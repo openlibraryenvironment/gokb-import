@@ -1,0 +1,28 @@
+body {
+	padding-top: 50px;
+}
+
+.navbar-inverse {
+	color: #fff;
+	background-color: #004678;
+	border-bottom: 0px;
+}
+.navbar-inverse .navbar-brand {
+	color: #fff;
+	font-weight: bold;
+}
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+	color: #004678;
+	background-color: #fff;
+}
+.navbar-inverse .navbar-nav > li > a {
+	color: #fff;
+}
+.content {
+	padding: 40px 15px;
+	margin-bottom: 40px;
+}
+
+#ygor-messages {
+	height: 60px;
+}
