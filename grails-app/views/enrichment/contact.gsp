@@ -1,3 +1,5 @@
+<meta name="layout" content="enrichment">
+
 <div class="row">
 	<div class="col-md-12">
 		<h3 id="contact">Kontakt</h3>

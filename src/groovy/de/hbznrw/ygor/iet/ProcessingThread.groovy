@@ -2,7 +2,7 @@ package de.hbznrw.ygor.iet;
 
 import de.hbznrw.ygor.iet.bridge.*
 import de.hbznrw.ygor.iet.interfaces.BridgeInterface
-import ygor.Document
+import ygor.Enrichment
 
 
 class ProcessingThread extends Thread {
@@ -13,7 +13,7 @@ class ProcessingThread extends Thread {
 	
 	private BridgeInterface bridge
 	
-	ProcessingThread(Document document, int indexOfKey, String options) {
+	ProcessingThread(Enrichment document, int indexOfKey, String options) {
 		this.document   = document
 		this.indexOfKey = indexOfKey
 		this.options    = options
@@ -34,7 +34,7 @@ class ProcessingThread extends Thread {
 		if(null == indexOfKey)
 			System.exit(0)
 		
-		document.setStatus(Document.StateOfProcess.WORKING)
+		document.setStatus(Enrichment.StateOfProcess.WORKING)
 		
 		println('Starting ..')
 
@@ -59,7 +59,7 @@ class ProcessingThread extends Thread {
 				bridge.go(document.resultPathName)
 				
 		} catch(Exception e) {
-			document.processCallback(Document.StateOfProcess.ERROR)
+			document.processCallback(Enrichment.StateOfProcess.ERROR)
 			
 			println(e.getMessage())
 			println(e.getStackTrace())
@@ -69,6 +69,6 @@ class ProcessingThread extends Thread {
 		}
 		println('Done.')
 		
-		document.processCallback(Document.StateOfProcess.FINISHED)
+		document.processCallback(Enrichment.StateOfProcess.FINISHED)
 	}
 }

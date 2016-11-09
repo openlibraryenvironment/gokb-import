@@ -2,16 +2,31 @@ package ygor
 
 import grails.util.Environment
 
-class DocumentController {
+class EnrichmentController {
 	
 	static scope = "session"
 	
 	def documents = [:]
 	
     def index = {
-			
-		render(view:'index', model:[documents:documents])
+		redirect(action:'process')
 	}
+    
+    def process = {
+        render(controller:'Enrichment', view:'process', model:[documents:documents, currentView:'process'])
+    }
+    
+    def howto = {
+        render(controller:'Enrichment', view:'howto', model:[currentView:'howto'])
+    }
+    
+    def about = {
+        render(controller:'Enrichment', view:'about', model:[currentView:'about'])
+    }
+    
+    def contact = {
+        render(controller:'Enrichment', view:'contact', model:[currentView:'contact'])
+    }
 		
 	def uploadFile = {
 		
@@ -20,16 +35,16 @@ class DocumentController {
 			flash.info    = null
 			flash.warning = null
 			flash.error   = 'Sie müssen eine gültige Datei auswählen.'
-			render(view:'index', model:[documents:documents])
+			render(view:'process', model:[documents:documents])
 			return
 		}
 		
-		def document = new Document(getSessionFolder(), file.originalFilename)
+		def document = new Enrichment(getSessionFolder(), file.originalFilename)
 		documents << ["${document.originHash}":document]
 		file.transferTo(new File(document.originPathName))
 		//response.sendError(200, 'Done')
 		
-		redirect(action:'index')
+		redirect(action:'process')
 	}
 	
 	def processFile = {
@@ -45,7 +60,7 @@ class DocumentController {
 		else {
 			def doc = getDocument()
 			
-			if(doc.status != Document.StateOfProcess.WORKING) {
+			if(doc.status != Enrichment.StateOfProcess.WORKING) {
 				flash.info    = 'Bearbeitung gestartet.'
 				flash.warning = null
 				flash.error   = null
@@ -53,7 +68,7 @@ class DocumentController {
 				doc.process((pIndex.toInteger() - 1), pOptions)
 			}
 		}
-		render(view:'index', model:[documents:documents])
+		render(view:'process', model:[documents:documents, currentView:'process'])
 	}
 	
 	def deleteFile = {
@@ -64,7 +79,7 @@ class DocumentController {
 		origin.delete()
 		documents.remove("${doc.originHash}")
 		
-		render(view:'index', model:[documents:documents])
+		render(view:'process', model:[documents:documents, currentView:'process'])
 	}
 	
 	def downloadFile() {
@@ -76,7 +91,8 @@ class DocumentController {
 	}
 	
 	def getStatus() {
-		render document.getStatus()
+        def doc = getDocument()
+		render doc.getStatus()
 	}
 	/*
 	def updateProgressbar = {
@@ -86,7 +102,7 @@ class DocumentController {
 	}
 	*/
 	
-	Document getDocument() {
+	Enrichment getDocument() {
 		def hash = (String) request.parameterMap['originHash'][0]
 		documents.get("${hash}")
 	}

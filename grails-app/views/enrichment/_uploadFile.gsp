@@ -1,22 +1,10 @@
 <!-- _uploadFile.gsp -->
-<%@ page import="ygor.Document" %>
+<%@ page import="ygor.Enrichment" %>
 
 <g:if test="${documents.size() == 0}">
 
 	<div class="row">
 	
-		<div class="col-md-12">
-			<div class="well">
-				<strong>Schritt 1</strong> 
-				<br /><br />
-				<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-				&nbsp; Wählen Sie eine CSV-Datei zur Bearbeitung.
-				<br />
-				<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-				&nbsp; Laden Sie die Datei auf den Server.
-			</div>
-		</div>
-		
 		<div class="col-md-12">
 			<g:uploadForm action="uploadFile">
 				<p>

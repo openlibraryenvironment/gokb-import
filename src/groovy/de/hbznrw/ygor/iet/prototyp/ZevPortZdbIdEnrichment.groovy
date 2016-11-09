@@ -26,8 +26,8 @@ class ZevPortZdbIdEnrichment {
     
     static sqlConfig = [
         'url'    : 'jdbc:mysql://193.30.112.88:3306/zevport',
-        'user'   : '',
-        'pass'   : '',
+        'user'   : 'kloberd',
+        'pass'   : 'hbz102016',
         'driver' : 'com.mysql.jdbc.Driver'
      ]
 

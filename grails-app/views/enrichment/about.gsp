@@ -1,3 +1,5 @@
+<meta name="layout" content="enrichment">
+
 <div class="row">
 	<div class="col-md-12">
 		<h3 id="about">Über</h3>
@@ -11,6 +13,6 @@
 		<p>
 			Richten Sie sich nach den Anweisungen in den grauen Informationsfeldern.
 		</p>
-		<p>Version 0.1</p>
+		<p>Version 0.1 / 2016-11-09</p>
 	</div>
 </div>

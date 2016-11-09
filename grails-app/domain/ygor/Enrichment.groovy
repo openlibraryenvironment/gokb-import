@@ -5,7 +5,7 @@ import de.hbznrw.ygor.iet.ProcessingThread
 import de.hbznrw.ygor.tools.FileToolkit
 
 
-class Document {
+class Enrichment {
 
 	static enum StateOfProcess {UNTOUCHED, WORKING, FINISHED, ERROR}
 	StateOfProcess status
@@ -25,7 +25,7 @@ class Document {
     static constraints = {
     }
 	
-	Document(File sessionFolder, String originalFilename) {
+	Enrichment(File sessionFolder, String originalFilename) {
 		this.sessionFolder 	= sessionFolder
 		originName 			= originalFilename
 		originHash 			= FileToolkit.getMD5Hash(originName + Math.random())
