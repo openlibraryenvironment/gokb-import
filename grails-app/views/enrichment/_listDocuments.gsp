@@ -10,11 +10,12 @@
 			<g:hiddenField name="originHash" value="${doc.key}" />
 			
 			<div class="row">
-				<div class="col-md-8">
-					<span class="glyphicon glyphicon-file"></span> 
+				<div class="col-xs-8">
+					<span class="glyphicon glyphicon-file"></span>
+					&nbsp;
 					<span title="${doc.value.originHash}">${doc.value.originName}</span>
 				</div>
-				<div class="col-md-4">
+				<div class="col-xs-4">
 					<g:if test="${doc.value.status == Enrichment.StateOfProcess.UNTOUCHED}">
 						<span class="label label-default pull-right">Nicht bearbeitet</span>
 					</g:if>
@@ -34,11 +35,11 @@
 			<br />
 			
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-xs-4">
 					<g:select name="processIndex" from="${1..20}" value="0" 
 						noSelection="['':'Spaltenindex der ISSN']"  class="form-control"/>
 				</div>
-				<div class="col-md-8">
+				<div class="col-xs-8">
 					<g:radio name="processIndexType" checked="true" value="pissn"/> pISSN
 					<g:radio name="processIndexType" value="eissn"/> eISSN
 				</div>
@@ -47,7 +48,7 @@
 			<br />
 			
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-xs-12">
 					Folgende Information soll hinzugefügt werden ..
 					<br /><br />
 					<label class="radio-inline">
@@ -66,12 +67,16 @@
 					-->
 				</div>
 			</div><!-- .row -->
-			
+			<!--
+				<g:checkBox name="processOption" checked="true" value="zdbid"/> ZDBId
+				<g:checkBox name="processOption" checked="false" value="ezbid"/> EZBId
+				<g:checkBox name="processOption" checked="false" value="gokbid"/> GOkbId
+			-->
 			<br />
 			
 			<div class="row">
 			
-				<div class="col-md-6">
+				<div class="col-xs-6">
 					<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
 		    			<g:actionSubmit action="downloadFile" value="Ergebnis speichern" class="btn btn-success"/>
 		    		</g:if>
@@ -80,31 +85,7 @@
 				</div>
 				
 			</div><!-- .row -->	
-			
-
-				
-				
-				
-				
-				
-				
-			
-				
-				
-				<!--
-				<g:checkBox name="processOption" checked="true" value="zdbid"/> ZDBId
-				<g:checkBox name="processOption" checked="false" value="ezbid"/> EZBId
-				<g:checkBox name="processOption" checked="false" value="gokbid"/> GOkbId
-				-->
-				<!-- 
-				<div class="progress">
-					<div class="progress-bar" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100" style="width: 5%;">
-						0%
-					</div>
-				</div>
-				-->
-
-			
+		
 			<br />
 			
 			

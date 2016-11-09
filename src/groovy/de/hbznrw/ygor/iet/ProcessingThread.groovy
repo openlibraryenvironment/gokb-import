@@ -19,14 +19,6 @@ class ProcessingThread extends Thread {
 		this.options    = options
 	}
 	
-	/*
-	int getProgress(){
-		if(bridge)
-			return bridge.progress
-		else
-			return -1
-	}
-*/
 	public void run() {
 		if(null == document.originPathName)
 			System.exit(0)

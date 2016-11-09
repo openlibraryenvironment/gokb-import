@@ -34,24 +34,21 @@ class Enrichment {
 		setStatus(StateOfProcess.UNTOUCHED)
 	}
 	
-	def process(int indexOfIssn, String options) {
+	def process(HashMap options) {
+                
+        //options.dump()
+        
 		resultName 			= FileToolkit.getDateTimePrefixedFileName(originName)
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + '/' + resultHash
 		
-		thread = new ProcessingThread(this, indexOfIssn, options)
+		thread = new ProcessingThread(this, options['index'], options['options'])
 		thread.start()
 	}
 	
 	def processCallback(StateOfProcess status) {
 		setStatus(status)
 	}
-	
-	/*
-	int getProgress() {
-		thread.getProgress()
-	}
-	*/
 	
 	def setStatus(StateOfProcess status) {
 		this.status = status

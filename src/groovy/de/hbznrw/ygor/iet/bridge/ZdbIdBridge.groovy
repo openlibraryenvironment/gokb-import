@@ -41,10 +41,4 @@ class ZdbIdBridge extends BridgeAbstract implements BridgeInterface {
 		processor.setConfiguration(",", null, null)
 		processor.processFile(inputFile, indexOfKey, outputFile)
 	}
-	
-	/*
-	void setProgress(int progress) {
-		println "<<< " + progress
-		this.progress = progress
-	}*/
 }

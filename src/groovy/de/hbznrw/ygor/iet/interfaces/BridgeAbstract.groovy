@@ -14,8 +14,4 @@ abstract class BridgeAbstract implements BridgeInterface {
 	
 	void go(String outputFile) throws Exception {
 	}
-	
-	int getProgress() {
-		return -1
-	}
 }
