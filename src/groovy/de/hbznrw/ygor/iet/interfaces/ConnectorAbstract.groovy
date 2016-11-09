@@ -1,13 +1,13 @@
 package de.hbznrw.ygor.iet.interfaces
 
-import de.hbznrw.ygor.iet.Envelope;
-import de.hbznrw.ygor.iet.enums.Query;
-import de.hbznrw.ygor.iet.enums.Status;
+import de.hbznrw.ygor.iet.Envelope
+import de.hbznrw.ygor.iet.enums.Query
+import de.hbznrw.ygor.iet.enums.Status
 
 /**
  * Abstract class for defining API endpoints
  *
- * @author kloberd
+ * @author David Klober
  *
  */
 abstract class ConnectorAbstract implements ConnectorInterface {

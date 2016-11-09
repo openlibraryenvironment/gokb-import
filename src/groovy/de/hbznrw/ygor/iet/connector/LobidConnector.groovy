@@ -1,14 +1,10 @@
 package de.hbznrw.ygor.iet.connector
 
 import groovy.json.JsonSlurper
-
-import java.util.ArrayList;
-
-import org.apache.commons.csv.CSVRecord;
-
+import java.util.ArrayList
+import org.apache.commons.csv.CSVRecord
 import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.enums.Query;
-import de.hbznrw.ygor.iet.enums.Status;
+import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.formatadapter.OaiDcSruFormatAdapter
 import de.hbznrw.ygor.iet.interfaces.*
 
@@ -16,7 +12,7 @@ import de.hbznrw.ygor.iet.interfaces.*
 /**
  * Controlling API calls using lobid.org
  * 
- * @author kloberd
+ * @author David Klober
  *
  */
 class LobidConnector extends ConnectorAbstract {

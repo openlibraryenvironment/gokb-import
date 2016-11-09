@@ -1,6 +1,6 @@
 package de.hbznrw.ygor.iet.interfaces
 
-import de.hbznrw.ygor.iet.enums.Query;
+import de.hbznrw.ygor.iet.enums.Query
 
 abstract class BridgeAbstract implements BridgeInterface {
 

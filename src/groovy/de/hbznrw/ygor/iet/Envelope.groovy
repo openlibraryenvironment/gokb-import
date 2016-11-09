@@ -1,11 +1,11 @@
 package de.hbznrw.ygor.iet
 
-import de.hbznrw.ygor.iet.enums.Status;
+import de.hbznrw.ygor.iet.enums.Status
 
 /**
  * Class for wrapping API call results
  * 
- * @author kloberd
+ * @author David Klober
  *
  */
 class Envelope {

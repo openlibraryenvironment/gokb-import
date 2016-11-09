@@ -1,14 +1,13 @@
 package de.hbznrw.ygor.iet.interfaces
 
-import java.util.ArrayList;
-
+import java.util.ArrayList
 import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.enums.Status;
+import de.hbznrw.ygor.iet.enums.Status
 
 /**
  * Abstract class for defining format specific queries
  * 
- * @author kloberd
+ * @author David Klober
  *
  */
 abstract class FormatAdapterAbstract implements FormatAdapterInterface {

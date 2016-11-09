@@ -1,12 +1,9 @@
 package de.hbznrw.ygor.iet.formatadapter
 
-import java.util.ArrayList;
-
-import org.apache.commons.csv.CSVRecord;
-
+import java.util.ArrayList
+import org.apache.commons.csv.CSVRecord
 import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.enums.Query;
-import de.hbznrw.ygor.iet.enums.Status;
+import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.interfaces.*
 import groovy.util.slurpersupport.GPathResult
 
@@ -14,7 +11,7 @@ import groovy.util.slurpersupport.GPathResult
 /**
  * Class for processing API calls using the OAI_DC format
  * 
- * @author kloberd
+ * @author David Klober
  *
  */
 class OaiDcSruFormatAdapter extends de.hbznrw.ygor.iet.interfaces.FormatAdapterAbstract {

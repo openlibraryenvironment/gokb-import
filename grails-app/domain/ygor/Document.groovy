@@ -1,9 +1,8 @@
 package ygor
 
-import java.security.MessageDigest
 import de.hbznrw.ygor.iet.IetWrapper
 import de.hbznrw.ygor.iet.ProcessingThread
-import de.hbznrw.ygor.filetools.FileToolkit
+import de.hbznrw.ygor.tools.FileToolkit
 
 
 class Document {
@@ -29,7 +28,7 @@ class Document {
 	Document(File sessionFolder, String originalFilename) {
 		this.sessionFolder 	= sessionFolder
 		originName 			= originalFilename
-		originHash 			= getMD5Hash(originName + Math.random())
+		originHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		originPathName 		= sessionFolder.getPath() + '/' + originHash
 		
 		setStatus(StateOfProcess.UNTOUCHED)
@@ -37,7 +36,7 @@ class Document {
 	
 	def process(int indexOfIssn, String options) {
 		resultName 			= FileToolkit.getDateTimePrefixedFileName(originName)
-		resultHash 			= getMD5Hash(originName + Math.random())
+		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + '/' + resultHash
 		
 		thread = new ProcessingThread(this, indexOfIssn, options)
@@ -69,8 +68,4 @@ class Document {
 	File getResultFile() {
 		new File(resultPathName)
 	}
-	
-	String getMD5Hash(String s) {
-		MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8")).encodeHex().toString()
-	 }
 }

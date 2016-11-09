@@ -9,7 +9,7 @@ import de.hbznrw.ygor.iet.enums.Query;
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
-import de.hbznrw.ygor.filetools.FileToolkit
+import de.hbznrw.ygor.tools.FileToolkit
 
 class ZdbIdBridge extends BridgeAbstract implements BridgeInterface {
 	

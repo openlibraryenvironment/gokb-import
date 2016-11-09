@@ -1,0 +1,20 @@
+package de.hbznrw.ygor.tools
+
+import java.security.MessageDigest
+import java.nio.file.Paths
+import org.codehaus.groovy.runtime.DateGroovyMethods
+
+class FileToolkit {
+
+	static String getDateTimePrefixedFileName(filename) {
+		def p1 = Paths.get(filename).getParent()
+		def p3 = Paths.get(filename).getFileName()
+		def p2 = DateGroovyMethods.format(new Date(), 'yyyyMMdd-HHmm-')
+
+		return p1.toString() + File.separator + p2 + p3.toString()
+	}
+    
+    static String getMD5Hash(String s) {
+        MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8")).encodeHex().toString()
+    }
+}
