@@ -131,11 +131,11 @@ class EnrichmentController {
      */
 
     File getSessionFolder() {
-        def path = '/tmp/ygor/' + session.id
+        def path = grailsApplication.config.ygor.uploadLocation + File.separator + session.id
         def sessionFolder = new File(path)
         if(!sessionFolder.exists()) {
             sessionFolder.mkdirs()
         }
-        return sessionFolder
+        sessionFolder
     }
 }

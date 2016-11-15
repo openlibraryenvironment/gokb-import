@@ -29,18 +29,17 @@ class Enrichment {
 		this.sessionFolder 	= sessionFolder
 		originName 			= originalFilename
 		originHash 			= FileToolkit.getMD5Hash(originName + Math.random())
-		originPathName 		= sessionFolder.getPath() + '/' + originHash
+		originPathName 		= this.sessionFolder.getPath() + File.separator + originHash
 		
 		setStatus(StateOfProcess.UNTOUCHED)
 	}
 	
-	def process(HashMap options) {
-                
+	def process(HashMap options) {    
         //options.dump()
         
 		resultName 			= FileToolkit.getDateTimePrefixedFileName(originName)
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
-		resultPathName 		= sessionFolder.getPath() + '/' + resultHash
+		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
 		thread = new ProcessingThread(this, options['index'], options['options'])
 		thread.start()
@@ -63,6 +62,6 @@ class Enrichment {
 	}
 	
 	File getResultFile() {
-		new File(resultPathName)
+        new File(resultPathName)
 	}
 }

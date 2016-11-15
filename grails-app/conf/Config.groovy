@@ -88,11 +88,11 @@ grails.hibernate.osiv.readonly = false
 environments {
     development {
         grails.logging.jul.usebridge = true
-		documentUploadFolder = "/tmp/ygor/dev"
+		ygor.uploadLocation = "/tmp/ygor/dev"
     }
     production {
         grails.logging.jul.usebridge = false
-		documentUploadFolder = "/tmp/ygor/prod"
+		ygor.uploadLocation = "/tmp/ygor/prod"
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }

@@ -39,7 +39,7 @@ class ZevPortZdbIdEnrichment {
             sqlConfig['url'], sqlConfig['user'], sqlConfig['pass'], sqlConfig['driver']
             )
         
-        def tmpPath    = '/tmp/' + FileToolkit.getMD5Hash(
+        def tmpPath    = File.separator + 'tmp' + File.separator + FileToolkit.getMD5Hash(
             ZevPortZdbIdEnrichment.class.getName() + Math.random()
             )
         

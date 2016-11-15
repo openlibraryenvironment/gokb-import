@@ -8,10 +8,13 @@ class FileToolkit {
 
 	static String getDateTimePrefixedFileName(filename) {
 		def p1 = Paths.get(filename).getParent()
+        def p2 = DateGroovyMethods.format(new Date(), 'yyyyMMdd-HHmm-')
 		def p3 = Paths.get(filename).getFileName()
-		def p2 = DateGroovyMethods.format(new Date(), 'yyyyMMdd-HHmm-')
 
-		return p1.toString() + File.separator + p2 + p3.toString()
+        if(null != p1)
+		    return p1.toString() + File.separator + p2 + p3.toString()
+            
+        p2 + p3.toString()
 	}
     
     static String getMD5Hash(String s) {
