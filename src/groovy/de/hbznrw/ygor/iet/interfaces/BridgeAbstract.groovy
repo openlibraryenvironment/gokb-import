@@ -4,6 +4,7 @@ import de.hbznrw.ygor.iet.enums.Query
 
 abstract class BridgeAbstract implements BridgeInterface {
 
+    public Thread master
 	public Query query
 	public ConnectorInterface connector
 	public FormatAdapterInterface formatAdapter
@@ -14,4 +15,9 @@ abstract class BridgeAbstract implements BridgeInterface {
 	
 	void go(String outputFile) throws Exception {
 	}
+    
+    void increaseProgress() {
+        if(master)
+            master.increaseProgress()
+    }
 }

@@ -9,6 +9,7 @@ class Enrichment {
 
 	static enum StateOfProcess {UNTOUCHED, WORKING, FINISHED, ERROR}
 	StateOfProcess status
+    float progress = 0.0
 	
 	String originName
 	String originHash
@@ -41,14 +42,22 @@ class Enrichment {
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
-        def mThread = new MultipleProcessingThread(this, options)
-		mThread.start()
+        thread = new MultipleProcessingThread(this, options)
+		thread.start()
 	}
 	
-	def processCallback(StateOfProcess status) {
-		setStatus(status)
-	}
-	
+    def setProgress(float progress) {
+        this.progress = progress
+    }
+    
+    float getProgress() {
+        progress
+    }
+    
+    def setStatusByCallback(StateOfProcess status) {
+        setStatus(status)
+    }
+    
 	def setStatus(StateOfProcess status) {
 		this.status = status
 	}

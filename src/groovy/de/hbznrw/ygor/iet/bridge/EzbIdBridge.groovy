@@ -18,7 +18,8 @@ class EzbIdBridge extends BridgeAbstract implements BridgeInterface {
 	String inputFile
 	int indexOfKey
 	
-	EzbIdBridge(String inputFile, int indexOfKey) {
+	EzbIdBridge(Thread master, String inputFile, int indexOfKey) {
+        this.master     = master
 		this.inputFile  = inputFile
 		this.indexOfKey = indexOfKey
 		

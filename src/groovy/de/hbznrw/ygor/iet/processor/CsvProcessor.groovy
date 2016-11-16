@@ -57,9 +57,10 @@ class CsvProcessor extends ProcessorAbstract {
 
         Paths.get(inputFile).withReader { reader ->
             CSVParser csv = new CSVParser(reader, csvFormat)
-            //total = csv.getRecords().size()
 
             for (record in csv.iterator()) {
+                bridge.increaseProgress()
+                
                 ArrayList modifiedRecord = processRecord(record, indexOfKey, ++count)
                 csvPrinter.printRecord(modifiedRecord)
             }

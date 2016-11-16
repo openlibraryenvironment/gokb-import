@@ -13,6 +13,9 @@ class MultipleProcessingThread extends Thread {
 	private indexOfKey
 	private options
 	
+    private int progressTotal   = 0
+    private int progressCurrent = 0
+    
 	private BridgeInterface bridge
 	
 	MultipleProcessingThread(Enrichment document, HashMap options) {
@@ -31,17 +34,25 @@ class MultipleProcessingThread extends Thread {
 		document.setStatus(Enrichment.StateOfProcess.WORKING)
 		
 		println('Starting ..')
-
+        
 		//BridgeInterface bridge
 		try {
+            
+            LineNumberReader lnr = new LineNumberReader(
+                new FileReader(new File(document.originPathName))
+                );
+            lnr.skip(Long.MAX_VALUE);
+            progressTotal = lnr.getLineNumber() * options.size()
+            lnr.close();
+            
             options.each{
                 option ->
                     switch(option) {
                         case 'zdbid':
-                            bridge = new ZdbIdBridge(document.originPathName, indexOfKey)
+                            bridge = new ZdbIdBridge(this, document.originPathName, indexOfKey)
                             break
                         case 'ezbid':
-                            bridge = new EzbIdBridge(document.originPathName, indexOfKey)
+                            bridge = new EzbIdBridge(this, document.originPathName, indexOfKey)
                             break
                     }
                     
@@ -56,7 +67,7 @@ class MultipleProcessingThread extends Thread {
             }
            								
 		} catch(Exception e) {
-			document.processCallback(Enrichment.StateOfProcess.ERROR)
+			document.setStatusByCallback(Enrichment.StateOfProcess.ERROR)
 			
 			println(e.getMessage())
 			println(e.getStackTrace())
@@ -66,6 +77,11 @@ class MultipleProcessingThread extends Thread {
 		}
 		println('Done.')
 		
-		document.processCallback(Enrichment.StateOfProcess.FINISHED)
+		document.setStatusByCallback(Enrichment.StateOfProcess.FINISHED)
 	}
+    
+    void increaseProgress() {
+        progressCurrent++
+        document.setProgress((progressCurrent / progressTotal) * 100)
+    }
 }

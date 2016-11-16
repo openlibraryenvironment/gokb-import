@@ -18,7 +18,8 @@ class HbzIdBridge extends BridgeAbstract implements BridgeInterface {
 	String inputFile
 	int indexOfKey
 	
-	HbzIdBridge(String inputFile, int indexOfKey) {
+	HbzIdBridge(Thread master, String inputFile, int indexOfKey) {
+        this.master     = master
 		this.inputFile  = inputFile
 		this.indexOfKey = indexOfKey
 		

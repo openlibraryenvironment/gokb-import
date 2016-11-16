@@ -102,7 +102,7 @@ class EnrichmentController {
                     ]
                 )
     }
-
+    
     def deleteFile = {
 
         def doc = getDocument()
@@ -128,9 +128,14 @@ class EnrichmentController {
                 )
     }
 
-    def getStatus() {
+    def ajaxGetStatus() {
         def doc = getDocument()
         render doc.getStatus()
+    }
+    
+    def ajaxGetProgress() {
+        def doc = getDocument()
+        render doc.getProgress()
     }
 
     Enrichment getDocument() {

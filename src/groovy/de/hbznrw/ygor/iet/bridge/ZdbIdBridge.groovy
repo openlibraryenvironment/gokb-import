@@ -16,9 +16,9 @@ class ZdbIdBridge extends BridgeAbstract implements BridgeInterface {
 	def query = Query.ZDBID
 	String inputFile
 	int indexOfKey
-	//int progress = 0
 	
-	ZdbIdBridge(String inputFile, int indexOfKey) {
+	ZdbIdBridge(Thread master, String inputFile, int indexOfKey) {
+        this.master     = master
 		this.inputFile  = inputFile
 		this.indexOfKey = indexOfKey
 		
