@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta name="layout" content="main"/>
-		<title>Welcome to Grails</title>
+		<title>Ygor - Alpha</title>
 	</head>
 	<body>
 		<div class="alert alert-danger" role="alert">

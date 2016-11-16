@@ -10,24 +10,21 @@
 			<g:hiddenField name="originHash" value="${doc.key}" />
 			
 			<div class="row">
-				<div class="col-xs-8">
-					<span class="glyphicon glyphicon-file"></span>
-					&nbsp;
-					<span title="${doc.value.originHash}">${doc.value.originName}</span>
-				</div>
-				<div class="col-xs-4">
-					<span class="pull-right">
+				<div class="col-xs-12">
+					<span title="${doc.value.originHash}"><strong>${doc.value.originName}</strong></span>
+				
+					<span>
 						<g:if test="${doc.value.status == Enrichment.StateOfProcess.UNTOUCHED}">
-							[ Nicht bearbeitet ]
+							&rarr; Nicht bearbeitet
 						</g:if>
 						<g:if test="${doc.value.status == Enrichment.StateOfProcess.WORKING}">
-							[ In Bearbeitung .. ]
+							&rarr; In Bearbeitung ..
 						</g:if>
 						<g:if test="${doc.value.status == Enrichment.StateOfProcess.ERROR}">
-							[ Fehler ]
+							&rarr; Fehler ]
 						</g:if>
 						<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
-							[ Bearbeitung abgeschlossen ]
+							&rarr; Bearbeitung abgeschlossen
 						</g:if>
 					</span>
 				</div>
