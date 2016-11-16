@@ -5,7 +5,7 @@
 
 	<g:if test="${documents.size() == 0}">
 
-		<div class="col-md-12">
+		<div class="col-xs-12">
 			<div class="well">
 				<strong>Schritt 1</strong> 
 				<br /><br />
@@ -24,7 +24,7 @@
 		<g:each in="${documents}" var="doc">
 
 			<g:if test="${doc.value.status != Enrichment.StateOfProcess.FINISHED}">
-				<div class="col-md-12">
+				<div class="col-xs-12">
 					<div class="well">
 						<strong>Schritt 2</strong> 
 						<br /><br />
@@ -44,7 +44,7 @@
 			</g:if>
 			
 			<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
-				<div class="col-md-12">
+				<div class="col-xs-12">
 					<div class="well">
 						<strong>Schritt 3</strong> 
 						<br /><br />

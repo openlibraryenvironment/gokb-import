@@ -1,8 +1,7 @@
 <meta name="layout" content="enrichment">
 
 <div class="row">
-	<div class="col-md-12">
-		<h3 id="about">Über</h3>
+	<div class="col-xs-12">
 		<p>Wer oder was ist <em>Ygor</em>?</p>
 		<p>
 			<em>Ygor</em> ist ein kleines Werkzeug zur Anreicherung existierender Daten.

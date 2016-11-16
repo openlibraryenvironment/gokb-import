@@ -59,21 +59,28 @@ class EnrichmentController {
 
     def processFile = {
         
-        def pIndex     = request.parameterMap['processIndex'][0]
-        def pIndexType = request.parameterMap['processIndexType'][0]
-        def pOptions   = request.parameterMap['processOption'][0]
+        def pmIndex     = request.parameterMap['processIndex'][0]
+        def pmIndexType = request.parameterMap['processIndexType'][0]
+        def pmOptions   = request.parameterMap['processOption']
 
-        if(!pIndex) {
+        println request.parameterMap['processOption']
+        
+        if(!pmIndex) {
             flash.info    = null
             flash.warning = 'Geben Sie einen gültigen Index an.'
+            flash.error   = null
+        }
+        else if(!pmOptions) {
+            flash.info    = null
+            flash.warning = 'Wählen Sie mindestens eine Anreicherungsoption.'
             flash.error   = null
         }
         else {
             def doc = getDocument()
             def processOptions = [
-                'index':   pIndex.toInteger() - 1,
-                'type':    pIndexType,
-                'options': pOptions
+                'indexOfKey':   pmIndex.toInteger() - 1,
+                'type':         pmIndexType,
+                'options':      pmOptions
                 ]
             
             if(doc.status != Enrichment.StateOfProcess.WORKING) {
@@ -86,7 +93,13 @@ class EnrichmentController {
         }
         render(
                 view:'process',
-                model:[documents:documents, currentView:'process']
+                model:[
+                    documents:documents, 
+                    currentView:'process',
+                    pIndex:pmIndex,
+                    pIndexType:pmIndexType,
+                    pOptions:pmOptions,
+                    ]
                 )
     }
 

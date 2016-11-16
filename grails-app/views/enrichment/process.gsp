@@ -8,8 +8,12 @@
 	<body>
 	
 	<div class="row">
-		<div class="col-md-12">
-			<h3 id="iet" title="Session: ${session.id}">Informationsanreicherung</h3>
+		<div class="col-xs-12">
+			<p>
+				<span class="glyphicon glyphicon-folder-open"></span>
+				&nbsp;
+				${session.id}
+			</p>
 		</div>
 	</div>
 	

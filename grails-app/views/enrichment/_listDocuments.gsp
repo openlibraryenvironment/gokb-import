@@ -37,7 +37,7 @@
 			<div class="row">
 				<div class="col-xs-4">
 					<g:select name="processIndex" from="${1..20}" value="0" 
-						noSelection="['':'Spaltenindex der ISSN']"  class="form-control"/>
+						noSelection="['':'Spaltenindex der .. ']"  class="form-control"/>
 				</div>
 				<div class="col-xs-8">
 					<g:radio name="processIndexType" checked="true" value="pissn"/> pISSN
@@ -51,37 +51,31 @@
 				<div class="col-xs-12">
 					Folgende Information soll hinzugefügt werden ..
 					<br /><br />
-					<label class="radio-inline">
-						<g:radio name="processOption" checked="true" value="zdbid" class="radio"/> ZDB-Id
-					</label>
-					<label class="radio-inline">
-						<g:radio name="processOption" value="ezbid" class="radio"/> EZB-Id
-					</label>		
-					<!-- 	
-					<label class="radio-inline">
-						<g:radio name="processOption" value="hbzid" class="radio"/> HBZ-Id
-					</label>
-					<label class="radio-inline">
-						<g:radio name="processOption" value="gokbid" class="radio"/> GOKb-Id
-					</label>
-					-->
+					<g:checkBox name="processOption" checked="true" value="zdbid"/> ZDB-Id
+					<g:checkBox name="processOption" checked="true" value="ezbid"/> EZB-Id
+					
+					<!--<g:checkBox name="processOption" checked="false" value="gokbid"/> GOKb-Id-->
+			
 				</div>
 			</div><!-- .row -->
-			<!--
-				<g:checkBox name="processOption" checked="true" value="zdbid"/> ZDBId
-				<g:checkBox name="processOption" checked="false" value="ezbid"/> EZBId
-				<g:checkBox name="processOption" checked="false" value="gokbid"/> GOkbId
-			-->
+			
 			<br />
 			
 			<div class="row">
 			
 				<div class="col-xs-6">
+					<g:if test="${doc.value.status == Enrichment.StateOfProcess.UNTOUCHED}">
+		    			<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
+						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-default"/>
+					</g:if>
+					<g:if test="${doc.value.status == Enrichment.StateOfProcess.ERROR}">
+						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
+					</g:if>
 					<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
+						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 		    			<g:actionSubmit action="downloadFile" value="Ergebnis speichern" class="btn btn-success"/>
 		    		</g:if>
-		    		<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-					<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-default"/>
+		    		
 				</div>
 				
 			</div><!-- .row -->	

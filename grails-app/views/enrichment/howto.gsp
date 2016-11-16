@@ -1,9 +1,7 @@
 <meta name="layout" content="enrichment">
 
 <div class="row">
-	<div class="col-md-12">
-		<h3 id="howto">Anleitung</h3>
-
+	<div class="col-xs-12">
 		<div class="well">
 			<strong>Schritt 1</strong> 
 			<br /><br />
@@ -12,8 +10,9 @@
 			<br />
 			<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 			&nbsp; Laden Sie die Datei auf den Server.
+		</div>
 			
-			<br /><br />		
+		<div class="well">	
 			<strong>Schritt 2</strong> 
 			<br /><br />
 			<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
@@ -27,8 +26,9 @@
 			<br />
 			<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 			&nbsp; Starten Sie die Bearbeitung.
-			
-			<br /><br />
+		</div>
+		
+		<div class="well">
 			<strong>Schritt 3</strong> 
 			<br /><br />
 			<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>

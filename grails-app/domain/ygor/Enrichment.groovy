@@ -1,7 +1,7 @@
 package ygor
 
 import de.hbznrw.ygor.iet.IetWrapper
-import de.hbznrw.ygor.iet.ProcessingThread
+import de.hbznrw.ygor.iet.MultipleProcessingThread
 import de.hbznrw.ygor.tools.FileToolkit
 
 
@@ -41,8 +41,8 @@ class Enrichment {
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
-		thread = new ProcessingThread(this, options['index'], options['options'])
-		thread.start()
+        def mThread = new MultipleProcessingThread(this, options)
+		mThread.start()
 	}
 	
 	def processCallback(StateOfProcess status) {
