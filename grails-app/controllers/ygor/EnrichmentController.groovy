@@ -102,6 +102,12 @@ class EnrichmentController {
                     ]
                 )
     }
+    def stopProcessingFile = {
+        def doc = getDocument()
+        doc.thread.isRunning = false
+        
+        deleteFile()
+    }
     
     def deleteFile = {
 
@@ -130,12 +136,8 @@ class EnrichmentController {
 
     def ajaxGetStatus() {
         def doc = getDocument()
-        render doc.getStatus()
-    }
-    
-    def ajaxGetProgress() {
-        def doc = getDocument()
-        render doc.getProgress()
+        
+        render '{"status":"' + doc.getStatus() + '", "progress":' + doc.getProgress() + '}'
     }
 
     Enrichment getDocument() {

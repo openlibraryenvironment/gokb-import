@@ -12,6 +12,8 @@ class MultipleProcessingThread extends Thread {
 	private document
 	private indexOfKey
 	private options
+    
+    public isRunning = true
 	
     private int progressTotal   = 0
     private int progressCurrent = 0

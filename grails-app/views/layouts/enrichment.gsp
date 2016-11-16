@@ -35,8 +35,6 @@
 						<br />
 					</div>
 				</div>
-		
-      			<g:layoutBody/>
       			
       			<div class="row">
       				<div class="col-xs-12">
@@ -59,7 +57,9 @@
 				      	</div>
 		      		</div>
 		      	</div>
-							
+				
+				<g:layoutBody/>
+					
 			</div>
     	</div><!-- /.container -->
     	

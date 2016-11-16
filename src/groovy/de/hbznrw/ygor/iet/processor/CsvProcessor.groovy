@@ -59,6 +59,11 @@ class CsvProcessor extends ProcessorAbstract {
             CSVParser csv = new CSVParser(reader, csvFormat)
 
             for (record in csv.iterator()) {
+                if(!bridge.master.isRunning) {
+                    println('Aborted by user action.')
+                    return
+                }
+                
                 bridge.increaseProgress()
                 
                 ArrayList modifiedRecord = processRecord(record, indexOfKey, ++count)
