@@ -22,7 +22,7 @@
 			&nbsp; Bestimmen Sie den Typ der angegebenen ISSN.
 			<br />
 			<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-			&nbsp; Wählen Sie die hinzuzufügenden Informationen aus.
+			&nbsp; Wählen Sie die anzureichernden Informationen aus.
 			<br />
 			<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 			&nbsp; Starten Sie die Bearbeitung.

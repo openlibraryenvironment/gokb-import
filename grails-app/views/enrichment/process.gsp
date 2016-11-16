@@ -7,16 +7,6 @@
 	</head>
 	<body>
 	
-	<div class="row">
-		<div class="col-xs-12">
-			<p>
-				<span class="glyphicon glyphicon-folder-open"></span>
-				&nbsp;
-				${session.id}
-			</p>
-		</div>
-	</div>
-	
 		<g:render template="processInfo" />
 	
 		<g:render template="uploadFile" />

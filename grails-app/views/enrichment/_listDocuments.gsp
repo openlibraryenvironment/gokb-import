@@ -16,19 +16,20 @@
 					<span title="${doc.value.originHash}">${doc.value.originName}</span>
 				</div>
 				<div class="col-xs-4">
-					<g:if test="${doc.value.status == Enrichment.StateOfProcess.UNTOUCHED}">
-						<span class="label label-default pull-right">Nicht bearbeitet</span>
-					</g:if>
-					<g:if test="${doc.value.status == Enrichment.StateOfProcess.WORKING}">
-						<span class="label label-info pull-right">In Bearbeitung</span>
-					</g:if>
-					<g:if test="${doc.value.status == Enrichment.StateOfProcess.ERROR}">
-						<span class="label label-danger pull-right">Fehler</span>
-					</g:if>
-					<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
-						<span class="label label-success pull-right">Bearbeitung abgeschlossen</span>
-					</g:if>
-	
+					<span class="pull-right">
+						<g:if test="${doc.value.status == Enrichment.StateOfProcess.UNTOUCHED}">
+							[ Nicht bearbeitet ]
+						</g:if>
+						<g:if test="${doc.value.status == Enrichment.StateOfProcess.WORKING}">
+							[ In Bearbeitung .. ]
+						</g:if>
+						<g:if test="${doc.value.status == Enrichment.StateOfProcess.ERROR}">
+							[ Fehler ]
+						</g:if>
+						<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
+							[ Bearbeitung abgeschlossen ]
+						</g:if>
+					</span>
 				</div>
 			</div><!-- .row -->	
 	

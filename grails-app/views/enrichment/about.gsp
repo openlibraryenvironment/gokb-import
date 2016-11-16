@@ -12,6 +12,10 @@
 		<p>
 			Richten Sie sich nach den Anweisungen in den grauen Informationsfeldern.
 		</p>
-		<p>Version 0.1 / 2016-11-09</p>
+		<br />
+		<p>
+			<em>Version <g:meta name="app.version"/></em> <br />
+			<em>basierend auf Grails <g:meta name="app.grails.version"/></em>
+		</p>
 	</div>
 </div>

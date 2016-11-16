@@ -31,8 +31,11 @@
 							<path d="M63.008 3.897H12.177v50.139H0V.002L63.008 0v3.897" fill="#004678"/>
 						</svg>
 					</div>
+					<div class="col-xs-12">
+						<br />
+					</div>
 				</div>
-				
+		
       			<g:layoutBody/>
       			
       			<div class="row">
