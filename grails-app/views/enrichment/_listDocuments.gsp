@@ -24,7 +24,7 @@
 				<div class="col-xs-12">
 					<span title="${doc.value.originHash}"><strong>${doc.value.originName}</strong></span>
 				
-					<span>
+					<span><em>
 						<g:if test="${doc.value.status == Enrichment.StateOfProcess.UNTOUCHED}">
 							&rarr; Nicht bearbeitet
 						</g:if>
@@ -37,7 +37,7 @@
 						<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
 							&rarr; Bearbeitung abgeschlossen
 						</g:if>
-					</span>
+					</span></em>
 				</div>
 			</div><!-- .row -->	
 	
@@ -51,6 +51,7 @@
 					</div>
 					<div class="col-xs-8">
 						<g:radio name="processIndexType" checked="true" value="pissn"/> pISSN
+						&nbsp;
 						<g:radio name="processIndexType" value="eissn"/> eISSN
 					</div>
 				</div><!-- .row -->
@@ -64,6 +65,7 @@
 						Folgende Information soll hinzugefügt werden ..
 						<br /><br />
 						<g:checkBox name="processOption" checked="true" value="zdbid"/> ZDB-Id
+						&nbsp;
 						<g:checkBox name="processOption" checked="true" value="ezbid"/> EZB-Id
 						
 						<!--<g:checkBox name="processOption" checked="false" value="gokbid"/> GOKb-Id-->
