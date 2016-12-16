@@ -2,6 +2,7 @@ package de.hbznrw.ygor.iet;
 
 import de.hbznrw.ygor.iet.bridge.*
 import de.hbznrw.ygor.iet.interfaces.BridgeInterface
+//import ygor.Data
 import ygor.Enrichment
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -51,10 +52,10 @@ class MultipleProcessingThread extends Thread {
                 option ->
                     switch(option) {
                         case 'zdbid':
-                            bridge = new ZdbIdBridge(this, document.originPathName, indexOfKey)
+                            bridge = new ZdbBridge(this, document.originPathName, indexOfKey)
                             break
                         case 'ezbid':
-                            bridge = new EzbIdBridge(this, document.originPathName, indexOfKey)
+                            bridge = new EzbBridge(this, document.originPathName, indexOfKey)
                             break
                     }
                     
@@ -86,4 +87,8 @@ class MultipleProcessingThread extends Thread {
         progressCurrent++
         document.setProgress((progressCurrent / progressTotal) * 100)
     }
+    /*
+    Data getData() {
+        document.data
+    }*/
 }

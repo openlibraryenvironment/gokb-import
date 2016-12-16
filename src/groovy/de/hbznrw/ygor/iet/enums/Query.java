@@ -4,7 +4,10 @@ public enum Query {
 	
 	ZDBID ("ZDBID"),
 	EZBID ("EZBID"),
-	HBZID ("HBZID");
+	HBZID ("HBZID"),
+	
+	TITLE ("TITLE")
+	;
 	
 	private String value;
 	

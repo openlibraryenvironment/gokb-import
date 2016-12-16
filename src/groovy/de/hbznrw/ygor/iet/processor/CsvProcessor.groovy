@@ -8,13 +8,12 @@ import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
 
 import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.enums.Status;
-import de.hbznrw.ygor.iet.formatadapter.OaiDcSruFormatAdapter
+import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
 
 import java.nio.file.Paths
-import java.util.ArrayList;
+import java.util.ArrayList
 
 /**
  * Class for reading and processing csv files

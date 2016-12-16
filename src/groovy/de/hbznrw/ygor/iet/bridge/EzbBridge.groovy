@@ -12,19 +12,18 @@ import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
 import de.hbznrw.ygor.tools.FileToolkit
 
-class HbzIdBridge extends BridgeAbstract implements BridgeInterface {
+class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
-	def query = Query.HBZID
+	def    query = Query.EZBID
 	String inputFile
-	int indexOfKey
+	int    indexOfKey
 	
-	HbzIdBridge(Thread master, String inputFile, int indexOfKey) {
+	EzbBridge(Thread master, String inputFile, int indexOfKey) {
         this.master     = master
 		this.inputFile  = inputFile
 		this.indexOfKey = indexOfKey
 		
-		this.connector     = new LobidConnector(this)
-		this.formatAdapter = new JldLobidFormatAdapter(this)
+		this.connector     = new EzbConnector(this)
 		this.processor     = new CsvProcessor(this)
 	}
 	

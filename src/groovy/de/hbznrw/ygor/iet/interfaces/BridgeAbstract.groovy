@@ -5,9 +5,8 @@ import de.hbznrw.ygor.iet.enums.Query
 abstract class BridgeAbstract implements BridgeInterface {
 
     public Thread master
-	public Query query
+    public Query query
 	public ConnectorInterface connector
-	public FormatAdapterInterface formatAdapter
 	public ProcessorInterface processor
 	
 	void go() throws Exception {
