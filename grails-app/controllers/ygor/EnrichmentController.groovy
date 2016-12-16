@@ -16,7 +16,7 @@ class EnrichmentController {
                 model:[documents:documents, currentView:'process']
                 )
     }
-
+    
     def howto = {
         render(
                 view:'howto',
@@ -83,7 +83,7 @@ class EnrichmentController {
                 'options':      pmOptions
                 ]
             
-            if(doc.status != Enrichment.StateOfProcess.WORKING) {
+            if(doc.status != Enrichment.ProcessingState.WORKING) {
                 flash.info    = 'Bearbeitung gestartet.'
                 flash.warning = null
                 flash.error   = null
@@ -103,6 +103,7 @@ class EnrichmentController {
                 )
     }
     def stopProcessingFile = {
+        
         def doc = getDocument()
         doc.thread.isRunning = false
         
@@ -112,7 +113,7 @@ class EnrichmentController {
     def deleteFile = {
 
         def doc = getDocument()
-        def origin = doc.getOriginFile()
+        def origin = doc.getFile(Enrichment.FileType.ORIGIN)
 
         origin.delete()
         documents.remove("${doc.originHash}")
@@ -126,21 +127,34 @@ class EnrichmentController {
     def downloadFile() {
 
         def doc = getDocument()
-        def result = doc.getResultFile()
+        def result = doc.getFile(Enrichment.FileType.RESULT)
 
         render(
                 file:result,
                 fileName:"${doc.resultName}"
                 )
     }
+    
+    def exportFile() {
+        
+        def doc = getDocument()
+        def result = doc.getFile(Enrichment.FileType.JSON)
+
+        render(
+                file:result,
+                fileName:"${doc.resultName}.json"
+                )
+    }
 
     def ajaxGetStatus() {
+        
         def doc = getDocument()
         
         render '{"status":"' + doc.getStatus() + '", "progress":' + doc.getProgress() + '}'
     }
 
     Enrichment getDocument() {
+        
         def hash = (String) request.parameterMap['originHash'][0]
         documents.get("${hash}")
     }
@@ -151,6 +165,7 @@ class EnrichmentController {
      */
 
     File getSessionFolder() {
+        
         def path = grailsApplication.config.ygor.uploadLocation + File.separator + session.id
         def sessionFolder = new File(path)
         if(!sessionFolder.exists()) {

@@ -23,7 +23,7 @@
 
 		<g:each in="${documents}" var="doc">
 
-			<g:if test="${doc.value.status != Enrichment.StateOfProcess.FINISHED}">
+			<g:if test="${doc.value.status != Enrichment.ProcessingState.FINISHED}">
 				<div class="col-xs-12">
 					<div class="well">
 						<strong>Schritt 2</strong> 
@@ -32,7 +32,7 @@
 						&nbsp; Geben Sie den Index der Spalte an, welche die ISSN enthält.
 						<br />
 						<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-						&nbsp; Bestimmen Sie den Typ der angegebenen ISSN.
+						&nbsp; Bestimmen Sie den Typ der gegebenen ISSN.
 						<br />
 						<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 						&nbsp; Wählen Sie die anzureichernden Informationen aus.
@@ -43,7 +43,7 @@
 				</div>
 			</g:if>
 			
-			<g:if test="${doc.value.status == Enrichment.StateOfProcess.FINISHED}">
+			<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 				<div class="col-xs-12">
 					<div class="well">
 						<strong>Schritt 3</strong> 

@@ -33,7 +33,7 @@ class MultipleProcessingThread extends Thread {
 		if(null == indexOfKey)
 			System.exit(0)
 		
-		document.setStatus(Enrichment.StateOfProcess.WORKING)
+		document.setStatus(Enrichment.ProcessingState.WORKING)
 		
 		println('Starting ..')
         
@@ -69,7 +69,7 @@ class MultipleProcessingThread extends Thread {
             }
            								
 		} catch(Exception e) {
-			document.setStatusByCallback(Enrichment.StateOfProcess.ERROR)
+			document.setStatusByCallback(Enrichment.ProcessingState.ERROR)
 			
 			println(e.getMessage())
 			println(e.getStackTrace())
@@ -79,7 +79,7 @@ class MultipleProcessingThread extends Thread {
 		}
 		println('Done.')
 		
-		document.setStatusByCallback(Enrichment.StateOfProcess.FINISHED)
+		document.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}
     
     void increaseProgress() {

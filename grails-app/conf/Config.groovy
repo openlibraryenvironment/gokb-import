@@ -89,10 +89,12 @@ environments {
     development {
         grails.logging.jul.usebridge = true
 		ygor.uploadLocation = "/tmp/ygor/dev"
+        ygor.version = app.version
     }
     production {
         grails.logging.jul.usebridge = false
 		ygor.uploadLocation = "/tmp/ygor/prod"
+        ygor.version = app.version
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }
