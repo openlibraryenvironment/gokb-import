@@ -14,7 +14,9 @@ import de.hbznrw.ygor.tools.FileToolkit
 
 class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	
-	def    query = Query.HBZID
+    def query = [
+        Query.HBZID
+    ]
 	String inputFile
 	int    indexOfKey
 	

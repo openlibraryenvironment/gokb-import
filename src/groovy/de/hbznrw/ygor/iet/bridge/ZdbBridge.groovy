@@ -13,7 +13,11 @@ import de.hbznrw.ygor.tools.FileToolkit
 
 class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
-	def    query = Query.ZDBID
+	def query = [
+        Query.ZDBID,
+        Query.TITLE
+        ]
+    
 	String inputFile
 	int    indexOfKey
 	

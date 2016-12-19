@@ -14,7 +14,9 @@ import de.hbznrw.ygor.tools.FileToolkit
 
 class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
-	def    query = Query.EZBID
+	def query = [
+        Query.EZBID
+    ]
 	String inputFile
 	int    indexOfKey
 	

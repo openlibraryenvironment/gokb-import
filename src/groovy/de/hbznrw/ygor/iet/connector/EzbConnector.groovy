@@ -32,7 +32,7 @@ class EzbConnector extends ConnectorAbstract {
     // ConnectorInterface
     
 	@Override
-	Envelope getResult(Query query, String value) {
+	Envelope poll(String value) {
 		
 		try {
 			String url  = requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + value
@@ -43,43 +43,45 @@ class EzbConnector extends ConnectorAbstract {
 		} catch(Exception e) {
 			return getEnvelopeWithStatus(Status.STATUS_ERROR)
 		}
-		
-		getEnvelope(query)
 	}
-            
-    // FormatAdapterInterface
-    
+         
     @Override
-    Envelope getEnvelope(Query query) {
-        if(Query.EZBID == query) {
-            return getEzbID()
-        }
-        else {
-            return getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    Envelope query(Query query) {
+        try {
+            getEnvelope(query)
+        } catch(Exception e) {
+            return getEnvelopeWithStatus(Status.STATUS_ERROR)
         }
     }
     
-    private Envelope getEzbID() {
-        if(response == null) {
+    // FormatAdapterInterface
+    
+    // <ezb_page>
+    //   <ezb_alphabetical_list_searchresult>
+    //     <alphabetical_order>
+    //       <journals>
+    //         <journal jourid="64800">
+    
+    @Override
+    Envelope getEnvelope(Query query) {
+        if(response == null)
             return getEnvelopeWithStatus(Status.STATUS_NO_RESPONSE)
-        }
-                
-        def result = []
         
-        /*
-         * Matching:
-         *
-         * <ezb_page>
-         *   <ezb_alphabetical_list_searchresult>
-         *     <alphabetical_order>
-         *       <journals>
-         *         <journal jourid="64800">
-         */
+        switch(query){
+            case Query.EZBID:
+                return getEzbID()
+                break;
+        }
+        
+        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    }
+    
+    private Envelope getEzbID() {
+        def result = []
         
         response.ezb_alphabetical_list_searchresult.alphabetical_order.journals.journal.each { journal ->
             result << journal.@'jourid'
         }
-
-        return getEnvelopeWithMessage(result)
+        getEnvelopeWithMessage(result)
     }
 }

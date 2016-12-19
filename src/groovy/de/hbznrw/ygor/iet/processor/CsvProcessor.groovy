@@ -81,31 +81,38 @@ class CsvProcessor extends ProcessorAbstract {
         ArrayList modifiedRecord = record.toList()
 
         def key = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey)
-        def msg = ""
-        def state = Status.UNKNOWN_REQUEST
-
         if("" != key) {
-            Envelope env = bridge.connector.getResult(bridge.query, key)
+            
+            bridge.connector.poll(key)
+            
+            bridge.query.each{ q -> // TODO
+                def msg = ""
+                def state = Status.UNKNOWN_REQUEST
+                
+                Envelope env = bridge.connector.query(q)
+    
+                if(Status.RESULT_OK == env.state) {
+                    msg = env.message[0]
+                }
+                else if(Status.RESULT_MULTIPLE_MATCHES == env.state) {
+                    msg = env.message.join(", ")
+                }
+                state = env.state
 
-            if(Status.RESULT_OK == env.state) {
-                msg = env.message[0]
+                modifiedRecord << (msg)
+                modifiedRecord << (q.toString() + '_' + state)
+                
+                println("#" + count + " processed " + key + " -> " + env.message + " : " + state)
             }
-            else if(Status.RESULT_MULTIPLE_MATCHES == env.state) {
-                msg = env.message.join(", ")
-            }
-            state = env.state
-
-            println("#" + count + " processed " + key + " -> " + env.message + " : " + state)
-
         } else {
             println("#" + count + " skipped empty ISSN")
         }
 
         // e.g.  record [0]: size = 1, index = 1 ->  indexOfKey + 1 -> error
-        if(record.size() > indexOfKey) {
+        /*if(record.size() > indexOfKey) {
             modifiedRecord.add(indexOfKey + 1, msg)
             modifiedRecord.add(indexOfKey + 2, bridge.query.toString() + '_' + state)
-        }
+        }*/
 
         return modifiedRecord
     }

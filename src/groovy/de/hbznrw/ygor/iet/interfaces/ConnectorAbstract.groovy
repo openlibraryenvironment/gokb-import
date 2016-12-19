@@ -29,9 +29,13 @@ abstract class ConnectorAbstract implements ConnectorInterface {
 		this.bridge = bridge
 	}
 	
-	Envelope getResult(Query query, String value) {
-		getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
-	}
+    Envelope poll() {
+        // TODO
+    }
+    
+    Envelope query(Query query) {  
+        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    }
     
     Envelope getEnvelopeWithMessage(ArrayList message) {
         def state = Status.RESULT_OK

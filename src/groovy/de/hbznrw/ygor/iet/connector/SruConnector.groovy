@@ -23,7 +23,7 @@ class SruConnector extends ConnectorAbstract {
 	private String queryIdentifier  = 'query=iss='
     
     private String formatIdentifier = 'oai_dc'
-    private GPathResult response    = null
+    private GPathResult response
 
 	SruConnector(BridgeInterface bridge) {
 		super(bridge)
@@ -32,51 +32,58 @@ class SruConnector extends ConnectorAbstract {
     
     // ConnectorInterface
     
+    @Override
+    Envelope poll(String issn) {
+        try {
+            String url  = requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn
+            String text = new URL(url).getText()
+            
+            response = new XmlSlurper().parseText(text)
+            
+        } catch(Exception e) {
+            return getEnvelopeWithStatus(Status.STATUS_ERROR)
+        }
+    }
+    
 	@Override
-	Envelope getResult(Query query, String value) {
-		
+	Envelope query(Query query) {
 		try {
-			String url  = requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + value
-			String text = new URL(url).getText()
-			
-			response = new XmlSlurper().parseText(text)
-			
+            getEnvelope(query)
 		} catch(Exception e) {
 			return getEnvelopeWithStatus(Status.STATUS_ERROR)
 		}
-		
-		getEnvelope(query)
 	}
             
     // FormatAdapterInterface
 
+    // <records>
+    //   <record>
+    //     <recordData>
+    // ..
+       
     @Override
     Envelope getEnvelope(Query query) {
-        if(Query.ZDBID == query) {
-            return getZdbID()
+        if(response == null)
+            return getEnvelopeWithStatus(Status.STATUS_NO_RESPONSE)
+            
+        switch(query){
+            case Query.ZDBID:
+                return getZdbID()
+                break;
+            case Query.TITLE:
+                return getTitle()
+                break;
         }
-        else {
-            return getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
-        }
+        
+        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
     }
     
+    // <dc>
+    //   <identifier xsi:type="dnb:ZDBID">2530653-4
+    //   <type>Online-Ressource
+    
     private Envelope getZdbID() {
-        if(response == null) {
-            return getEnvelopeWithStatus(Status.STATUS_NO_RESPONSE)
-        }
-                
         def result = []
-        
-        /*
-         * Matching:
-         *
-         * <records>
-         *   <record>
-         *     <recordData>
-         *       <dc>
-         *         <identifier xsi:type="dnb:ZDBID">2530653-4
-         *         <type>Online-Ressource
-         */
         
         response.records.record.each { record ->
             record.recordData.dc.type.findAll { type ->
@@ -89,7 +96,20 @@ class SruConnector extends ConnectorAbstract {
                 }
             }
         }
-
-        return getEnvelopeWithMessage(result)
+        getEnvelopeWithMessage(result)
+    }
+    
+    // <dc>
+    //   <title>Blah
+    
+    private Envelope getTitle() {
+        def result = []
+        
+        response.records.record.each { record ->
+            record.recordData.dc.title.each { i ->
+                result << i
+            }
+        }
+        getEnvelopeWithMessage(result)
     }
 }

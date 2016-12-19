@@ -33,7 +33,7 @@ class LobidConnector extends ConnectorAbstract {
     // ConnectorInterface
 	
 	@Override
-	Envelope getResult(Query query, String value) {
+	Envelope poll(String value) {
 		
 		try {
 			String url  = requestUrl + queryIdentifier + value
@@ -44,39 +44,42 @@ class LobidConnector extends ConnectorAbstract {
 		} catch(Exception e) {
 			return getEnvelopeWithStatus(Status.STATUS_ERROR)
 		}
-		
-		getEnvelope(query)
 	}
     
-    // FormatAdapterInterface
-
     @Override
-    Envelope getEnvelope(Query query) {
-        if(Query.HBZID == query) {
-            return getHbzID()
-        }
-        else {
-            return getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    Envelope query(Query query) {
+        try {
+            getEnvelope(query)
+        } catch(Exception e) {
+            return getEnvelopeWithStatus(Status.STATUS_ERROR)
         }
     }
     
-    private Envelope getHbzID() {
-        if(response == null) {
+    // FormatAdapterInterface
+    
+    // {
+    //   "@graph" : [ {
+    //     "hbzId" : "HT015982448",
+    //   }, {
+    //   } ],
+    // }
+
+    @Override
+    Envelope getEnvelope(Query query) {
+        if(response == null)
             return getEnvelopeWithStatus(Status.STATUS_NO_RESPONSE)
-        }
-                
-        def result = []
         
-        /*
-         * Matching:
-         *
-         * {
-         *   "@graph" : [ {
-         *     "hbzId" : "HT015982448",
-         *   }, {
-         *   } ],
-         * }
-         */
+        switch(query){
+            case Query.HBZID:
+                return getHbzID()
+                break;
+        }
+        
+        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    }
+    
+    private Envelope getHbzID() {
+        def result = []
         
         response."@graph"."hbzId".each{ i ->
             
@@ -85,6 +88,6 @@ class LobidConnector extends ConnectorAbstract {
                 result << ((i.size() > 0) ? i.first() : i)
             }
         }
-        return getEnvelopeWithMessage(result)
+        getEnvelopeWithMessage(result)
     }
 }

@@ -11,11 +11,17 @@ interface ConnectorInterface {
     
     /**
      * 
-     * @param query
-     * @param value
+     * @param issn
      * @return
      */
-    Envelope getResult(Query query, String value)
+    Envelope poll(String issn)
+    
+    /**
+     *
+     * @param query
+     * @return
+     */
+    Envelope query(Query query)
     
     /**
      * @return Envelope depending on query
