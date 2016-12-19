@@ -51,10 +51,10 @@ class MultipleProcessingThread extends Thread {
             options.each{
                 option ->
                     switch(option) {
-                        case 'zdbid':
+                        case 'zdb':
                             bridge = new ZdbBridge(this, document.originPathName, indexOfKey)
                             break
-                        case 'ezbid':
+                        case 'ezb':
                             bridge = new EzbBridge(this, document.originPathName, indexOfKey)
                             break
                     }

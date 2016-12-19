@@ -6,7 +6,7 @@ public enum Query {
 	EZBID ("EZBID"),
 	HBZID ("HBZID"),
 	
-	TITLE ("TITLE")
+	ZDBTITLE ("ZDBTITLE")
 	;
 	
 	private String value;

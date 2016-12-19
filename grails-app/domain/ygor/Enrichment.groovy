@@ -1,7 +1,7 @@
 package ygor
 
-import de.hbznrw.ygor.iet.IetWrapper
 import de.hbznrw.ygor.iet.MultipleProcessingThread
+import de.hbznrw.ygor.iet.export.Data
 import de.hbznrw.ygor.tools.*
 
 
@@ -24,6 +24,7 @@ class Enrichment {
 	File sessionFolder
     
 	def thread
+    def data
 	
     static constraints = {
     }
@@ -44,7 +45,9 @@ class Enrichment {
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
-        thread = new MultipleProcessingThread(this, options)
+        data                = new Data()
+        
+        thread              = new MultipleProcessingThread(this, options)
 		thread.start()
 	}
 	
@@ -78,7 +81,8 @@ class Enrichment {
                 break
             case FileType.JSON:
                 def file = new File(resultPathName)
-                // TODO
+                def result = JsonToolkit.parseDataToJson(this.data)
+                file.write(result)
                 return file
                 break
         }

@@ -17,6 +17,13 @@ class EnrichmentController {
                 )
     }
     
+    def json = {
+        render(
+                view:'json',
+                model:[documents:documents, currentView:'json']
+                )
+    }
+    
     def howto = {
         render(
                 view:'howto',

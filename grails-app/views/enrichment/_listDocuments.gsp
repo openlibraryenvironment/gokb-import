@@ -64,11 +64,11 @@
 					<div class="col-xs-12">
 						Folgende Information soll hinzugefügt werden ..
 						<br /><br />
-						<g:checkBox name="processOption" checked="true" value="zdbid"/> ZDB-Id
+						<g:checkBox name="processOption" checked="true" value="zdb"/> ZDB
 						&nbsp;
-						<g:checkBox name="processOption" checked="true" value="ezbid"/> EZB-Id
+						<g:checkBox name="processOption" checked="true" value="ezb"/> EZB
 						
-						<!--<g:checkBox name="processOption" checked="false" value="gokbid"/> GOKb-Id-->
+						<!--<g:checkBox name="processOption" checked="false" value="gokb"/> GOKb-->
 				
 					</div>
 				</div><!-- .row -->
@@ -90,7 +90,8 @@
 					</g:if>
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-		    			<g:actionSubmit action="downloadFile" value="Ergebnis speichern" class="btn btn-success"/>
+		    			<g:actionSubmit action="downloadFile" value="CSV speichern" class="btn btn-success"/>
+		    			<g:actionSubmit action="exportFile" value="JSON-Datei speichern" class="btn btn-success"/>
 		    		</g:if>
 		    		
 				</div>

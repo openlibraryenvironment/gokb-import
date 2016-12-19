@@ -70,7 +70,7 @@ class SruConnector extends ConnectorAbstract {
             case Query.ZDBID:
                 return getZdbID()
                 break;
-            case Query.TITLE:
+            case Query.ZDBTITLE:
                 return getTitle()
                 break;
         }
@@ -92,7 +92,8 @@ class SruConnector extends ConnectorAbstract {
                 type.parent().identifier.findAll { i ->
                     i.@'xsi:type' == 'dnb:ZDBID'
                 }.each { i ->
-                    result << i
+                    def s = i.toString()
+                    result << s
                 }
             }
         }
@@ -100,16 +101,23 @@ class SruConnector extends ConnectorAbstract {
     }
     
     // <dc>
-    //   <title>Blah
+    //   <title>Blah [Elektronische Ressource]
+    //   <type>Online-Ressource
     
     private Envelope getTitle() {
         def result = []
         
         response.records.record.each { record ->
-            record.recordData.dc.title.each { i ->
-                result << i
+            record.recordData.dc.type.findAll { type ->
+                type.text() == "Online-Ressource"
+            }.each { type ->
+                type.parent().title.each { i ->                
+                    def s = i.toString()
+                    result << s.substring(0, s.lastIndexOf("[Elektronische Ressource]"))
+                }
             }
         }
         getEnvelopeWithMessage(result)
     }
+   
 }

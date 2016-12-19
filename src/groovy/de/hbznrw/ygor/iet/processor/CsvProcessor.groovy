@@ -6,12 +6,12 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Status
+import de.hbznrw.ygor.iet.export.DataMapper
+import de.hbznrw.ygor.iet.export.Title
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
-
 import java.nio.file.Paths
 import java.util.ArrayList
 
@@ -80,10 +80,20 @@ class CsvProcessor extends ProcessorAbstract {
 
         ArrayList modifiedRecord = record.toList()
 
-        def key = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey)
+        def data    = bridge.master.document.data
+        def key     = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey)
         if("" != key) {
-            
+
             bridge.connector.poll(key)
+          
+            // TODO: refacoring ..
+            def saveTitle = false
+            def title = DataMapper.getExistingTitleByISSN(data, key)
+            
+            if(!title) {
+                title = new Title(key)
+                saveTitle = true
+            }
             
             bridge.query.each{ q -> // TODO
                 def msg = ""
@@ -101,18 +111,19 @@ class CsvProcessor extends ProcessorAbstract {
 
                 modifiedRecord << (msg)
                 modifiedRecord << (q.toString() + '_' + state)
-                
+
+                // TODO: refacoring ..
+                DataMapper.mapping(title, q, env)
+                                
                 println("#" + count + " processed " + key + " -> " + env.message + " : " + state)
             }
+            if(saveTitle) {
+                data.content << title
+            }
+            
         } else {
             println("#" + count + " skipped empty ISSN")
         }
-
-        // e.g.  record [0]: size = 1, index = 1 ->  indexOfKey + 1 -> error
-        /*if(record.size() > indexOfKey) {
-            modifiedRecord.add(indexOfKey + 1, msg)
-            modifiedRecord.add(indexOfKey + 2, bridge.query.toString() + '_' + state)
-        }*/
 
         return modifiedRecord
     }

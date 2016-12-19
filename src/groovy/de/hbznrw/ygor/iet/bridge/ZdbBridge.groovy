@@ -15,7 +15,7 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
 	def query = [
         Query.ZDBID,
-        Query.TITLE
+        Query.ZDBTITLE
         ]
     
 	String inputFile
