@@ -5,27 +5,50 @@ import de.hbznrw.ygor.iet.enums.*
 
 class DataMapper {
 
-    static mapping(Title title, Query query, Envelope envelope) {
+    static maptoTitle(Title title, Query query, Envelope envelope) {
        
         switch(query) {
             case Query.ZDBID:
                 def tmp     = Data.getNewIdentifier()
                 tmp.type    = 'zdb'
-                tmp.value   = envelope.message.join(", ").trim()
+                tmp.value   = DataMapper.normString(envelope.message)
+                tmp._meta   = envelope.state
                 title.identifiers << tmp
                 break;
                 
             case Query.ZDBTITLE:
-                title.name = envelope.message.join(", ").trim()
+                title.name = DataMapper.normString(envelope.message)
                 break;
                 
+            case Query.ZDBPUBLISHER:
+                // TODO testing [pub][date][state_pub, state_date]
+                def tmp       = Data.getNewPublisherHistory()
+                if(envelope.messages){
+                    tmp.name      = DataMapper.normString(envelope.messages['name'])
+                    tmp.startDate = DataMapper.normString(envelope.messages['startDate'])
+                    tmp._meta     = envelope.states.toString()
+                }
+                title.publisher_history << tmp
+                break;
+                 
             case Query.EZBID:
                 def tmp     = Data.getNewIdentifier()
                 tmp.type    = 'ezb'
-                tmp.value   = envelope.message.join(", ").trim()
+                tmp.value   = DataMapper.normString(envelope.message)
+                tmp._meta   = envelope.state
                 title.identifiers << tmp
                 break;
         }
+    }
+    
+    static String normString(ArrayList l) {
+        if(!l) l = []
+        DataMapper.normString(l.join(", "))
+    }
+    
+    static String normString(String s) {
+        s = s.replaceAll("  "," ")
+        s.trim()
     }
     
     static Title getExistingTitleByISSN(Data data, String value) {

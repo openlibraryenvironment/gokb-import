@@ -73,6 +73,9 @@ class SruConnector extends ConnectorAbstract {
             case Query.ZDBTITLE:
                 return getTitle()
                 break;
+            case Query.ZDBPUBLISHER:
+                return getPublisher()
+                break;
         }
         
         getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
@@ -101,7 +104,7 @@ class SruConnector extends ConnectorAbstract {
     }
     
     // <dc>
-    //   <title>Blah [Elektronische Ressource]
+    //   <title>Blah [Elektronische Ressource] etc etc
     //   <type>Online-Ressource
     
     private Envelope getTitle() {
@@ -111,13 +114,44 @@ class SruConnector extends ConnectorAbstract {
             record.recordData.dc.type.findAll { type ->
                 type.text() == "Online-Ressource"
             }.each { type ->
-                type.parent().title.each { i ->                
-                    def s = i.toString()
-                    result << s.substring(0, s.lastIndexOf("[Elektronische Ressource]"))
+                type.parent().title.each { t ->                
+                    def s = t.toString()
+                    result << s.replace("[Elektronische Ressource]", "")
                 }
             }
         }
         getEnvelopeWithMessage(result)
     }
-   
+    
+    // <dc>
+    //   <publisher>American Association of Pharmaceutical Scientists
+    //   <type>Online-Ressource
+    
+    // <dc>
+    //   <date>2008
+    //   <type>Online-Ressource
+    
+    private Envelope getPublisher() {
+        def resultPublisher     = []
+        def resultPublisherDate = []
+        
+        response.records.record.each { record ->
+            record.recordData.dc.type.findAll { type ->
+                type.text() == "Online-Ressource"
+            }.each { type ->
+                type.parent().publisher.each { p ->
+                    resultPublisher << p.toString()
+                }
+                type.parent().date.each { d ->
+                    resultPublisherDate << d.toString() + '-01-01'
+                }
+            }
+        }
+        
+        getEnvelopeWithComplexMessage([
+            'name':     resultPublisher, 
+            'startDate':resultPublisherDate
+        ])
+    }
+       
 }

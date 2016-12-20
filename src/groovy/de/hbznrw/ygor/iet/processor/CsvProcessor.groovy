@@ -95,27 +95,49 @@ class CsvProcessor extends ProcessorAbstract {
                 saveTitle = true
             }
             
-            bridge.query.each{ q -> // TODO
+            bridge.query.each{ q ->
                 def msg = ""
                 def state = Status.UNKNOWN_REQUEST
                 
                 Envelope env = bridge.connector.query(q)
     
-                if(Status.RESULT_OK == env.state) {
-                    msg = env.message[0]
-                }
-                else if(Status.RESULT_MULTIPLE_MATCHES == env.state) {
-                    msg = env.message.join(", ")
-                }
-                state = env.state
+                if(env.type == Envelope.SIMPLE){
+                    
+                    if(Status.RESULT_OK == env.state)
+                        msg = env.message[0]
+                    else if(Status.RESULT_MULTIPLE_MATCHES == env.state)
+                        msg = env.message.join(", ")
 
-                modifiedRecord << (msg)
-                modifiedRecord << (q.toString() + '_' + state)
-
-                // TODO: refacoring ..
-                DataMapper.mapping(title, q, env)
-                                
-                println("#" + count + " processed " + key + " -> " + env.message + " : " + state)
+                    state = env.state
+    
+                    modifiedRecord << (msg)
+                    modifiedRecord << (q.toString() + '_' + state)
+                    
+                    println("#" + count + " processed " + key + " -> " + msg + " : " + state)
+                }
+                else if(env.type == Envelope.COMPLEX){
+                    
+                    // used for Publisher
+                    env.states.eachWithIndex { ste, i ->
+                        if(Status.RESULT_OK == ste) {
+                            msg = env.messages[i]
+                        }
+                        else if(Status.RESULT_MULTIPLE_MATCHES == ste) {
+                            if(env.messages[i])
+                                msg = env.messages[i].join(", ")
+                            else
+                                msg = null // todo ??
+                        }
+                        
+                        modifiedRecord << (msg)
+                        modifiedRecord << (q.toString() + '_' + state)
+                        
+                        println("#" + count + " processed " + key + " -> " + msg + " : " + state)
+                    }    
+                }
+                
+                DataMapper.maptoTitle(title, q, env)
+    
             }
             if(saveTitle) {
                 data.content << title

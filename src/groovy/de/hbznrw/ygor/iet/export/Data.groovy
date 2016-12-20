@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.iet.export
 
+import de.hbznrw.ygor.iet.enums.*
+
 class Data {
 
     Meta    meta
@@ -10,7 +12,7 @@ class Data {
         meta = new Meta(
             type:   "alpha",
             ygor:   "0.3",
-            date:   new Date() // TODO timezone
+            date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1'))
         )
         
         content = []
@@ -30,7 +32,7 @@ class Meta {
     
     String type = ""
     String ygor = ""
-    Date   date
+    String date = ""
 }
 
 class Title {
@@ -41,41 +43,44 @@ class Title {
         def tmp     = Data.getNewIdentifier()
         tmp.type    = 'issn'
         tmp.value   = issn
+        tmp._meta   = Status.STATUS_OK
         identifiers << tmp
     }
     
-    String imprint = ""
-    String issuer = ""
-    String medium = ""
-    String type = ""
-    String name = ""
-    String publishedFrom = ""
-    String publishedTo = ""
+    String imprint          = ""
+    String issuer           = ""
+    String medium           = "Journal"
+    String type             = "Serial"
+    String name             = ""
+    String publishedFrom    = ""
+    String publishedTo      = ""
     
-    def identifiers = []
-    def publisher_history = []
-    
-    // ???
-    String shortcode = ""
-    String status = ""
+    def identifiers         = []
+    def publisher_history   = []
     
     // ???
-    String OAStatus = ""
+    String shortcode        = ""
+    String status           = "Current"
+    
+    // ???
+    String OAStatus         = ""
     String continuingSeries = ""
     String defaultAccessURL = ""
-    String editStatus = ""
+    String editStatus       = "In Progress"
 }
 
 class Identifier {
+    String _meta    = ""
     
-    String type = ""
-    String value = ""
+    String type     = ""
+    String value    = ""
 }
 
 class PublisherHistory {
+    String _meta    = ""
     
-    Date   endDate
-    String name = ""
-    Date   startDate
-    String status = ""
+    String endDate
+    String name     = ""
+    String startDate
+    String status   = "Active"
 }

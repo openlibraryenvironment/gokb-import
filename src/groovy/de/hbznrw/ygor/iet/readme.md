@@ -8,14 +8,12 @@ groovy compiler 2.4.x
 
 ## Bridges
 
-Instantiation and controlling of connectors, adapters and processors.
+Instantiation and controlling of connectors and processors.
 
 ## Connectors
 
 Defines and handles request url (endpoint depending) and query. 
 Initiated the request and returns the result.
-
-## Adapters
 
 Handles parsing of the response (format depending) and returns the matching result.
 
