@@ -43,7 +43,7 @@ class Title {
         def tmp     = Data.getNewIdentifier()
         tmp.type    = 'issn'
         tmp.value   = issn
-        tmp._meta   = Status.STATUS_OK
+        tmp._meta   = Status.UNDEFINED
         identifiers << tmp
     }
     
@@ -70,14 +70,14 @@ class Title {
 }
 
 class Identifier {
-    String _meta    = ""
+    String _meta    = Status.UNDEFINED
     
     String type     = ""
     String value    = ""
 }
 
 class PublisherHistory {
-    String _meta    = ""
+    String _meta    = Status.UNDEFINED
     
     String endDate
     String name     = ""
