@@ -2,51 +2,8 @@ package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.iet.enums.*
 
-class Data {
-
-    Meta    meta
-    def     content
-    
-    Data() {
-
-        meta = new Meta(
-            type:   "alpha",
-            ygor:   "0.3",
-            date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1'))
-        )
-        
-        content = []
-    }
-    
-    static getNewIdentifier() {
-        return new Identifier()
-    }
-    
-    static getNewPublisherHistory() {
-        return new PublisherHistory()
-    }
-}
-
-
-class Meta {
-    
-    String type = ""
-    String ygor = ""
-    String date = ""
-}
-
 class Title {
-    
-    Title(){}
-    
-    Title(String issn){
-        def tmp     = Data.getNewIdentifier()
-        tmp.type    = 'issn'
-        tmp.value   = issn
-        tmp._meta   = Status.UNDEFINED
-        identifiers << tmp
-    }
-    
+        
     String imprint          = ""
     String issuer           = ""
     String medium           = "Journal"
@@ -67,16 +24,39 @@ class Title {
     String continuingSeries = ""
     String defaultAccessURL = ""
     String editStatus       = "In Progress"
+    
+    Title(){
+    }
+    
+    Title(String issn){
+        def tmp     = TitleStruct.getNewIdentifier()
+        tmp.type    = 'issn'
+        tmp.value   = issn
+        tmp._meta   = Status.UNDEFINED
+        identifiers << tmp
+    }
 }
 
-class Identifier {
+
+class TitleStruct {
+    
+    static getNewIdentifier() {
+        return new TitleIdentifier()
+    }
+    
+    static getNewPublisherHistory() {
+        return new TitlePublisherHistory()
+    }
+}
+
+class TitleIdentifier {
     String _meta    = Status.UNDEFINED
     
     String type     = ""
     String value    = ""
 }
 
-class PublisherHistory {
+class TitlePublisherHistory {
     String _meta    = Status.UNDEFINED
     
     String endDate

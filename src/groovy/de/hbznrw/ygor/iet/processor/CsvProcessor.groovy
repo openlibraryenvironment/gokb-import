@@ -140,7 +140,7 @@ class CsvProcessor extends ProcessorAbstract {
     
             }
             if(saveTitle) {
-                data.content << title
+                data.titles << title
             }
             
         } else {

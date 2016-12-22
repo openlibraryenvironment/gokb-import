@@ -1,7 +1,7 @@
 package ygor
 
 import de.hbznrw.ygor.iet.MultipleProcessingThread
-import de.hbznrw.ygor.iet.export.Data
+import de.hbznrw.ygor.iet.export.DataContainer
 import de.hbznrw.ygor.tools.*
 
 
@@ -45,7 +45,7 @@ class Enrichment {
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
-        data                = new Data()
+        data                = new DataContainer()
         
         thread              = new MultipleProcessingThread(this, options)
 		thread.start()

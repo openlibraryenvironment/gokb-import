@@ -6,7 +6,7 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
 
-import de.hbznrw.ygor.iet.export.Data
+import de.hbznrw.ygor.iet.export.DataContainer
 import ygor.Enrichment
 import groovy.json.JsonOutput
 
@@ -32,14 +32,15 @@ public class JsonToolkit {
         JsonOutput.prettyPrint(writer.toString())
     }
     
-    static String parseDataToJson(Data data) {
+    static String parseDataToJson(DataContainer data) {
         
         def writer      = new StringWriter()
         def jsonBuilder = new groovy.json.StreamingJsonBuilder(writer)
      
         jsonBuilder {
-            meta    data.meta
-            content data.content
+            'meta'    data.meta
+            'package' data.pkg
+            'titles'  data.titles
         }
         
         JsonOutput.prettyPrint(writer.toString())

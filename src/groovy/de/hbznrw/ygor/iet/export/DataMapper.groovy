@@ -9,7 +9,7 @@ class DataMapper {
        
         switch(query) {
             case Query.ZDBID:
-                def tmp     = Data.getNewIdentifier()
+                def tmp     = TitleStruct.getNewIdentifier()
                 tmp.type    = 'zdb'
                 tmp.value   = DataMapper.normString(envelope.message)
                 tmp._meta   = envelope.state
@@ -22,7 +22,7 @@ class DataMapper {
                 
             case Query.ZDBPUBLISHER:
                 // TODO testing [pub][date][state_pub, state_date]
-                def tmp       = Data.getNewPublisherHistory()
+                def tmp           = TitleStruct.getNewPublisherHistory()
                 if(envelope.messages){
                     tmp.name      = DataMapper.normString(envelope.messages['name'])
                     tmp.startDate = DataMapper.normString(envelope.messages['startDate'])
@@ -32,7 +32,7 @@ class DataMapper {
                 break;
                  
             case Query.EZBID:
-                def tmp     = Data.getNewIdentifier()
+                def tmp     = TitleStruct.getNewIdentifier()
                 tmp.type    = 'ezb'
                 tmp.value   = DataMapper.normString(envelope.message)
                 tmp._meta   = envelope.state
@@ -51,10 +51,10 @@ class DataMapper {
         s.trim()
     }
     
-    static Title getExistingTitleByISSN(Data data, String value) {
+    static Title getExistingTitleByISSN(DataContainer data, String value) {
         def result = null
 
-        data.content.each { title ->
+        data.titles.each { title ->
             title.identifiers.each { i ->
                 if("issn".equals(i.type) && value.equals(i.value)) {
                     result = title
