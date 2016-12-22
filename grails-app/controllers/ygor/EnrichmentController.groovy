@@ -1,9 +1,9 @@
 package ygor
 
+// ignore strange errors ..
 import grails.util.Environment
 import groovyx.net.http.HTTPBuilder
 import static groovyx.net.http.Method.POST
-
 import org.apache.commons.io.IOUtils
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.mime.MultipartFormEntity
@@ -96,10 +96,12 @@ class EnrichmentController {
         }
         else {
             def doc = getDocument()
-            def processOptions = [
+            def options = [
                 'indexOfKey':   pmIndex.toInteger() - 1,
                 'type':         pmIndexType,
-                'options':      pmOptions
+                'options':      pmOptions,
+                'ygorVersion':  grailsApplication.config.ygor.version,
+                'ygorType':     grailsApplication.config.ygor.type
                 ]
             
             if(doc.status != Enrichment.ProcessingState.WORKING) {
@@ -107,7 +109,7 @@ class EnrichmentController {
                 flash.warning = null
                 flash.error   = null
 
-                doc.process(processOptions)
+                doc.process(options)
             }
         }
         render(
@@ -158,11 +160,11 @@ class EnrichmentController {
         
         def doc     = getDocument()
         def result  = doc.getFile(Enrichment.FileType.JSON)
-        def http    = new HTTPBuilder(grailsApplication.config.gokbApi.uri)
+        def http    = new HTTPBuilder(grailsApplication.config.gokbApi.xrTitleUri)
         
         http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd
 
-        println "EC.exportFile(" + doc.resultHash + ") -> " + grailsApplication.config.gokbApi.uri
+        println "EC.exportFile(" + doc.resultHash + ") -> " + grailsApplication.config.gokbApi.xrTitleUri
         
         http.request(POST) { req ->
             headers.'User-Agent' = 'ygor'
@@ -199,7 +201,7 @@ class EnrichmentController {
         
         def doc = getDocument()
         
-        render '{"status":"' + doc.getStatus() + '", "progress":' + doc.getProgress() + '}'
+        render '{"status":"' + doc.getStatus() + '", "progress":' + doc.getProgress().round() + '}'
     }
 
     Enrichment getDocument() {

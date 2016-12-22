@@ -88,11 +88,14 @@ grails.hibernate.osiv.readonly = false
 environments {
     development {
         grails.logging.jul.usebridge = true
-		ygor.uploadLocation = "/tmp/ygor/dev"
-        ygor.version = app.version
-        
+        ygor {
+            version        = grails.util.Metadata.current.'app.version'
+            type           = 'development'
+            uploadLocation = "/tmp/ygor/dev"
+        }
         gokbApi {
-            uri  = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
+            xrTitleUri   = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
+            xrPackageUri = 'http://localhost:8080//gokb/integration/crossReferencePackage'
             user = ''
             pwd  = ''
         }
@@ -100,11 +103,14 @@ environments {
     }
     production {
         grails.logging.jul.usebridge = false
-		ygor.uploadLocation = "/tmp/ygor/prod"
-        ygor.version = app.version
-        
+        ygor {
+            version        = grails.util.Metadata.current.'app.version'
+            type           = 'production'
+            uploadLocation = "/tmp/ygor/prod"
+        }      
         gokbApi {
-            uri  = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
+            xrTitleUri   = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
+            xrPackageUri = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
             user = ''
             pwd  = ''
         }

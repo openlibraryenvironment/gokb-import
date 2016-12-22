@@ -11,8 +11,8 @@ class DataContainer {
     DataContainer() {
 
         meta = new Meta(
-            type:   "alpha",
-            ygor:   "0.3",
+            type:   "TODO",
+            ygor:   "TODO",
             date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1'))
         )
         pkg      = new Package()

@@ -46,6 +46,8 @@ class Enrichment {
 		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
         data                = new DataContainer()
+        data.meta.ygor      = options.get('ygorVersion')
+        data.meta.type      = options.get('ygorType')
         
         thread              = new MultipleProcessingThread(this, options)
 		thread.start()
