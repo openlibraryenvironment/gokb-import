@@ -90,8 +90,8 @@
 					</g:if>
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-		    			<!--<g:actionSubmit action="downloadFile" value="CSV speichern" class="btn btn-success"/>-->
-		    			<g:actionSubmit action="exportFile" value="JSON-Datei speichern" class="btn btn-success"/>
+		    			<g:actionSubmit action="downloadFile" value="JSON speichern" class="btn btn-success"/>
+		    			<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success"/>
 		    		</g:if>
 		    		
 				</div>

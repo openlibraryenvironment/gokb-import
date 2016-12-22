@@ -1,6 +1,18 @@
 package ygor
 
 import grails.util.Environment
+import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.Method.POST
+
+import org.apache.commons.io.IOUtils
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.entity.mime.MultipartFormEntity
+import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.content.ByteArrayBody
+import org.apache.http.entity.mime.content.StringBody
+import org.apache.http.entity.mime.content.FileBody
+
+
 
 class EnrichmentController {
 
@@ -44,7 +56,7 @@ class EnrichmentController {
                 model:[currentView:'contact']
                 )
     }
-
+        
     def uploadFile = {
 
         def file = request.getFile('uploadFile')
@@ -134,17 +146,6 @@ class EnrichmentController {
     def downloadFile() {
 
         def doc = getDocument()
-        def result = doc.getFile(Enrichment.FileType.RESULT)
-
-        render(
-                file:result,
-                fileName:"${doc.resultName}"
-                )
-    }
-    
-    def exportFile() {
-        
-        def doc = getDocument()
         def result = doc.getFile(Enrichment.FileType.JSON)
 
         render(
@@ -152,7 +153,48 @@ class EnrichmentController {
                 fileName:"${doc.resultName}.json"
                 )
     }
+    
+    def exportFile() {
+        
+        def doc     = getDocument()
+        def result  = doc.getFile(Enrichment.FileType.JSON)
+        def http    = new HTTPBuilder(grailsApplication.config.gokbApi.uri)
+        
+        http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd
 
+        println "EC.exportFile(" + doc.resultHash + ") -> " + grailsApplication.config.gokbApi.uri
+        
+        http.request(POST) { req ->
+            headers.'User-Agent' = 'ygor'
+            req.getParams().setParameter("http.socket.timeout", new Integer(5000))
+            
+            MultipartEntity entity = new MultipartEntity()
+            entity.addPart("file", new FileBody(result))
+            entity.addPart("info", new StringBody("greetings from ygor"))
+            req.setEntity(entity)
+            
+            response.success = { resp, html ->
+                println "server response: ${resp.statusLine}"
+                println "server:          ${resp.headers.'Server'}"
+                println "content length:  ${resp.headers.'Content-Length'}"
+                if(resp.status < 400){
+                    flash.warning = html
+                }
+                else {
+                    flash.info = html
+                }
+            }
+            response.failure = { resp ->
+                println "server response: ${resp.statusLine}"
+                flash.error = resp.statusLine
+            }
+        }
+
+        // TODO ...
+        
+        process()
+    }
+    
     def ajaxGetStatus() {
         
         def doc = getDocument()
