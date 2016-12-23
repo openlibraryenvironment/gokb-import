@@ -19,14 +19,12 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
         Query.ZDBPUBLISHER
         ]
     
-	String inputFile
-	int    indexOfKey
+    HashMap options
 	
-	ZdbBridge(Thread master, String inputFile, int indexOfKey) {
-        this.master     = master
-		this.inputFile  = inputFile
-		this.indexOfKey = indexOfKey
-		
+	ZdbBridge(Thread master, HashMap options) {
+        this.master  = master
+        this.options = options
+
 		this.connector     = new SruConnector(this)
 		this.processor     = new CsvProcessor(this)
 	}
@@ -39,10 +37,12 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go(String outputFile) throws Exception {
-		println("Input:  " + inputFile)
-		println("Output: " + outputFile + "\n")
+        options << [outputFile : outputFile]
+        
+		println("Input:  " + options.get('inputFile'))
+		println("Output: " + options.get('outputFile') + "\n")
 		
 		processor.setConfiguration(",", null, null)
-		processor.processFile(inputFile, indexOfKey, outputFile)
+		processor.processFile(options)
 	}
 }

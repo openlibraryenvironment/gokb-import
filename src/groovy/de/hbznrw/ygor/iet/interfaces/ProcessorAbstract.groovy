@@ -1,7 +1,9 @@
 package de.hbznrw.ygor.iet.interfaces
 
 import java.util.ArrayList
+
 import org.apache.commons.csv.CSVRecord
+
 import de.hbznrw.ygor.iet.Envelope
 
 /**
@@ -20,7 +22,7 @@ abstract class ProcessorAbstract implements ProcessorInterface {
 		this.bridge = bridge
 	}
 		
-	ArrayList processRecord(CSVRecord record, int indexOfKey, int count) {
+	ArrayList processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
 		return new ArrayList()
 	}
 }

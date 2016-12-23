@@ -12,6 +12,7 @@ class MultipleProcessingThread extends Thread {
 
 	private document
 	private indexOfKey
+    private typeOfKey
 	private options
     
     public isRunning = true
@@ -23,8 +24,9 @@ class MultipleProcessingThread extends Thread {
 	
 	MultipleProcessingThread(Enrichment document, HashMap options) {
 		this.document   = document
-		this.indexOfKey = options['indexOfKey']
-		this.options    = options['options']
+		this.indexOfKey = options.get('indexOfKey')
+        this.typeOfKey  = options.get('typeOfKey')
+		this.options    = options.get('options')
 	}
 	
 	public void run() {
@@ -52,10 +54,20 @@ class MultipleProcessingThread extends Thread {
                 option ->
                     switch(option) {
                         case 'zdb':
-                            bridge = new ZdbBridge(this, document.originPathName, indexOfKey)
+                            bridge = new ZdbBridge(this, new HashMap(
+                                inputFile:  document.originPathName, 
+                                indexOfKey: indexOfKey, 
+                                typeOfKey:  typeOfKey
+                                )
+                            )
                             break
                         case 'ezb':
-                            bridge = new EzbBridge(this, document.originPathName, indexOfKey)
+                            bridge = new EzbBridge(this, new HashMap(
+                                inputFile:  document.originPathName, 
+                                indexOfKey: indexOfKey, 
+                                typeOfKey:  typeOfKey
+                                )
+                            )
                             break
                     }
                     

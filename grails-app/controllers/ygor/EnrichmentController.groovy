@@ -98,7 +98,7 @@ class EnrichmentController {
             def doc = getDocument()
             def options = [
                 'indexOfKey':   pmIndex.toInteger() - 1,
-                'type':         pmIndexType,
+                'typeOfKey':    pmIndexType,
                 'options':      pmOptions,
                 'ygorVersion':  grailsApplication.config.ygor.version,
                 'ygorType':     grailsApplication.config.ygor.type

@@ -28,6 +28,10 @@ class CsvProcessor extends ProcessorAbstract {
     private int count 		    = 0
     private int total		    = 0
 
+    
+    private String inputFile
+    private String outputFile
+    private String typeOfKey
     //
 
     CsvProcessor(BridgeInterface bridge) {
@@ -35,6 +39,7 @@ class CsvProcessor extends ProcessorAbstract {
     }
 
     void setConfiguration(String delimiter, String quote, String recordSeparator) {
+        
         if(null != delimiter) {
             csvFormat = csvFormat.withDelimiter((char)delimiter)
         }
@@ -46,7 +51,15 @@ class CsvProcessor extends ProcessorAbstract {
         }
     }
 
-    void processFile(String inputFile, int indexOfKey, String outputFile) throws Exception {
+    void processFile(HashMap options) throws Exception {
+        
+        println "CsvProcessor.processFile() -> " + options
+        
+        this.inputFile  = options.get('inputFile')
+        this.outputFile = options.get('outputFile')
+        this.indexOfKey = options.get('indexOfKey')
+        this.typeOfKey  = options.get('typeOfKey')
+        
         def fileWriter
         def csvPrinter
 
@@ -65,7 +78,7 @@ class CsvProcessor extends ProcessorAbstract {
                 
                 bridge.increaseProgress()
                 
-                ArrayList modifiedRecord = processRecord(record, indexOfKey, ++count)
+                ArrayList modifiedRecord = processRecord(record, indexOfKey, typeOfKey, ++count)
                 csvPrinter.printRecord(modifiedRecord)
             }
         }
@@ -76,7 +89,7 @@ class CsvProcessor extends ProcessorAbstract {
     }
 
     @Override
-    ArrayList processRecord(CSVRecord record, int indexOfKey, int count) {
+    ArrayList processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
 
         ArrayList modifiedRecord = record.toList()
 

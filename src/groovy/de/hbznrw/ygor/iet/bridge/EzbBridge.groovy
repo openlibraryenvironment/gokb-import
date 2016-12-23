@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.iet.bridge
 
 import java.util.ArrayList;
+import java.util.HashMap
 
 import org.apache.commons.csv.CSVRecord;
 
@@ -17,13 +18,12 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	def query = [
         Query.EZBID
     ]
-	String inputFile
-	int    indexOfKey
+    
+	HashMap options
 	
-	EzbBridge(Thread master, String inputFile, int indexOfKey) {
-        this.master     = master
-		this.inputFile  = inputFile
-		this.indexOfKey = indexOfKey
+	EzbBridge(Thread master, HashMap options) {
+        this.master  = master
+		this.options = options
 		
 		this.connector     = new EzbConnector(this)
 		this.processor     = new CsvProcessor(this)
@@ -37,10 +37,12 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go(String outputFile) throws Exception {
-		println("Input:  " + inputFile)
-		println("Output: " + outputFile + "\n")
-		
-		processor.setConfiguration(",", null, null)
-		processor.processFile(inputFile, indexOfKey, outputFile)
+		options << [outputFile : outputFile]
+        
+        println("Input:  " + options.get('inputFile'))
+        println("Output: " + options.get('outputFile') + "\n")
+        
+        processor.setConfiguration(",", null, null)
+        processor.processFile(options)
 	}
 }
