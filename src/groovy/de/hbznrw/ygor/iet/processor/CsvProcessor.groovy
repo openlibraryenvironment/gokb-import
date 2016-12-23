@@ -10,6 +10,7 @@ import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.DataMapper
 import de.hbznrw.ygor.iet.export.Title
+import de.hbznrw.ygor.iet.export.TitleStruct
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
 import java.nio.file.Paths
@@ -101,11 +102,19 @@ class CsvProcessor extends ProcessorAbstract {
           
             // TODO: refacoring ..
             def saveTitle = false
-            def title = DataMapper.getExistingTitleByISSN(data, key)
+            def title = DataMapper.getExistingTitleByPrimaryIdentifier(data, key)
             
             if(!title) {
                 title = new Title(key)
                 saveTitle = true
+                
+                if(typeOfKey == TitleStruct.EISSN){
+                    def ident   = TitleStruct.getNewIdentifier()
+                    ident.type  = typeOfKey
+                    ident.value = key
+                    ident._meta = Status.RESULT_OK
+                    title.identifiers << ident
+                }
             }
             
             bridge.query.each{ q ->

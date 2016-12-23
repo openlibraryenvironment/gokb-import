@@ -30,7 +30,7 @@ class Title {
     
     Title(String issn){
         def tmp     = TitleStruct.getNewIdentifier()
-        tmp.type    = 'issn'
+        tmp.type    = TitleStruct.ISSN
         tmp.value   = issn
         tmp._meta   = Status.UNDEFINED
         identifiers << tmp
@@ -39,6 +39,8 @@ class Title {
 
 
 class TitleStruct {
+    static final ISSN  = 'issn'
+    static final EISSN = 'eissn'
     
     static getNewIdentifier() {
         return new TitleIdentifier()

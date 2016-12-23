@@ -51,7 +51,7 @@ class DataMapper {
         s.trim()
     }
     
-    static Title getExistingTitleByISSN(DataContainer data, String value) {
+    static Title getExistingTitleByPrimaryIdentifier(DataContainer data, String value) {
         def result = null
 
         data.titles.each { title ->
