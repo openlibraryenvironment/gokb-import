@@ -2,6 +2,7 @@ package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.iet.bridge.*
 
 class DataMapper {
 
@@ -10,7 +11,7 @@ class DataMapper {
         switch(query) {
             case Query.ZDBID:
                 def tmp     = TitleStruct.getNewIdentifier()
-                tmp.type    = 'zdb'
+                tmp.type    = ZdbBridge.IDENTIFIER
                 tmp.value   = DataMapper.normString(envelope.message)
                 tmp._meta   = envelope.state
                 title.identifiers << tmp
@@ -33,7 +34,7 @@ class DataMapper {
                  
             case Query.EZBID:
                 def tmp     = TitleStruct.getNewIdentifier()
-                tmp.type    = 'ezb'
+                tmp.type    = EzbBridge.IDENTIFIER
                 tmp.value   = DataMapper.normString(envelope.message)
                 tmp._meta   = envelope.state
                 title.identifiers << tmp
@@ -56,7 +57,7 @@ class DataMapper {
 
         data.titles.each { title ->
             title.identifiers.each { i ->
-                if("issn".equals(i.type) && value.equals(i.value)) {
+                if(TitleStruct.ISSN.equals(i.type) && value.equals(i.value)) {
                     result = title
                 }
             }

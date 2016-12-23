@@ -40,9 +40,7 @@ class MultipleProcessingThread extends Thread {
 		
 		println('Starting ..')
         
-		//BridgeInterface bridge
-		try {
-            
+		try {  
             LineNumberReader lnr = new LineNumberReader(
                 new FileReader(new File(document.originPathName))
                 );
@@ -53,7 +51,7 @@ class MultipleProcessingThread extends Thread {
             options.each{
                 option ->
                     switch(option) {
-                        case 'zdb':
+                        case ZdbBridge.IDENTIFIER:
                             bridge = new ZdbBridge(this, new HashMap(
                                 inputFile:  document.originPathName, 
                                 indexOfKey: indexOfKey, 
@@ -61,7 +59,7 @@ class MultipleProcessingThread extends Thread {
                                 )
                             )
                             break
-                        case 'ezb':
+                        case EzbBridge.IDENTIFIER:
                             bridge = new EzbBridge(this, new HashMap(
                                 inputFile:  document.originPathName, 
                                 indexOfKey: indexOfKey, 
@@ -99,8 +97,4 @@ class MultipleProcessingThread extends Thread {
         progressCurrent++
         document.setProgress((progressCurrent / progressTotal) * 100)
     }
-    /*
-    Data getData() {
-        document.data
-    }*/
 }

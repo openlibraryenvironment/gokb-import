@@ -15,6 +15,8 @@ import de.hbznrw.ygor.tools.FileToolkit
 
 class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	
+    static final IDENTIFIER = 'hbz'
+    
     def query = [
         Query.HBZID
     ]

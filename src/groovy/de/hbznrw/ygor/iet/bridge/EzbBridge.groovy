@@ -15,6 +15,8 @@ import de.hbznrw.ygor.tools.FileToolkit
 
 class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
+    static final IDENTIFIER = 'ezb'
+    
 	def query = [
         Query.EZBID
     ]

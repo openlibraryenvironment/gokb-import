@@ -13,6 +13,8 @@ import de.hbznrw.ygor.tools.FileToolkit
 
 class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
+    static final IDENTIFIER = 'zdb'
+    
 	def query = [
         Query.ZDBID,
         Query.ZDBTITLE,

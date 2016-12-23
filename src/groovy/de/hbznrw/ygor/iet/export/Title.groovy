@@ -41,6 +41,7 @@ class Title {
 class TitleStruct {
     static final ISSN  = 'issn'
     static final EISSN = 'eissn'
+    static final PISSN = 'pissn'
     
     static getNewIdentifier() {
         return new TitleIdentifier()

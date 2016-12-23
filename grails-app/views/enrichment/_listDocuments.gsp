@@ -1,6 +1,10 @@
 <!-- _listDocuments.gsp -->
 
-<%@ page import="ygor.Enrichment" %>
+<%@ page 
+	import="ygor.Enrichment" 
+	import="de.hbznrw.ygor.iet.export.TitleStruct"
+	import="de.hbznrw.ygor.iet.bridge.*"
+%>
 
 	<g:each in="${documents}" var="doc">
 
@@ -50,9 +54,9 @@
 							noSelection="['':'Spaltenindex der .. ']"  class="form-control"/>
 					</div>
 					<div class="col-xs-8">
-						<g:radio name="processIndexType" checked="true" value="pissn"/> pISSN
+						<g:radio name="processIndexType" checked="true" value="${TitleStruct.PISSN}"/> pISSN
 						&nbsp;
-						<g:radio name="processIndexType" value="eissn"/> eISSN
+						<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/> eISSN
 					</div>
 				</div><!-- .row -->
 				
@@ -64,9 +68,9 @@
 					<div class="col-xs-12">
 						Folgende Information soll hinzugefügt werden ..
 						<br /><br />
-						<g:checkBox name="processOption" checked="true" value="zdb"/> ZDB
+						<g:checkBox name="processOption" checked="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB
 						&nbsp;
-						<g:checkBox name="processOption" checked="true" value="ezb"/> EZB
+						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB
 						
 						<!--<g:checkBox name="processOption" checked="false" value="gokb"/> GOKb-->
 				
@@ -91,7 +95,8 @@
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 		    			<g:actionSubmit action="downloadFile" value="JSON speichern" class="btn btn-success"/>
-		    			<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success"/>
+		    			<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success"
+		    				data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" />
 		    		</g:if>
 		    		
 				</div>
@@ -99,6 +104,12 @@
 			</div><!-- .row -->	
 		
 			<br />
+			
+			<script>
+				$(function(){
+				  $('[data-toggle="tooltip"]').tooltip()
+				})
+			</script>
 
 			<g:if test="${doc.value.status == Enrichment.ProcessingState.WORKING}">
 				<script>
