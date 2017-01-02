@@ -9,7 +9,7 @@ class Enrichment {
 
     static enum FileType {ORIGIN, RESULT, JSON}
     
-	static enum ProcessingState {UNTOUCHED, WORKING, FINISHED, ERROR}
+	static enum ProcessingState {UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR}
 	ProcessingState status
     float progress = 0.0
     
@@ -35,6 +35,8 @@ class Enrichment {
 		originHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		originPathName 		= this.sessionFolder.getPath() + File.separator + originHash
 		
+        data                = new DataContainer()
+        
 		setStatus(ProcessingState.UNTOUCHED)
 	}
 	
@@ -45,7 +47,6 @@ class Enrichment {
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
-        data                = new DataContainer()
         data.meta.ygor      = options.get('ygorVersion')
         data.meta.type      = options.get('ygorType')
         

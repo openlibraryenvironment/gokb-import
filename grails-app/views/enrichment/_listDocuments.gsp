@@ -32,6 +32,9 @@
 						<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 							&rarr; Nicht bearbeitet
 						</g:if>
+						<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
+							&rarr; Vorbereitung
+						</g:if>
 						<g:if test="${doc.value.status == Enrichment.ProcessingState.WORKING}">
 							&rarr; In Bearbeitung ..
 						</g:if>
@@ -47,6 +50,19 @@
 	
 			<br />
 			
+			<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
+				<div class="row">
+				
+					<div class="col-xs-12">
+						Titel des Pakets in der GOKb: <g:textField name="pkgTitle" size="64" value="Münchhausen Verlag 1999" />
+						<br />
+						<g:checkBox name="ignorePkgTitle" value="true" checked="false" /> Diese Angabe ignorieren
+					</div>
+				
+				</div><!-- .row -->
+				<br />
+			</g:if>
+			
 			<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">			
 				<div class="row">
 					<div class="col-xs-4">
@@ -61,9 +77,7 @@
 				</div><!-- .row -->
 				
 				<br />
-			</g:if>
-			
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
+
 				<div class="row">
 					<div class="col-xs-12">
 						Folgende Information soll hinzugefügt werden ..
@@ -79,6 +93,7 @@
 				
 				<br />
 			</g:if>
+			
 			<div class="row">
 			
 				<div class="col-xs-6">
@@ -86,6 +101,9 @@
 		    			<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-default"/>
 					</g:if>
+					<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
+						<g:actionSubmit action="prepareFile" value="Weiter" class="btn btn-default"/>
+		    		</g:if>
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.WORKING}">
 						<g:actionSubmit action="stopProcessingFile" value="Bearbeitung abbrechen" class="btn btn-danger"/>
 					</g:if>
@@ -96,7 +114,8 @@
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 		    			<g:actionSubmit action="downloadFile" value="JSON speichern" class="btn btn-success"/>
 		    			<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success"
-		    				data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" />
+-		    				data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" />
+		    			
 		    		</g:if>
 		    		
 				</div>

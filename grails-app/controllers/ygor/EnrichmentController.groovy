@@ -11,6 +11,7 @@ import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.ByteArrayBody
 import org.apache.http.entity.mime.content.StringBody
 import org.apache.http.entity.mime.content.FileBody
+import de.hbznrw.ygor.iet.export.*
 
 
 
@@ -21,42 +22,42 @@ class EnrichmentController {
     def documents = [:]
 
     def index = { redirect(action:'process')   }
-
+    
     def process = {
         render(
-                view:'process',
-                model:[documents:documents, currentView:'process']
-                )
+            view:'process',
+            model:[documents:documents, currentView:'process']
+            )
     }
     
     def json = {
         render(
-                view:'json',
-                model:[documents:documents, currentView:'json']
-                )
+            view:'json',
+            model:[documents:documents, currentView:'json']
+            )
     }
     
     def howto = {
         render(
-                view:'howto',
-                model:[currentView:'howto']
-                )
+            view:'howto',
+            model:[currentView:'howto']
+            )
     }
 
     def about = {
         render(
-                view:'about',
-                model:[currentView:'about']
-                )
+            view:'about',
+            model:[currentView:'about']
+            )
     }
 
     def contact = {
         render(
-                view:'contact',
-                model:[currentView:'contact']
-                )
+            view:'contact',
+            model:[currentView:'contact']
+            )
     }
-        
+    
     def uploadFile = {
 
         def file = request.getFile('uploadFile')
@@ -69,13 +70,24 @@ class EnrichmentController {
         }
 
         def document = new Enrichment(getSessionFolder(), file.originalFilename)
+        document.setStatus(Enrichment.ProcessingState.PREPARE)
         documents << ["${document.originHash}":document]
+        
         file.transferTo(new File(document.originPathName))
-        //response.sendError(200, 'Done')
 
         redirect(action:'process')
     }
 
+    def prepareFile = {
+        
+        if(!request.parameterMap['ignorePkgTitle']) {
+            def pkgTitle = request.parameterMap['pkgTitle'][0]
+            document.data.pkg.packageHeader.name = pkgTitle
+        }
+        document.setStatus(Enrichment.ProcessingState.UNTOUCHED)
+        redirect(action:'process')
+    }
+    
     def processFile = {
         
         def pmIndex     = request.parameterMap['processIndex'][0]

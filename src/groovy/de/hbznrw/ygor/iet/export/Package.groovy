@@ -13,6 +13,13 @@ class Package {
     }
 }
 
+class PackageStruct {
+    
+    static getNewPackageTipp() {
+        return new PackageTipp()
+    }
+}
+
 class PackageHeader {
     
     String breakable        = ""
@@ -35,19 +42,14 @@ class PackageHeader {
     def variantNames         = []
 
     PackageHeader() {
-        source = PackageStruct.getNewPackageSource()
+        source = PackageHeaderStruct.getNewPackageSource()
     }
 }
 
-
-class PackageStruct {
+class PackageHeaderStruct {
     
     static getNewPackageIdentifier() {
         return new PackageIdentifier()
-    }
-    
-    static getNewPackageTipp() {
-        return new PackageTipp()
     }
     
     static getNewPackageVariantName() {
@@ -105,7 +107,6 @@ class PackageSource {
     String url      = ""
 }
 
-
 class PackageTippStruct {
     
     static getNewPackageTippCoverage() {
@@ -149,7 +150,6 @@ class PackageTippTitle {
     String name     = ""
     String type     = ""
 }
-
    
 class PackageTippTitleStruct {
     

@@ -49,6 +49,7 @@ class DataMapper {
     
     static String normString(String s) {
         s = s.replaceAll("  "," ")
+        s = s.replaceAll(" : ",": ")
         s.trim()
     }
     
