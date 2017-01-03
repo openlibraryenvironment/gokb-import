@@ -54,6 +54,8 @@ class SruPicaConnector extends ConnectorAbstract {
         } catch(Exception e) {
             return getEnvelopeWithStatus(Status.STATUS_ERROR)
         }
+        
+        getEnvelopeWithStatus(Status.STATUS_OK)
     }
     
 	@Override
@@ -88,11 +90,14 @@ class SruPicaConnector extends ConnectorAbstract {
             case Query.ZDBID:
                 return resultOnly('006Z', '0')
                 break;
+            case Query.GBVGVKPPN:
+                return resultOnly('003@', '0')
+                break;
             case Query.GBVEISSN:
-                return resultOnly('005P', '0')
+                return resultOnly('005A', '0')
                 break;
             case Query.GBVPISSN:
-                return resultOnly('005A', '0')
+                return resultOnly('005P', '0')
                 break;
             case Query.GBVTITLE:
                 return getTitle()
@@ -125,10 +130,11 @@ class SruPicaConnector extends ConnectorAbstract {
     private Envelope getTitle() {
         def result = []
         
+        // correction
         obvRecords.each { record ->
             result << getPicaValue(record.recordData.record, '025@', 'a')
         }
-        
+        // or .. main title
         if(result.minus(null).isEmpty()) {
             obvRecords.each { record ->
                 result << getPicaValue(record.recordData.record,'021A', 'a')
@@ -143,10 +149,12 @@ class SruPicaConnector extends ConnectorAbstract {
         
         obvRecords.each { record ->
             resultPublisher << getPicaValue(record.recordData.record, '033A', 'n')
+            
             def date1 = getPicaValue(record.recordData.record, '011@', 'a')
             def date2 = getPicaValue(record.recordData.record, '031N', 'j')
-            date1 = date1 ? date1 : date2
-            date1 = date1 ? date1.split("/")[0] : null
+            date1     = date1 ? date1 : date2
+            date1     = date1 ? date1.split("/")[0] : null
+            
             resultPublisherDate << date1
         }
         

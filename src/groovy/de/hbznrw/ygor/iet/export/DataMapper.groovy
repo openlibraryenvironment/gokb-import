@@ -6,19 +6,21 @@ import de.hbznrw.ygor.iet.bridge.*
 
 class DataMapper {
 
-    static maptoTitle(Title title, Query query, Envelope envelope) {
+    static Title mapToTitle(Title title, Query query, Envelope envelope) {
        
-        if(query in [Query.ZDBID, Query.EZBID, Query.GBVEISSN, Query.GBVPISSN]) {
-            def tmp     = TitleStruct.getNewIdentifier()
+        if(query in [Query.ZDBID, Query.EZBID, Query.GBVEISSN, Query.GBVPISSN, Query.GBVGVKPPN]) {
+            def tmp = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
-                tmp.type    = ZdbBridge.IDENTIFIER
+                tmp.type = ZdbBridge.IDENTIFIER
             else if(Query.EZBID == query)
-                tmp.type    = EzbBridge.IDENTIFIER
+                tmp.type = EzbBridge.IDENTIFIER
             else if(Query.GBVEISSN == query)
-                tmp.type    = TitleStruct.EISSN
+                tmp.type = TitleStruct.EISSN
             else if(Query.GBVPISSN == query)
-                tmp.type    = TitleStruct.PISSN
+                tmp.type = TitleStruct.PISSN
+            else if(Query.GBVGVKPPN == query)
+                tmp.type = "gvk_ppn"
                 
             tmp.value   = DataMapper.normString(envelope.message)
             tmp._meta   = envelope.state
@@ -39,8 +41,10 @@ class DataMapper {
             }
             title.publisher_history << tmp
         }
+        
+        title
     }
-    
+   
     static String normString(ArrayList l) {
         if(!l) l = []
         DataMapper.normString(l.join(", "))

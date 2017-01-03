@@ -83,7 +83,7 @@ class CsvProcessor extends ProcessorAbstract {
                 csvPrinter.printRecord(modifiedRecord)
             }
         }
-
+        
         fileWriter.flush()
         fileWriter.close()
         csvPrinter.close()
@@ -107,17 +107,6 @@ class CsvProcessor extends ProcessorAbstract {
             if(!title) {
                 title = new Title(key)
                 saveTitle = true
-                
-                // removed because adding GBV as primary data source
-                /*
-                if(typeOfKey == TitleStruct.EISSN){
-                    def ident   = TitleStruct.getNewIdentifier()
-                    ident.type  = typeOfKey
-                    ident.value = key
-                    ident._meta = Status.RESULT_OK
-                    title.identifiers << ident
-                }
-                */
             }
             
             bridge.query.each{ q ->
@@ -161,8 +150,7 @@ class CsvProcessor extends ProcessorAbstract {
                     }    
                 }
                 
-                DataMapper.maptoTitle(title, q, env)
-    
+                DataMapper.mapToTitle(title, q, env)
             }
             if(saveTitle) {
                 data.titles << title

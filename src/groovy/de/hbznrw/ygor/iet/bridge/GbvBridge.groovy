@@ -18,6 +18,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
     // api requests to do 
 	def query = [
         Query.ZDBID,
+        Query.GBVGVKPPN,
         Query.GBVPISSN,
         Query.GBVEISSN,
         Query.GBVTITLE,
