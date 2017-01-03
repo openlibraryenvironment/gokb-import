@@ -51,10 +51,18 @@ class MultipleProcessingThread extends Thread {
             options.each{
                 option ->
                     switch(option) {
-                        case ZdbBridge.IDENTIFIER:
-                            bridge = new ZdbBridge(this, new HashMap(
+                        case GbvBridge.IDENTIFIER:
+                            bridge = new GbvBridge(this, new HashMap(
                                 inputFile:  document.originPathName, 
                                 indexOfKey: indexOfKey, 
+                                typeOfKey:  typeOfKey
+                                )
+                            )
+                            break
+                        case ZdbBridge.IDENTIFIER:
+                            bridge = new ZdbBridge(this, new HashMap(
+                                inputFile:  document.originPathName,
+                                indexOfKey: indexOfKey,
                                 typeOfKey:  typeOfKey
                                 )
                             )

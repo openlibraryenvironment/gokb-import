@@ -15,6 +15,7 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'zdb'
     
+    // api requests to do
 	def query = [
         Query.ZDBID,
         Query.ZDBTITLE,

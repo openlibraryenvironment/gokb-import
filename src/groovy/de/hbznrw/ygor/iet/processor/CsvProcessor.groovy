@@ -108,6 +108,8 @@ class CsvProcessor extends ProcessorAbstract {
                 title = new Title(key)
                 saveTitle = true
                 
+                // removed because adding GBV as primary data source
+                /*
                 if(typeOfKey == TitleStruct.EISSN){
                     def ident   = TitleStruct.getNewIdentifier()
                     ident.type  = typeOfKey
@@ -115,6 +117,7 @@ class CsvProcessor extends ProcessorAbstract {
                     ident._meta = Status.RESULT_OK
                     title.identifiers << ident
                 }
+                */
             }
             
             bridge.query.each{ q ->

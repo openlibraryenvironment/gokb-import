@@ -80,14 +80,14 @@
 
 				<div class="row">
 					<div class="col-xs-12">
-						Folgende Information soll hinzugefügt werden ..
+						Information sollen über die folgenden Schnittstellen hinzugefügt werden ..
 						<br /><br />
-						<g:checkBox name="processOption" checked="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB
 						&nbsp;
-						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB
-						
-						<!--<g:checkBox name="processOption" checked="false" value="gokb"/> GOKb-->
-				
+						<g:checkBox name="processOption" checked="true" value="${GbvBridge.IDENTIFIER}"/> GBV
+						&nbsp;
+						<g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB
+						&nbsp;
+						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB				
 					</div>
 				</div><!-- .row -->
 				

@@ -6,8 +6,13 @@ public enum Query {
 	EZBID ("EZBID"),
 	HBZID ("HBZID"),
 	
-	ZDBTITLE ("ZDBTITLE"),
-	ZDBPUBLISHER ("ZDBPUBLISHER")
+	GBVTITLE     ("GBVTITLE"),
+    GBVPUBLISHER ("GBVPUBLISHER"),
+    GBVEISSN     ("GBVEISSN"),
+    GBVPISSN     ("GBVPISSN"),
+
+	ZDBTITLE     ("ZDBTITLE"),     // old
+	ZDBPUBLISHER ("ZDBPUBLISHER")  // old
 	;
 	
 	private String value;

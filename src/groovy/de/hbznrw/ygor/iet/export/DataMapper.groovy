@@ -8,37 +8,36 @@ class DataMapper {
 
     static maptoTitle(Title title, Query query, Envelope envelope) {
        
-        switch(query) {
-            case Query.ZDBID:
-                def tmp     = TitleStruct.getNewIdentifier()
+        if(query in [Query.ZDBID, Query.EZBID, Query.GBVEISSN, Query.GBVPISSN]) {
+            def tmp     = TitleStruct.getNewIdentifier()
+            
+            if(Query.ZDBID == query)
                 tmp.type    = ZdbBridge.IDENTIFIER
-                tmp.value   = DataMapper.normString(envelope.message)
-                tmp._meta   = envelope.state
-                title.identifiers << tmp
-                break;
-                
-            case Query.ZDBTITLE:
-                title.name = DataMapper.normString(envelope.message)
-                break;
-                
-            case Query.ZDBPUBLISHER:
-                // TODO testing [pub][date][state_pub, state_date]
-                def tmp           = TitleStruct.getNewPublisherHistory()
-                if(envelope.messages){
-                    tmp.name      = DataMapper.normString(envelope.messages['name'])
-                    tmp.startDate = DataMapper.normString(envelope.messages['startDate'])
-                    tmp._meta     = envelope.states.toString()
-                }
-                title.publisher_history << tmp
-                break;
-                 
-            case Query.EZBID:
-                def tmp     = TitleStruct.getNewIdentifier()
+            else if(Query.EZBID == query)
                 tmp.type    = EzbBridge.IDENTIFIER
-                tmp.value   = DataMapper.normString(envelope.message)
-                tmp._meta   = envelope.state
-                title.identifiers << tmp
-                break;
+            else if(Query.GBVEISSN == query)
+                tmp.type    = TitleStruct.EISSN
+            else if(Query.GBVPISSN == query)
+                tmp.type    = TitleStruct.PISSN
+                
+            tmp.value   = DataMapper.normString(envelope.message)
+            tmp._meta   = envelope.state
+            title.identifiers << tmp
+        }
+        
+        else if(query == Query.GBVTITLE) {
+            title.name = DataMapper.normString(envelope.message)
+        }
+        
+        else if(query == Query.GBVPUBLISHER) {
+            // TODO testing [pub][date][state_pub, state_date]
+            def tmp           = TitleStruct.getNewPublisherHistory()
+            if(envelope.messages){
+                tmp.name      = DataMapper.normString(envelope.messages['name'])
+                tmp.startDate = DataMapper.normString(envelope.messages['startDate'])
+                tmp._meta     = envelope.states.toString()
+            }
+            title.publisher_history << tmp
         }
     }
     
