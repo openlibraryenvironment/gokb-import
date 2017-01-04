@@ -4,19 +4,57 @@ import de.hbznrw.ygor.iet.enums.*
 
 class Package {
     
-    PackageHeader packageHeader
-    def tipps
+    PackageHeader packageHeader = new PackageHeader()
+    def tipps                   = [] // list
     
     Package() {
-        packageHeader = new PackageHeader()
-        tipps         = []
     }
 }
 
 class PackageStruct {
     
-    static getNewPackageTipp() {
-        return new PackageTipp()
+    // Package
+    
+    static Tipp getNewTipp() {
+        return new Tipp()
+    }
+    
+    static Tipp getNewTipp(String issn) {
+        return new Tipp(issn)
+    }
+    
+    // PackageHeader
+    
+    static PackageHeaderVariantName getNewPackageHeaderVariantName() {
+        return new PackageHeaderVariantName()
+    }
+    
+    static PackageHeaderCuratoryGroups getNewPackageHeaderCuratoryGroups() {
+        return new PackageHeaderCuratoryGroups()
+    }
+    
+    static PackageHeaderSource getNewPackageHeaderSource() {
+        return new PackageHeaderSource()
+    }
+    
+    // Tipps
+    
+    static TippCoverage getNewTippCoverage() {
+        return new TippCoverage()
+    }
+    
+    static TippPlatform getNewTippPlatform() {
+        return new TippPlatform()
+    }
+    
+    static TippTitle getNewTippTitle() {
+        return new TippTitle()
+    }
+    
+    // TippTitle
+    
+    static TippTitleIdentifier getNewTippTitleIdentifier() {
+        return new TippTitleIdentifier()
     }
 }
 
@@ -36,43 +74,45 @@ class PackageHeader {
     String scope            = ""
     String userListVerifier = ""
     
-    def additionalProperties = []
-    def curatoryGroups       = []
-    def source               = []
-    def variantNames         = []
+    PackageHeaderSource source = PackageStruct.getNewPackageHeaderSource()
+    
+    def additionalProperties = [] // list
+    def curatoryGroups       = [] // list
+    def variantNames         = [] // list
 
     PackageHeader() {
-        source = PackageHeaderStruct.getNewPackageSource()
     }
 }
 
-class PackageHeaderStruct {
+class PackageHeaderIdentifier {
     
-    static getNewPackageIdentifier() {
-        return new PackageIdentifier()
-    }
-    
-    static getNewPackageVariantName() {
-        return new PackageVariantName()
-    }
-    
-    static getNewPackageCuratoryGroups() {
-        return new PackageCuratoryGroups()
-    }
-    
-    static getNewPackageSource() {
-        return new PackageSource()
-    }
-}
-
-class PackageIdentifier {
-    String _meta = Status.UNDEFINED
-    
+    String _meta = Status.UNDEFINED   
     String type  = ""
     String value = ""
 }
 
-class PackageTipp {
+class PackageHeaderVariantName {
+    
+    String _meta         = Status.UNDEFINED    
+    String variantName   = ""
+}
+
+class PackageHeaderCuratoryGroups {
+    
+    String _meta         = Status.UNDEFINED  
+    String curatoryGroup = ""
+}
+
+class PackageHeaderSource {
+    
+    String _meta    = Status.UNDEFINED   
+    String name     = ""
+    String normname = ""
+    String url      = ""
+}
+
+class Tipp {
+    
     String _meta       = Status.UNDEFINED
     
     String accessEnd
@@ -82,49 +122,26 @@ class PackageTipp {
     String status      = ""   
     String url         = ""
     
-    def coverage       = []
-    def platform       = []
-    def title          = []
-}
-
-class PackageVariantName {
-    String _meta       = Status.UNDEFINED
+    def title          = PackageStruct.getNewTippTitle()
+    def platform       = PackageStruct.getNewTippPlatform()
+    def coverage       = [] // list
     
-    String variantName = ""
-}
-
-class PackageCuratoryGroups {
-    String _meta         = Status.UNDEFINED
-    
-    String curatoryGroup = ""
-}
-
-class PackageSource {
-    String _meta    = Status.UNDEFINED
-    
-    String name     = ""
-    String normname = ""
-    String url      = ""
-}
-
-class PackageTippStruct {
-    
-    static getNewPackageTippCoverage() {
-        return new PackageTippCoverage()
+    Tipp() {    
     }
     
-    static getNewPackageTippPlatform() {
-        return new PackageTippPlatform()
-    }
-    
-    static getNewPackageTippTitle() {
-        return new PackageTippTitle()
+    Tipp(String issn) {
+        
+        def tmp     = PackageStruct.getNewTippTitleIdentifier()
+        tmp.type    = TitleStruct.ISSN
+        tmp.value   = issn
+        tmp._meta   = Status.UNDEFINED
+        title.identifiers << tmp
     }
 }
 
-class PackageTippCoverage {
-    String _meta            = Status.UNDEFINED
+class TippCoverage {
     
+    String _meta            = Status.UNDEFINED   
     String coverageDepth    = ""
     String coverageNote     = ""
     String embargo          = ""
@@ -136,32 +153,25 @@ class PackageTippCoverage {
     String startVolume      = ""
 }
 
-class PackageTippPlatform {
+class TippPlatform {
+    
     String _meta      = Status.UNDEFINED
-
     String name       = ""
     String primaryUrl = ""
 }
 
-class PackageTippTitle {
-    String _meta    = Status.UNDEFINED
+class TippTitle {
     
-    def identifiers = []
+    String _meta    = Status.UNDEFINED  
+    def identifiers = [] // list
     String name     = ""
-    String type     = ""
-}
-   
-class PackageTippTitleStruct {
-    
-    static getNewPackageTippTitleIdentifier() {
-        return new PackageTippTitleIdentifier()
-    }
+    String type     = "Serial"
 }
 
-class PackageTippTitleIdentifier {
-    String _meta = Status.UNDEFINED
+class TippTitleIdentifier {
     
-    String type  = ""
-    String value = ""
+    String _meta    = Status.UNDEFINED
+    String type     = ""
+    String value    = ""
 }
 

@@ -32,15 +32,15 @@ public class JsonToolkit {
         JsonOutput.prettyPrint(writer.toString())
     }
     
-    static String parseDataToJson(DataContainer data) {
+    static String parseDataToJson(DataContainer dc) {
         
         def writer      = new StringWriter()
         def jsonBuilder = new groovy.json.StreamingJsonBuilder(writer)
      
         jsonBuilder {
-            'meta'    data.meta
-            'package' data.pkg
-            'titles'  data.titles
+            'meta'    dc.meta
+            'package' dc.pkg
+            'titles'  dc.titles
         }
         
         JsonOutput.prettyPrint(writer.toString())

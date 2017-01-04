@@ -6,7 +6,7 @@ import de.hbznrw.ygor.iet.bridge.*
 
 class DataMapper {
 
-    static Title mapToTitle(Title title, Query query, Envelope envelope) {
+    static Title mapToTitle(Title title, Query query, Envelope env) {
        
         if(query in [Query.ZDBID, Query.EZBID, Query.GBVEISSN, Query.GBVPISSN, Query.GBVGVKPPN]) {
             def tmp = TitleStruct.getNewIdentifier()
@@ -22,32 +22,53 @@ class DataMapper {
             else if(Query.GBVGVKPPN == query)
                 tmp.type = "gvk_ppn"
                 
-            tmp.value   = DataMapper.normString(envelope.message)
-            tmp._meta   = envelope.state
+            tmp.value   = DataMapper.normString(env.message)
+            tmp._meta   = env.state
             title.identifiers << tmp
         }
         
         else if(query == Query.GBVTITLE) {
-            title.name = DataMapper.normString(envelope.message)
+            title.name = DataMapper.normString(env.message)
         }
         
         else if(query == Query.GBVPUBLISHER) {
             // TODO testing [pub][date][state_pub, state_date]
             def tmp           = TitleStruct.getNewPublisherHistory()
-            if(envelope.messages){
-                tmp.name      = DataMapper.normString(envelope.messages['name'])
-                tmp.startDate = DataMapper.normString(envelope.messages['startDate'])
-                tmp._meta     = envelope.states.toString()
+            if(env.messages){
+                tmp.name      = DataMapper.normString(env.messages['name'])
+                tmp.startDate = DataMapper.normString(env.messages['startDate'])
+                tmp._meta     = env.states.toString()
             }
             title.publisher_history << tmp
         }
         
         title
     }
-   
-    static String normString(ArrayList l) {
-        if(!l) l = []
-        DataMapper.normString(l.join(", "))
+    
+    static Tipp mapToTipp(Tipp tipp, Query query, Envelope env) {
+        
+        if(query in [Query.ZDBID, Query.GBVEISSN]) {
+            def tmp = TitleStruct.getNewIdentifier()
+            
+            if(Query.ZDBID == query)
+                tmp.type = ZdbBridge.IDENTIFIER
+            else if(Query.GBVEISSN == query)
+                tmp.type = TitleStruct.EISSN
+                
+            tmp.value   = DataMapper.normString(env.message)
+            tmp._meta   = env.state
+            tipp.title.identifiers << tmp
+        }
+        
+        else if(query == Query.GBVTITLE) {
+            tipp.title.name = DataMapper.normString(env.message)
+        }
+        
+        tipp
+    }
+    
+    static String normString(ArrayList list) {
+        list ? DataMapper.normString(list.join(", ")) : ""
     }
     
     static String normString(String s) {
@@ -56,10 +77,10 @@ class DataMapper {
         s.trim()
     }
     
-    static Title getExistingTitleByPrimaryIdentifier(DataContainer data, String value) {
+    static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String value) {
         def result = null
 
-        data.titles.each { title ->
+        dc.titles.each { title ->
             title.identifiers.each { i ->
                 if(TitleStruct.ISSN.equals(i.type) && value.equals(i.value)) {
                     result = title
@@ -67,5 +88,31 @@ class DataMapper {
             }
         }
         result
+    }
+    
+    static Tipp getExistingTippByPrimaryIdentifier(DataContainer dc, String value) {
+        def result = null
+
+        dc.pkg.tipps.each { tipp ->
+            tipp.title.identifiers.each { i ->
+                if(TitleStruct.ISSN.equals(i.type) && value.equals(i.value)) {
+                    result = tipp
+                }
+            }
+        }
+        result
+    }
+    
+    static clearUp(DataContainer dc) {
+        
+        dc.titles.each{ title ->
+            title.identifiers.removeIf {it.type == TitleStruct.ISSN} 
+        }
+        // TODO
+        /*
+        dc.pkg.tipps.each{ tipp ->
+            tipp.title.identifiers.removeIf {it.type == TitleStruct.ISSN}
+        }
+        */
     }
 }

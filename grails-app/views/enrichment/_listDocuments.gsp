@@ -83,11 +83,11 @@
 						Information sollen über die folgenden Schnittstellen hinzugefügt werden ..
 						<br /><br />
 						&nbsp;
-						<g:checkBox name="processOption" checked="true" value="${GbvBridge.IDENTIFIER}"/> GBV
-						&nbsp;
 						<g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB
 						&nbsp;
-						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB				
+						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB
+						&nbsp;
+						<g:checkBox name="processOption" checked="true" value="${GbvBridge.IDENTIFIER}"/> GBV
 					</div>
 				</div><!-- .row -->
 				

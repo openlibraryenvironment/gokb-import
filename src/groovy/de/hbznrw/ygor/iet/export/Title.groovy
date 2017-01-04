@@ -12,8 +12,8 @@ class Title {
     String publishedFrom    = ""
     String publishedTo      = ""
     
-    def identifiers         = []
-    def publisher_history   = []
+    def identifiers         = [] // list
+    def publisher_history   = [] // list
     
     // ???
     String shortcode        = ""
@@ -29,6 +29,7 @@ class Title {
     }
     
     Title(String issn){
+        
         def tmp     = TitleStruct.getNewIdentifier()
         tmp.type    = TitleStruct.ISSN
         tmp.value   = issn
@@ -39,29 +40,30 @@ class Title {
 
 
 class TitleStruct {
+    
     static final ISSN  = 'issn'
     static final EISSN = 'eissn'
     static final PISSN = 'pissn'
     
-    static getNewIdentifier() {
+    static TitleIdentifier getNewIdentifier() {
         return new TitleIdentifier()
     }
     
-    static getNewPublisherHistory() {
+    static TitlePublisherHistory getNewPublisherHistory() {
         return new TitlePublisherHistory()
     }
 }
 
 class TitleIdentifier {
-    String _meta    = Status.UNDEFINED
     
+    String _meta    = Status.UNDEFINED    
     String type     = ""
     String value    = ""
 }
 
 class TitlePublisherHistory {
-    String _meta    = Status.UNDEFINED
     
+    String _meta    = Status.UNDEFINED
     String endDate
     String name     = ""
     String startDate

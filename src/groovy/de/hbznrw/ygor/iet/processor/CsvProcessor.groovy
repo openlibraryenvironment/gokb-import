@@ -8,9 +8,7 @@ import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Status
-import de.hbznrw.ygor.iet.export.DataMapper
-import de.hbznrw.ygor.iet.export.Title
-import de.hbznrw.ygor.iet.export.TitleStruct
+import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
 import java.nio.file.Paths
@@ -74,6 +72,8 @@ class CsvProcessor extends ProcessorAbstract {
                 def ignoreReturnValue = processRecord(record, indexOfKey, typeOfKey, ++count)
             }
         }
+        
+        DataMapper.clearUp(bridge.master.document.data)
     }
 
     @Override
@@ -81,19 +81,24 @@ class CsvProcessor extends ProcessorAbstract {
 
         ArrayList modifiedRecord = record.toList()
 
-        def data    = bridge.master.document.data
-        def key     = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey)
+        def data = bridge.master.document.data
+        def key  = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey)
         if("" != key) {
 
             bridge.connector.poll(key)
           
-            // TODO: refacoring ..
             def saveTitle = false
-            def title = DataMapper.getExistingTitleByPrimaryIdentifier(data, key)
-            
+            def title     = DataMapper.getExistingTitleByPrimaryIdentifier(data, key)
             if(!title) {
-                title = new Title(key)
+                title     = new Title(key)
                 saveTitle = true
+            }
+            
+            def saveTipp = false
+            def tipp     = DataMapper.getExistingTippByPrimaryIdentifier(data, key)
+            if(!tipp) {
+                tipp     = PackageStruct.getNewTipp(key)
+                saveTipp = true
             }
             
             bridge.query.each{ q ->
@@ -138,10 +143,12 @@ class CsvProcessor extends ProcessorAbstract {
                 }
                 
                 DataMapper.mapToTitle(title, q, env)
+                DataMapper.mapToTipp(tipp, q, env)
             }
-            if(saveTitle) {
+            if(saveTitle)
                 data.titles << title
-            }
+            if(saveTipp)
+                data.pkg.tipps << tipp
             
         } else {
             println("#" + count + " skipped empty ISSN")
