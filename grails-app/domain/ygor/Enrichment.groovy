@@ -3,7 +3,7 @@ package ygor
 import de.hbznrw.ygor.iet.MultipleProcessingThread
 import de.hbznrw.ygor.iet.export.DataContainer
 import de.hbznrw.ygor.tools.*
-
+import de.hbznrw.ygor.iet.export.DataMapper
 
 class Enrichment {
 
@@ -79,12 +79,14 @@ class Enrichment {
             case FileType.ORIGIN:
                 return new File(originPathName)
                 break
+            /*
             case FileType.RESULT:
                 return new File(resultPathName)
                 break
+            */
             case FileType.JSON:
                 def file = new File(resultPathName)
-                def result = JsonToolkit.parseDataToJson(this.data)
+                def result = JsonToolkit.parseDataToJson(data)
                 file.write(result)
                 return file
                 break

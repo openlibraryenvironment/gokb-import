@@ -29,10 +29,9 @@ class CsvProcessor extends ProcessorAbstract {
     private int count 		    = 0
     private int total		    = 0
 
-    
     private String inputFile
-    private String outputFile
     private String typeOfKey
+    
     //
 
     CsvProcessor(BridgeInterface bridge) {
@@ -57,15 +56,9 @@ class CsvProcessor extends ProcessorAbstract {
         println "CsvProcessor.processFile() -> " + options
         
         this.inputFile  = options.get('inputFile')
-        this.outputFile = options.get('outputFile')
         this.indexOfKey = options.get('indexOfKey')
         this.typeOfKey  = options.get('typeOfKey')
         
-        def fileWriter
-        def csvPrinter
-
-        fileWriter = new FileWriter(outputFile);
-        csvPrinter = new CSVPrinter(fileWriter, csvFormat)
         count = 0
 
         Paths.get(inputFile).withReader { reader ->
@@ -78,15 +71,9 @@ class CsvProcessor extends ProcessorAbstract {
                 }
                 
                 bridge.increaseProgress()
-                
-                ArrayList modifiedRecord = processRecord(record, indexOfKey, typeOfKey, ++count)
-                csvPrinter.printRecord(modifiedRecord)
+                def ignoreReturnValue = processRecord(record, indexOfKey, typeOfKey, ++count)
             }
         }
-        
-        fileWriter.flush()
-        fileWriter.close()
-        csvPrinter.close()
     }
 
     @Override

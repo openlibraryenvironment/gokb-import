@@ -2,11 +2,9 @@ package de.hbznrw.ygor.iet;
 
 import de.hbznrw.ygor.iet.bridge.*
 import de.hbznrw.ygor.iet.interfaces.BridgeInterface
-//import ygor.Data
 import ygor.Enrichment
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 class MultipleProcessingThread extends Thread {
 
@@ -47,12 +45,12 @@ class MultipleProcessingThread extends Thread {
             lnr.skip(Long.MAX_VALUE);
             progressTotal = lnr.getLineNumber() * options.size()
             lnr.close();
-            
+
             options.each{
                 option ->
                     switch(option) {
-                        case GbvBridge.IDENTIFIER:
-                            bridge = new GbvBridge(this, new HashMap(
+                        case EzbBridge.IDENTIFIER:
+                            bridge = new EzbBridge(this, new HashMap(
                                 inputFile:  document.originPathName, 
                                 indexOfKey: indexOfKey, 
                                 typeOfKey:  typeOfKey
@@ -67,24 +65,18 @@ class MultipleProcessingThread extends Thread {
                                 )
                             )
                             break
-                        case EzbBridge.IDENTIFIER:
-                            bridge = new EzbBridge(this, new HashMap(
-                                inputFile:  document.originPathName, 
-                                indexOfKey: indexOfKey, 
+                        case GbvBridge.IDENTIFIER:
+                            bridge = new GbvBridge(this, new HashMap(
+                                inputFile:  document.originPathName,
+                                indexOfKey: indexOfKey,
                                 typeOfKey:  typeOfKey
                                 )
                             )
                             break
                     }
-                    
-                    if(bridge) {
-                        bridge.go(document.resultPathName)
-                        Files.copy(
-                            Paths.get(document.resultPathName),
-                            Paths.get(document.originPathName),
-                            StandardCopyOption.REPLACE_EXISTING
-                            )
-                    }
+                  
+                    if(bridge)
+                        bridge.go()
             }
            								
 		} catch(Exception e) {

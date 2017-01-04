@@ -34,18 +34,14 @@ class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go() throws Exception {
-		def outputFile = FileToolkit.getDateTimePrefixedFileName(inputFile)
-		go(outputFile)
-	}
-	
-	@Override
-	void go(String outputFile) throws Exception {
-		options << [outputFile : outputFile]
-        
         println("Input:  " + options.get('inputFile'))
-        println("Output: " + options.get('outputFile') + "\n")
         
         processor.setConfiguration(",", null, null)
         processor.processFile(options)
+	}
+	
+	@Override
+	void go(String outputFile) throws Exception {   
+        println("deprecated function call go(outputFile)")
 	}
 }
