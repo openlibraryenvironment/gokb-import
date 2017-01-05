@@ -47,7 +47,7 @@ abstract class ConnectorAbstract implements ConnectorInterface {
                 state = Status.RESULT_MULTIPLE_MATCHES
             break;
         }
-        return new Envelope(state, message)
+        new Envelope(state, message)
     }
     
     Envelope getEnvelopeWithComplexMessage(HashMap messages) {
@@ -68,10 +68,10 @@ abstract class ConnectorAbstract implements ConnectorInterface {
                 break;
             }
         }
-        return new Envelope(states, messages)
+        new Envelope(states, messages)
     }
     
     Envelope getEnvelopeWithStatus(Status state) {
-        return new Envelope(state, [])
+        new Envelope(state, [])
     }
 }

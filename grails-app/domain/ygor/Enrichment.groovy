@@ -47,8 +47,8 @@ class Enrichment {
 		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
 		
-        data.meta.ygor      = options.get('ygorVersion')
-        data.meta.type      = options.get('ygorType')
+        data.info.ygor      = options.get('ygorVersion')
+        data.info.type      = options.get('ygorType')
         
         thread              = new MultipleProcessingThread(this, options)
 		thread.start()

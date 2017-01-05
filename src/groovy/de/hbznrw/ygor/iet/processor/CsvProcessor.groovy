@@ -69,7 +69,7 @@ class CsvProcessor extends ProcessorAbstract {
                 }
                 
                 bridge.increaseProgress()
-                def ignoreReturnValue = processRecord(record, indexOfKey, typeOfKey, ++count)
+                rocessRecord(record, indexOfKey, typeOfKey, ++count)
             }
         }
         
@@ -77,9 +77,7 @@ class CsvProcessor extends ProcessorAbstract {
     }
 
     @Override
-    ArrayList processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
-
-        ArrayList modifiedRecord = record.toList()
+    void processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
 
         def data = bridge.master.document.data
         def key  = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey)
@@ -115,10 +113,6 @@ class CsvProcessor extends ProcessorAbstract {
                         msg = env.message.join(", ")
 
                     state = env.state
-    
-                    modifiedRecord << (msg)
-                    modifiedRecord << (q.toString() + '_' + state)
-                    
                     println("#" + count + " processed " + key + " -> " + msg + " : " + state)
                 }
                 else if(env.type == Envelope.COMPLEX){
@@ -130,14 +124,11 @@ class CsvProcessor extends ProcessorAbstract {
                         }
                         else if(Status.RESULT_MULTIPLE_MATCHES == ste) {
                             if(env.messages[i])
-                                msg = env.messages[i].join(", ")
+                                msg = env.messages[i].join("|")
                             else
                                 msg = null // todo ??
                         }
-                        
-                        modifiedRecord << (msg)
-                        modifiedRecord << (q.toString() + '_' + state)
-                        
+
                         println("#" + count + " processed " + key + " -> " + msg + " : " + state)
                     }    
                 }
@@ -153,7 +144,5 @@ class CsvProcessor extends ProcessorAbstract {
         } else {
             println("#" + count + " skipped empty ISSN")
         }
-
-        return modifiedRecord
     }
 }

@@ -4,25 +4,18 @@ import de.hbznrw.ygor.iet.enums.*
 
 class DataContainer {
 
-    Meta    meta
+    Info    info
     Package pkg
     def     titles
     
     DataContainer() {
 
-        meta = new Meta(
+        info = new Info(
             type:   "TODO",
             ygor:   "TODO",
             date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1'))
         )
-        pkg      = new Package()
-        titles   = []
+        pkg      = new MV(new Package())
+        titles   = new MV([]) // list
     }
-}
-
-class Meta {
-    
-    String type = ""
-    String ygor = ""
-    String date = ""
 }

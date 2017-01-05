@@ -22,7 +22,6 @@ abstract class ProcessorAbstract implements ProcessorInterface {
 		this.bridge = bridge
 	}
 		
-	ArrayList processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
-		return new ArrayList()
+	void processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
 	}
 }

@@ -23,15 +23,16 @@ class Envelope {
     Envelope(){
     }
     
+    
     Envelope(Status state, ArrayList message) {
-        this.state   = state
-        this.message = message
+        this.state   = state                    // Status.CONST
+        this.message = message                  // String | []
         this.type    = Envelope.SIMPLE
     }
     
     Envelope(List states, HashMap messages) {
-        this.states   = states
-        this.messages = messages
+        this.states   = states                  // [Status.CONST1, Status.CONST2, Status.CONST3]
+        this.messages = messages                // [a1:[b11, b12, b13, b14], a2:[b21, b22, b23, b24], a3:[b31, b32, b33, b34]]
         this.type     = Envelope.COMPLEX
     }
 
