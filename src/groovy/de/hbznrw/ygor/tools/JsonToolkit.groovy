@@ -38,7 +38,7 @@ public class JsonToolkit {
         def jsonBuilder = new groovy.json.StreamingJsonBuilder(writer)
      
         jsonBuilder {
-            'meta'    dc.meta
+            'meta'    dc.info
             'package' dc.pkg
             'titles'  dc.titles
         }

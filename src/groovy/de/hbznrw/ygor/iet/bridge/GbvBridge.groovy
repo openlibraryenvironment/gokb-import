@@ -18,11 +18,14 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
     // api requests to do 
 	def query = [
         Query.ZDBID,
-        Query.GBVGVKPPN,
-        Query.GBVPISSN,
-        Query.GBVEISSN,
-        Query.GBVTITLE,
-        Query.GBVPUBLISHER
+        Query.GBV_GVKPPN,
+        Query.GBV_PISSN,
+        Query.GBV_EISSN,
+        Query.GBV_TITLE,
+        Query.GBV_PUBLISHER,
+        Query.GBV_PUBLISHED_FROM,
+        Query.GBV_PUBLISHED_TO,
+        Query.GBV_TIPP_URL
         ]
     
     HashMap options

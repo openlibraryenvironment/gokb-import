@@ -69,7 +69,7 @@ class CsvProcessor extends ProcessorAbstract {
                 }
                 
                 bridge.increaseProgress()
-                rocessRecord(record, indexOfKey, typeOfKey, ++count)
+                processRecord(record, indexOfKey, typeOfKey, ++count)
             }
         }
         
@@ -80,7 +80,7 @@ class CsvProcessor extends ProcessorAbstract {
     void processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
 
         def data = bridge.master.document.data
-        def key  = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey)
+        def key  = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey).toString()
         if("" != key) {
 
             bridge.connector.poll(key)
@@ -88,14 +88,14 @@ class CsvProcessor extends ProcessorAbstract {
             def saveTitle = false
             def title     = DataMapper.getExistingTitleByPrimaryIdentifier(data, key)
             if(!title) {
-                title     = new Title(key)
+                title     = new Title()
                 saveTitle = true
             }
             
             def saveTipp = false
             def tipp     = DataMapper.getExistingTippByPrimaryIdentifier(data, key)
             if(!tipp) {
-                tipp     = PackageStruct.getNewTipp(key)
+                tipp     = PackageStruct.getNewTipp()
                 saveTipp = true
             }
             
@@ -136,10 +136,14 @@ class CsvProcessor extends ProcessorAbstract {
                 DataMapper.mapToTitle(title, q, env)
                 DataMapper.mapToTipp(tipp, q, env)
             }
-            if(saveTitle)
-                data.titles << title
-            if(saveTipp)
-                data.pkg.tipps << tipp
+            if(saveTitle){
+                println "saveTitle: " + key + " - " +  title
+                data.titles.v << ["${key}": new Pod(title)]
+            }
+            if(saveTipp){
+                println "saveTipp: " + key + " - " +  tipp
+                data.pkg.v.tipps.v << ["${key}": new Pod(tipp)]
+            }
             
         } else {
             println("#" + count + " skipped empty ISSN")

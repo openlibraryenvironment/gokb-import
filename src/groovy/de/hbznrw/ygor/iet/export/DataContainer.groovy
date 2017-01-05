@@ -4,9 +4,9 @@ import de.hbznrw.ygor.iet.enums.*
 
 class DataContainer {
 
-    Info    info
-    Package pkg
-    def     titles
+    Info info
+    Pod   pkg
+    Pod   titles
     
     DataContainer() {
 
@@ -15,7 +15,7 @@ class DataContainer {
             ygor:   "TODO",
             date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1'))
         )
-        pkg      = new MV(new Package())
-        titles   = new MV([]) // list
+        pkg      = new Pod(new Package())
+        titles   = new Pod([:]) // list
     }
 }

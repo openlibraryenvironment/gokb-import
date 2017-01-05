@@ -4,38 +4,26 @@ import de.hbznrw.ygor.iet.enums.*
 
 class Title {
         
-    String imprint          = ""
-    String issuer           = ""
-    String medium           = "Journal"
-    String type             = "Serial"
-    String name             = ""
-    String publishedFrom    = ""
-    String publishedTo      = ""
+    Pod imprint          = new Pod("")
+    Pod issuer           = new Pod("")
+    Pod medium           = new Pod("Journal", Status.HARDCODED)
+    Pod type             = new Pod("Serial", Status.HARDCODED)
+    Pod name             = new Pod("")
+    Pod publishedFrom    = new Pod("")
+    Pod publishedTo      = new Pod("")
     
-    def identifiers         = [] // list
-    def publisher_history   = [] // list
-    
-    // ???
-    String shortcode        = ""
-    String status           = "Current"
+    Pod identifiers       = new Pod([]) // list
+    Pod publisher_history = new Pod([]) // list
     
     // ???
-    String OAStatus         = ""
-    String continuingSeries = ""
-    String defaultAccessURL = ""
-    String editStatus       = "In Progress"
+    Pod shortcode        = new Pod("")
+    Pod status           = new Pod("Current", Status.HARDCODED)
     
-    Title(){
-    }
-    
-    Title(String issn){
-        
-        def tmp     = TitleStruct.getNewIdentifier()
-        tmp.type    = TitleStruct.ISSN
-        tmp.value   = issn
-        tmp._meta   = Status.UNDEFINED
-        identifiers << tmp
-    }
+    // ???
+    Pod OAStatus         = new Pod("")
+    Pod continuingSeries = new Pod("")
+    Pod defaultAccessURL = new Pod("")
+    Pod editStatus       = new Pod("In Progress", Status.HARDCODED)
 }
 
 
@@ -55,17 +43,15 @@ class TitleStruct {
 }
 
 class TitleIdentifier {
-    
-    String _meta    = Status.UNDEFINED    
-    String type     = ""
-    String value    = ""
+      
+    Pod type  = new Pod("")
+    Pod value = new Pod("")
 }
 
 class TitlePublisherHistory {
     
-    String _meta    = Status.UNDEFINED
-    String endDate
-    String name     = ""
-    String startDate
-    String status   = "Active"
+    Pod endDate   = new Pod()
+    Pod name      = new Pod("")
+    Pod startDate = new Pod()
+    Pod status    = new Pod("Active", Status.HARDCODED)
 }

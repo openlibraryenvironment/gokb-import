@@ -82,7 +82,7 @@ class EnrichmentController {
         
         if(!request.parameterMap['ignorePkgTitle']) {
             def pkgTitle = request.parameterMap['pkgTitle'][0]
-            document.data.pkg.packageHeader.name = pkgTitle
+            document.data.pkg.v.packageHeader.v.name.v = new Pod(pkgTitle)
         }
         document.setStatus(Enrichment.ProcessingState.UNTOUCHED)
         redirect(action:'process')

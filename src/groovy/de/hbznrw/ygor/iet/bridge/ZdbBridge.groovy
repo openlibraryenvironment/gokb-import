@@ -18,8 +18,8 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
     // api requests to do
 	def query = [
         Query.ZDBID,
-        Query.ZDBTITLE,
-        Query.ZDBPUBLISHER
+        Query.ZDB_TITLE,
+        Query.ZDB_PUBLISHER
         ]
     
     HashMap options

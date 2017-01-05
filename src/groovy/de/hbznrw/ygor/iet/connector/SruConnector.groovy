@@ -32,6 +32,8 @@ class SruConnector extends ConnectorAbstract {
     
     // ConnectorInterface
     
+    // TODO fix return value
+    
     @Override
     Envelope poll(String issn) {
         try {
@@ -70,10 +72,10 @@ class SruConnector extends ConnectorAbstract {
             case Query.ZDBID:
                 return getZdbID()
                 break;
-            case Query.ZDBTITLE:
+            case Query.ZDB_TITLE:
                 return getTitle()
                 break;
-            case Query.ZDBPUBLISHER:
+            case Query.ZDB_PUBLISHER:
                 return getPublisher()
                 break;
         }

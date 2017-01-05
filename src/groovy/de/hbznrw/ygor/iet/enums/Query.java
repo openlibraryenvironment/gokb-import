@@ -6,14 +6,18 @@ public enum Query {
 	EZBID ("EZBID"),
 	HBZID ("HBZID"),
 	
-	GBVGVKPPN    ("GBVGVKPPN"),
-	GBVTITLE     ("GBVTITLE"),
-    GBVPUBLISHER ("GBVPUBLISHER"),
-    GBVEISSN     ("GBVEISSN"),
-    GBVPISSN     ("GBVPISSN"),
+    GBV_EISSN     ("GBV_EISSN"),
+    GBV_PISSN     ("GBV_PISSN"),
     
-	ZDBTITLE     ("ZDBTITLE"),     // old
-	ZDBPUBLISHER ("ZDBPUBLISHER")  // old
+	GBV_GVKPPN         ("GBV_GVKPPN"),
+	GBV_TITLE          ("GBV_TITLE"),
+    GBV_PUBLISHER      ("GBV_PUBLISHER"),
+    GBV_PUBLISHED_FROM ("GBV_PUBLISHED_FROM"),
+    GBV_PUBLISHED_TO   ("GBV_PUBLISHED_TO"),
+    GBV_TIPP_URL       ("GBV_TIPP_URL"),
+        
+	ZDB_TITLE     ("ZDB_TITLE"),     // old
+	ZDB_PUBLISHER ("ZDB_PUBLISHER")  // old
 	;
 	
 	private String value;

@@ -25,7 +25,7 @@ class SruPicaConnector extends ConnectorAbstract {
     
     private String formatIdentifier = 'picaxml'
     private GPathResult response
-    private obvRecords              = []
+    private picaRecords             = []
     
 	SruPicaConnector(BridgeInterface bridge) {
 		super(bridge)
@@ -42,13 +42,15 @@ class SruPicaConnector extends ConnectorAbstract {
             String url  = requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn
             String text = new URL(url).getText()
             
+            println url
+            
             response = new XmlSlurper().parseText(text)
             
-            obvRecords = []
+            picaRecords = []
             response.records.record.each { r ->
-                def df = r.recordData.record.find{it.'@tag' == '002@'}
-                def sf = df.subfield.find{it.'@code' == '0'}
-                obvRecords << r
+                def test = r.recordData.record.datafield.findAll{it.'@tag' == '016H'}.subfield.findAll{it.'@code' == '0'}
+                if("Elektronische Ressource".equals(test?.text()))
+                    picaRecords << r
             }
             
         } catch(Exception e) {
@@ -88,29 +90,47 @@ class SruPicaConnector extends ConnectorAbstract {
             
         switch(query){
             case Query.ZDBID:
-                return resultOnly('006Z', '0')
+                return getFirstResultOnly('006Z', '0')
                 break;
-            case Query.GBVGVKPPN:
-                return resultOnly('003@', '0')
+            case Query.GBV_GVKPPN:
+                return getFirstResultOnly('003@', '0')
                 break;
-            case Query.GBVEISSN:
-                return resultOnly('005A', '0')
+            case Query.GBV_EISSN:
+                return getFirstResultOnly('005A', '0')
                 break;
-            case Query.GBVPISSN:
-                return resultOnly('005P', '0')
+            case Query.GBV_PISSN:
+                return getFirstResultOnly('005P', '0')
                 break;
-            case Query.GBVTITLE:
+            case Query.GBV_TITLE:
                 return getTitle()
                 break;
-            case Query.GBVPUBLISHER:
-                return getPublisher()
+            case Query.GBV_PUBLISHER:
+                return getAllPublisher()
+                break;
+            case Query.GBV_PUBLISHED_FROM:
+                return getFirstResultOnly('011@', 'a')
+                break;
+            case Query.GBV_PUBLISHED_TO:
+                return getFirstResultOnly('011@', 'b')
+                break;
+            case Query.GBV_TIPP_URL:
+                return getAllTippUrl()
                 break;
         }
         
         getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
     }
     
-    private String getPicaValue(Object record, String tag, String code) {
+    private Envelope getFirstResultOnly(String tag, String code) {
+        def result = []
+        
+        picaRecords.each { record ->
+            result << getFirstPicaValue(record.recordData.record, tag, code)
+        }
+        getEnvelopeWithMessage(result.minus(null).unique())
+    }
+    
+    private String getFirstPicaValue(Object record, String tag, String code) {
         def df = record.datafield.find{it.'@tag' == tag}
         def sf = df.subfield.find{it.'@code' == code}
 
@@ -118,49 +138,57 @@ class SruPicaConnector extends ConnectorAbstract {
         return sf ? sf.text() : null
     }  
     
-    private Envelope resultOnly(String tag, String code) {
+    private ArrayList getAllPicaValues(Object record, String tag, String code) {
         def result = []
+        def sf = record.datafield.findAll{it.'@tag' == tag}.subfield.findAll{it.'@code' == code}
         
-        obvRecords.each { record ->
-            result << getPicaValue(record.recordData.record, tag, code)
+        sf.each { f ->
+            result << f.text()      
         }
-        getEnvelopeWithMessage(result.minus(null).unique())
+        
+        println " .. getPicaValues(" +  tag + "" + code + ") = " + result
+        result
     }
-
+    
     private Envelope getTitle() {
         def result = []
         
         // correction
-        obvRecords.each { record ->
-            result << getPicaValue(record.recordData.record, '025@', 'a')
+        picaRecords.each { record ->
+            result << getFirstPicaValue(record.recordData.record, '025@', 'a')
         }
         // or .. main title
         if(result.minus(null).isEmpty()) {
-            obvRecords.each { record ->
-                result << getPicaValue(record.recordData.record,'021A', 'a')
+            picaRecords.each { record ->
+                result << getFirstPicaValue(record.recordData.record,'021A', 'a')
             }
         }
         getEnvelopeWithMessage(result.minus(null).unique())
     }
-
-    private Envelope getPublisher() {
-        def resultPublisher     = []
-        def resultPublisherDate = []
+    
+    private Envelope getAllPublisher() {
+        def resultName = []
         
-        obvRecords.each { record ->
-            resultPublisher << getPicaValue(record.recordData.record, '033A', 'n')
-            
-            def date1 = getPicaValue(record.recordData.record, '011@', 'a')
-            def date2 = getPicaValue(record.recordData.record, '031N', 'j')
-            date1     = date1 ? date1 : date2
-            date1     = date1 ? date1.split("/")[0] : null
-            
-            resultPublisherDate << date1
+        picaRecords.each { record ->
+            resultName += getAllPicaValues(record.recordData.record, '033A', 'n') // TODO
         }
         
         getEnvelopeWithComplexMessage([
-            'name':     resultPublisher.minus(null), 
-            'startDate':resultPublisherDate.minus(null)
+            'name':      resultName,
+            'startDate': '',
+            'endDate':   '',
+            'status':    '',
         ])
+        
+        //getEnvelopeWithMessage(result.minus(null))
+    }
+    
+    private Envelope getAllTippUrl() {
+        def result = []
+        
+        picaRecords.each { record ->
+            result += getAllPicaValues(record.recordData.record, '009P', 'a') // TODO
+        }
+        getEnvelopeWithMessage(result.minus(null).unique())
     }
 }
