@@ -1,7 +1,5 @@
 package de.hbznrw.ygor.iet.processor
 
-//@Grab(group='org.apache.commons', module='commons-csv', version='1.4')
-
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVFormat
@@ -73,13 +71,13 @@ class CsvProcessor extends ProcessorAbstract {
             }
         }
         
-        DataMapper.clearUp(bridge.master.document.data)
+        DataMapper.clearUp(bridge.master.enrichment.dataContainer)
     }
 
     @Override
     void processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
 
-        def data = bridge.master.document.data
+        def data = bridge.master.enrichment.dataContainer
         def key  = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey).toString()
         if("" != key) {
 

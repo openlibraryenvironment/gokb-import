@@ -69,11 +69,11 @@ class EnrichmentController {
             return
         }
 
-        def document = new Enrichment(getSessionFolder(), file.originalFilename)
-        document.setStatus(Enrichment.ProcessingState.PREPARE)
-        documents << ["${document.originHash}":document]
+        def en = new Enrichment(getSessionFolder(), file.originalFilename)
+        en.setStatus(Enrichment.ProcessingState.PREPARE)
+        documents << ["${en.originHash}":en]
         
-        file.transferTo(new File(document.originPathName))
+        file.transferTo(new File(en.originPathName))
 
         redirect(action:'process')
     }
@@ -82,9 +82,9 @@ class EnrichmentController {
         
         if(!request.parameterMap['ignorePkgTitle']) {
             def pkgTitle = request.parameterMap['pkgTitle'][0]
-            document.data.pkg.v.packageHeader.v.name.v = new Pod(pkgTitle)
+            enrichment.dataContainer.pkg.v.packageHeader.v.name.v = new Pod(pkgTitle)
         }
-        document.setStatus(Enrichment.ProcessingState.UNTOUCHED)
+        enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
         redirect(action:'process')
     }
     
@@ -107,7 +107,7 @@ class EnrichmentController {
             flash.error   = null
         }
         else {
-            def doc = getDocument()
+            def en = getEnrichment()
             def options = [
                 'indexOfKey':   pmIndex.toInteger() - 1,
                 'typeOfKey':    pmIndexType,
@@ -116,40 +116,40 @@ class EnrichmentController {
                 'ygorType':     grailsApplication.config.ygor.type
                 ]
             
-            if(doc.status != Enrichment.ProcessingState.WORKING) {
+            if(en.status != Enrichment.ProcessingState.WORKING) {
                 flash.info    = 'Bearbeitung gestartet.'
                 flash.warning = null
                 flash.error   = null
 
-                doc.process(options)
+                en.process(options)
             }
         }
         render(
                 view:'process',
                 model:[
-                    documents:documents, 
-                    currentView:'process',
-                    pIndex:pmIndex,
-                    pIndexType:pmIndexType,
-                    pOptions:pmOptions,
+                    documents:   documents, 
+                    currentView: 'process',
+                    pIndex:      pmIndex,
+                    pIndexType:  pmIndexType,
+                    pOptions:    pmOptions,
                     ]
                 )
     }
     def stopProcessingFile = {
         
-        def doc = getDocument()
-        doc.thread.isRunning = false
+        def en = getEnrichment()
+        en.thread.isRunning = false
         
         deleteFile()
     }
     
     def deleteFile = {
 
-        def doc = getDocument()
-        def origin = doc.getFile(Enrichment.FileType.ORIGIN)
+        def en     = getEnrichment()
+        def origin = en.getFile(Enrichment.FileType.ORIGIN)
 
         origin.delete()
-        documents.remove("${doc.originHash}")
+        documents.remove("${en.originHash}")
 
         render(
                 view:'process',
@@ -159,24 +159,25 @@ class EnrichmentController {
 
     def downloadFile() {
 
-        def doc = getDocument()
-        def result = doc.getFile(Enrichment.FileType.JSON)
+        def en     = getEnrichment()
+        def result = en.getFile(Enrichment.FileType.JSON)
 
         render(
                 file:result,
-                fileName:"${doc.resultName}.json"
+                fileName:"${en.resultName}.json"
                 )
     }
     
     def exportFile() {
         
-        def doc     = getDocument()
-        def result  = doc.getFile(Enrichment.FileType.JSON)
-        def http    = new HTTPBuilder(grailsApplication.config.gokbApi.xrTitleUri)
+        def en     = getEnrichment()
+        def raw    = en.getFile(Enrichment.FileType.JSON)
+        def result = DataMapper.clearUp(raw)
+        def http   = new HTTPBuilder(grailsApplication.config.gokbApi.xrTitleUri)
         
         http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd
 
-        println "EC.exportFile(" + doc.resultHash + ") -> " + grailsApplication.config.gokbApi.xrTitleUri
+        println "EC.exportFile(" + en.resultHash + ") -> " + grailsApplication.config.gokbApi.xrTitleUri
         
         http.request(POST) { req ->
             headers.'User-Agent' = 'ygor'
@@ -211,12 +212,12 @@ class EnrichmentController {
     
     def ajaxGetStatus() {
         
-        def doc = getDocument()
+        def en = getEnrichment()
         
-        render '{"status":"' + doc.getStatus() + '", "progress":' + doc.getProgress().round() + '}'
+        render '{"status":"' + en.getStatus() + '", "progress":' + en.getProgress().round() + '}'
     }
 
-    Enrichment getDocument() {
+    Enrichment getEnrichment() {
         
         def hash = (String) request.parameterMap['originHash'][0]
         documents.get("${hash}")

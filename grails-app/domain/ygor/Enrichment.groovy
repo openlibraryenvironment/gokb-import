@@ -24,7 +24,7 @@ class Enrichment {
 	File sessionFolder
     
 	def thread
-    def data
+    def dataContainer
 	
     static constraints = {
     }
@@ -35,7 +35,7 @@ class Enrichment {
 		originHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		originPathName 		= this.sessionFolder.getPath() + File.separator + originHash
 		
-        data                = new DataContainer()
+        dataContainer       = new DataContainer()
         
 		setStatus(ProcessingState.UNTOUCHED)
 	}
@@ -43,14 +43,14 @@ class Enrichment {
 	def process(HashMap options) {    
         //options.dump()
         
-		resultName 			= FileToolkit.getDateTimePrefixedFileName(originName)
-		resultHash 			= FileToolkit.getMD5Hash(originName + Math.random())
-		resultPathName 		= sessionFolder.getPath() + File.separator + resultHash
+		resultName 	   = FileToolkit.getDateTimePrefixedFileName(originName)
+		resultHash 	   = FileToolkit.getMD5Hash(originName + Math.random())
+		resultPathName = sessionFolder.getPath() + File.separator + resultHash
 		
-        data.info.ygor      = options.get('ygorVersion')
-        data.info.type      = options.get('ygorType')
+        dataContainer.info.ygor = options.get('ygorVersion')
+        dataContainer.info.type = options.get('ygorType')
         
-        thread              = new MultipleProcessingThread(this, options)
+        thread         = new MultipleProcessingThread(this, options)
 		thread.start()
 	}
 	
@@ -86,7 +86,7 @@ class Enrichment {
             */
             case FileType.JSON:
                 def file = new File(resultPathName)
-                def result = JsonToolkit.parseDataToJson(data)
+                def result = JsonToolkit.parseDataToJson(dataContainer)
                 file.write(result)
                 return file
                 break

@@ -4,7 +4,8 @@ import de.hbznrw.ygor.iet.enums.*
 
 class Info {
     
-    String type
-    String ygor
-    String date
+    String    type
+    String    ygor
+    String    date
+    ArrayList api
 }

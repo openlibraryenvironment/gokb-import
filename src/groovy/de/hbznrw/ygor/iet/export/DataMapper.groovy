@@ -39,24 +39,20 @@ class DataMapper {
                 def tmp         = TitleStruct.getNewPublisherHistory()
                 
                 tmp.name.v      = DataMapper.normString(env.messages['name'])
-                tmp.name.m      = DataMapper.normString(env.states.find{
-                        it.toString().startsWith('name_')
-                    }
+                tmp.name.m      = DataMapper.normString(
+                    (env.states.find{it.toString().startsWith('name_')}).toString().replaceFirst('name_', '')
                 )
                 tmp.startDate.v = DataMapper.normString(env.messages['startDate'])
-                tmp.startDate.m = DataMapper.normString(env.states.find{
-                        it.toString().startsWith('startDate_')
-                    }
+                tmp.startDate.m = DataMapper.normString(
+                    (env.states.find{it.toString().startsWith('startDate_')}).toString().replaceFirst('startDate_', '')
                 )         
                 tmp.endDate.v   = DataMapper.normString(env.messages['endDate'])
-                tmp.endDate.m   = DataMapper.normString(env.states.find{
-                        it.toString().startsWith('endDate_')
-                    }
+                tmp.endDate.m   = DataMapper.normString(
+                    (env.states.find{it.toString().startsWith('endDate_')}).toString().replaceFirst('endDate_', '')
                 )  
                 tmp.status.v    = DataMapper.normString(env.messages['status'])
-                tmp.status.m    = DataMapper.normString(env.states.find{
-                        it.toString().startsWith('status_')
-                    }
+                tmp.status.m    = DataMapper.normString(
+                    (env.states.find{it.toString().startsWith('status_')}).toString().replaceFirst('status_', '')
                 )
                 title.publisher_history.v << new Pod(tmp)
         }
@@ -117,25 +113,28 @@ class DataMapper {
         s.trim()
     }
     
-    static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String ident) {
+    static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String key) {
         def result = null
 
-        if(dc.titles.v.containsKey(ident))
-            result dc.titles.v[ident]
+        if(dc.titles.v.containsKey(key))
+            result dc.titles.v[key]
 
         result
     }
     
-    static Tipp getExistingTippByPrimaryIdentifier(DataContainer dc, String ident) {
+    static Tipp getExistingTippByPrimaryIdentifier(DataContainer dc, String key) {
         def result = null
 
-        if(dc.pkg.v.tipps.v.containsKey(ident))
-            result dc.pkg.v.tipps.v[ident]
+        if(dc.pkg.v.tipps.v.containsKey(key))
+            result dc.pkg.v.tipps.v[key]
 
         result
     }
     
     static clearUp(DataContainer dc) {
+        dc
+        // TODO
+        
         /*
         dc.titles.v.each{ title ->
             title.v.identifiers.v.removeIf {it.v.type == TitleStruct.ISSN} 

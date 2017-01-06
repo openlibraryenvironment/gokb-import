@@ -8,7 +8,7 @@ import java.nio.file.Paths
 
 class MultipleProcessingThread extends Thread {
 
-	private document
+	private enrichment
 	private indexOfKey
     private typeOfKey
 	private options
@@ -20,27 +20,27 @@ class MultipleProcessingThread extends Thread {
     
 	private BridgeInterface bridge
 	
-	MultipleProcessingThread(Enrichment document, HashMap options) {
-		this.document   = document
+	MultipleProcessingThread(Enrichment en, HashMap options) {
+		this.enrichment = en
 		this.indexOfKey = options.get('indexOfKey')
         this.typeOfKey  = options.get('typeOfKey')
 		this.options    = options.get('options')
 	}
 	
 	public void run() {
-		if(null == document.originPathName)
+		if(null == enrichment.originPathName)
 			System.exit(0)
 	
 		if(null == indexOfKey)
 			System.exit(0)
 		
-		document.setStatus(Enrichment.ProcessingState.WORKING)
+		enrichment.setStatus(Enrichment.ProcessingState.WORKING)
 		
 		println('Starting ..')
         
 		try {  
             LineNumberReader lnr = new LineNumberReader(
-                new FileReader(new File(document.originPathName))
+                new FileReader(new File(enrichment.originPathName))
                 );
             lnr.skip(Long.MAX_VALUE);
             progressTotal = lnr.getLineNumber() * options.size()
@@ -51,7 +51,7 @@ class MultipleProcessingThread extends Thread {
                     switch(option) {
                         case EzbBridge.IDENTIFIER:
                             bridge = new EzbBridge(this, new HashMap(
-                                inputFile:  document.originPathName, 
+                                inputFile:  enrichment.originPathName, 
                                 indexOfKey: indexOfKey, 
                                 typeOfKey:  typeOfKey
                                 )
@@ -59,7 +59,7 @@ class MultipleProcessingThread extends Thread {
                             break
                         case ZdbBridge.IDENTIFIER:
                             bridge = new ZdbBridge(this, new HashMap(
-                                inputFile:  document.originPathName,
+                                inputFile:  enrichment.originPathName,
                                 indexOfKey: indexOfKey,
                                 typeOfKey:  typeOfKey
                                 )
@@ -67,7 +67,7 @@ class MultipleProcessingThread extends Thread {
                             break
                         case GbvBridge.IDENTIFIER:
                             bridge = new GbvBridge(this, new HashMap(
-                                inputFile:  document.originPathName,
+                                inputFile:  enrichment.originPathName,
                                 indexOfKey: indexOfKey,
                                 typeOfKey:  typeOfKey
                                 )
@@ -80,7 +80,7 @@ class MultipleProcessingThread extends Thread {
             }
            								
 		} catch(Exception e) {
-			document.setStatusByCallback(Enrichment.ProcessingState.ERROR)
+			enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
 			
 			println(e.getMessage())
 			println(e.getStackTrace())
@@ -90,11 +90,11 @@ class MultipleProcessingThread extends Thread {
 		}
 		println('Done.')
 		
-		document.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}
     
     void increaseProgress() {
         progressCurrent++
-        document.setProgress((progressCurrent / progressTotal) * 100)
+        enrichment.setProgress((progressCurrent / progressTotal) * 100)
     }
 }
