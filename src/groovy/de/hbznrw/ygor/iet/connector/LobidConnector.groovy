@@ -32,13 +32,16 @@ class LobidConnector extends ConnectorAbstract {
     
     // ConnectorInterface
 	
+    @Override
+    String getAPIQuery(String issn) {
+        return requestUrl + queryIdentifier + issn
+    }
+    
 	@Override
-	Envelope poll(String value) {
+	Envelope poll(String issn) {
 		
 		try {
-			String url  = requestUrl + queryIdentifier + value
-			String text = new URL(url).getText(requestProperties: [Accept: requestHeader])
-
+			String text = new URL(getAPIQuery(issn)).getText(requestProperties: [Accept: requestHeader])
 			response = new JsonSlurper().parseText(text)
 			
 		} catch(Exception e) {

@@ -13,7 +13,8 @@ class DataContainer {
         info = new Info(
             type:   "TODO",
             ygor:   "TODO",
-            date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1'))
+            date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),
+            api:    []
         )
         pkg      = new Pod(new Package())
         titles   = new Pod([:]) // list

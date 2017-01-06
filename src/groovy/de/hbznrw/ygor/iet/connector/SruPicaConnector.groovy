@@ -34,16 +34,17 @@ class SruPicaConnector extends ConnectorAbstract {
     
     // ConnectorInterface
     
+    @Override
+    String getAPIQuery(String issn) {
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn
+    }
+    
     // TODO fix return value
     
     @Override
     Envelope poll(String issn) {
         try {
-            String url  = requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn
-            String text = new URL(url).getText()
-            
-            println url
-            
+            String text = new URL(getAPIQuery(issn)).getText()
             response = new XmlSlurper().parseText(text)
             
             picaRecords = []

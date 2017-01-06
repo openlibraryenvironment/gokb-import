@@ -42,6 +42,8 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	void go() throws Exception {
         println("Input:  " + options.get('inputFile'))
         
+        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
+        
         processor.setConfiguration(",", null, null)
         processor.processFile(options)
 	}

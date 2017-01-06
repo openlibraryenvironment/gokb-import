@@ -28,7 +28,10 @@ abstract class ConnectorAbstract implements ConnectorInterface {
 		this.bridge = bridge
 	}
 	
-    Envelope poll() {
+    String getAPIQuery(String issn) {
+        // TODO
+    }
+    Envelope poll(String issn) {
         // TODO
     }
     

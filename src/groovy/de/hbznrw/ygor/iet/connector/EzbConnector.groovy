@@ -31,13 +31,16 @@ class EzbConnector extends ConnectorAbstract {
 	
     // ConnectorInterface
     
+    @Override
+    String getAPIQuery(String issn) {
+        return requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + issn
+    }
+    
 	@Override
-	Envelope poll(String value) {
+	Envelope poll(String issn) {
 		
 		try {
-			String url  = requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + value
-			String text = new URL(url).getText()
-
+			String text = new URL(getAPIQuery(issn)).getText()
 			response = new XmlSlurper().parseText(text)
 			
 		} catch(Exception e) {

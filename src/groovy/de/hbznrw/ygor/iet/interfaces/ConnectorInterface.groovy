@@ -14,6 +14,13 @@ interface ConnectorInterface {
      * @param issn
      * @return
      */
+    String getAPIQuery(String issn)
+    
+    /**
+     * 
+     * @param issn
+     * @return
+     */
     Envelope poll(String issn)
     
     /**
