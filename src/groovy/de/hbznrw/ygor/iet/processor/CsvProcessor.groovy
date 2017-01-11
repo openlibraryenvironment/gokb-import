@@ -74,8 +74,6 @@ class CsvProcessor extends ProcessorAbstract {
                 processRecord(record, indexOfKey, typeOfKey, ++count)
             }
         }
-        
-        DataMapper.clearUp(bridge.master.enrichment.dataContainer)
     }
 
     @Override

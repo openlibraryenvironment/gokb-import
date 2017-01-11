@@ -87,14 +87,12 @@ class Enrichment {
             */
             case FileType.JSON:
                 def file = new File(resultPathName)
-                def result = DataTransformer.getSimpleJSON(dataContainer)
-                file.write(result)
+                file.write(DataTransformer.getSimpleJSON(dataContainer))
                 return file
                 break
             case FileType.JSON_DEBUG:
                 def file = new File(resultPathName)
-                def result = JsonToolkit.parseDataToJson(dataContainer)
-                file.write(result)
+                file.write(JsonToolkit.parseDataToJson(dataContainer))
                 return file
                 break
         }

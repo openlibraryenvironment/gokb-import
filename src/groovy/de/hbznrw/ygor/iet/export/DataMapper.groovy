@@ -133,20 +133,4 @@ class DataMapper {
 
         result
     }
-    
-    static clearUp(DataContainer dc) {
-        dc
-        // TODO
-        
-        /*
-        dc.titles.v.each{ title ->
-            title.v.identifiers.v.removeIf {it.v.type == TitleStruct.ISSN} 
-        }*/
-        // TODO
-        /*
-        dc.pkg.tipps.each{ tipp ->
-            tipp.title.identifiers.removeIf {it.type == TitleStruct.ISSN}
-        }
-        */
-    }
 }

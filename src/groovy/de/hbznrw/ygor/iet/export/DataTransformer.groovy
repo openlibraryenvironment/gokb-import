@@ -18,22 +18,69 @@ class DataTransformer {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
 
-        json = DataTransformer.parsePackageHeader(json)
+        json = DataStats.statisticBeforeParsing(json)
         
+        json = DataTransformer.parsePackageHeader(json)
         json = DataTransformer.parseCuratoryGroups(json)
         json = DataTransformer.parseSource(json)
         json = DataTransformer.parseVariantNames(json)
-        
         json = DataTransformer.parseTipps(json)
         json = DataTransformer.parseCoverage(json)
         json = DataTransformer.parseTitles(json)
         json = DataTransformer.parsePublisherHistory(json)
-        
         json = DataTransformer.parseIdentifiers(json)
+        
+        json = DataTransformer.cleanUp(json)
+        json = DataStats.statisticAfterCleanUp(json)
         
         new JsonBuilder(json).toPrettyString()      
     }
 
+    static Object cleanUp(Object json){
+        
+        // remove empty identifiers
+        json.package.tipps.each{ tipp ->
+            def identifiers = []
+            tipp.title.identifiers.each { ident ->
+                if(ident.value) {
+                    identifiers << ident
+                }
+            }
+            tipp.title.identifiers = identifiers
+        }
+        
+        //remove tipps without name and identifier
+        def tipps = []
+        json.package.tipps.each{ tipp ->
+            if(tipp.title.name?.trim() != "" && tipp.title.identifiers?.size() > 0) {
+                tipps << tipp
+            }
+        }
+        json.package.tipps = tipps
+        
+        // remove empty identifiers
+        json.titles.each{ title ->
+            def identifiers = []
+            title.identifiers.each { ident ->
+                if(ident.value) {
+                    identifiers << ident
+                }
+            }
+            title.identifiers = identifiers
+        }
+        
+        //remove titles without name and identifier
+        def titles = []
+        json.titles.each{ title ->
+            if(title.name?.trim() != "" && title.identifiers?.size() > 0) {
+                titles << title
+            }
+        }
+        json.titles = titles
+        
+        json
+    }
+    
     static Object parsePackageHeader(Object json) {
         
         println ". DataTransformer.parsePackageHeader()"

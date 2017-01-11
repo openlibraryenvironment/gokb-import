@@ -8,4 +8,5 @@ class Meta {
     String    ygor
     String    date
     ArrayList api
+    HashMap   stats
 }
