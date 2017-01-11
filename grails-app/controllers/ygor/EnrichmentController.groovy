@@ -161,7 +161,16 @@ class EnrichmentController {
 
         def en     = getEnrichment()
         def result = en.getFile(Enrichment.FileType.JSON)
-
+        render(
+                file:result,
+                fileName:"${en.resultName}.json"
+                )
+    }
+    
+    def downloadDebugFile() {
+        
+        def en      = getEnrichment()
+        def result = en.getFile(Enrichment.FileType.JSON_DEBUG)
         render(
                 file:result,
                 fileName:"${en.resultName}.json"
@@ -170,10 +179,14 @@ class EnrichmentController {
     
     def exportFile() {
         
-        def en     = getEnrichment()
-        def raw    = en.getFile(Enrichment.FileType.JSON)
-        def result = DataMapper.clearUp(raw)
-        def http   = new HTTPBuilder(grailsApplication.config.gokbApi.xrTitleUri)
+        // TODO split file
+        //return only json.package
+        //return only json.titles
+
+        def en      = getEnrichment()
+        def rawFile = en.getFile(Enrichment.FileType.JSON)
+        def result  = DataMapper.clearUp(rawFile)
+        def http    = new HTTPBuilder(grailsApplication.config.gokbApi.xrTitleUri)
         
         http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd
 

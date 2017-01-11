@@ -94,6 +94,7 @@ class CsvProcessor extends ProcessorAbstract {
             def tipp     = DataMapper.getExistingTippByPrimaryIdentifier(data, key)
             if(!tipp) {
                 tipp     = PackageStruct.getNewTipp()
+                tipp.coverage.v << PackageStruct.getNewTippCoverage() // TODO j4testing
                 saveTipp = true
             }
             

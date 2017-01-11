@@ -2,12 +2,13 @@ package ygor
 
 import de.hbznrw.ygor.iet.MultipleProcessingThread
 import de.hbznrw.ygor.iet.export.DataContainer
+import de.hbznrw.ygor.iet.export.DataTransformer
 import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.export.DataMapper
 
 class Enrichment {
 
-    static enum FileType {ORIGIN, RESULT, JSON}
+    static enum FileType {ORIGIN, RESULT, JSON, JSON_DEBUG}
     
 	static enum ProcessingState {UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR}
 	ProcessingState status
@@ -85,6 +86,12 @@ class Enrichment {
                 break
             */
             case FileType.JSON:
+                def file = new File(resultPathName)
+                def result = DataTransformer.getSimpleJSON(dataContainer)
+                file.write(result)
+                return file
+                break
+            case FileType.JSON_DEBUG:
                 def file = new File(resultPathName)
                 def result = JsonToolkit.parseDataToJson(dataContainer)
                 file.write(result)

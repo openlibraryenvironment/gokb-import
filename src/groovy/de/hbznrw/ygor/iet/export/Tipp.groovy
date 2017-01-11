@@ -18,7 +18,7 @@ class Tipp {
 
 class TippCoverage {
      
-    Pod coverageDepth = new Pod("")
+    Pod coverageDepth = new Pod("Fulltext", Status.HARDCODED)
     Pod coverageNote  = new Pod("")
     Pod embargo       = new Pod("")
     Pod endDate       = new Pod("")

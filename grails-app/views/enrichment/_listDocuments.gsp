@@ -96,7 +96,7 @@
 			
 			<div class="row">
 			
-				<div class="col-xs-6">
+				<div class="col-xs-12">
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 		    			<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-default"/>
@@ -113,8 +113,9 @@
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 		    			<g:actionSubmit action="downloadFile" value="JSON speichern" class="btn btn-success"/>
-		    			<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success"
--		    				data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" />
+		    			<g:actionSubmit action="downloadDebugFile" value="DEBUG speichern" class="btn btn-success"/>
+		    			<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success disabled"
+		    				data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" disabled="disabled"/>
 		    			
 		    		</g:if>
 		    		
@@ -161,7 +162,7 @@
 							}
 						});
 					}
-					var ygorInterval${doc.key} = setInterval(ygorDocumentStatus${doc.key}, 1000);
+					var ygorInterval${doc.key} = setInterval(ygorDocumentStatus${doc.key}, 1500);
 				</script>
 			</g:if>
 		</g:form>
