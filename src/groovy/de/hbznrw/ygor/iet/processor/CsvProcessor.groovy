@@ -4,11 +4,15 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
+
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.*
+import de.hbznrw.ygor.iet.export.structure.PackageStruct
+import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
+
 import java.nio.file.Paths
 import java.util.ArrayList
 

@@ -2,6 +2,9 @@ package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.iet.export.structure.Tipp
+import de.hbznrw.ygor.iet.export.structure.Title
+import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
 
 class DataMapper {

@@ -2,7 +2,7 @@
 
 <%@ page 
 	import="ygor.Enrichment" 
-	import="de.hbznrw.ygor.iet.export.TitleStruct"
+	import="de.hbznrw.ygor.iet.export.structure.TitleStruct"
 	import="de.hbznrw.ygor.iet.bridge.*"
 %>
 
