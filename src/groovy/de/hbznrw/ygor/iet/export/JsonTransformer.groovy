@@ -6,7 +6,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-class DataTransformer {
+class JsonTransformer {
     
     /*
      * the ugly ...  
@@ -20,17 +20,17 @@ class DataTransformer {
 
         json = DataStats.statisticBeforeParsing(json)
         
-        json = DataTransformer.parsePackageHeader(json)
-        json = DataTransformer.parseCuratoryGroups(json)
-        json = DataTransformer.parseSource(json)
-        json = DataTransformer.parseVariantNames(json)
-        json = DataTransformer.parseTipps(json)
-        json = DataTransformer.parseCoverage(json)
-        json = DataTransformer.parseTitles(json)
-        json = DataTransformer.parsePublisherHistory(json)
-        json = DataTransformer.parseIdentifiers(json)
+        json = JsonTransformer.parsePackageHeader(json)
+        json = JsonTransformer.parseCuratoryGroups(json)
+        json = JsonTransformer.parseSource(json)
+        json = JsonTransformer.parseVariantNames(json)
+        json = JsonTransformer.parseTipps(json)
+        json = JsonTransformer.parseCoverage(json)
+        json = JsonTransformer.parseTitles(json)
+        json = JsonTransformer.parsePublisherHistory(json)
+        json = JsonTransformer.parseIdentifiers(json)
         
-        json = DataTransformer.cleanUp(json)
+        json = JsonTransformer.cleanUp(json)
         json = DataStats.statisticAfterCleanUp(json)
         
         new JsonBuilder(json).toPrettyString()      

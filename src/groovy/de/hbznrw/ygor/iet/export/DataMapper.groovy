@@ -26,13 +26,13 @@ class DataMapper {
                 tmp.type.v = "gvk_ppn"
                 
             tmp.type.m  = Status.IGNORE
-            tmp.value.v = DataMapper.normString(env.message)
+            tmp.value.v = DataNormalizer.normIdentifier(env.message, tmp.type.v)
             tmp.value.m = env.state
             title.identifiers.v << new Pod(tmp)
         }
         
         else if(query == Query.GBV_TITLE) {
-            title.name.v = DataMapper.normString(env.message)
+            title.name.v = DataNormalizer.normString(env.message)
             title.name.m = env.state
         }
         
@@ -41,32 +41,32 @@ class DataMapper {
                 // TODO refactoring
                 def tmp         = TitleStruct.getNewPublisherHistory()
                 
-                tmp.name.v      = DataMapper.normString(env.messages['name'])
-                tmp.name.m      = DataMapper.normString(
+                tmp.name.v      = DataNormalizer.normString(env.messages['name'])
+                tmp.name.m      = DataNormalizer.normString(
                     (env.states.find{it.toString().startsWith('name_')}).toString().replaceFirst('name_', '')
                 )
-                tmp.startDate.v = DataMapper.normString(env.messages['startDate'])
-                tmp.startDate.m = DataMapper.normString(
+                tmp.startDate.v = DataNormalizer.normString(env.messages['startDate'])
+                tmp.startDate.m = DataNormalizer.normString(
                     (env.states.find{it.toString().startsWith('startDate_')}).toString().replaceFirst('startDate_', '')
                 )         
-                tmp.endDate.v   = DataMapper.normString(env.messages['endDate'])
-                tmp.endDate.m   = DataMapper.normString(
+                tmp.endDate.v   = DataNormalizer.normString(env.messages['endDate'])
+                tmp.endDate.m   = DataNormalizer.normString(
                     (env.states.find{it.toString().startsWith('endDate_')}).toString().replaceFirst('endDate_', '')
                 )  
-                tmp.status.v    = DataMapper.normString(env.messages['status'])
-                tmp.status.m    = DataMapper.normString(
+                tmp.status.v    = DataNormalizer.normString(env.messages['status'])
+                tmp.status.m    = DataNormalizer.normString(
                     (env.states.find{it.toString().startsWith('status_')}).toString().replaceFirst('status_', '')
                 )
                 title.publisher_history.v << new Pod(tmp)
         }
         
         else if(query == Query.GBV_PUBLISHED_FROM) {
-            title.publishedFrom.v = DataMapper.normString(env.message)
+            title.publishedFrom.v = DataNormalizer.normDate(env.message, DataNormalizer.IS_START_DATE)
             title.publishedFrom.m = env.state
         }
         
         else if(query == Query.GBV_PUBLISHED_TO) {
-            title.publishedTo.v   = DataMapper.normString(env.message)
+            title.publishedTo.v = DataNormalizer.normDate(env.message, DataNormalizer.IS_END_DATE)
             title.publishedTo.m = env.state
         }
         
@@ -84,43 +84,30 @@ class DataMapper {
                 tmp.type.v = TitleStruct.EISSN
 
             tmp.type.m  = Status.IGNORE
-            tmp.value.v = DataMapper.normString(env.message)
+            tmp.value.v = DataNormalizer.normIdentifier(env.message, tmp.type.v)
             tmp.value.m = env.state
             
             tipp.title.v.identifiers.v << new Pod(tmp)
         }
         
         else if(query == Query.GBV_TITLE) {
-            tipp.title.v.name.v = DataMapper.normString(env.message)
+            tipp.title.v.name.v = DataNormalizer.normString(env.message)
             tipp.title.v.name.m = env.state
         }
         
         else if(query == Query.GBV_TIPP_URL) {
-            tipp.url.v = DataMapper.normString(env.message)
+            tipp.url.v = DataNormalizer.normString(env.message)
             tipp.url.m = env.state
         }
         
         tipp
     }
-    
-    static String normString(ArrayList list) {
-        list ? DataMapper.normString(list.join("|")) : ""
-    }
-    
-    static String normString(String s) {
-        if(!s)
-            return s
-        
-        s = s.replaceAll("  "," ")
-        s = s.replaceAll(" : ",": ")
-        s.trim()
-    }
-    
+  
     static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String key) {
         def result = null
 
         if(dc.titles.v.containsKey(key))
-            result dc.titles.v[key]
+            result = dc.titles.v[key]
 
         result
     }
@@ -129,7 +116,7 @@ class DataMapper {
         def result = null
 
         if(dc.pkg.v.tipps.v.containsKey(key))
-            result dc.pkg.v.tipps.v[key]
+            result = dc.pkg.v.tipps.v[key]
 
         result
     }
