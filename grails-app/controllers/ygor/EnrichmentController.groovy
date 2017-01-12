@@ -149,12 +149,13 @@ class EnrichmentController {
     
     def deleteFile = {
 
-        def en     = getEnrichment()
-        def origin = en.getFile(Enrichment.FileType.ORIGIN)
-
-        origin.delete()
-        documents.remove("${en.originHash}")
-
+        def en = getEnrichment()
+        if(en) {
+            def origin = en.getFile(Enrichment.FileType.ORIGIN)
+            if(origin)
+                origin.delete()
+            documents.remove("${en.originHash}")
+        }
         render(
                 view:'process',
                 model:[documents:documents, currentView:'process']
