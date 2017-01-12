@@ -2,6 +2,10 @@
 
 <div class="row">
 	<div class="col-xs-12">
+		<br />
+		<br />
+	</div>
+	<div class="col-xs-10 col-xs-offset-1">
 		<p>Bei Problemen oder Fragen kontaktieren Sie bitte ...</p>
 		<br />
 		<address>

@@ -8,7 +8,7 @@
 	&nbsp; Bestimmen Sie den Typ der gegebenen ISSN.
 	<br />
 	<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-	&nbsp; Wählen Sie die anzureichernden Informationen aus.
+	&nbsp; Wählen Sie Quellen für die anzureichernden Informationen.
 	<br />
 	<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 	&nbsp; Starten Sie die Bearbeitung.

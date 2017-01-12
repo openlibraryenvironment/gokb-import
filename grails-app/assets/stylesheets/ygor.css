@@ -2,6 +2,11 @@ body {
 	padding-top: 50px;
 }
 
+h3 {
+	color: #f18123;
+	font-weight: bold;
+	margin-bottom: 15px;
+}
 .navbar-inverse {
 	color: #fff;
 	background-color: #004678;
@@ -24,5 +29,5 @@ body {
 }
 
 #ygor-messages {
-	height: 60px;
+	min-height: 1px;
 }

@@ -2,12 +2,20 @@
 
 <div class="row">
 	<div class="col-xs-12">
+		<br />
+		<br />
+	</div>
+	<div class="col-xs-10 col-xs-offset-1">
 		<p>Wer oder was ist <em>Ygor</em>?</p>
 		<p>
 			<em>Ygor</em> ist ein kleines Werkzeug zur Anreicherung existierender Daten.
 			Im CSV-Format <em>(Comma-separated values)</em> vorliegende Dateien können durch automatisierte Nutzung externer Webservices
-			um verschiedene Identifier erweitert werden.
-			Ausgangspunkt für dieses Verfahren sind vorhandene ISSN-Angaben <em>(International Standard Serial Number)</em>. 
+			um verschiedene Informationen erweitert werden.
+			Dieses Verfahren orientiert wird durch vorhandene ISSN-Angaben <em>(International Standard Serial Number)</em> gesteuert. 
+		</p>
+		
+		<p>
+			Die so angereicherten Daten können anschließend über eine Schnittstelle an eine vorgegebene <em><strong>Knowledgebase</strong></em> übermittelt werden.
 		</p>
 		<p>
 			Richten Sie sich nach den Anweisungen in den grauen Informationsfeldern.

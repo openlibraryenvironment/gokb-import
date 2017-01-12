@@ -65,7 +65,11 @@ class EnrichmentController {
             flash.info    = null
             flash.warning = null
             flash.error   = 'Sie müssen eine gültige Datei auswählen.'
-            render(view:'process', model:[documents:documents])
+            render(view:'process', model:[
+                documents:documents,
+                currentView: 'process'
+                ]
+            )
             return
         }
 
@@ -169,7 +173,7 @@ class EnrichmentController {
     
     def downloadDebugFile() {
         
-        def en      = getEnrichment()
+        def en     = getEnrichment()
         def result = en.getFile(Enrichment.FileType.JSON_DEBUG)
         render(
                 file:result,
