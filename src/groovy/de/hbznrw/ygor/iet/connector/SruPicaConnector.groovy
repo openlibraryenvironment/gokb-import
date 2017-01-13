@@ -115,7 +115,10 @@ class SruPicaConnector extends ConnectorAbstract {
                 return getFirstResultOnly('011@', 'b')
                 break;
             case Query.GBV_TIPP_URL:
-                return getAllTippUrl()
+                return getAllTippURL()
+                break;
+            case Query.GBV_PLATFORM_URL:
+                return getFirstResultOnly('009P', '0')
                 break;
         }
         
@@ -168,23 +171,37 @@ class SruPicaConnector extends ConnectorAbstract {
     }
     
     private Envelope getAllPublisher() {
-        def resultName = []
+
+        def resultStartDate = []
+        def resultEndDate   = []
+        def resultName      = []
+        def resultStatus    = []
         
         picaRecords.each { record ->
-            resultName += getAllPicaValues(record.recordData.record, '033A', 'n') // TODO
+            record.recordData.record.datafield.findAll{it.'@tag' == '033A'}.each { df ->
+                def n = df.subfield.find{it.'@code' == 'n'}.text() // TODO or use p here ?
+                def h = df.subfield.find{it.'@code' == 'h'}.text()
+                
+                resultName      << n ? n : null
+                resultStartDate << h ? h : null
+                resultEndDate   << h ? h : null
+                resultStatus    << null
+            }
         }
         
+        println " .. getPicaValues(033An) = " + resultName
+        println " .. getPicaValues(033Ah) = " + resultStartDate
+        
+        // TODO refactor this
         getEnvelopeWithComplexMessage([
             'name':      resultName,
-            'startDate': '',
-            'endDate':   '',
-            'status':    '',
+            'startDate': resultStartDate,
+            'endDate':   resultEndDate,
+            'status':    resultStatus,
         ])
-        
-        //getEnvelopeWithMessage(result.minus(null))
-    }
+    } 
     
-    private Envelope getAllTippUrl() {
+    private Envelope getAllTippURL() {
         def result = []
         
         picaRecords.each { record ->

@@ -7,6 +7,8 @@ import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
 
+import java.sql.Timestamp
+
 class DataNormalizer {
 
     final static IS_START_DATE  = 1000
@@ -109,6 +111,9 @@ class DataNormalizer {
      * - "2008"
      * - "2005/06"
      * - "2002/2003"
+     * - "2005-"
+     * - "2005-06"
+     * - "2002-2003"
      * 
      * @param str
      * @param dateType DataMapper.IS_START_DATE|DataMapper.IS_END_DATE
@@ -118,17 +123,39 @@ class DataNormalizer {
         str = DataNormalizer.normString(str)
      
         if(str.contains("/")){
+            def tmp = str.split("/")
+            
             if(dateType.equals(DataNormalizer.IS_START_DATE)){
-                str = str.split("/")[0]
+                str = tmp[0]
             }
             else if(dateType.equals(DataNormalizer.IS_END_DATE)){
-                str = str.split("/")
-                if(str[1].length()<str[0].length() && str[0].length() == 4 && str[1].length() == 2){
-                    str = str[0].take(2) + str[1]
+                if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
+                    str = tmp[0].take(2) + tmp[1]
                 }
                 else {
-                    str = str.split("/")[1]
+                    str = tmp[1]
                 }
+            }
+        }
+        else if(str.contains("-")){
+            def tmp = str.split("-")
+            
+            if(dateType.equals(DataNormalizer.IS_START_DATE)){
+                str = tmp[0]
+            }
+            else if(dateType.equals(DataNormalizer.IS_END_DATE)){
+                if(tmp.length == 2) {
+                    if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
+                        str = tmp[0].take(2) + tmp[1]
+                    }
+                    else {
+                        str = tmp[1]
+                    }
+                }
+                else {
+                    return ''
+                }
+                
             }
         }
         
@@ -165,6 +192,7 @@ class DataNormalizer {
      * @return
      */
     static String normURL(String str) {
+        
         str = DataNormalizer.normString(str)
         
         def url = new URL(str)
@@ -173,6 +201,25 @@ class DataNormalizer {
         }
         else {
             str
+        }
+    }
+    
+    
+    /**
+     * 
+     * @param str
+     * @return
+     */
+    static isValidDate(String str) {
+        if(str.trim().equals("")){
+            return Status.MISSING_DATE
+        }
+        try {
+            def check = Timestamp.valueOf(str);
+            return Status.VALID_DATE
+        }
+        catch(Exception e) {
+            return Status.INVALID_DATE
         }
     }
 }

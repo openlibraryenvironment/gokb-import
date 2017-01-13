@@ -13,8 +13,12 @@ first 005A0						-	Title.identifiers.value (type: eissn) / Package.tipps.title.i
 first 005P0						-	Title.identifiers.value (type: pissn) / Package.tipps.title.identifier.value (type: pissn)
 first 011@a						-	Title.publishedFrom
 first 011@b						-	Title.publishedTo
-all 033An
+
+all 033An						-	Title.publisher_history.name
+	with 033Ah					-	Title.publisher_history.startDate / Title.publisher_history.endDate 
+
 all 009Pa
+all 009P0						-	Package.tipps.platform // TODO
 
 HARDCODED:
 

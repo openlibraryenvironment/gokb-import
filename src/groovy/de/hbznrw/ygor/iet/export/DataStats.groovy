@@ -13,6 +13,10 @@ class DataStats {
     final static RESULT_OK = 0
     final static RESULT_MULTIPLE_MATCHES = 1
     final static RESULT_NO_MATCH = 2
+    
+    final static VALID_DATE   = 0
+    final static INVALID_DATE = 1
+    final static MISSING_DATE = 2
         
     static Object statisticBeforeParsing(Object json){
         
@@ -40,9 +44,33 @@ class DataStats {
                 }
             } 
         }
-        json.meta.stats << ["titles.name with valid match":      titleName[DataStats.RESULT_OK]]
+        json.meta.stats << ["titles.name WITH SINGLE MATCH":     titleName[DataStats.RESULT_OK]]
         json.meta.stats << ["titles.name with multiple matches": titleName[DataStats.RESULT_MULTIPLE_MATCHES]]
         json.meta.stats << ["titles.name with no match":         titleName[DataStats.RESULT_NO_MATCH]]
+        
+        // titles.publisher_history
+        
+        List<Integer> publisherHistory = [0,0,0]
+        
+        json.titles.v.each{ key, value ->
+            value.v.each { titleField ->
+                if(titleField.key.equals("publisher_history")) {
+                    if(titleField.value.m.equals(Status.RESULT_OK.toString())) {
+                        publisherHistory[DataStats.RESULT_OK]++
+                    }
+                    else if(titleField.value.m.equals(Status.RESULT_MULTIPLE_MATCHES.toString())) {
+                         publisherHistory[DataStats.RESULT_MULTIPLE_MATCHES]++
+                    }
+                    else if(titleField.value.m.equals(Status.RESULT_NO_MATCH.toString())) {
+                        publisherHistory[DataStats.RESULT_NO_MATCH]++
+                    }
+                }
+            }
+        }
+        json.meta.stats << ["titles.publisher_history with single result":    publisherHistory[DataStats.RESULT_OK]]
+        json.meta.stats << ["titles.publisher_history with multiple results": publisherHistory[DataStats.RESULT_MULTIPLE_MATCHES]]
+        json.meta.stats << ["titles.publisher_history with no result":        publisherHistory[DataStats.RESULT_NO_MATCH]]
+        
         
         // titles.identifiers
         
@@ -72,9 +100,9 @@ class DataStats {
         }
         
         identifiers.each{ i ->
-            json.meta.stats["title.identifier [${i.key}] got valid match"]      = i.value[DataStats.RESULT_OK]
-            json.meta.stats["title.identifier [${i.key}] got multiple matches"] = i.value[DataStats.RESULT_MULTIPLE_MATCHES]
-            json.meta.stats["title.identifier [${i.key}] got no match"]         = i.value[DataStats.RESULT_NO_MATCH]
+            json.meta.stats["title.identifier ${i.key.toUpperCase()} GOT SINGLE RESULT"]     = i.value[DataStats.RESULT_OK]
+            json.meta.stats["title.identifier ${i.key.toUpperCase()} got multiple results"] = i.value[DataStats.RESULT_MULTIPLE_MATCHES]
+            json.meta.stats["title.identifier ${i.key.toUpperCase()} got no result"]         = i.value[DataStats.RESULT_NO_MATCH]
         }
         
         // tipps
@@ -98,18 +126,48 @@ class DataStats {
                 }
             }
         }
-        json.meta.stats << ["tipp.title.url with valid match":      tippUrls[DataStats.RESULT_OK]]
-        json.meta.stats << ["tipp.title.url with multiple matches": tippUrls[DataStats.RESULT_MULTIPLE_MATCHES]]
-        json.meta.stats << ["tipp.title.url with no match":         tippUrls[DataStats.RESULT_NO_MATCH]]
+        json.meta.stats << ["tipp.title.url GOT SINGLE RESULT":    tippUrls[DataStats.RESULT_OK]]
+        json.meta.stats << ["tipp.title.url got multiple results": tippUrls[DataStats.RESULT_MULTIPLE_MATCHES]]
+        json.meta.stats << ["tipp.title.url got not matching":     tippUrls[DataStats.RESULT_NO_MATCH]]
+        
+        
+        // dates
+        
+        List<Integer> phDates = [0,0,0]
+        
+        json.titles.v.each{ title ->
+            title.value.v.publisher_history.v.each { ph ->
+                ph.v.each { phe ->
+                    
+                    println phe.value
+                    
+                    if(phe.value.m.equals(Status.VALID_DATE.toString())){
+                        phDates[DataStats.VALID_DATE]++
+                    }
+                    else if(phe.value.m.equals(Status.INVALID_DATE.toString())){
+                        phDates[DataStats.INVALID_DATE]++
+                    }
+                    else if(phe.value.m.equals(Status.MISSING_DATE.toString())){
+                        phDates[DataStats.MISSING_DATE]++
+                    }
+                }
+            }
+        }
+        json.meta.stats << ["titles.publisher_history WITH VALID DATES":   phDates[DataStats.VALID_DATE]]
+        json.meta.stats << ["titles.publisher_history with invalid dates": phDates[DataStats.INVALID_DATE]]
+        json.meta.stats << ["titles.publisher_history with missing dates": phDates[DataStats.MISSING_DATE]]
         
         json
     }
     
     static Object statisticAfterCleanUp(Object json){
         
-        json.meta.stats << ["tipps after cleanUp" :  json.package.tipps.size()]
-        json.meta.stats << ["titles after cleanUp" : json.titles.size()]
+        // general
+        
+        json.meta.stats << ["tipps AFTER CLEANUP" :  json.package.tipps.size()]
+        json.meta.stats << ["titles AFTER CLEANUP" : json.titles.size()]
         
         json
     }
+   
 }

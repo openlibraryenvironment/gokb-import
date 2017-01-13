@@ -14,6 +14,12 @@ public enum Status {
 	HARDCODED          ("HARDCODED"),
 	// use for constants, tmp vars, etc
 	IGNORE             ("IGNORE"),
+	// use for valid date values
+    VALID_DATE         ("VALID_DATE"),
+	// use for non conform date values
+	INVALID_DATE       ("INVALID_DATE"),
+	// no value given
+	MISSING_DATE       ("MISSING_DATE"),
 
 	// api responses
 	

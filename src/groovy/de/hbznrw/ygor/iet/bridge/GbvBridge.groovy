@@ -25,7 +25,8 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_PUBLISHER,
         Query.GBV_PUBLISHED_FROM,
         Query.GBV_PUBLISHED_TO,
-        Query.GBV_TIPP_URL
+        Query.GBV_TIPP_URL,
+        Query.GBV_PLATFORM_URL
         ]
     
     HashMap options

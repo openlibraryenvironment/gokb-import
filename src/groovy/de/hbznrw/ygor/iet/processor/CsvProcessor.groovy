@@ -8,8 +8,7 @@ import org.apache.commons.csv.CSVRecord
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.*
-import de.hbznrw.ygor.iet.export.structure.PackageStruct
-import de.hbznrw.ygor.iet.export.structure.Title
+import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
 

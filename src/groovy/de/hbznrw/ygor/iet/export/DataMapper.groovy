@@ -2,9 +2,7 @@ package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.export.structure.Tipp
-import de.hbznrw.ygor.iet.export.structure.Title
-import de.hbznrw.ygor.iet.export.structure.TitleStruct
+import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.bridge.*
 
 class DataMapper {
@@ -38,26 +36,24 @@ class DataMapper {
         
         else if(query == Query.GBV_PUBLISHER) {
  
-                // TODO refactoring
-                def tmp         = TitleStruct.getNewPublisherHistory()
+            env.messages['name'].eachWithIndex{ elem, i ->
+            
+                def tmp    = TitleStruct.getNewPublisherHistory()
                 
-                tmp.name.v      = DataNormalizer.normString(env.messages['name'])
-                tmp.name.m      = DataNormalizer.normString(
+                tmp.name.v = DataNormalizer.normString(env.messages['name'][i])
+            
+                tmp.startDate.v = DataNormalizer.normDate(env.messages['startDate'][i], DataNormalizer.IS_START_DATE)
+                tmp.startDate.m = DataNormalizer.isValidDate(tmp.startDate.v)
+                       
+                tmp.endDate.v = DataNormalizer.normDate(env.messages['endDate'][i], DataNormalizer.IS_END_DATE)
+                tmp.endDate.m = DataNormalizer.isValidDate(tmp.endDate.v)
+                
+                title.publisher_history.v << new Pod(tmp)
+                //  store children status here
+                title.publisher_history.m = DataNormalizer.normString(
                     (env.states.find{it.toString().startsWith('name_')}).toString().replaceFirst('name_', '')
                 )
-                tmp.startDate.v = DataNormalizer.normString(env.messages['startDate'])
-                tmp.startDate.m = DataNormalizer.normString(
-                    (env.states.find{it.toString().startsWith('startDate_')}).toString().replaceFirst('startDate_', '')
-                )         
-                tmp.endDate.v   = DataNormalizer.normString(env.messages['endDate'])
-                tmp.endDate.m   = DataNormalizer.normString(
-                    (env.states.find{it.toString().startsWith('endDate_')}).toString().replaceFirst('endDate_', '')
-                )  
-                tmp.status.v    = DataNormalizer.normString(env.messages['status'])
-                tmp.status.m    = DataNormalizer.normString(
-                    (env.states.find{it.toString().startsWith('status_')}).toString().replaceFirst('status_', '')
-                )
-                title.publisher_history.v << new Pod(tmp)
+            }
         }
         
         else if(query == Query.GBV_PUBLISHED_FROM) {
@@ -98,6 +94,18 @@ class DataMapper {
         else if(query == Query.GBV_TIPP_URL) {
             tipp.url.v = DataNormalizer.normString(env.message)
             tipp.url.m = env.state
+        }
+        
+        else if(query == Query.GBV_PLATFORM_URL) {
+            def tmp = PackageStruct.getNewTippPlatform()
+            
+            tmp.name.v = DataNormalizer.normURL(env.message)
+            tmp.name.m = env.state
+            
+            tmp.primaryUrl.v = DataNormalizer.normURL(env.message)
+            tmp.primaryUrl.m = env.state
+
+            tipp.platform = new Pod(tmp)
         }
         
         tipp
