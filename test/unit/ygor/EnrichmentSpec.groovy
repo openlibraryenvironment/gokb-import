@@ -14,7 +14,4 @@ class EnrichmentSpec extends Specification {
 
     def cleanup() {
     }
-
-    void "test something"() {
-    }
 }

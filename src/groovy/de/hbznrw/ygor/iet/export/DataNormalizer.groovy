@@ -36,7 +36,9 @@ class DataNormalizer {
         if(!str)
             return str
         
-        str = str.replaceAll("  "," ").replaceAll(" : ",": ")
+        str = str.replaceAll("\\s+"," ")
+        str = str.replaceAll(" , ",", ").replaceAll(" ,",", ")
+        str = str.replaceAll(" : ",": ").replaceAll(" :",": ")
         str.trim()
     }
     
@@ -52,15 +54,14 @@ class DataNormalizer {
     static String normIdentifier(ArrayList list, Object type) {
         def result = []
         list.each{ e ->
-            println e
             result << DataNormalizer.normIdentifier(e.toString(), type)
         }
         result ? result.join("|") : ""
     }
     
     /**
-     * eissn/pissn: "1234567"   -> "1234-5678"
-     * eissn/pissn: "12345"     -> "123-456"
+     * eissn/pissn: "12345678"   -> "1234-5678"
+     * eissn/pissn: "1234567"    -> "1234-567"
      *
      * zdb:         "12345"     -> "1234-5"
      * zdb:         "12345678"  -> "1234567-8"
@@ -77,7 +78,8 @@ class DataNormalizer {
         str = str.replaceAll("-","").replaceAll("/","")
         
         if(type.equals(TitleStruct.EISSN) || type.equals(TitleStruct.PISSN)){
-            str = new StringBuilder(str).insert(Math.abs(str.length()/2).toInteger(), "-").toString();
+            if(str.length() > 4)
+                str = new StringBuilder(str).insert(4, "-").toString();
         }
         else if(type.equals(ZdbBridge.IDENTIFIER)){
             str = new StringBuilder(str).insert(Math.abs(str.length()-1).toInteger(), "-").toString();
@@ -122,7 +124,7 @@ class DataNormalizer {
     static String normDate(String str, Object dateType) {
         str = DataNormalizer.normString(str)
      
-        if(str.contains("/")){
+        if(str && str.contains("/")){
             def tmp = str.split("/")
             
             if(dateType.equals(DataNormalizer.IS_START_DATE)){
@@ -137,7 +139,7 @@ class DataNormalizer {
                 }
             }
         }
-        else if(str.contains("-")){
+        else if(str && str.contains("-")){
             def tmp = str.split("-")
             
             if(dateType.equals(DataNormalizer.IS_START_DATE)){
@@ -159,11 +161,13 @@ class DataNormalizer {
             }
         }
         
-        if(dateType.equals(DataNormalizer.IS_START_DATE)){
-            str += "-01-01 00:00:00.000"
-        }
-        else if(dateType.equals(DataNormalizer.IS_END_DATE)){
-            str += "-12-31 23:59:59.000"
+        if(str && str != "") {
+            if(dateType.equals(DataNormalizer.IS_START_DATE)){
+                str += "-01-01 00:00:00.000"
+            }
+            else if(dateType.equals(DataNormalizer.IS_END_DATE)){
+                str += "-12-31 23:59:59.000"
+            }
         }
         
         str
@@ -191,17 +195,21 @@ class DataNormalizer {
      * @param str
      * @return
      */
-    static String normURL(String str) {
-        
+    static String normURL(String str) {    
         str = DataNormalizer.normString(str)
         
-        def url = new URL(str)
-        if(url) {
-            url.getAuthority()
-        }
-        else {
-            str
-        }
+        try {
+            if(str && str.indexOf('http://') == -1 && str.indexOf('https://') == -1){
+                str = 'http://' + str
+            }
+            
+            def url = new URL(str)
+            if(url) {
+                str = url.getAuthority()
+            }
+        } catch(Exception e) {}
+        
+        str
     }
     
     
@@ -211,7 +219,7 @@ class DataNormalizer {
      * @return
      */
     static isValidDate(String str) {
-        if(str.trim().equals("")){
+        if(!str || str.trim().equals("")){
             return Status.MISSING_DATE
         }
         try {

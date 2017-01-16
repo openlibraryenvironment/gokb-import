@@ -14,7 +14,4 @@ class EnrichmentControllerSpec extends Specification {
 
     def cleanup() {
     }
-
-    void "test something"() {
-    }
 }

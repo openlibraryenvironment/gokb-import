@@ -32,6 +32,7 @@ class DataStats {
         json.titles.v.each{ key, value ->
             value.v.each{ titleField ->
                 if(titleField.key.equals("name")) {
+                    
                     if(titleField.value.m.equals(Status.RESULT_OK.toString())) {
                         titleName[DataStats.RESULT_OK]++
                     }
@@ -55,6 +56,7 @@ class DataStats {
         json.titles.v.each{ key, value ->
             value.v.each { titleField ->
                 if(titleField.key.equals("publisher_history")) {
+                    
                     if(titleField.value.m.equals(Status.RESULT_OK.toString())) {
                         publisherHistory[DataStats.RESULT_OK]++
                     }
@@ -113,7 +115,6 @@ class DataStats {
             value.v.each{ tippField ->
 
                 if(tippField.key.equals("url")) {
-                    
                     if(tippField.value.m.equals(Status.RESULT_OK.toString())) {
                         tippUrls[DataStats.RESULT_OK]++
                     }
@@ -138,8 +139,6 @@ class DataStats {
         json.titles.v.each{ title ->
             title.value.v.publisher_history.v.each { ph ->
                 ph.v.each { phe ->
-                    
-                    println phe.value
                     
                     if(phe.value.m.equals(Status.VALID_DATE.toString())){
                         phDates[DataStats.VALID_DATE]++
