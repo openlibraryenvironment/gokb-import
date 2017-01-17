@@ -15,8 +15,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'gbv'
     
-    // api requests to do 
-	def query = [
+	def tasks = [
         Query.ZDBID,
         Query.GBV_GVKPPN,
         Query.GBV_PISSN,
@@ -26,7 +25,8 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_PUBLISHED_FROM,
         Query.GBV_PUBLISHED_TO,
         Query.GBV_TIPP_URL,
-        Query.GBV_PLATFORM_URL
+        Query.GBV_PLATFORM_URL,
+        Query.GBV_TIPP_COVERAGE
         ]
     
     HashMap options

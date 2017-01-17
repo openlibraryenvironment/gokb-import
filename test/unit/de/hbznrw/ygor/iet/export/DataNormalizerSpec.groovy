@@ -138,6 +138,8 @@ class DataNormalizerSpec extends Specification {
                 "-2006",
                 "2005-06",
                 "2002-2003",
+                "10.2005-11.2006",
+                "10.2005 - 11.2006",
                 null,
                 ""
                 ]
@@ -149,6 +151,8 @@ class DataNormalizerSpec extends Specification {
                 ["", "2006-12-31 23:59:59.000"],
                 ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
                 ["2002-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
+                ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
+                ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
                 [null, null],
                 ["", ""]
                 ]
@@ -185,6 +189,28 @@ class DataNormalizerSpec extends Specification {
             DataNormalizer.normDate(list1, DataNormalizer.IS_END_DATE)   == resultEndDate1
             DataNormalizer.normDate(list2, DataNormalizer.IS_END_DATE)   == resultEndDate2
     }  
+    
+    void "normCoverageVolume(String str, Object dateType)"() {
+        given:
+            def test = [
+                "18.2005 - 27.2014",
+                "Verlag; 18.2005 - 27.2014",
+                "22.2022"
+                ]
+            def result = [
+                ["18", "27"],
+                ["18", "27"],
+                ["22", "22"]
+                ]
+            
+        expect:
+            test.eachWithIndex{e, i ->
+                println "\"${test[i]}\" >> \"${result[i][0]}\""
+                DataNormalizer.normCoverageVolume(test[i], DataNormalizer.IS_START_DATE) == result[i][0]
+                println "\"${test[i]}\" >> \"${result[i][1]}\""
+                DataNormalizer.normCoverageVolume(test[i], DataNormalizer.IS_END_DATE) == result[i][1]
+            }
+    }
     
     void "normURL(String str) "() {
         given:
@@ -234,12 +260,12 @@ class DataNormalizerSpec extends Specification {
                 ""
                 ]
             def result = [
-                Status.VALID_DATE,
-                Status.VALID_DATE,
-                Status.INVALID_DATE,
-                Status.INVALID_DATE,
-                Status.MISSING_DATE,
-                Status.MISSING_DATE
+                Status.VALIDATOR_DATE_IS_VALID,
+                Status.VALIDATOR_DATE_IS_VALID,
+                Status.VALIDATOR_DATE_IS_INVALID,
+                Status.VALIDATOR_DATE_IS_INVALID,
+                Status.VALIDATOR_DATE_IS_MISSING,
+                Status.VALIDATOR_DATE_IS_MISSING
                 ]
             
         expect:

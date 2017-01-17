@@ -120,6 +120,9 @@ class SruPicaConnector extends ConnectorAbstract {
             case Query.GBV_PLATFORM_URL:
                 return getFirstResultOnly('009P', '0')
                 break;
+            case Query.GBV_TIPP_COVERAGE:
+                return getTippCoverage()
+                break;
         }
         
         getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
@@ -171,7 +174,6 @@ class SruPicaConnector extends ConnectorAbstract {
     }
     
     private Envelope getAllPublisher() {
-
         def resultStartDate = []
         def resultEndDate   = []
         def resultName      = []
@@ -208,5 +210,45 @@ class SruPicaConnector extends ConnectorAbstract {
             result += getAllPicaValues(record.recordData.record, '009P', 'a') // TODO
         }
         getEnvelopeWithMessage(result.minus(null).unique())
+    }
+    
+    private Envelope getTippCoverage() {       
+        def resultCoverageNote  = []
+        def resultEmbargo       = []
+        def resultEndDate       = []
+        def resultEndIssue      = []
+        def resultEndVolume     = []
+        def resultStartDate     = []
+        def resultStartIssue    = []
+        def resultStartVolume   = []
+        
+        picaRecords.each { record ->
+            println record
+            record.recordData.record.datafield.findAll{it.'@tag' == '009P'}.each { df ->
+                def x = df.subfield.find{it.'@code' == 'x'}.text()
+                def z = df.subfield.find{it.'@code' == 'z'}.text()
+                
+                resultStartDate    << x ? x : null
+                resultEndDate      << x ? x : null
+                resultStartVolume  << x ? x : null
+                resultEndVolume    << x ? x : null
+                resultCoverageNote << z ? z : null
+            }
+        }
+        
+        println " .. getPicaValues(009Pz) = " + resultStartDate
+        println " .. getPicaValues(009Pz) = " + resultCoverageNote
+        
+        // TODO refactor this
+        getEnvelopeWithComplexMessage([
+            'coverageNote': resultCoverageNote,
+            'embargo':      resultEmbargo,
+            'endDate':      resultEndDate,
+            'endIssue':     resultEndIssue,
+            'endVolume':    resultEndVolume,
+            'startDate':    resultStartDate,
+            'startIssue':   resultStartIssue,
+            'startVolume':  resultStartVolume
+        ])
     }
 }

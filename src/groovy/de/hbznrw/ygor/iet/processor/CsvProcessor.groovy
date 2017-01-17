@@ -12,6 +12,7 @@ import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
 
+import java.io.ObjectInputStream.ValidationList
 import java.nio.file.Paths
 import java.util.ArrayList
 
@@ -95,11 +96,10 @@ class CsvProcessor extends ProcessorAbstract {
             def tipp     = DataMapper.getExistingTippByPrimaryIdentifier(data, key)
             if(!tipp) {
                 tipp     = PackageStruct.getNewTipp()
-                tipp.coverage.v << PackageStruct.getNewTippCoverage() // TODO j4testing
                 saveTipp = true
             }
             
-            bridge.query.each{ q ->
+            bridge.tasks.each{ q ->
                 def msg = ""
                 def state = Status.UNKNOWN_REQUEST
                 
@@ -137,11 +137,11 @@ class CsvProcessor extends ProcessorAbstract {
                 DataMapper.mapToTipp(tipp, q, env)
             }
             if(saveTitle){
-                println "saveTitle: " + key + " - " +  title
+                println "saveTitle: " + key
                 data.titles.v << ["${key}": new Pod(title)]
             }
             if(saveTipp){
-                println "saveTipp: " + key + " - " +  tipp
+                println "saveTipp: " + key
                 data.pkg.v.tipps.v << ["${key}": new Pod(tipp)]
             }
             

@@ -17,8 +17,7 @@ class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'hbz'
     
-    // api requests to do
-    def query = [
+    def tasks = [
         Query.HBZID
     ]
     

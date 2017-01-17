@@ -17,6 +17,8 @@ public enum Query {
     GBV_TIPP_URL        ("GBV_TIPP_URL"),
     GBV_PLATFORM_URL    ("GBV_PLATFORM_URL"),
         
+    GBV_TIPP_COVERAGE   ("GBV_TIPP_COVERAGE"),
+    
 	ZDB_TITLE     ("ZDB_TITLE"),     // old
 	ZDB_PUBLISHER ("ZDB_PUBLISHER")  // old
 	;

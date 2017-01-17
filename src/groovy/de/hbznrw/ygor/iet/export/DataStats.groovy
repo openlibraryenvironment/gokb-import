@@ -140,13 +140,13 @@ class DataStats {
             title.value.v.publisher_history.v.each { ph ->
                 ph.v.each { phe ->
                     
-                    if(phe.value.m.equals(Status.VALID_DATE.toString())){
+                    if(phe.value.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
                         phDates[DataStats.VALID_DATE]++
                     }
-                    else if(phe.value.m.equals(Status.INVALID_DATE.toString())){
+                    else if(phe.value.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                         phDates[DataStats.INVALID_DATE]++
                     }
-                    else if(phe.value.m.equals(Status.MISSING_DATE.toString())){
+                    else if(phe.value.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
                         phDates[DataStats.MISSING_DATE]++
                     }
                 }

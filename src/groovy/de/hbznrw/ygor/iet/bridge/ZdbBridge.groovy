@@ -14,9 +14,8 @@ import de.hbznrw.ygor.tools.FileToolkit
 class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'zdb'
-    
-    // api requests to do
-	def query = [
+
+	def tasks = [
         Query.ZDBID,
         Query.ZDB_TITLE,
         Query.ZDB_PUBLISHER

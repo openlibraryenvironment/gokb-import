@@ -108,6 +108,34 @@ class DataMapper {
             tipp.platform = new Pod(tmp)
         }
         
+        else if(query == Query.GBV_TIPP_COVERAGE) {
+            
+            env.messages['coverageNote'].eachWithIndex{ elem, i ->
+                def tmp = PackageStruct.getNewTippCoverage()
+                // TODO
+                tmp.coverageNote.v = DataNormalizer.normString(env.messages['coverageNote'][i])
+                tmp.coverageNote.m = DataNormalizer.normString(env.states[i])
+                
+                if(env.messages['startDate'][i]){
+                    tmp.startDate.v = DataNormalizer.normDate(env.messages['startDate'][i], DataNormalizer.IS_START_DATE)
+                    tmp.startDate.m = DataNormalizer.isValidDate(tmp.startDate.v)   
+                }
+                if(env.messages['endDate'][i]){
+                    tmp.endDate.v = DataNormalizer.normDate(env.messages['endDate'][i], DataNormalizer.IS_END_DATE)
+                    tmp.endDate.m = DataNormalizer.isValidDate(tmp.startDate.v)
+                }
+                if(env.messages['startVolume'][i]){
+                    tmp.startVolume.v = DataNormalizer.normCoverageVolume(env.messages['startVolume'][i], DataNormalizer.IS_START_DATE)
+                    tmp.startVolume.m = env.states[i]
+                }
+                if(env.messages['endVolume'][i]){
+                    tmp.endVolume.v = DataNormalizer.normCoverageVolume(env.messages['endVolume'][i], DataNormalizer.IS_END_DATE)
+                    tmp.endVolume.m = env.states[i]                 
+                }  
+                tipp.coverage.v << tmp
+            }
+        }
+       
         tipp
     }
   

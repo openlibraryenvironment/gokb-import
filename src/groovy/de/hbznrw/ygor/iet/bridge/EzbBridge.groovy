@@ -17,8 +17,7 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'ezb'
     
-    // api requests to do
-	def query = [
+	def tasks = [
         Query.EZBID
     ]
     
