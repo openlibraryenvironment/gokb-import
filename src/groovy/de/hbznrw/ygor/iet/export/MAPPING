@@ -20,6 +20,9 @@ all 033An						-	Title.publisher_history.name
 all 009Pa
 all 009P0						-	Package.tipps.platform // TODO
 
+009Px							-	Package.tipps.coverage.(endDate,endVolume,startDate,startVolume)
+009Pz							-	Package.tipps.coverage.note
+
 HARDCODED:
 
 "Journal"						-	Title.medium

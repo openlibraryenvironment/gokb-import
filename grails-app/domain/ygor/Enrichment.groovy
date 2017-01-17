@@ -2,9 +2,9 @@ package ygor
 
 import de.hbznrw.ygor.iet.MultipleProcessingThread
 import de.hbznrw.ygor.iet.export.DataContainer
-import de.hbznrw.ygor.iet.export.JsonTransformer
+import de.hbznrw.ygor.iet.export.Transformer
 import de.hbznrw.ygor.tools.*
-import de.hbznrw.ygor.iet.export.DataMapper
+import de.hbznrw.ygor.iet.export.Mapper
 
 class Enrichment {
 
@@ -87,7 +87,7 @@ class Enrichment {
             */
             case FileType.JSON:
                 def file = new File(resultPathName)
-                file.write(JsonTransformer.getSimpleJSON(dataContainer))
+                file.write(Transformer.getSimpleJSON(dataContainer))
                 return file
                 break
             case FileType.JSON_DEBUG:

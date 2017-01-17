@@ -14,7 +14,7 @@ import de.hbznrw.ygor.iet.export.structure.*
  * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
  */
 @TestMixin(GrailsUnitTestMixin)
-class DataNormalizerSpec extends Specification {
+class NormalizerSpec extends Specification {
 
     // fields
     // fixture methods
@@ -55,7 +55,7 @@ class DataNormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                DataNormalizer.normString(test[i]) == result[i]
+                Normalizer.normString(test[i]) == result[i]
             }
     }
     
@@ -75,7 +75,7 @@ class DataNormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                DataNormalizer.normString(test[i]) == result[i]
+                Normalizer.normString(test[i]) == result[i]
             }
     }
        
@@ -107,7 +107,7 @@ class DataNormalizerSpec extends Specification {
         expect: 
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                DataNormalizer.normIdentifier(test[i][0], test[i][1]) == result[i]
+                Normalizer.normIdentifier(test[i][0], test[i][1]) == result[i]
             }
             
             // TODO: not implemented DataNormalizer.normIdentifier("", EzbBridge.IDENTIFIER) 
@@ -124,8 +124,8 @@ class DataNormalizerSpec extends Specification {
             println "\"${list1}\" >> \"${result1}\""
             println "\"${list2}\" >> \"${result2}\""
             
-            DataNormalizer.normIdentifier(list1, TitleStruct.EISSN) == result1
-            DataNormalizer.normIdentifier(list2, TitleStruct.PISSN) == result2
+            Normalizer.normIdentifier(list1, TitleStruct.EISSN) == result1
+            Normalizer.normIdentifier(list2, TitleStruct.PISSN) == result2
     }   
     
     void "normDate(String str, Object dateType)"() {
@@ -160,8 +160,8 @@ class DataNormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> START_DATE:\"${result[i][0]}\" END_DATE:\"${result[i][1]}\""
-                DataNormalizer.normDate(test[0], DataNormalizer.IS_START_DATE) == result[i][0]
-                DataNormalizer.normDate(test[0], DataNormalizer.IS_END_DATE) == result[i][1]
+                Normalizer.normDate(test[0], Normalizer.IS_START_DATE) == result[i][0]
+                Normalizer.normDate(test[0], Normalizer.IS_END_DATE) == result[i][1]
             }
     }
     
@@ -184,10 +184,10 @@ class DataNormalizerSpec extends Specification {
             println "\"${list2}\" >> END_DATE:\"${resultEndDate2}\""
             
         expect:
-            DataNormalizer.normDate(list1, DataNormalizer.IS_START_DATE) == resultStartDate1
-            DataNormalizer.normDate(list2, DataNormalizer.IS_START_DATE) == resultStartDate2
-            DataNormalizer.normDate(list1, DataNormalizer.IS_END_DATE)   == resultEndDate1
-            DataNormalizer.normDate(list2, DataNormalizer.IS_END_DATE)   == resultEndDate2
+            Normalizer.normDate(list1, Normalizer.IS_START_DATE) == resultStartDate1
+            Normalizer.normDate(list2, Normalizer.IS_START_DATE) == resultStartDate2
+            Normalizer.normDate(list1, Normalizer.IS_END_DATE)   == resultEndDate1
+            Normalizer.normDate(list2, Normalizer.IS_END_DATE)   == resultEndDate2
     }  
     
     void "normCoverageVolume(String str, Object dateType)"() {
@@ -206,9 +206,9 @@ class DataNormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i][0]}\""
-                DataNormalizer.normCoverageVolume(test[i], DataNormalizer.IS_START_DATE) == result[i][0]
+                Normalizer.normCoverageVolume(test[i], Normalizer.IS_START_DATE) == result[i][0]
                 println "\"${test[i]}\" >> \"${result[i][1]}\""
-                DataNormalizer.normCoverageVolume(test[i], DataNormalizer.IS_END_DATE) == result[i][1]
+                Normalizer.normCoverageVolume(test[i], Normalizer.IS_END_DATE) == result[i][1]
             }
     }
     
@@ -232,7 +232,7 @@ class DataNormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                DataNormalizer.normURL(test[i]) == result[i]
+                Normalizer.normURL(test[i]) == result[i]
             }
     }
     
@@ -246,7 +246,7 @@ class DataNormalizerSpec extends Specification {
                 ]
          expect:
              println "\"${test[0]}\" >> \"${result[0]}\""
-             DataNormalizer.normURL(test[0]) == result[0]
+             Normalizer.normURL(test[0]) == result[0]
     } 
     
     void "isValidDate(String str)"() {
@@ -271,7 +271,7 @@ class DataNormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                DataNormalizer.isValidDate(test[i]) == result[i]
+                Normalizer.isValidDate(test[i]) == result[i]
             }
     }
 }

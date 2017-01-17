@@ -6,7 +6,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-class JsonTransformer {
+class Transformer {
     
     /*
      * the ugly ...  
@@ -18,25 +18,25 @@ class JsonTransformer {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
 
-        json = DataStats.statisticBeforeParsing(json)
+        json = Statistics.statisticBeforeParsing(json)
         
-        json = JsonTransformer.parsePackageHeader(json)
-        json = JsonTransformer.parseCuratoryGroups(json)
-        json = JsonTransformer.parseSource(json)
-        json = JsonTransformer.parseVariantNames(json)
-        json = JsonTransformer.parseTipps(json)
-        json = JsonTransformer.parseCoverage(json)
-        json = JsonTransformer.parseTitles(json)
-        json = JsonTransformer.parsePublisherHistory(json)
-        json = JsonTransformer.parseIdentifiers(json)
+        json = Transformer.parsePackageHeader(json)
+        json = Transformer.parseCuratoryGroups(json)
+        json = Transformer.parseSource(json)
+        json = Transformer.parseVariantNames(json)
+        json = Transformer.parseTipps(json)
+        json = Transformer.parseCoverage(json)
+        json = Transformer.parseTitles(json)
+        json = Transformer.parsePublisherHistory(json)
+        json = Transformer.parseIdentifiers(json)
         
-        json = JsonTransformer.cleanUp(json)
-        json = DataStats.statisticAfterCleanUp(json)
-        
+        json = Transformer.cleanUpJSON(json)
+        json = Statistics.statisticAfterCleanUp(json)
+
         new JsonBuilder(json).toPrettyString()      
     }
-
-    static Object cleanUp(Object json){
+    
+    static Object cleanUpJSON(Object json){
         
         // remove empty identifiers
         json.package.tipps.each{ tipp ->

@@ -5,7 +5,7 @@ import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.bridge.*
 
-class DataMapper {
+class Mapper {
 
     static Title mapToTitle(Title title, Query query, Envelope env) {
        
@@ -24,13 +24,13 @@ class DataMapper {
                 tmp.type.v = "gvk_ppn"
                 
             tmp.type.m  = Status.IGNORE
-            tmp.value.v = DataNormalizer.normIdentifier(env.message, tmp.type.v)
+            tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
             tmp.value.m = env.state
             title.identifiers.v << new Pod(tmp)
         }
         
         else if(query == Query.GBV_TITLE) {
-            title.name.v = DataNormalizer.normString(env.message)
+            title.name.v = Normalizer.normString(env.message)
             title.name.m = env.state
         }
         
@@ -40,29 +40,29 @@ class DataMapper {
             
                 def tmp    = TitleStruct.getNewPublisherHistory()
                 
-                tmp.name.v = DataNormalizer.normString(env.messages['name'][i])
+                tmp.name.v = Normalizer.normString(env.messages['name'][i])
             
-                tmp.startDate.v = DataNormalizer.normDate(env.messages['startDate'][i], DataNormalizer.IS_START_DATE)
-                tmp.startDate.m = DataNormalizer.isValidDate(tmp.startDate.v)
+                tmp.startDate.v = Normalizer.normDate(env.messages['startDate'][i], Normalizer.IS_START_DATE)
+                tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)
                        
-                tmp.endDate.v = DataNormalizer.normDate(env.messages['endDate'][i], DataNormalizer.IS_END_DATE)
-                tmp.endDate.m = DataNormalizer.isValidDate(tmp.endDate.v)
+                tmp.endDate.v = Normalizer.normDate(env.messages['endDate'][i], Normalizer.IS_END_DATE)
+                tmp.endDate.m = Normalizer.isValidDate(tmp.endDate.v)
                 
                 title.publisher_history.v << new Pod(tmp)
                 //  store children status here
-                title.publisher_history.m = DataNormalizer.normString(
+                title.publisher_history.m = Normalizer.normString(
                     (env.states.find{it.toString().startsWith('name_')}).toString().replaceFirst('name_', '')
                 )
             }
         }
         
         else if(query == Query.GBV_PUBLISHED_FROM) {
-            title.publishedFrom.v = DataNormalizer.normDate(env.message, DataNormalizer.IS_START_DATE)
+            title.publishedFrom.v = Normalizer.normDate(env.message, Normalizer.IS_START_DATE)
             title.publishedFrom.m = env.state
         }
         
         else if(query == Query.GBV_PUBLISHED_TO) {
-            title.publishedTo.v = DataNormalizer.normDate(env.message, DataNormalizer.IS_END_DATE)
+            title.publishedTo.v = Normalizer.normDate(env.message, Normalizer.IS_END_DATE)
             title.publishedTo.m = env.state
         }
         
@@ -80,29 +80,29 @@ class DataMapper {
                 tmp.type.v = TitleStruct.EISSN
 
             tmp.type.m  = Status.IGNORE
-            tmp.value.v = DataNormalizer.normIdentifier(env.message, tmp.type.v)
+            tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
             tmp.value.m = env.state
             
             tipp.title.v.identifiers.v << new Pod(tmp)
         }
         
         else if(query == Query.GBV_TITLE) {
-            tipp.title.v.name.v = DataNormalizer.normString(env.message)
+            tipp.title.v.name.v = Normalizer.normString(env.message)
             tipp.title.v.name.m = env.state
         }
         
         else if(query == Query.GBV_TIPP_URL) {
-            tipp.url.v = DataNormalizer.normString(env.message)
+            tipp.url.v = Normalizer.normString(env.message)
             tipp.url.m = env.state
         }
         
         else if(query == Query.GBV_PLATFORM_URL) {
             def tmp = PackageStruct.getNewTippPlatform()
             
-            tmp.name.v = DataNormalizer.normURL(env.message)
+            tmp.name.v = Normalizer.normURL(env.message)
             tmp.name.m = env.state
             
-            tmp.primaryUrl.v = DataNormalizer.normURL(env.message)
+            tmp.primaryUrl.v = Normalizer.normURL(env.message)
             tmp.primaryUrl.m = env.state
 
             tipp.platform = new Pod(tmp)
@@ -113,23 +113,23 @@ class DataMapper {
             env.messages['coverageNote'].eachWithIndex{ elem, i ->
                 def tmp = PackageStruct.getNewTippCoverage()
                 // TODO
-                tmp.coverageNote.v = DataNormalizer.normString(env.messages['coverageNote'][i])
-                tmp.coverageNote.m = DataNormalizer.normString(env.states[i])
+                tmp.coverageNote.v = Normalizer.normString(env.messages['coverageNote'][i])
+                tmp.coverageNote.m = Normalizer.normString(env.states[i])
                 
                 if(env.messages['startDate'][i]){
-                    tmp.startDate.v = DataNormalizer.normDate(env.messages['startDate'][i], DataNormalizer.IS_START_DATE)
-                    tmp.startDate.m = DataNormalizer.isValidDate(tmp.startDate.v)   
+                    tmp.startDate.v = Normalizer.normDate(env.messages['startDate'][i], Normalizer.IS_START_DATE)
+                    tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)   
                 }
                 if(env.messages['endDate'][i]){
-                    tmp.endDate.v = DataNormalizer.normDate(env.messages['endDate'][i], DataNormalizer.IS_END_DATE)
-                    tmp.endDate.m = DataNormalizer.isValidDate(tmp.startDate.v)
+                    tmp.endDate.v = Normalizer.normDate(env.messages['endDate'][i], Normalizer.IS_END_DATE)
+                    tmp.endDate.m = Normalizer.isValidDate(tmp.startDate.v)
                 }
                 if(env.messages['startVolume'][i]){
-                    tmp.startVolume.v = DataNormalizer.normCoverageVolume(env.messages['startVolume'][i], DataNormalizer.IS_START_DATE)
+                    tmp.startVolume.v = Normalizer.normCoverageVolume(env.messages['startVolume'][i], Normalizer.IS_START_DATE)
                     tmp.startVolume.m = env.states[i]
                 }
                 if(env.messages['endVolume'][i]){
-                    tmp.endVolume.v = DataNormalizer.normCoverageVolume(env.messages['endVolume'][i], DataNormalizer.IS_END_DATE)
+                    tmp.endVolume.v = Normalizer.normCoverageVolume(env.messages['endVolume'][i], Normalizer.IS_END_DATE)
                     tmp.endVolume.m = env.states[i]                 
                 }  
                 tipp.coverage.v << tmp

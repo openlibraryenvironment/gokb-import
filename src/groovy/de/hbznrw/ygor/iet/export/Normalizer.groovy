@@ -11,7 +11,7 @@ import de.hbznrw.ygor.iet.bridge.*
 
 import java.sql.Timestamp
 
-class DataNormalizer {
+class Normalizer {
 
     final static IS_START_DATE  = 1000
     final static IS_END_DATE    = 1001
@@ -25,7 +25,7 @@ class DataNormalizer {
      * @return  
      */
     static String normString(ArrayList list) {
-        list ? DataNormalizer.normString(list.join("|")) : ""
+        list ? Normalizer.normString(list.join("|")) : ""
     }
     
     /**
@@ -56,7 +56,7 @@ class DataNormalizer {
     static String normIdentifier(ArrayList list, Object type) {
         def result = []
         list.each{ e ->
-            result << DataNormalizer.normIdentifier(e.toString(), type)
+            result << Normalizer.normIdentifier(e.toString(), type)
         }
         result ? result.join("|") : ""
     }
@@ -76,7 +76,7 @@ class DataNormalizer {
         if(!str)
             return str
         
-        str = DataNormalizer.normString(str)
+        str = Normalizer.normString(str)
         str = str.replaceAll("-","").replaceAll("/","")
         
         if(type.equals(TitleStruct.EISSN) || type.equals(TitleStruct.PISSN)){
@@ -104,7 +104,7 @@ class DataNormalizer {
     static String normDate(ArrayList list, Object dateType) {
         def result = []
         list.each{ e ->
-            result << DataNormalizer.normDate(e, dateType)
+            result << Normalizer.normDate(e, dateType)
         }
         result ? result.join("|") : ""
     }
@@ -125,15 +125,15 @@ class DataNormalizer {
      * @return "YYYY-01-01 00:00:00.000"|"YYYY-12-31 00:00:00.000"
      */
     static String normDate(String str, Object dateType) {
-        str = DataNormalizer.normString(str)
+        str = Normalizer.normString(str)
      
         if(str && str.contains("/")){
             def tmp = str.split("/")
             
-            if(dateType.equals(DataNormalizer.IS_START_DATE)){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
                 str = tmp[0]
             }
-            else if(dateType.equals(DataNormalizer.IS_END_DATE)){
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
                 if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
                     str = tmp[0].take(2) + tmp[1]
                 }
@@ -145,10 +145,10 @@ class DataNormalizer {
         else if(str && str.contains("-")){
             def tmp = str.split("-")
             
-            if(dateType.equals(DataNormalizer.IS_START_DATE)){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
                 str = tmp[0]
             }
-            else if(dateType.equals(DataNormalizer.IS_END_DATE)){
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
                 if(tmp.length == 2) {
                     if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
                         str = tmp[0].take(2) + tmp[1]
@@ -164,15 +164,15 @@ class DataNormalizer {
             
             if(1 == StringUtils.countOccurrencesOf(str, ".")){
                 def tmp2 = str.split("\\.")
-                str = DataNormalizer.normString(tmp2[1])
+                str = Normalizer.normString(tmp2[1])
             }
         }
         
         if(str && str != "") {
-            if(dateType.equals(DataNormalizer.IS_START_DATE)){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
                 str += "-01-01 00:00:00.000"
             }
-            else if(dateType.equals(DataNormalizer.IS_END_DATE)){
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
                 str += "-12-31 23:59:59.000"
             }
         }
@@ -192,7 +192,7 @@ class DataNormalizer {
      */
     
     static String normCoverageVolume(String str, Object dateType) {
-        str = DataNormalizer.normString(str)
+        str = Normalizer.normString(str)
      
         if(str && str.contains(";")){
             def tmp = str.split(";")
@@ -201,10 +201,10 @@ class DataNormalizer {
         if(str && str.contains("-")){
             def tmp = str.split("-")
             
-            if(dateType.equals(DataNormalizer.IS_START_DATE)){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
                 str = tmp[0]
             }
-            else if(dateType.equals(DataNormalizer.IS_END_DATE)){
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
                 str = tmp[1]
             }
         }
@@ -213,7 +213,7 @@ class DataNormalizer {
             str = tmp2[0]
         }
         
-        DataNormalizer.normString(str)
+        Normalizer.normString(str)
     }
     
     /**
@@ -225,7 +225,7 @@ class DataNormalizer {
     static String normURL(ArrayList list) {
         def result = []
         list.each{ e ->
-            result << DataNormalizer.normURL(e)
+            result << Normalizer.normURL(e)
         }
         result ? result.join("|") : ""
     }
@@ -237,7 +237,7 @@ class DataNormalizer {
      * @return
      */
     static String normURL(String str) {    
-        str = DataNormalizer.normString(str)
+        str = Normalizer.normString(str)
         
         try {
             if(str && str.indexOf('http://') == -1 && str.indexOf('https://') == -1){

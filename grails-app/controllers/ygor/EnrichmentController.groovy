@@ -190,7 +190,7 @@ class EnrichmentController {
 
         def en      = getEnrichment()
         def rawFile = en.getFile(Enrichment.FileType.JSON)
-        def result  = DataMapper.clearUp(rawFile)
+        def result  = Mapper.clearUp(rawFile)
         def http    = new HTTPBuilder(grailsApplication.config.gokbApi.xrTitleUri)
         
         http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd

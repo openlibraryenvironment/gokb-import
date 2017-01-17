@@ -86,14 +86,14 @@ class CsvProcessor extends ProcessorAbstract {
             bridge.connector.poll(key)
           
             def saveTitle = false
-            def title     = DataMapper.getExistingTitleByPrimaryIdentifier(data, key)
+            def title     = Mapper.getExistingTitleByPrimaryIdentifier(data, key)
             if(!title) {
                 title     = new Title()
                 saveTitle = true
             }
             
             def saveTipp = false
-            def tipp     = DataMapper.getExistingTippByPrimaryIdentifier(data, key)
+            def tipp     = Mapper.getExistingTippByPrimaryIdentifier(data, key)
             if(!tipp) {
                 tipp     = PackageStruct.getNewTipp()
                 saveTipp = true
@@ -133,8 +133,8 @@ class CsvProcessor extends ProcessorAbstract {
                     }    
                 }
                 
-                DataMapper.mapToTitle(title, q, env)
-                DataMapper.mapToTipp(tipp, q, env)
+                Mapper.mapToTitle(title, q, env)
+                Mapper.mapToTipp(tipp, q, env)
             }
             if(saveTitle){
                 println "saveTitle: " + key
