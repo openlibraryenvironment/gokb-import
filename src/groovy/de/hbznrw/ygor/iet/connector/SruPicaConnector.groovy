@@ -106,7 +106,7 @@ class SruPicaConnector extends ConnectorAbstract {
                 return getTitle()
                 break;
             case Query.GBV_PUBLISHER:
-                return getAllPublisher()
+                return getPublisherAsFatEnvelope()
                 break;
             case Query.GBV_PUBLISHED_FROM:
                 return getFirstResultOnly('011@', 'a')
@@ -118,10 +118,10 @@ class SruPicaConnector extends ConnectorAbstract {
                 return getAllTippURL()
                 break;
             case Query.GBV_PLATFORM_URL:
-                return getFirstResultOnly('009P', '0')
+                return getAllPlattformURL()
                 break;
             case Query.GBV_TIPP_COVERAGE:
-                return getTippCoverage()
+                return getTippCoverageAsFatEnvelope()
                 break;
         }
         
@@ -173,7 +173,8 @@ class SruPicaConnector extends ConnectorAbstract {
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
-    private Envelope getAllPublisher() {
+    private Envelope getPublisherAsFatEnvelope() {
+        def result          = []
         def resultStartDate = []
         def resultEndDate   = []
         def resultName      = []
@@ -189,18 +190,20 @@ class SruPicaConnector extends ConnectorAbstract {
                 resultEndDate   << h ? h : null
                 resultStatus    << null
             }
+            println " .. getPicaValues(033An) = " + resultName
+            println " .. getPicaValues(033Ah) = " + resultStartDate
+            
+            // TODO refactor this
+            
+            result << getEnvelopeWithComplexMessage([
+                'name':      resultName,
+                'startDate': resultStartDate,
+                'endDate':   resultEndDate,
+                'status':    resultStatus,
+            ])
         }
-        
-        println " .. getPicaValues(033An) = " + resultName
-        println " .. getPicaValues(033Ah) = " + resultStartDate
-        
-        // TODO refactor this
-        getEnvelopeWithComplexMessage([
-            'name':      resultName,
-            'startDate': resultStartDate,
-            'endDate':   resultEndDate,
-            'status':    resultStatus,
-        ])
+       
+        getEnvelopeWithMessage(result)
     } 
     
     private Envelope getAllTippURL() {
@@ -212,7 +215,17 @@ class SruPicaConnector extends ConnectorAbstract {
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
-    private Envelope getTippCoverage() {       
+    private Envelope getAllPlattformURL() {
+        def result = []
+        
+        picaRecords.each { record ->
+            result += getAllPicaValues(record.recordData.record, '009P', '0') // TODO
+        }
+        getEnvelopeWithMessage(result.minus(null).unique())
+    }
+    
+    private Envelope getTippCoverageAsFatEnvelope() { 
+        def result              = []     
         def resultCoverageNote  = []
         def resultEmbargo       = []
         def resultEndDate       = []
@@ -223,32 +236,37 @@ class SruPicaConnector extends ConnectorAbstract {
         def resultStartVolume   = []
         
         picaRecords.each { record ->
-            println record
             record.recordData.record.datafield.findAll{it.'@tag' == '009P'}.each { df ->
                 def x = df.subfield.find{it.'@code' == 'x'}.text()
                 def z = df.subfield.find{it.'@code' == 'z'}.text()
-                
-                resultStartDate    << x ? x : null
-                resultEndDate      << x ? x : null
-                resultStartVolume  << x ? x : null
-                resultEndVolume    << x ? x : null
-                resultCoverageNote << z ? z : null
+
+                resultCoverageNote  << z ? z : null
+                resultEmbargo       << null
+                resultEndDate       << x ? x : null
+                resultEndIssue      << null
+                resultEndVolume     << x ? x : null
+                resultStartDate     << x ? x : null
+                resultStartIssue    << null
+                resultStartVolume   << x ? x : null
             }
+            
+            println " .. getPicaValues(009Px) = " + resultStartDate
+            println " .. getPicaValues(009Pz) = " + resultCoverageNote
+            
+            // TODO refactor this
+            
+            result << getEnvelopeWithComplexMessage([
+                'coverageNote': resultCoverageNote,
+                'embargo':      resultEmbargo,
+                'endDate':      resultEndDate,
+                'endIssue':     resultEndIssue,
+                'endVolume':    resultEndVolume,
+                'startDate':    resultStartDate,
+                'startIssue':   resultStartIssue,
+                'startVolume':  resultStartVolume
+            ])
         }
         
-        println " .. getPicaValues(009Pz) = " + resultStartDate
-        println " .. getPicaValues(009Pz) = " + resultCoverageNote
-        
-        // TODO refactor this
-        getEnvelopeWithComplexMessage([
-            'coverageNote': resultCoverageNote,
-            'embargo':      resultEmbargo,
-            'endDate':      resultEndDate,
-            'endIssue':     resultEndIssue,
-            'endVolume':    resultEndVolume,
-            'startDate':    resultStartDate,
-            'startIssue':   resultStartIssue,
-            'startVolume':  resultStartVolume
-        ])
+        getEnvelopeWithMessage(result)
     }
 }

@@ -35,24 +35,22 @@ class Mapper {
         }
         
         else if(query == Query.GBV_PUBLISHER) {
- 
-            env.messages['name'].eachWithIndex{ elem, i ->
             
-                def tmp    = TitleStruct.getNewPublisherHistory()
+            env.message.each{ e ->
+               e.messages['name'].eachWithIndex{ elem, i ->
                 
-                tmp.name.v = Normalizer.normString(env.messages['name'][i])
-            
-                tmp.startDate.v = Normalizer.normDate(env.messages['startDate'][i], Normalizer.IS_START_DATE)
-                tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)
-                       
-                tmp.endDate.v = Normalizer.normDate(env.messages['endDate'][i], Normalizer.IS_END_DATE)
-                tmp.endDate.m = Normalizer.isValidDate(tmp.endDate.v)
+                    def tmp = TitleStruct.getNewPublisherHistory()
+                    
+                    tmp.name.v = Normalizer.normString(e.messages['name'][i])
                 
-                title.publisher_history.v << new Pod(tmp)
-                //  store children status here
-                title.publisher_history.m = Normalizer.normString(
-                    (env.states.find{it.toString().startsWith('name_')}).toString().replaceFirst('name_', '')
-                )
+                    tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
+                    tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)
+                           
+                    tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
+                    tmp.endDate.m = Normalizer.isValidDate(tmp.endDate.v)
+                    
+                    title.publisher_history.v << new Pod(tmp)
+                }
             }
         }
         
@@ -108,31 +106,40 @@ class Mapper {
             tipp.platform = new Pod(tmp)
         }
         
-        else if(query == Query.GBV_TIPP_COVERAGE) {
+        else if(query == Query.GBV_TIPP_COVERAGE) {     
             
-            env.messages['coverageNote'].eachWithIndex{ elem, i ->
-                def tmp = PackageStruct.getNewTippCoverage()
-                // TODO
-                tmp.coverageNote.v = Normalizer.normString(env.messages['coverageNote'][i])
-                tmp.coverageNote.m = Normalizer.normString(env.states[i])
-                
-                if(env.messages['startDate'][i]){
-                    tmp.startDate.v = Normalizer.normDate(env.messages['startDate'][i], Normalizer.IS_START_DATE)
-                    tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)   
+            env.message.each{ e ->
+                e.messages['coverageNote'].eachWithIndex{ elem, i ->
+                    
+                    def tmp = PackageStruct.getNewTippCoverage()
+                    // TODO
+                    tmp.coverageNote.v = Normalizer.normString(e.messages['coverageNote'][i])
+                    tmp.coverageNote.m = Normalizer.normString(
+                        (e.states.find{it.toString().startsWith('coverageNote_')}).toString().replaceFirst('coverageNote_', '')
+                        )
+                    
+                    if(e.messages['startDate'][i]){
+                        tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
+                        tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)   
+                    }
+                    if(e.messages['endDate'][i]){
+                        tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
+                        tmp.endDate.m = Normalizer.isValidDate(tmp.startDate.v)
+                    }
+                    if(e.messages['startVolume'][i]){
+                        tmp.startVolume.v = Normalizer.normCoverageVolume(e.messages['startVolume'][i], Normalizer.IS_START_DATE)
+                        tmp.startVolume.m = Normalizer.normString(
+                            (e.states.find{it.toString().startsWith('startVolume_')}).toString().replaceFirst('startVolume_', '')
+                            )
+                    }
+                    if(e.messages['endVolume'][i]){
+                        tmp.endVolume.v = Normalizer.normCoverageVolume(e.messages['endVolume'][i], Normalizer.IS_END_DATE)
+                        tmp.endVolume.m = Normalizer.normString(
+                            (e.states.find{it.toString().startsWith('endVolume_')}).toString().replaceFirst('endVolume_', '')  
+                            )              
+                    }  
+                    tipp.coverage.v << tmp
                 }
-                if(env.messages['endDate'][i]){
-                    tmp.endDate.v = Normalizer.normDate(env.messages['endDate'][i], Normalizer.IS_END_DATE)
-                    tmp.endDate.m = Normalizer.isValidDate(tmp.startDate.v)
-                }
-                if(env.messages['startVolume'][i]){
-                    tmp.startVolume.v = Normalizer.normCoverageVolume(env.messages['startVolume'][i], Normalizer.IS_START_DATE)
-                    tmp.startVolume.m = env.states[i]
-                }
-                if(env.messages['endVolume'][i]){
-                    tmp.endVolume.v = Normalizer.normCoverageVolume(env.messages['endVolume'][i], Normalizer.IS_END_DATE)
-                    tmp.endVolume.m = env.states[i]                 
-                }  
-                tipp.coverage.v << tmp
             }
         }
        
