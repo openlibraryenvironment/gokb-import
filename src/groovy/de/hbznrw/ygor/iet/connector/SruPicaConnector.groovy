@@ -22,6 +22,7 @@ class SruPicaConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "http://sru.gbv.de/gvk?version=1.2&operation=searchRetrieve&maximumRecords=10"
 	private String queryIdentifier  = 'query=pica.iss%3D'
+    private String queryOnlyJournals = "%20and%20(pica.mak=Obvz%20or%20pica.mak=Obv)"
     
     private String formatIdentifier = 'picaxml'
     private GPathResult response
@@ -36,7 +37,7 @@ class SruPicaConnector extends ConnectorAbstract {
     
     @Override
     String getAPIQuery(String issn) {
-        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn + queryOnlyJournals
     }
     
     // TODO fix return value
