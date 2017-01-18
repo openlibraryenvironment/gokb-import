@@ -18,7 +18,7 @@ class Transformer {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
 
-        json = Statistics.statisticBeforeParsing(json)
+        json = Statistics.getStatsBeforeParsing(json)
         
         json = Transformer.parsePackageHeader(json)
         json = Transformer.parseCuratoryGroups(json)
@@ -31,7 +31,7 @@ class Transformer {
         json = Transformer.parseIdentifiers(json)
         
         json = Transformer.cleanUpJSON(json)
-        json = Statistics.statisticAfterCleanUp(json)
+        json = Statistics.getStatsAfterCleanUp(json)
 
         new JsonBuilder(json).toPrettyString()      
     }

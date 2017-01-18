@@ -18,7 +18,7 @@ class Statistics {
     final static INVALID_DATE = 1
     final static MISSING_DATE = 2
         
-    static Object statisticBeforeParsing(Object json){
+    static Object getStatsBeforeParsing(Object json){
         
         // general
         
@@ -29,72 +29,44 @@ class Statistics {
         
         List<Integer> titleName = [0,0,0]
         
-        json.titles.v.each{ key, value ->
-            value.v.each{ titleField ->
-                if(titleField.key.equals("name")) {
-                    
-                    if(titleField.value.m.equals(Status.RESULT_OK.toString())) {
-                        titleName[Statistics.RESULT_OK]++
-                    }
-                    else if(titleField.value.m.equals(Status.RESULT_MULTIPLE_MATCHES.toString())) {
-                         titleName[Statistics.RESULT_MULTIPLE_MATCHES]++
-                    }
-                    else if(titleField.value.m.equals(Status.RESULT_NO_MATCH.toString())) {
-                        titleName[Statistics.RESULT_NO_MATCH]++
-                    }
-                }
-            } 
-        }
-        json.meta.stats << ["titles.name WITH SINGLE MATCH":     titleName[Statistics.RESULT_OK]]
-        json.meta.stats << ["titles.name with multiple matches": titleName[Statistics.RESULT_MULTIPLE_MATCHES]]
-        json.meta.stats << ["titles.name with no match":         titleName[Statistics.RESULT_NO_MATCH]]
-        
-        // titles.publisher_history
-        
-        List<Integer> publisherHistory = [0,0,0]
-        
-        json.titles.v.each{ key, value ->
-            value.v.each { titleField ->
-                if(titleField.key.equals("publisher_history")) {
-                    
-                    if(titleField.value.m.equals(Status.RESULT_OK.toString())) {
-                        publisherHistory[Statistics.RESULT_OK]++
-                    }
-                    else if(titleField.value.m.equals(Status.RESULT_MULTIPLE_MATCHES.toString())) {
-                         publisherHistory[Statistics.RESULT_MULTIPLE_MATCHES]++
-                    }
-                    else if(titleField.value.m.equals(Status.RESULT_NO_MATCH.toString())) {
-                        publisherHistory[Statistics.RESULT_NO_MATCH]++
-                    }
-                }
+        json.titles.v.each{ title ->
+            def name = title.value.v.name
+            
+            if(name?.m.equals(Status.RESULT_OK.toString())) {
+                titleName[Statistics.RESULT_OK]++
+            }
+            else if(name?.m.equals(Status.RESULT_MULTIPLE_MATCHES.toString())) {
+                 titleName[Statistics.RESULT_MULTIPLE_MATCHES]++
+            }
+            else if(name?.m.equals(Status.RESULT_NO_MATCH.toString())) {
+                titleName[Statistics.RESULT_NO_MATCH]++
             }
         }
-        json.meta.stats << ["titles.publisher_history with single result":    publisherHistory[Statistics.RESULT_OK]]
-        json.meta.stats << ["titles.publisher_history with multiple results": publisherHistory[Statistics.RESULT_MULTIPLE_MATCHES]]
-        json.meta.stats << ["titles.publisher_history with no result":        publisherHistory[Statistics.RESULT_NO_MATCH]]
-        
+        json.meta.stats << ["titles.name AS SINGLE MATCH":     titleName[Statistics.RESULT_OK]]
+        json.meta.stats << ["titles.name with multiple matches": titleName[Statistics.RESULT_MULTIPLE_MATCHES]]
+        json.meta.stats << ["titles.name with no match":         titleName[Statistics.RESULT_NO_MATCH]]
         
         // titles.identifiers
         
         HashMap<String, List<Integer>> identifiers = [:]
         
-        identifiers[TitleStruct.PISSN]      = [0,0,0]
-        identifiers[TitleStruct.EISSN]      = [0,0,0]   
-        identifiers[ZdbBridge.IDENTIFIER]   = [0,0,0]       
-        identifiers[EzbBridge.IDENTIFIER]   = [0,0,0]
+        identifiers[TitleStruct.PISSN]    = [0,0,0]
+        identifiers[TitleStruct.EISSN]    = [0,0,0]   
+        identifiers[ZdbBridge.IDENTIFIER] = [0,0,0]       
+        identifiers[EzbBridge.IDENTIFIER] = [0,0,0]
         
-        json.titles.v.each{ key, value ->
-            value.v.identifiers.v.each { ident ->
-                
+        json.titles.v.each{ title ->
+            title.value.v.identifiers.v.each { ident ->
                 def tmp = identifiers["${ident.v.type.v}"]
+                
                 if(tmp) {
-                    if(ident.v.value.m.equals(Status.RESULT_OK.toString())) {
+                    if(ident.v.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
                         tmp[Statistics.RESULT_OK]++
                     }
-                    else if(ident.v.value.m.equals(Status.RESULT_MULTIPLE_MATCHES.toString())) {
+                    else if(ident.v.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
                          tmp[Statistics.RESULT_MULTIPLE_MATCHES]++
                     }
-                    else if(ident.v.value.m.equals(Status.RESULT_NO_MATCH.toString())) {
+                    else if(ident.v.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
                         tmp[Statistics.RESULT_NO_MATCH]++
                     }
                 }
@@ -102,34 +74,31 @@ class Statistics {
         }
         
         identifiers.each{ i ->
-            json.meta.stats["title.identifier ${i.key.toUpperCase()} GOT SINGLE RESULT"]     = i.value[Statistics.RESULT_OK]
-            json.meta.stats["title.identifier ${i.key.toUpperCase()} got multiple results"] = i.value[Statistics.RESULT_MULTIPLE_MATCHES]
-            json.meta.stats["title.identifier ${i.key.toUpperCase()} got no result"]         = i.value[Statistics.RESULT_NO_MATCH]
+            json.meta.stats["title.identifier ${i.key.toUpperCase()} AS VALID RESULTS"]    = i.value[Statistics.RESULT_OK]
+            json.meta.stats["title.identifier ${i.key.toUpperCase()} are invalid"]         = i.value[Statistics.RESULT_MULTIPLE_MATCHES]
+            json.meta.stats["title.identifier ${i.key.toUpperCase()} are in unkown state"] = i.value[Statistics.RESULT_NO_MATCH]
         }
         
         // tipps
         
         List<Integer> tippUrls = [0,0,0]
         
-        json.package.v.tipps.v.each{ key, value ->
-            value.v.each{ tippField ->
+        json.package.v.tipps.v.each{ tipp ->
+            def url = tipp.value.v.url
 
-                if(tippField.key.equals("url")) {
-                    if(tippField.value.m.equals(Status.RESULT_OK.toString())) {
-                        tippUrls[Statistics.RESULT_OK]++
-                    }
-                    else if(tippField.value.m.equals(Status.RESULT_MULTIPLE_MATCHES.toString())) {
-                        tippUrls[Statistics.RESULT_MULTIPLE_MATCHES]++
-                    }
-                    else if(tippField.value.m.equals(Status.RESULT_NO_MATCH.toString())) {
-                        tippUrls[Statistics.RESULT_NO_MATCH]++
-                    }
-                }
+            if(url?.m.equals(Status.RESULT_OK.toString())) {
+                tippUrls[Statistics.RESULT_OK]++
+            }
+            else if(url?.m.equals(Status.RESULT_MULTIPLE_MATCHES.toString())) {
+                tippUrls[Statistics.RESULT_MULTIPLE_MATCHES]++
+            }
+            else if(url?.m.equals(Status.RESULT_NO_MATCH.toString())) {
+                tippUrls[Statistics.RESULT_NO_MATCH]++
             }
         }
-        json.meta.stats << ["tipp.title.url GOT SINGLE RESULT":    tippUrls[Statistics.RESULT_OK]]
-        json.meta.stats << ["tipp.title.url got multiple results": tippUrls[Statistics.RESULT_MULTIPLE_MATCHES]]
-        json.meta.stats << ["tipp.title.url got not matching":     tippUrls[Statistics.RESULT_NO_MATCH]]
+        json.meta.stats << ["tipp.title.url FOUND AS SINGLE RESULT":    tippUrls[Statistics.RESULT_OK]]
+        json.meta.stats << ["tipp.title.url found with multiple results": tippUrls[Statistics.RESULT_MULTIPLE_MATCHES]]
+        json.meta.stats << ["tipp.title.url found with no match":     tippUrls[Statistics.RESULT_NO_MATCH]]
         
         
         // dates
@@ -137,29 +106,56 @@ class Statistics {
         List<Integer> phDates = [0,0,0]
         
         json.titles.v.each{ title ->
-            title.value.v.publisher_history.v.each { ph ->
-                ph.v.each { phe ->
-                    
-                    if(phe.value.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
-                        phDates[Statistics.VALID_DATE]++
-                    }
-                    else if(phe.value.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
-                        phDates[Statistics.INVALID_DATE]++
-                    }
-                    else if(phe.value.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
-                        phDates[Statistics.MISSING_DATE]++
+            title.value.v.publisher_history.v.each { ph ->              
+                def sd = ph.v.startDate
+                def ed = ph.v.endDate
+
+                if(sd?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
+                    phDates[Statistics.VALID_DATE]++
+                }
+                if(sd?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
+                    phDates[Statistics.INVALID_DATE]++
+                }
+                if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                    phDates[Statistics.MISSING_DATE]++
+                }
+            }
+        }
+        json.meta.stats << ["titles.publisher_history FOUND WITH VALID DATES":   phDates[Statistics.VALID_DATE]]
+        json.meta.stats << ["titles.publisher_history found with invalid dates": phDates[Statistics.INVALID_DATE]]
+        json.meta.stats << ["titles.publisher_history found with missing dates": phDates[Statistics.MISSING_DATE]]
+        
+        List<Integer> covDates = [0,0,0]
+        
+        json.package.v.tipps.v.each{ tipp ->
+            tipp.value.v.each{ tippField ->
+                if(tippField.key.equals("coverage")) {
+                    tippField.value.v.each{ covField ->       
+                        def sd = covField.startDate
+                        def ed = covField.endDate
+                       
+                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
+                            covDates[Statistics.VALID_DATE]++
+                        }
+                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
+                            covDates[Statistics.INVALID_DATE]++
+                        }
+                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                            covDates[Statistics.MISSING_DATE]++
+                        }
                     }
                 }
             }
         }
-        json.meta.stats << ["titles.publisher_history WITH VALID DATES":   phDates[Statistics.VALID_DATE]]
-        json.meta.stats << ["titles.publisher_history with invalid dates": phDates[Statistics.INVALID_DATE]]
-        json.meta.stats << ["titles.publisher_history with missing dates": phDates[Statistics.MISSING_DATE]]
+
+        json.meta.stats << ["tipp.coverage FOUND WITH VALID DATES":   covDates[Statistics.VALID_DATE]]
+        json.meta.stats << ["tipp.coverage found with invalid dates": covDates[Statistics.INVALID_DATE]]
+        json.meta.stats << ["tipp.coverage found with missing dates": covDates[Statistics.MISSING_DATE]]
         
         json
     }
     
-    static Object statisticAfterCleanUp(Object json){
+    static Object getStatsAfterCleanUp(Object json){
         
         // general
         
