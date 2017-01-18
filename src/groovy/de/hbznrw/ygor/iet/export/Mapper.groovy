@@ -25,7 +25,7 @@ class Mapper {
                 
             tmp.type.m  = Status.IGNORE
             tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
-            tmp.value.m = env.state
+            tmp.value.m = Validator.isValidIdentifier(tmp.value.v, tmp.type.v)
             title.identifiers.v << new Pod(tmp)
         }
         
@@ -44,10 +44,10 @@ class Mapper {
                     tmp.name.v = Normalizer.normString(e.messages['name'][i])
                 
                     tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
-                    tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)
+                    tmp.startDate.m = Validator.isValidDate(tmp.startDate.v)
                            
                     tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
-                    tmp.endDate.m = Normalizer.isValidDate(tmp.endDate.v)
+                    tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
                     
                     title.publisher_history.v << new Pod(tmp)
                 }
@@ -79,7 +79,7 @@ class Mapper {
 
             tmp.type.m  = Status.IGNORE
             tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
-            tmp.value.m = env.state
+            tmp.value.m = Validator.isValidIdentifier(tmp.value.v, tmp.type.v)
             
             tipp.title.v.identifiers.v << new Pod(tmp)
         }
@@ -120,11 +120,11 @@ class Mapper {
                     
                     if(e.messages['startDate'][i]){
                         tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
-                        tmp.startDate.m = Normalizer.isValidDate(tmp.startDate.v)   
+                        tmp.startDate.m = Validator.isValidDate(tmp.startDate.v)   
                     }
                     if(e.messages['endDate'][i]){
                         tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
-                        tmp.endDate.m = Normalizer.isValidDate(tmp.startDate.v)
+                        tmp.endDate.m = Validator.isValidDate(tmp.startDate.v)
                     }
                     if(e.messages['startVolume'][i]){
                         tmp.startVolume.v = Normalizer.normCoverageVolume(e.messages['startVolume'][i], Normalizer.IS_START_DATE)

@@ -44,8 +44,6 @@ class Normalizer {
         str.trim()
     }
     
-    
-    
     /**
      * Concatenates list elements with "|" as delimiter
      *
@@ -62,9 +60,9 @@ class Normalizer {
     }
     
     /**
-     * eissn/pissn: "12345678"   -> "1234-5678"
-     * eissn/pissn: "1234567"    -> "1234-567"
-     *
+     * eissn/pissn: "12345678"  -> "1234-5678"
+     * eissn/pissn: "1234567"   -> "1234567"
+     * eissn/pissn: "123456789" -> "123456789"
      * zdb:         "12345"     -> "1234-5"
      * zdb:         "12345678"  -> "1234567-8"
      * 
@@ -80,7 +78,7 @@ class Normalizer {
         str = str.replaceAll("-","").replaceAll("/","")
         
         if(type.equals(TitleStruct.EISSN) || type.equals(TitleStruct.PISSN)){
-            if(str.length() > 4)
+            if(str.length() == 8)
                 str = new StringBuilder(str).insert(4, "-").toString();
         }
         else if(type.equals(ZdbBridge.IDENTIFIER)){
@@ -92,9 +90,7 @@ class Normalizer {
 
         str
     }
-  
-    
-      
+
     /**
      * 
      * @param list
@@ -189,8 +185,7 @@ class Normalizer {
      * @param str
      * @param dateType DataMapper.IS_START_DATE|DataMapper.IS_END_DATE
      * @return 
-     */
-    
+     */  
     static String normCoverageVolume(String str, Object dateType) {
         str = Normalizer.normString(str)
      
@@ -251,24 +246,5 @@ class Normalizer {
         } catch(Exception e) {}
         
         str
-    }
-    
-    
-    /**
-     * 
-     * @param str
-     * @return
-     */
-    static isValidDate(String str) {
-        if(!str || str.trim().equals("")){
-            return Status.VALIDATOR_DATE_IS_MISSING
-        }
-        try {
-            def check = Timestamp.valueOf(str);
-            return Status.VALIDATOR_DATE_IS_VALID
-        }
-        catch(Exception e) {
-            return Status.VALIDATOR_DATE_IS_INVALID
-        }
     }
 }

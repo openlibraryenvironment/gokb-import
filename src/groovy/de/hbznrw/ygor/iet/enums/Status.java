@@ -8,12 +8,23 @@ public enum Status {
 	STATUS_ERROR       ("STATUS_ERROR"),
 	STATUS_NO_RESPONSE ("STATUS_NO_RESPONSE"),   
 	
-	// use as default value
+   // api responses
+    
+    RESULT_OK               ("RESULT_OK"),
+    RESULT_NO_MATCH         ("RESULT_NO_MATCH"),
+    RESULT_MULTIPLE_MATCHES ("RESULT_MULTIPLE_MATCHES"),
+	
+    
+    // use for the non processed
+    
+	// default value
 	UNDEFINED          ("UNDEFINED"),
-	// use for hardcoded values
+	// hardcoded values
 	HARDCODED          ("HARDCODED"),
-	// use for constants, tmp vars, etc
+	// constants, tmp vars, etc
 	IGNORE             ("IGNORE"),
+	
+	// after validator check
 	
 	// use for valid date values
 	VALIDATOR_DATE_IS_VALID    ("VALIDATOR_DATE_IS_VALID"),
@@ -21,12 +32,17 @@ public enum Status {
 	VALIDATOR_DATE_IS_INVALID  ("VALIDATOR_DATE_IS_INVALID"),
 	// no value given
 	VALIDATOR_DATE_IS_MISSING  ("VALIDATOR_DATE_IS_MISSING"),
-
-	// api responses
 	
-	RESULT_OK               ("RESULT_OK"),
-	RESULT_NO_MATCH         ("RESULT_NO_MATCH"),
-	RESULT_MULTIPLE_MATCHES ("RESULT_MULTIPLE_MATCHES");
+	// given identifier seems to be valid
+	VALIDATOR_IDENTIFIER_IS_VALID          ("VALIDATOR_IDENTIFIER_IS_VALID"),
+	// given identifier is not valid
+	VALIDATOR_IDENTIFIER_IS_INVALID        ("VALIDATOR_IDENTIFIER_IS_INVALID"),
+	// e.g. not implemented yet
+	VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE  ("VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE")
+	
+	;
+
+
 	
 	private String value;
 	

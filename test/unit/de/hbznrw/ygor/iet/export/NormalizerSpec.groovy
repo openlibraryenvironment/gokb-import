@@ -55,8 +55,12 @@ class NormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                Normalizer.normString(test[i]) == result[i]
             }
+            Normalizer.normString(test[0]) == result[0]
+            Normalizer.normString(test[1]) == result[1]
+            Normalizer.normString(test[2]) == result[2]
+            Normalizer.normString(test[3]) == result[3]
+            Normalizer.normString(test[4]) == result[4]
     }
     
     void "normString(ArrayList list)"() {
@@ -75,8 +79,11 @@ class NormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                Normalizer.normString(test[i]) == result[i]
             }
+            Normalizer.normString(test[0]) == result[0]
+            Normalizer.normString(test[1]) == result[1]
+            Normalizer.normString(test[2]) == result[2]
+            Normalizer.normString(test[3]) == result[3]
     }
        
     void "normIdentifier(String str, Object type)"() {
@@ -85,6 +92,7 @@ class NormalizerSpec extends Specification {
                 ["12345678", TitleStruct.EISSN],
                 ["1234/5678", TitleStruct.EISSN],
                 ["1234567", TitleStruct.EISSN],
+                ["123456789", TitleStruct.EISSN],
                 ["33445XXX", TitleStruct.PISSN],
                 ["3344--YYYY", TitleStruct.PISSN],
                 ["1234-567X", ZdbBridge.IDENTIFIER],
@@ -95,7 +103,8 @@ class NormalizerSpec extends Specification {
             def result = [
                 "1234-5678",
                 "1234-5678",
-                "1234-567",
+                "1234567",
+                "123456789",
                 "3344-5XXX",
                 "3344-YYYY",
                 "1234567-X",
@@ -107,8 +116,17 @@ class NormalizerSpec extends Specification {
         expect: 
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                Normalizer.normIdentifier(test[i][0], test[i][1]) == result[i]
             }
+            Normalizer.normIdentifier(test[0][0], test[0][1]) == result[0]
+            Normalizer.normIdentifier(test[1][0], test[1][1]) == result[1]
+            Normalizer.normIdentifier(test[2][0], test[2][1]) == result[2]
+            Normalizer.normIdentifier(test[3][0], test[3][1]) == result[3]
+            Normalizer.normIdentifier(test[4][0], test[4][1]) == result[4]
+            Normalizer.normIdentifier(test[5][0], test[5][1]) == result[5]
+            Normalizer.normIdentifier(test[6][0], test[6][1]) == result[6]
+            Normalizer.normIdentifier(test[7][0], test[7][1]) == result[7]
+            Normalizer.normIdentifier(test[8][0], test[8][1]) == result[8]
+            Normalizer.normIdentifier(test[9][0], test[9][1]) == result[9]
             
             // TODO: not implemented DataNormalizer.normIdentifier("", EzbBridge.IDENTIFIER) 
     }
@@ -117,8 +135,8 @@ class NormalizerSpec extends Specification {
         given:
             def list1 = ["12345678","1234-88XX","999966"]
             def list2 = [null,"1234-88XX","999966"]
-            def result1 = "1234-5678|1234-88XX|9999-66"
-            def result2 = "null|1234-88XX|9999-66"
+            def result1 = "1234-5678|1234-88XX|999966"
+            def result2 = "null|1234-88XX|999966"
         
         expect:
             println "\"${list1}\" >> \"${result1}\""
@@ -150,7 +168,7 @@ class NormalizerSpec extends Specification {
                 ["2005-01-01 00:00:00.000", ""],
                 ["", "2006-12-31 23:59:59.000"],
                 ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
-                ["2002-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
+                ["2002-01-01 00:00:00.000", "2003-12-31 23:59:59.000"],
                 ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
                 ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
                 [null, null],
@@ -159,10 +177,35 @@ class NormalizerSpec extends Specification {
         
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> START_DATE:\"${result[i][0]}\" END_DATE:\"${result[i][1]}\""
-                Normalizer.normDate(test[0], Normalizer.IS_START_DATE) == result[i][0]
-                Normalizer.normDate(test[0], Normalizer.IS_END_DATE) == result[i][1]
+                println "\"${test[i]}\" >> START_DATE:\"${result[i][0]}\""
             }
+            Normalizer.normDate(test[0], Normalizer.IS_START_DATE) == result[0][0]
+            Normalizer.normDate(test[1], Normalizer.IS_START_DATE) == result[1][0]
+            Normalizer.normDate(test[2], Normalizer.IS_START_DATE) == result[2][0]
+            Normalizer.normDate(test[3], Normalizer.IS_START_DATE) == result[3][0]
+            Normalizer.normDate(test[4], Normalizer.IS_START_DATE) == result[4][0]
+            Normalizer.normDate(test[5], Normalizer.IS_START_DATE) == result[5][0]
+            Normalizer.normDate(test[6], Normalizer.IS_START_DATE) == result[6][0]
+            Normalizer.normDate(test[7], Normalizer.IS_START_DATE) == result[7][0]
+            Normalizer.normDate(test[8], Normalizer.IS_START_DATE) == result[8][0]
+            Normalizer.normDate(test[9], Normalizer.IS_START_DATE) == result[9][0]
+            Normalizer.normDate(test[10], Normalizer.IS_START_DATE) == result[10][0]
+            
+            
+            test.eachWithIndex{e, i ->
+                println "\"${test[i]}\" >> END_DATE:\"${result[i][1]}\""
+            }
+            Normalizer.normDate(test[0], Normalizer.IS_END_DATE) == result[0][1]
+            Normalizer.normDate(test[1], Normalizer.IS_END_DATE) == result[1][1]
+            Normalizer.normDate(test[2], Normalizer.IS_END_DATE) == result[2][1]
+            Normalizer.normDate(test[3], Normalizer.IS_END_DATE) == result[3][1]
+            Normalizer.normDate(test[4], Normalizer.IS_END_DATE) == result[4][1]
+            Normalizer.normDate(test[5], Normalizer.IS_END_DATE) == result[5][1]
+            Normalizer.normDate(test[6], Normalizer.IS_END_DATE) == result[6][1]
+            Normalizer.normDate(test[7], Normalizer.IS_END_DATE) == result[7][1]
+            Normalizer.normDate(test[8], Normalizer.IS_END_DATE) == result[8][1]
+            Normalizer.normDate(test[9], Normalizer.IS_END_DATE) == result[9][1]
+            Normalizer.normDate(test[10], Normalizer.IS_END_DATE) == result[10][1]
     }
     
     void "normDate(ArrayList list, Object dateType)"() {
@@ -177,15 +220,15 @@ class NormalizerSpec extends Specification {
             def resultStartDate2 = "null|2005${startDatePostfix}||2005${startDatePostfix}|2010${startDatePostfix}"
             def resultEndDate1   = "2008${endDatePostfix}||2006${endDatePostfix}|null|null"
             def resultEndDate2   = "null|2006${endDatePostfix}|2006${endDatePostfix}|2006${endDatePostfix}|2010${endDatePostfix}"
-            
+
+        expect:
             println "\"${list1}\" >> START_DATE:\"${resultStartDate1}\""
             println "\"${list2}\" >> START_DATE:\"${resultStartDate2}\""
-            println "\"${list1}\" >> END_DATE:\"${resultEndDate1}\""
-            println "\"${list2}\" >> END_DATE:\"${resultEndDate2}\""
-            
-        expect:
             Normalizer.normDate(list1, Normalizer.IS_START_DATE) == resultStartDate1
             Normalizer.normDate(list2, Normalizer.IS_START_DATE) == resultStartDate2
+            
+            println "\"${list1}\" >> END_DATE:\"${resultEndDate1}\""
+            println "\"${list2}\" >> END_DATE:\"${resultEndDate2}\""
             Normalizer.normDate(list1, Normalizer.IS_END_DATE)   == resultEndDate1
             Normalizer.normDate(list2, Normalizer.IS_END_DATE)   == resultEndDate2
     }  
@@ -205,11 +248,18 @@ class NormalizerSpec extends Specification {
             
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i][0]}\""
-                Normalizer.normCoverageVolume(test[i], Normalizer.IS_START_DATE) == result[i][0]
-                println "\"${test[i]}\" >> \"${result[i][1]}\""
-                Normalizer.normCoverageVolume(test[i], Normalizer.IS_END_DATE) == result[i][1]
+                println "\"${test[i]}\" >> START_DATE:\"${result[i][0]}\""
             }
+            Normalizer.normCoverageVolume(test[0], Normalizer.IS_START_DATE) == result[0][0]
+            Normalizer.normCoverageVolume(test[1], Normalizer.IS_START_DATE) == result[1][0]
+            Normalizer.normCoverageVolume(test[2], Normalizer.IS_START_DATE) == result[2][0]
+            
+            test.eachWithIndex{e, i ->
+                println "\"${test[i]}\" >> END_DATE:\"${result[i][1]}\""
+            }
+            Normalizer.normCoverageVolume(test[0], Normalizer.IS_END_DATE) == result[0][1]
+            Normalizer.normCoverageVolume(test[1], Normalizer.IS_END_DATE) == result[1][1]
+            Normalizer.normCoverageVolume(test[2], Normalizer.IS_END_DATE) == result[2][1]
     }
     
     void "normURL(String str) "() {
@@ -232,8 +282,12 @@ class NormalizerSpec extends Specification {
         expect:
             test.eachWithIndex{e, i ->
                 println "\"${test[i]}\" >> \"${result[i]}\""
-                Normalizer.normURL(test[i]) == result[i]
             }
+            Normalizer.normURL(test[0]) == result[0]
+            Normalizer.normURL(test[1]) == result[1]
+            Normalizer.normURL(test[2]) == result[2]
+            Normalizer.normURL(test[3]) == result[3]
+            Normalizer.normURL(test[4]) == result[4]
     }
     
     void "normURL(ArrayList list)"() {
@@ -247,31 +301,5 @@ class NormalizerSpec extends Specification {
          expect:
              println "\"${test[0]}\" >> \"${result[0]}\""
              Normalizer.normURL(test[0]) == result[0]
-    } 
-    
-    void "isValidDate(String str)"() {
-        given:
-            def test = [
-                "1999-01-01 00:00:00.000",
-                "2000-12-31 23:59:59.000",
-                "-01-01 00:00:00.000",
-                "-12-31 23:59:59.000",
-                null,
-                ""
-                ]
-            def result = [
-                Status.VALIDATOR_DATE_IS_VALID,
-                Status.VALIDATOR_DATE_IS_VALID,
-                Status.VALIDATOR_DATE_IS_INVALID,
-                Status.VALIDATOR_DATE_IS_INVALID,
-                Status.VALIDATOR_DATE_IS_MISSING,
-                Status.VALIDATOR_DATE_IS_MISSING
-                ]
-            
-        expect:
-            test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
-                Normalizer.isValidDate(test[i]) == result[i]
-            }
     }
 }
