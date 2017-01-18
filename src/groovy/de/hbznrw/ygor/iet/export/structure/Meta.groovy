@@ -1,4 +1,4 @@
-package de.hbznrw.ygor.iet.export
+package de.hbznrw.ygor.iet.export.structure
 
 import de.hbznrw.ygor.iet.enums.*
 
