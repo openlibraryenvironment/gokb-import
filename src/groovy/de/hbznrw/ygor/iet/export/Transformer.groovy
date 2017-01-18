@@ -5,6 +5,7 @@ import de.hbznrw.ygor.iet.enums.*
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import ygor.Enrichment.FileType
 
 class Transformer {
     
@@ -13,12 +14,14 @@ class Transformer {
      * TODO refactoring  
      */ 
 
-    static String getSimpleJSON(DataContainer dc) {
+    static String getSimpleJSON(DataContainer dc, FileType type) {
      
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
 
-        json = Statistics.getStatsBeforeParsing(json)
+        if(type.equals(FileType.JSON)){
+            json = Statistics.getStatsBeforeParsing(json)
+        }
         
         json = Transformer.parsePackageHeader(json)
         json = Transformer.parseCuratoryGroups(json)
@@ -31,9 +34,17 @@ class Transformer {
         json = Transformer.parseIdentifiers(json)
         
         json = Transformer.cleanUpJSON(json)
-        json = Statistics.getStatsAfterCleanUp(json)
-
-        new JsonBuilder(json).toPrettyString()      
+        
+        if(type.equals(FileType.JSON)){
+            json = Statistics.getStatsAfterCleanUp(json)
+        }
+        else if(type.equals(FileType.JSON_PACKAGE)){
+            json = json.package
+        }
+        else if(type.equals(FileType.JSON_TITLES)){
+            json = json.titles
+        }
+        new JsonBuilder(json).toPrettyString() 
     }
     
     static Object cleanUpJSON(Object json){

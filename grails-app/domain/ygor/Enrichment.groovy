@@ -8,7 +8,7 @@ import de.hbznrw.ygor.iet.export.Mapper
 
 class Enrichment {
 
-    static enum FileType {ORIGIN, RESULT, JSON, JSON_DEBUG}
+    static enum FileType {ORIGIN, RESULT, JSON, JSON_PACKAGE, JSON_TITLES, JSON_DEBUG}
     
 	static enum ProcessingState {UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR}
 	ProcessingState status
@@ -80,14 +80,19 @@ class Enrichment {
             case FileType.ORIGIN:
                 return new File(originPathName)
                 break
-            /*
-            case FileType.RESULT:
-                return new File(resultPathName)
-                break
-            */
             case FileType.JSON:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer))
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON))
+                return file
+                break
+            case FileType.JSON_PACKAGE:
+                def file = new File(resultPathName)
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE))
+                return file
+                break
+            case FileType.JSON_TITLES:
+                def file = new File(resultPathName)
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES))
                 return file
                 break
             case FileType.JSON_DEBUG:

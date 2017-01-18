@@ -166,12 +166,32 @@ class EnrichmentController {
     }
 
     def downloadFile() {
-
+        
         def en     = getEnrichment()
         def result = en.getFile(Enrichment.FileType.JSON)
         render(
                 file:result,
-                fileName:"${en.resultName}.json"
+                fileName:"${en.resultName}.all.json"
+                )
+    }
+    
+    def downloadPackageFile() {
+
+        def en     = getEnrichment()
+        def result = en.getFile(Enrichment.FileType.JSON_PACKAGE)
+        render(
+                file:result,
+                fileName:"${en.resultName}.package.json"
+                )
+    }
+    
+    def downloadTitlesFile() {
+        
+        def en     = getEnrichment()
+        def result = en.getFile(Enrichment.FileType.JSON_TITLES)
+        render(
+                file:result,
+                fileName:"${en.resultName}.titles.json"
                 )
     }
     
@@ -181,7 +201,7 @@ class EnrichmentController {
         def result = en.getFile(Enrichment.FileType.JSON_DEBUG)
         render(
                 file:result,
-                fileName:"${en.resultName}.json"
+                fileName:"${en.resultName}.debug.json"
                 )
     }
     
