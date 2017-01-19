@@ -23,13 +23,23 @@ all 009P0						-	Package.tipps.platform // TODO
 009Px							-	Package.tipps.coverage.(endDate,endVolume,startDate,startVolume)
 009Pz							-	Package.tipps.coverage.note
 
+
 HARDCODED:
+
+"No" 							-	Package.packageHeader.breakable
+"Yes" 							-	Package.packageHeader.consistent
+"Yes" 							-	Package.packageHeader.fixed
+"Consortium" 					-	Package.packageHeader.global
+"Checked" 						-	Package.packageHeader.listStatus
+"LAS:eR"						-	Package.packageHeader.curatoryGroups.curatoryGroup
+
+"Electronic"					-	Package.tipps.medium
+"Current"						-	Package.tipps.status
+"Serial"						-	Package.tipps.title.type
+"Fulltext"						-	Package.tipps.coverage.coverageDepth
 
 "Journal"						-	Title.medium
 "Serial"						-	Title.type
 "Current"						-	Title.status
 "In Progress"					- 	Title.editStatus
 "Active"						-	Title.publisher_history.status
-"LAS:eR"						-	Package.curatoryGroups.curatoryGroup
-"Serial"						-	Package.tipps.type
-"Fulltext"						-	Package.coverage.coverageDepth
