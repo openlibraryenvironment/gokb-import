@@ -22,14 +22,14 @@ class Statistics {
         
         // general
         
-        json.meta.stats << ["tipps before cleanUp" :  json.package.v.tipps.v.size()]
-        json.meta.stats << ["titles before cleanUp" : json.titles.v.size()]
+        json.meta.stats << ["tipps before cleanUp" :  json.package.tipps.size()]
+        json.meta.stats << ["titles before cleanUp" : json.titles.size()]
         
         // titles
         
         List<Integer> titleName = [0,0,0]
         
-        json.titles.v.each{ title ->
+        json.titles.each{ title ->
             def name = title.value.v.name
             
             if(name?.m.equals(Status.RESULT_OK.toString())) {
@@ -42,7 +42,7 @@ class Statistics {
                 titleName[Statistics.RESULT_NO_MATCH]++
             }
         }
-        json.meta.stats << ["titles.name AS SINGLE MATCH":     titleName[Statistics.RESULT_OK]]
+        json.meta.stats << ["titles.name AS SINGLE MATCH":       titleName[Statistics.RESULT_OK]]
         json.meta.stats << ["titles.name with multiple matches": titleName[Statistics.RESULT_MULTIPLE_MATCHES]]
         json.meta.stats << ["titles.name with no match":         titleName[Statistics.RESULT_NO_MATCH]]
         
@@ -55,18 +55,21 @@ class Statistics {
         identifiers[ZdbBridge.IDENTIFIER] = [0,0,0]       
         identifiers[EzbBridge.IDENTIFIER] = [0,0,0]
         
-        json.titles.v.each{ title ->
-            title.value.v.identifiers.v.each { ident ->
-                def tmp = identifiers["${ident.v.type.v}"]
+        json.titles.each{ title ->
+            title.value.v.identifiers.each { ident ->
+                
+                println ident
+                
+                def tmp = identifiers["${ident.type.v}"]
                 
                 if(tmp) {
-                    if(ident.v.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
+                    if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
                         tmp[Statistics.RESULT_OK]++
                     }
-                    else if(ident.v.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
+                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
                          tmp[Statistics.RESULT_MULTIPLE_MATCHES]++
                     }
-                    else if(ident.v.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
+                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
                         tmp[Statistics.RESULT_NO_MATCH]++
                     }
                 }
@@ -83,7 +86,7 @@ class Statistics {
         
         List<Integer> tippUrls = [0,0,0]
         
-        json.package.v.tipps.v.each{ tipp ->
+        json.package.tipps.each{ tipp ->
             def url = tipp.value.v.url
 
             if(url?.m.equals(Status.RESULT_OK.toString())) {
@@ -105,10 +108,10 @@ class Statistics {
         
         List<Integer> phDates = [0,0,0]
         
-        json.titles.v.each{ title ->
-            title.value.v.publisher_history.v.each { ph ->              
-                def sd = ph.v.startDate
-                def ed = ph.v.endDate
+        json.titles.each{ title ->
+            title.value.v.publisher_history.each { ph ->              
+                def sd = ph.startDate
+                def ed = ph.endDate
 
                 if(sd?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
                     phDates[Statistics.VALID_DATE]++
@@ -127,10 +130,10 @@ class Statistics {
         
         List<Integer> covDates = [0,0,0]
         
-        json.package.v.tipps.v.each{ tipp ->
+        json.package.tipps.each{ tipp ->
             tipp.value.v.each{ tippField ->
                 if(tippField.key.equals("coverage")) {
-                    tippField.value.v.each{ covField ->       
+                    tippField.value.each{ covField ->       
                         def sd = covField.startDate
                         def ed = covField.endDate
                        

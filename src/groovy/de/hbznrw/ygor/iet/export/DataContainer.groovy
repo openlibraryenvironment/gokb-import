@@ -1,15 +1,13 @@
 package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.export.structure.Meta
-import de.hbznrw.ygor.iet.export.structure.Package
-import de.hbznrw.ygor.iet.export.structure.Pod
+import de.hbznrw.ygor.iet.export.structure.*
 
 class DataContainer {
 
-    Meta info
-    Pod  pkg
-    Pod  titles
+    Meta    info
+    Package pkg
+    HashMap titles
     
     DataContainer() {
 
@@ -20,7 +18,7 @@ class DataContainer {
             api:    [],
             stats:  [:]
         )
-        pkg      = new Pod(new Package())
-        titles   = new Pod([:]) // list
+        pkg      = new Package()
+        titles   = [:]
     }
 }

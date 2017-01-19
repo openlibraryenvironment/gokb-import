@@ -26,7 +26,8 @@ class Mapper {
             tmp.type.m  = Status.IGNORE
             tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
             tmp.value.m = Validator.isValidIdentifier(tmp.value.v, tmp.type.v)
-            title.identifiers.v << new Pod(tmp)
+            
+            title.identifiers << tmp // no pod
         }
         
         else if(query == Query.GBV_TITLE) {
@@ -49,7 +50,7 @@ class Mapper {
                     tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
                     tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
                     
-                    title.publisher_history.v << new Pod(tmp)
+                    title.publisher_history << tmp // no pod
                 }
             }
         }
@@ -80,8 +81,8 @@ class Mapper {
             tmp.type.m  = Status.IGNORE
             tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
             tmp.value.m = Validator.isValidIdentifier(tmp.value.v, tmp.type.v)
-            
-            tipp.title.v.identifiers.v << new Pod(tmp)
+
+            tipp.title.v.identifiers << tmp // no pod
         }
         
         else if(query == Query.GBV_TITLE) {
@@ -138,7 +139,7 @@ class Mapper {
                             (e.states.find{it.toString().startsWith('endVolume_')}).toString().replaceFirst('endVolume_', '')  
                             )              
                     }  
-                    tipp.coverage.v << tmp
+                    tipp.coverage << tmp // no pod
                 }
             }
         }
@@ -149,8 +150,8 @@ class Mapper {
     static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String key) {
         def result = null
 
-        if(dc.titles.v.containsKey(key))
-            result = dc.titles.v[key]
+        if(dc.titles.containsKey(key))
+            result = dc.titles[key]
 
         result
     }
@@ -158,8 +159,8 @@ class Mapper {
     static Tipp getExistingTippByPrimaryIdentifier(DataContainer dc, String key) {
         def result = null
 
-        if(dc.pkg.v.tipps.v.containsKey(key))
-            result = dc.pkg.v.tipps.v[key]
+        if(dc.pkg.tipps.containsKey(key))
+            result = dc.pkg.tipps[key]
 
         result
     }

@@ -7,7 +7,6 @@ import org.apache.commons.csv.CSVRecord
 
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Status
-import de.hbznrw.ygor.iet.export.Mapper
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.interfaces.*
@@ -139,11 +138,11 @@ class CsvProcessor extends ProcessorAbstract {
             }
             if(saveTitle){
                 println "saveTitle: " + key
-                data.titles.v << ["${key}": new Pod(title)]
+                data.titles << ["${key}": new Pod(title)]
             }
             if(saveTipp){
                 println "saveTipp: " + key
-                data.pkg.v.tipps.v << ["${key}": new Pod(tipp)]
+                data.pkg.tipps << ["${key}": new Pod(tipp)]
             }
             
         } else {

@@ -12,8 +12,8 @@ class Title {
     Pod publishedFrom    = new Pod("")
     Pod publishedTo      = new Pod("")
     
-    Pod identifiers       = new Pod([]) // list
-    Pod publisher_history = new Pod([]) // list
+    ArrayList<Identifier> identifiers                  = []
+    ArrayList<TitlePublisherHistory> publisher_history = []
     
     // ???
     Pod shortcode        = new Pod("")

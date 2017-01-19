@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.iet.export.structure
 
+import java.util.ArrayList
+
 import de.hbznrw.ygor.iet.enums.*
 
 class PackageHeader {
@@ -20,7 +22,7 @@ class PackageHeader {
     
     Pod source = new Pod(PackageStruct.getNewPackageHeaderSource())
     
-    Pod additionalProperties = new Pod([]) // list
-    Pod curatoryGroups       = new Pod([]) // list
-    Pod variantNames         = new Pod([]) // list
+    def additionalProperties = [] // TODO
+    ArrayList<PackageHeaderCuratoryGroup> curatoryGroups = []
+    def variantNames         = [] // TODO
 }

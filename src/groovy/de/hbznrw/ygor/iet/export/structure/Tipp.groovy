@@ -13,5 +13,6 @@ class Tipp {
     
     Pod title       = new Pod(PackageStruct.getNewTippTitle())
     Pod platform    = new Pod(PackageStruct.getNewTippPlatform())
-    Pod coverage    = new Pod([]) // list
+    
+    def coverage    = []
 }
