@@ -140,11 +140,18 @@ class Transformer {
             }
         }
         
-        json.package.tipps.each{ t ->
-            t.platform          = t.platform.v
-            t.title             = t.title.v
-            t.title.name        = t.title.name.v
-            t.title.type        = t.title.type.v
+        json.package.tipps.each{ tipp ->
+            tipp.platform = tipp.platform.v
+            tipp.title    = tipp.title.v
+            
+            // use validator
+            if(tipp.title.name.m == Status.VALIDATOR_STRING_IS_VALID.toString()){
+                tipp.title.name = tipp.title.name.v
+            }
+            else {
+                tipp.title.name = ""
+            }
+            tipp.title.type = tipp.title.type.v
         }
         
         json.package.tipps.eachWithIndex{ tipp, i ->
@@ -169,11 +176,43 @@ class Transformer {
                 def coverage = [:]
                 cover.each{ attr ->
                     if(attr.value.v instanceof java.lang.String) {
-                        coverage << ["${attr.key}":attr.value.v]
+                        
+                        // use validator
+                        if(['startDate', 'endDate'].contains(attr.key)){
+                            if(attr.value.m == Status.VALIDATOR_DATE_IS_VALID.toString())
+                                coverage << ["${attr.key}":attr.value.v]
+                            else
+                                coverage << ["${attr.key}":""]
+                        }
+                        // use validator
+                        else if(['startVolume', 'endVolume'].contains(attr.key)){
+                            if(attr.value.m == Status.VALIDATOR_NUMBER_IS_VALID.toString())
+                                coverage << ["${attr.key}":attr.value.v]
+                            else
+                                coverage << ["${attr.key}":""]
+                        } 
+                        else {
+                            coverage << ["${attr.key}":attr.value.v]
+                        }
+                        
                     }
                 }
                 tipp.coverage[i] = coverage
             }
+        }
+        
+        // only valid entries
+        json.package.tipps.each{ tipp ->
+            def coverage = []
+            tipp.coverage.each{ cover ->
+                cover.any { attr ->
+                    if(["startDate", "startVolume", "endDate", "endVolume"].contains(attr.key.toString()) && attr.value.toString() != ""){
+                        coverage << cover
+                        return true
+                    } 
+                }
+            }
+            tipp.coverage = coverage
         }
         
         json
@@ -184,13 +223,17 @@ class Transformer {
          println ". DataTransformer.parseTippTitleIdentifiers()"
 
          json.package.tipps.each{ tipp ->
+             def validIdentifiers = []
              tipp.title.identifiers.each{ ident ->
-                 ident.each{ attr ->
-                     // e.key: type  | e.value.v: eissn     | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                     // e.key: value | e.value.v: 1234-5678 | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                     ident."${attr.key}" = attr.value.v
+                 
+                 // use validator
+                 if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
+                     ident.type  = ident.type.v
+                     ident.value = ident.value.v
+                     validIdentifiers << ident
                  }
              }
+             tipp.title.identifiers = validIdentifiers
          }
 
          json
@@ -203,7 +246,19 @@ class Transformer {
         json.titles.each{ title ->
             title.each{ attr ->
                 if(attr.value.v instanceof java.lang.String) {
-                    title."${attr.key}" = (attr.value.v ? attr.value.v : "")
+                    
+                    // use validator
+                    if(attr.key == "name") {
+                        if(attr.value.m == Status.VALIDATOR_STRING_IS_VALID.toString()){
+                            title."${attr.key}" = attr.value.v
+                        }
+                        else {
+                            title."${attr.key}" = ""
+                        }
+                    }
+                    else {
+                        title."${attr.key}" = (attr.value.v ? attr.value.v : "")
+                    }
                 }
             }
         }
@@ -216,13 +271,17 @@ class Transformer {
          println ". DataTransformer.parseTitleIdentifiers()"
 
          json.titles.each{ title ->
+             def validIdentifiers = []
              title.identifiers.each{ ident ->
-                 ident.each{ attr ->
-                     // e.key: type  | e.value.v: eissn     | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                     // e.key: value | e.value.v: 1234-5678 | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                     ident."${attr.key}" = attr.value.v
+
+                 // use validator
+                 if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
+                     ident.type  = ident.type.v
+                     ident.value = ident.value.v
+                     validIdentifiers << ident
                  }
              }
+             title.identifiers = validIdentifiers
          }
          
          json
@@ -231,43 +290,38 @@ class Transformer {
     static Object parsePublisherHistory(Object json) {
         
         println ". DataTransformer.parsePublisherHistory()"
-        
+
         json.titles.each{ title ->
             title.publisher_history.eachWithIndex { ph, i ->
-                def publisher_history = [:] 
+                def publisher_history = [:]
                 ph.each{ attr ->
-                    publisher_history << ["${attr.key}" : attr.value.v]
+
+                    // use validator
+                    if(['startDate', 'endDate'].contains(attr.key)){
+                        if(attr.value.m == Status.VALIDATOR_DATE_IS_VALID.toString())
+                            publisher_history << ["${attr.key}" : attr.value.v]
+                        else
+                            publisher_history << ["${attr.key}":""]
+                    }
+                    else {
+                        publisher_history << ["${attr.key}" : attr.value.v]
+                    }
                 }
                 title.publisher_history[i] = publisher_history
             }
         }
         
-        json
-    }
-         
-    static Object parseIdentifiers(Object json, Object removeNonValid) {
-   
-        println ". DataTransformer.parseIdentifiers()"
-  
-        // TODO
-        
-        json.package.tipps.each{ t ->
-            t.title.identifiers.each{ i ->
-                i.each{ e ->
-                    // e.key: type  | e.value.v: eissn     | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                    // e.key: value | e.value.v: 1234-5678 | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                    i."${e.key}" = e.value.v
+        // only valid entries
+        json.titles.each{ title ->
+            def publisher_history = []
+            title.publisher_history.each{ ph ->
+                ph.any { attr ->
+                    if(["startDate", "endDate"].contains(attr.key.toString()) && attr.value.toString() != ""){
+                        publisher_history << ph
+                        return true
+                    } 
                 }
-            }
-        }
-        
-        json.titles.each{ t ->
-            t.identifiers.each{ i ->
-                i.each{ e ->
-                    // e.key: type  | e.value.v: eissn     | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                    // e.key: value | e.value.v: 1234-5678 | e.value.m: VALIDATOR_IDENTIFIER_IS_VALID
-                    i."${e.key}" = e.value.v
-                }
+                title.publisher_history = publisher_history
             }
         }
         
@@ -278,41 +332,19 @@ class Transformer {
         
         println ". DataTransformer.cleanUpJSON()"
         
-        // remove empty identifiers
-        json.package.tipps.each{ tipp ->
-            def identifiers = []
-            tipp.title.identifiers.each { ident ->
-                if(ident.value) {
-                    identifiers << ident
-                }
-            }
-            tipp.title.identifiers = identifiers
-        }
-        
         //remove tipps without name and identifier
         def tipps = []
         json.package.tipps.each{ tipp ->
-            if(tipp.title.name?.trim() != "" && tipp.title.identifiers?.size() > 0) {
+            if(tipp.title.identifiers.size() > 0) {
                 tipps << tipp
             }
         }
         json.package.tipps = tipps
-        
-        // remove empty identifiers
-        json.titles.each{ title ->
-            def identifiers = []
-            title.identifiers.each { ident ->
-                if(ident.value) {
-                    identifiers << ident
-                }
-            }
-            title.identifiers = identifiers
-        }
-        
+               
         //remove titles without name and identifier
         def titles = []
         json.titles.each{ title ->
-            if(title.name?.trim() != "" && title.identifiers?.size() > 0) {
+            if(title.identifiers.size() > 0) {
                 titles << title
             }
         }

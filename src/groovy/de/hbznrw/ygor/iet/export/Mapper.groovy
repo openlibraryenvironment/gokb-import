@@ -32,7 +32,7 @@ class Mapper {
         
         else if(query == Query.GBV_TITLE) {
             title.name.v = Normalizer.normString(env.message)
-            title.name.m = env.state
+            title.name.m = Validator.isValidString(title.name.v)
         }
         
         else if(query == Query.GBV_PUBLISHER) {
@@ -57,12 +57,12 @@ class Mapper {
         
         else if(query == Query.GBV_PUBLISHED_FROM) {
             title.publishedFrom.v = Normalizer.normDate(env.message, Normalizer.IS_START_DATE)
-            title.publishedFrom.m = env.state
+            title.publishedFrom.m = Validator.isValidDate(title.publishedFrom.v)
         }
         
         else if(query == Query.GBV_PUBLISHED_TO) {
             title.publishedTo.v = Normalizer.normDate(env.message, Normalizer.IS_END_DATE)
-            title.publishedTo.m = env.state
+            title.publishedTo.m = Validator.isValidDate(title.publishedTo.v)
         }
         
         title
@@ -87,7 +87,7 @@ class Mapper {
         
         else if(query == Query.GBV_TITLE) {
             tipp.title.v.name.v = Normalizer.normString(env.message)
-            tipp.title.v.name.m = env.state
+            tipp.title.v.name.m = Validator.isValidString(tipp.title.v.name.v)
         }
         
         else if(query == Query.GBV_TIPP_URL) {
@@ -129,15 +129,17 @@ class Mapper {
                     }
                     if(e.messages['startVolume'][i]){
                         tmp.startVolume.v = Normalizer.normCoverageVolume(e.messages['startVolume'][i], Normalizer.IS_START_DATE)
-                        tmp.startVolume.m = Normalizer.normString(
+                        /*tmp.startVolume.m = Normalizer.normString(
                             (e.states.find{it.toString().startsWith('startVolume_')}).toString().replaceFirst('startVolume_', '')
-                            )
+                            )*/
+                        tmp.startVolume.m = Validator.isValidNumber(tmp.startVolume.v)
                     }
                     if(e.messages['endVolume'][i]){
                         tmp.endVolume.v = Normalizer.normCoverageVolume(e.messages['endVolume'][i], Normalizer.IS_END_DATE)
-                        tmp.endVolume.m = Normalizer.normString(
+                        /*tmp.endVolume.m = Normalizer.normString(
                             (e.states.find{it.toString().startsWith('endVolume_')}).toString().replaceFirst('endVolume_', '')  
-                            )              
+                            )*/
+                        tmp.endVolume.m = Validator.isValidNumber(tmp.endVolume.v)
                     }  
                     tipp.coverage << tmp // no pod
                 }

@@ -16,6 +16,35 @@ class Validator {
     final static IS_START_DATE  = 1000
     final static IS_END_DATE    = 1001
     
+    
+    /**
+     *
+     * @param str
+     * @return
+     */
+    static isValidString(String str) {
+        if(!str || str.trim().equals("") || str.length() < 3){
+            return Status.VALIDATOR_STRING_IS_INVALID
+        }
+        if(str.contains("|")){
+            return Status.VALIDATOR_STRING_IS_INVALID
+        }
+        return Status.VALIDATOR_STRING_IS_VALID
+    }
+    
+    /**
+     *
+     * @param str
+     * @return
+     */
+    static isValidNumber(String str) {
+        if(str && !str.trim().equals("")){
+            if(str.isInteger())
+                return Status.VALIDATOR_NUMBER_IS_VALID
+        }
+        return Status.VALIDATOR_NUMBER_IS_INVALID
+    }
+    
     /**
      * 
      * @param str

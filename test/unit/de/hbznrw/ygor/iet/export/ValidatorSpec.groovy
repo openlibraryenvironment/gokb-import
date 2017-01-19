@@ -33,6 +33,65 @@ class ValidatorSpec extends Specification {
     def cleanupSpec() {}   
     
     
+    void "isValidString(String str)"() {
+        given:
+            def test = [
+                "This is a title",
+                "Multiple|Strings",
+                "ab",
+                "",
+                null
+                ]
+            def result = [
+                Status.VALIDATOR_STRING_IS_VALID,
+                Status.VALIDATOR_STRING_IS_INVALID,
+                Status.VALIDATOR_STRING_IS_INVALID,
+                Status.VALIDATOR_STRING_IS_INVALID,
+                Status.VALIDATOR_STRING_IS_INVALID
+                ]
+            
+        expect:
+            test.eachWithIndex{e, i ->
+                println "\"${test[i]}\" >> \"${result[i]}\""
+            }
+            Validator.isValidString(test[0]) == result[0]
+            Validator.isValidString(test[1]) == result[1]
+            Validator.isValidString(test[2]) == result[2]
+            Validator.isValidString(test[3]) == result[3]
+            Validator.isValidString(test[4]) == result[4]
+    }
+    
+    void "isValidNumber(String str)"() {
+        given:
+            def test = [
+                "124",
+                "124,5",
+                "333.6",
+                "ab",
+                "",
+                null
+                ]
+            def result = [
+                Status.VALIDATOR_NUMBER_IS_VALID,
+                Status.VALIDATOR_NUMBER_IS_INVALID,
+                Status.VALIDATOR_NUMBER_IS_INVALID,
+                Status.VALIDATOR_NUMBER_IS_INVALID,
+                Status.VALIDATOR_NUMBER_IS_INVALID,
+                Status.VALIDATOR_NUMBER_IS_INVALID
+                ]
+            
+        expect:
+            test.eachWithIndex{e, i ->
+                println "\"${test[i]}\" >> \"${result[i]}\""
+            }
+            Validator.isValidNumber(test[0]) == result[0]
+            Validator.isValidNumber(test[1]) == result[1]
+            Validator.isValidNumber(test[2]) == result[2]
+            Validator.isValidNumber(test[3]) == result[3]
+            Validator.isValidNumber(test[4]) == result[4]
+            Validator.isValidNumber(test[5]) == result[5]
+    }
+    
     void "isValidIdentifier(String str, Object identifierType)"() {
         given:
             def test = [

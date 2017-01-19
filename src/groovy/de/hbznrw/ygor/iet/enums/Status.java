@@ -38,7 +38,17 @@ public enum Status {
 	// given identifier is not valid
 	VALIDATOR_IDENTIFIER_IS_INVALID        ("VALIDATOR_IDENTIFIER_IS_INVALID"),
 	// e.g. not implemented yet
-	VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE  ("VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE")
+	VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE  ("VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE"),
+	
+	// given title seems to be valid
+    VALIDATOR_STRING_IS_VALID    ("VALIDATOR_STRING_IS_VALID"),
+    // given title is not valid
+    VALIDATOR_STRING_IS_INVALID  ("VALIDATOR_STRING_IS_INVALID"),
+    
+    // given title seems to be valid
+    VALIDATOR_NUMBER_IS_VALID    ("VALIDATOR_NUMBER_IS_VALID"),
+    // given title is not valid
+    VALIDATOR_NUMBER_IS_INVALID  ("VALIDATOR_NUMBER_IS_INVALID"),
 	
 	;
 

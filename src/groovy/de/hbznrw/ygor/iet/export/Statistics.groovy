@@ -22,8 +22,8 @@ class Statistics {
         
         // general
         
-        json.meta.stats << ["tipps before cleanUp" :  json.package.tipps.size()]
-        json.meta.stats << ["titles before cleanUp" : json.titles.size()]
+        json.meta.stats << ["1. tipps before cleanUp" :  json.package.tipps.size()]
+        json.meta.stats << ["1. titles before cleanUp" : json.titles.size()]
         
         // titles
         
@@ -162,8 +162,8 @@ class Statistics {
         
         // general
         
-        json.meta.stats << ["tipps AFTER CLEANUP" :  json.package.tipps.size()]
-        json.meta.stats << ["titles AFTER CLEANUP" : json.titles.size()]
+        json.meta.stats << ["1. tipps AFTER CLEANUP" :  json.package.tipps.size()]
+        json.meta.stats << ["1. titles AFTER CLEANUP" : json.titles.size()]
         
         json
     }
