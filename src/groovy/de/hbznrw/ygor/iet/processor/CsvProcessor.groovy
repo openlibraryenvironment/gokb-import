@@ -79,21 +79,21 @@ class CsvProcessor extends ProcessorAbstract {
     @Override
     void processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
 
-        def data = bridge.master.enrichment.dataContainer
-        def key  = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey).toString()
+        def dc  = bridge.master.enrichment.dataContainer
+        def key = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey).toString()
         if("" != key) {
 
             bridge.connector.poll(key)
           
             def saveTitle = false
-            def title     = Mapper.getExistingTitleByPrimaryIdentifier(data, key)
+            def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, key)
             if(!title) {
                 title     = new Title()
                 saveTitle = true
             }
             
             def saveTipp = false
-            def tipp     = Mapper.getExistingTippByPrimaryIdentifier(data, key)
+            def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, key)
             if(!tipp) {
                 tipp     = PackageStruct.getNewTipp()
                 saveTipp = true
@@ -133,16 +133,16 @@ class CsvProcessor extends ProcessorAbstract {
                     }    
                 }
                 
-                Mapper.mapToTitle(title, q, env)
-                Mapper.mapToTipp(tipp, q, env)
+                Mapper.mapToTitle(dc, title, q, env)
+                Mapper.mapToTipp(dc, tipp, q, env)
             }
             if(saveTitle){
                 println "saveTitle: " + key
-                data.titles << ["${key}": new Pod(title)]
+                dc.titles << ["${key}": new Pod(title)]
             }
             if(saveTipp){
                 println "saveTipp: " + key
-                data.pkg.tipps << ["${key}": new Pod(tipp)]
+                dc.pkg.tipps << ["${key}": new Pod(tipp)]
             }
             
         } else {

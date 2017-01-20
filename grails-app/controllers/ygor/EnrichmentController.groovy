@@ -98,6 +98,7 @@ class EnrichmentController {
             def pkgNominal = preset.find{it.key == pm['pkgNominal'][0]}
             if(pkgNominal){
                 ph.v.nominalPlatform.v = pkgNominal.value
+                ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.v)
                 ph.v.nominalProvider.v = pkgNominal.key
             }
             

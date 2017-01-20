@@ -50,6 +50,12 @@ public enum Status {
     // given title is not valid
     VALIDATOR_NUMBER_IS_INVALID  ("VALIDATOR_NUMBER_IS_INVALID"),
 	
+    
+    // given url seems to be valid
+    VALIDATOR_URL_IS_VALID    ("VALIDATOR_URL_IS_VALID"),
+    // given url is invalid
+    VALIDATOR_URL_IS_INVALID  ("VALIDATOR_URL_IS_INVALID"),
+    
 	;
 
 

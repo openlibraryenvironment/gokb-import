@@ -52,7 +52,7 @@ class ValidatorSpec extends Specification {
             
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Validator.isValidString(test[0]) == result[0]
             Validator.isValidString(test[1]) == result[1]
@@ -82,7 +82,7 @@ class ValidatorSpec extends Specification {
             
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Validator.isValidNumber(test[0]) == result[0]
             Validator.isValidNumber(test[1]) == result[1]
@@ -121,7 +121,7 @@ class ValidatorSpec extends Specification {
 
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Validator.isValidIdentifier(test[0][0], test[0][1]) == result[0]
             Validator.isValidIdentifier(test[1][0], test[1][1]) == result[1]
@@ -156,7 +156,7 @@ class ValidatorSpec extends Specification {
             
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Validator.isValidDate(test[0]) == result[0]
             Validator.isValidDate(test[1]) == result[1]
@@ -164,5 +164,33 @@ class ValidatorSpec extends Specification {
             Validator.isValidDate(test[3]) == result[3]
             Validator.isValidDate(test[4]) == result[4]
             Validator.isValidDate(test[5]) == result[5]
+    }
+    
+    void "isValidURL(String str)"() {
+        given:
+            def test = [
+                "https://google.de/",
+                "http://google.de/?123",
+                "google.de",
+                null,
+                ""
+                ]
+            def result = [
+                Status.VALIDATOR_URL_IS_VALID,
+                Status.VALIDATOR_URL_IS_VALID,
+                Status.VALIDATOR_URL_IS_INVALID,
+                Status.VALIDATOR_URL_IS_INVALID,
+                Status.VALIDATOR_URL_IS_INVALID
+                ]
+            
+        expect:
+            test.eachWithIndex{e, i ->
+                println "${test[i]} -> ${result[i]}"
+            }
+            Validator.isValidURL(test[0]) == result[0]
+            Validator.isValidURL(test[1]) == result[1]
+            Validator.isValidURL(test[2]) == result[2]
+            Validator.isValidURL(test[3]) == result[3]
+            Validator.isValidURL(test[4]) == result[4]
     }
 }

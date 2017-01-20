@@ -7,7 +7,7 @@ import de.hbznrw.ygor.iet.bridge.*
 
 class Mapper {
 
-    static Title mapToTitle(Title title, Query query, Envelope env) {
+    static Title mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
        
         if(query in [Query.ZDBID, Query.EZBID, Query.GBV_EISSN, Query.GBV_PISSN, Query.GBV_GVKPPN]) {
             def tmp = TitleStruct.getNewIdentifier()
@@ -68,7 +68,7 @@ class Mapper {
         title
     }
     
-    static Tipp mapToTipp(Tipp tipp, Query query, Envelope env) {
+    static Tipp mapToTipp(DataContainer dc, Tipp tipp, Query query, Envelope env) {
         
         if(query in [Query.ZDBID, Query.GBV_EISSN]) {
             def tmp = TitleStruct.getNewIdentifier()
@@ -91,8 +91,8 @@ class Mapper {
         }
         
         else if(query == Query.GBV_TIPP_URL) {
-            tipp.url.v = Normalizer.normString(env.message)
-            tipp.url.m = env.state
+            tipp.url.v = Normalizer.normTippURL(env.message, dc.pkg.packageHeader.v.nominalPlatform.v)
+            tipp.url.m = Validator.isValidURL(tipp.url.v)
         }
         
         else if(query == Query.GBV_PLATFORM_URL) {

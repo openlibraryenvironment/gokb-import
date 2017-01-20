@@ -1,14 +1,13 @@
 package de.hbznrw.ygor.iet.export
 
 import org.springframework.util.StringUtils
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.iet.export.structure.PackageHeader
 import de.hbznrw.ygor.iet.export.structure.Tipp
 import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
-
 import java.sql.Timestamp
 
 class Normalizer {
@@ -246,5 +245,41 @@ class Normalizer {
         } catch(Exception e) {}
         
         str
+    }
+    
+    /**
+     * Concatenates list elements with "|" as delimiter.
+     * Eliminates null and empty values
+     *
+     * @param list
+     * @param nominalPlatform
+     * @return
+     */
+    static String normTippURL(ArrayList list, String nominalPlatform) {
+        def result = []
+        list.each{ e ->
+            result << Normalizer.normTippURL(e, nominalPlatform)
+        }
+        result ? result.minus(null).minus("").join("|") : ""
+    }
+    
+    /**
+     * Returns given url if it matches to nominal platform url
+     * 
+     * @param str
+     * @param nominalPlatform
+     * @return
+     */
+    static String normTippURL(String str, String nominalPlatform) {
+        
+        def npTmp  = Normalizer.normURL(nominalPlatform)
+        if(!npTmp)
+            return str
+            
+        def strTmp = Normalizer.normURL(str)
+        if(strTmp && strTmp.indexOf(npTmp) == 0)
+            return str
+        
+        ""
     }
 }

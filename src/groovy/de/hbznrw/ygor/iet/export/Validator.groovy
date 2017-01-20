@@ -68,6 +68,27 @@ class Validator {
         return Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
     }
     
+    
+    /**
+     * 
+     * @param str
+     * @return
+     */
+    static isValidURL(String str) {
+      
+        if(!str || str.trim().equals("")){
+            return Status.VALIDATOR_URL_IS_INVALID
+        }
+        
+        try {
+            def url = new URL(str)
+        } catch(Exception e) {
+            return Status.VALIDATOR_URL_IS_INVALID
+        }
+        
+        return Status.VALIDATOR_URL_IS_VALID
+    }
+    
     /**
      * 
      * @param str

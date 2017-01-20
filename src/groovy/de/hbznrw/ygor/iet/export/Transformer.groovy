@@ -129,6 +129,9 @@ class Transformer {
         
         json.package.tipps.each{ tipp ->
             tipp.each{ attr ->
+
+                // TODO validate tipp.url
+                
                 if(attr.value.v instanceof java.lang.String || attr.value.v == null) {
                     tipp."${attr.key}" = (attr.value.v ? attr.value.v : "")
                 }

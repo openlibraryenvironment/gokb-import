@@ -5,7 +5,6 @@ import java.util.ArrayList
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
-
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.bridge.*
 import de.hbznrw.ygor.iet.export.structure.*
@@ -54,7 +53,7 @@ class NormalizerSpec extends Specification {
                   
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Normalizer.normString(test[0]) == result[0]
             Normalizer.normString(test[1]) == result[1]
@@ -78,7 +77,7 @@ class NormalizerSpec extends Specification {
             
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Normalizer.normString(test[0]) == result[0]
             Normalizer.normString(test[1]) == result[1]
@@ -115,7 +114,7 @@ class NormalizerSpec extends Specification {
         
         expect: 
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Normalizer.normIdentifier(test[0][0], test[0][1]) == result[0]
             Normalizer.normIdentifier(test[1][0], test[1][1]) == result[1]
@@ -128,7 +127,7 @@ class NormalizerSpec extends Specification {
             Normalizer.normIdentifier(test[8][0], test[8][1]) == result[8]
             Normalizer.normIdentifier(test[9][0], test[9][1]) == result[9]
             
-            // TODO: not implemented DataNormalizer.normIdentifier("", EzbBridge.IDENTIFIER) 
+            // TODO: not implemented DataNormalizer.normIdentifier(", EzbBridge.IDENTIFIER) 
     }
     
     void "normIdentifier(ArrayList list, Object type)"() {
@@ -139,8 +138,8 @@ class NormalizerSpec extends Specification {
             def result2 = "null|1234-88XX|999966"
         
         expect:
-            println "\"${list1}\" >> \"${result1}\""
-            println "\"${list2}\" >> \"${result2}\""
+            println "${list1} -> ${result1}"
+            println "${list2} -> ${result2}"
             
             Normalizer.normIdentifier(list1, TitleStruct.EISSN) == result1
             Normalizer.normIdentifier(list2, TitleStruct.PISSN) == result2
@@ -177,7 +176,7 @@ class NormalizerSpec extends Specification {
         
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> START_DATE:\"${result[i][0]}\""
+                println "${test[i]} -> START_DATE: ${result[i][0]}"
             }
             Normalizer.normDate(test[0], Normalizer.IS_START_DATE) == result[0][0]
             Normalizer.normDate(test[1], Normalizer.IS_START_DATE) == result[1][0]
@@ -193,7 +192,7 @@ class NormalizerSpec extends Specification {
             
             
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> END_DATE:\"${result[i][1]}\""
+                println "${test[i]} -> END_DATE: ${result[i][1]}"
             }
             Normalizer.normDate(test[0], Normalizer.IS_END_DATE) == result[0][1]
             Normalizer.normDate(test[1], Normalizer.IS_END_DATE) == result[1][1]
@@ -222,13 +221,13 @@ class NormalizerSpec extends Specification {
             def resultEndDate2   = "null|2006${endDatePostfix}|2006${endDatePostfix}|2006${endDatePostfix}|2010${endDatePostfix}"
 
         expect:
-            println "\"${list1}\" >> START_DATE:\"${resultStartDate1}\""
-            println "\"${list2}\" >> START_DATE:\"${resultStartDate2}\""
+            println "${list1} -> START_DATE: ${resultStartDate1}"
+            println "${list2} -> START_DATE: ${resultStartDate2}"
             Normalizer.normDate(list1, Normalizer.IS_START_DATE) == resultStartDate1
             Normalizer.normDate(list2, Normalizer.IS_START_DATE) == resultStartDate2
             
-            println "\"${list1}\" >> END_DATE:\"${resultEndDate1}\""
-            println "\"${list2}\" >> END_DATE:\"${resultEndDate2}\""
+            println "${list1} -> END_DATE: ${resultEndDate1}"
+            println "${list2} -> END_DATE: ${resultEndDate2}"
             Normalizer.normDate(list1, Normalizer.IS_END_DATE)   == resultEndDate1
             Normalizer.normDate(list2, Normalizer.IS_END_DATE)   == resultEndDate2
     }  
@@ -248,14 +247,14 @@ class NormalizerSpec extends Specification {
             
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> START_DATE:\"${result[i][0]}\""
+                println "${test[i]} -> START_DATE: ${result[i][0]}"
             }
             Normalizer.normCoverageVolume(test[0], Normalizer.IS_START_DATE) == result[0][0]
             Normalizer.normCoverageVolume(test[1], Normalizer.IS_START_DATE) == result[1][0]
             Normalizer.normCoverageVolume(test[2], Normalizer.IS_START_DATE) == result[2][0]
             
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> END_DATE:\"${result[i][1]}\""
+                println "${test[i]} -> END_DATE: ${result[i][1]}"
             }
             Normalizer.normCoverageVolume(test[0], Normalizer.IS_END_DATE) == result[0][1]
             Normalizer.normCoverageVolume(test[1], Normalizer.IS_END_DATE) == result[1][1]
@@ -281,7 +280,7 @@ class NormalizerSpec extends Specification {
             
         expect:
             test.eachWithIndex{e, i ->
-                println "\"${test[i]}\" >> \"${result[i]}\""
+                println "${test[i]} -> ${result[i]}"
             }
             Normalizer.normURL(test[0]) == result[0]
             Normalizer.normURL(test[1]) == result[1]
@@ -299,7 +298,71 @@ class NormalizerSpec extends Specification {
                 "google.de|null|yahoo.de"
                 ]
          expect:
-             println "\"${test[0]}\" >> \"${result[0]}\""
+             println "${test[0]} -> ${result[0]}"
              Normalizer.normURL(test[0]) == result[0]
+    }
+    
+    void "normTippURL(String str, String nominalPlatform) "() {
+        given:
+            def test = [
+                    ["https://google.de/?123"        , "https://google.de"],
+                    ["http://yahoo.de?q=laser"       , "https://yahoo.de/etc"],
+                    ["https://google.de/sub/?123"    , "https://google.de"],
+                    ["http://yahoo.de/a/b/c?q=laser" , "http://yahoo.de/v/w"],
+                    ["https://google.de"             , "https://yahoo.de"],
+                    ["https://google.de/?123"        , ""],
+                    [""                              , "https://google.de"]
+                ]
+            def result = [
+                "https://google.de/?123",
+                "http://yahoo.de?q=laser" ,
+                "https://google.de/sub/?123",
+                "http://yahoo.de/a/b/c?q=laser",
+                "",
+                "https://google.de/?123",
+                ""
+                ]
+            
+        expect:
+            test.eachWithIndex{e, i ->
+                println "${test[i][0]} matches ${test[i][1]} -> ${result[i]}"
+            }
+            Normalizer.normTippURL(test[0][0], test[0][1]) == result[0]
+            Normalizer.normTippURL(test[1][0], test[1][1]) == result[1]
+            Normalizer.normTippURL(test[2][0], test[2][1]) == result[2]
+            Normalizer.normTippURL(test[3][0], test[3][1]) == result[3]
+            Normalizer.normTippURL(test[4][0], test[4][1]) == result[4]
+            Normalizer.normTippURL(test[5][0], test[5][1]) == result[5]
+            Normalizer.normTippURL(test[6][0], test[6][1]) == result[6]
+    }
+    
+    void "normTippURL(ArrayList list, String nominalPlatform)"() {
+        
+        given:
+            def test = [
+                    [["https://google.de/?123", "http://yahoo.de?q=laser", ""]                      , "https://google.de"],
+                    [["http://yahoo.de/a/b/c?q=laser", "http://yahoo.de/v/w", "https://google.de"]  , "https://google.de"],
+                    [["http://yahoo.de/a/b/c?q=laser", "", null]                                    , "https://yahoo.de"],
+                    [["http://yahoo.de/a/b/c?q=laser", "", null]                                    , "https://google.de"],
+                    [["http://yahoo.de/a/b/c?q=laser", "http://yahoo.de/v/w", "https://google.de"]  , "https://yahoo.de"]
+                ]
+            def result = [
+                "https://google.de/?123",
+                "https://google.de" ,
+                "http://yahoo.de/a/b/c?q=laser",
+                "",
+                "http://yahoo.de/a/b/c?q=laser|http://yahoo.de/v/w"
+                ]
+                
+         expect:
+             test.eachWithIndex{e, i ->
+                println "${test[i][0]} matches ${test[i][1]} -> ${result[i]}"
+             }
+             Normalizer.normTippURL(test[0][0], test[0][1]) == result[0]
+             Normalizer.normTippURL(test[1][0], test[1][1]) == result[1]
+             Normalizer.normTippURL(test[2][0], test[2][1]) == result[2]
+             Normalizer.normTippURL(test[3][0], test[3][1]) == result[3]
+             Normalizer.normTippURL(test[4][0], test[4][1]) == result[4]
+           
     }
 }
