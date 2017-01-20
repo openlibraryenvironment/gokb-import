@@ -8,7 +8,7 @@ import de.hbznrw.ygor.iet.export.Mapper
 
 class Enrichment {
 
-    static enum FileType {ORIGIN, RESULT, JSON, JSON_PACKAGE, JSON_TITLES, JSON_DEBUG}
+    static enum FileType {ORIGIN, RESULT, JSON, JSON_PACKAGE, JSON_TITLES, JSON_DEBUG, JSON_RAW}
     
 	static enum ProcessingState {UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR}
 	ProcessingState status
@@ -82,22 +82,27 @@ class Enrichment {
                 break
             case FileType.JSON:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON))
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON), "UTF-8")
                 return file
                 break
             case FileType.JSON_PACKAGE:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE))
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE), "UTF-8")
                 return file
                 break
             case FileType.JSON_TITLES:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES))
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES), "UTF-8")
                 return file
                 break
             case FileType.JSON_DEBUG:
                 def file = new File(resultPathName)
-                file.write(JsonToolkit.parseDataToJson(dataContainer))
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_DEBUG), "UTF-8")
+                return file
+                break
+            case FileType.JSON_RAW:
+                def file = new File(resultPathName)
+                file.write(JsonToolkit.parseDataToJson(dataContainer), "UTF-8")
                 return file
                 break
         }

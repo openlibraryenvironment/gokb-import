@@ -115,15 +115,17 @@
 					</g:if>
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
+						<g:actionSubmit action="downloadPackageFile" value="Package/Tipps speichern" class="btn btn-success"/>
+		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
+		    			
 						<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success disabled"
 		    				data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" disabled="disabled"/>
 		    			
+		    			
 		    			<br /><br />
-						
-		    			<g:actionSubmit action="downloadPackageFile" value="Package/Tipps speichern" class="btn btn-success"/>
-		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
-		    			<g:actionSubmit action="downloadFile" value="Statistik-Datei speichern" class="btn btn-success"/>
-		    			<g:actionSubmit action="downloadDebugFile" value="DEBUG-Datei speichern" class="btn btn-success"/>
+		    			
+		    			<g:actionSubmit action="downloadDebugFile" value="Debug-Datei speichern" class="btn"/>
+		    			<g:actionSubmit action="downloadRawFile" value="Datenstruktur speichern" class="btn"/>
 		    		</g:if>
 		    		
 				</div>

@@ -164,16 +164,6 @@ class EnrichmentController {
                 model:[documents:documents, currentView:'process']
                 )
     }
-
-    def downloadFile() {
-        
-        def en     = getEnrichment()
-        def result = en.getFile(Enrichment.FileType.JSON)
-        render(
-                file:result,
-                fileName:"${en.resultName}.all.json"
-                )
-    }
     
     def downloadPackageFile() {
 
@@ -202,6 +192,16 @@ class EnrichmentController {
         render(
                 file:result,
                 fileName:"${en.resultName}.debug.json"
+                )
+    }
+    
+    def downloadRawFile() {
+        
+        def en     = getEnrichment()
+        def result = en.getFile(Enrichment.FileType.JSON_RAW)
+        render(
+                file:result,
+                fileName:"${en.resultName}.raw.json"
                 )
     }
     
