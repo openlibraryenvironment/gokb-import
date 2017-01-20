@@ -15,7 +15,7 @@ import org.apache.http.entity.mime.content.FileBody
 
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.Pod
-
+import de.hbznrw.ygor.iet.export.structure.PackageStruct
 
 
 class EnrichmentController {
@@ -87,10 +87,25 @@ class EnrichmentController {
 
     def prepareFile = {
         
-        if(!request.parameterMap['ignorePkgTitle']) {
-            def pkgTitle = request.parameterMap['pkgTitle'][0]
-            enrichment.dataContainer.pkg.v.packageHeader.v.name.v = new Pod(pkgTitle)
+        def pm = request.parameterMap
+        def ph = enrichment.dataContainer.pkg.packageHeader
+        
+        if(!pm['ignorePkgData']) {
+            
+            ph.v.name.v = new Pod(pm['pkgTitle'][0])
+            
+            def preset = PackageStruct.getPackageHeaderNominalPlatformPreset()
+            def pkgNominal = preset.find{it.key == pm['pkgNominal'][0]}
+            if(pkgNominal){
+                ph.v.nominalPlatform.v = pkgNominal.value
+                ph.v.nominalProvider.v = pkgNominal.key
+            }
+            
+            def vn =  PackageStruct.getNewPackageHeaderVariantName()
+            vn.variantName.v = pm['pkgVariantName'][0]
+            ph.v.variantNames << vn 
         }
+        
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
         redirect(action:'process')
     }

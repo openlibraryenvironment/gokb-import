@@ -3,6 +3,7 @@
 <%@ page 
 	import="ygor.Enrichment" 
 	import="de.hbznrw.ygor.iet.export.structure.TitleStruct"
+	import="de.hbznrw.ygor.iet.export.structure.PackageStruct"
 	import="de.hbznrw.ygor.iet.bridge.*"
 %>
 
@@ -55,21 +56,47 @@
 			<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
 				<div class="row">
 				
-					<div class="col-xs-10 col-xs-offset-1">
-						Titel des Pakets in der GOKb:
-						<g:textField name="pkgTitle" size="64" value="Munchhausen Verlag : hbz : 1999" />
+					<div class="col-xs-5 col-xs-offset-1">
+						Pakettitel:
+						<br /> 
+						<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" />
 						<br />
-						<g:checkBox name="ignorePkgTitle" value="true" checked="true" /> Diese Angabe ignorieren
+						<br /> 
 					</div>
-				
+					
+					<div class="col-xs-4 col-xs-offset-1">
+						ZDB-Paketsigel:
+						<br /> 
+						<g:textField name="pkgVariantName" size="24" value="ZDB-0815" />
+						<br />
+						<br /> 
+					</div>
 				</div><!-- .row -->
+				
+				<div class="row">
+					<div class="col-xs-5 col-xs-offset-1">
+						Paketanbieter:
+						<br /> 
+						<g:select name="pkgNominal" from="${PackageStruct.getPackageHeaderNominalPlatformPreset().entrySet()}"
+							optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
+						<br /> 
+					</div>
+				</div><!-- .row -->
+				
+				<div class="row">
+					<div class="col-xs-10 col-xs-offset-1">
+						<g:checkBox name="ignorePkgData" value="true" checked="true" /> Diese Angabe ignorieren
+						<br />
+					</div>
+				</div><!-- .row -->
+				
 				<br />
 			</g:if>
 			
 			<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">			
 				<div class="row">
 					<div class="col-xs-4 col-xs-offset-1">
-						<g:select name="processIndex" from="${1..20}" value="0" 
+						<g:select name="processIndex" from="${1..15}" value="0" 
 							noSelection="['':'Spaltenindex der .. ']"  class="form-control"/>
 					</div>
 					<div class="col-xs-6">
