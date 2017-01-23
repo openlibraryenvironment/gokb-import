@@ -41,6 +41,10 @@ class Transformer {
 
         json = Transformer.cleanUpJSON(json, validator)
         
+        if(type.equals(FileType.JSON_DEBUG)){
+            json = Statistics.getStatsAfterCleanUp(json)
+        }
+        
         if(type.equals(FileType.JSON_PACKAGE)){
             json = json.package
         }

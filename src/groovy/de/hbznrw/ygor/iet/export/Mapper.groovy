@@ -150,7 +150,7 @@ class Mapper {
                     }
                     if(e.messages['endDate'][i]){
                         tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
-                        tmp.endDate.m = Validator.isValidDate(tmp.startDate.v)
+                        tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
                     }
                     if(e.messages['startVolume'][i]){
                         tmp.startVolume.v = Normalizer.normCoverageVolume(e.messages['startVolume'][i], Normalizer.IS_START_DATE)
