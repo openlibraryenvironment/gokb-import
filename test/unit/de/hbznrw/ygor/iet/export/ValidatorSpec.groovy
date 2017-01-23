@@ -172,12 +172,14 @@ class ValidatorSpec extends Specification {
                 "https://google.de/",
                 "http://google.de/?123",
                 "google.de",
+                "http://bib.uni-regensburg.de/ezeit/?2007988|http://www.emeraldinsight.com/loi/bij",
                 null,
                 ""
                 ]
             def result = [
                 Status.VALIDATOR_URL_IS_VALID,
                 Status.VALIDATOR_URL_IS_VALID,
+                Status.VALIDATOR_URL_IS_INVALID,
                 Status.VALIDATOR_URL_IS_INVALID,
                 Status.VALIDATOR_URL_IS_INVALID,
                 Status.VALIDATOR_URL_IS_INVALID
@@ -192,5 +194,6 @@ class ValidatorSpec extends Specification {
             Validator.isValidURL(test[2]) == result[2]
             Validator.isValidURL(test[3]) == result[3]
             Validator.isValidURL(test[4]) == result[4]
+            Validator.isValidURL(test[5]) == result[5]
     }
 }

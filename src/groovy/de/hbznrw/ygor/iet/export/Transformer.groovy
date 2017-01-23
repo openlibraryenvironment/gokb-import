@@ -29,7 +29,7 @@ class Transformer {
         //json = Transformer.parseAdditionalProperties(json)
         json = Transformer.parseCuratoryGroups(json)
         json = Transformer.parseSource(json)
-        //json = Transformer.parseVariantNames(json)
+        json = Transformer.parseVariantNames(json)
         
         json = Transformer.parseTipps(json, validator)
         json = Transformer.parseTippTitleIdentifiers(json, validator)
@@ -123,17 +123,38 @@ class Transformer {
         json
     }
     
+    static Object parseVariantNames(Object json) {
+        
+        println ". DataTransformer.parseVariantNames()"
+        
+        json.package.packageHeader.variantNames.eachWithIndex{ vn, i ->
+            
+            def variantName = [:]
+            vn.each{ attr ->
+                variantName << ["${attr.key}" : attr.value.v]
+            }
+            json.package.packageHeader.variantNames[i] = variantName
+        }
+        json
+    }
+    
     static Object parseTipps(Object json, boolean useValidator) {
         
         println ". DataTransformer.parseTipps()"
         
         json.package.tipps.each{ tipp ->
             tipp.each{ attr ->
-
-                // TODO validate tipp.url
-                
                 if(attr.value.v instanceof java.lang.String || attr.value.v == null) {
-                    tipp."${attr.key}" = (attr.value.v ? attr.value.v : "")
+                    def value = (attr.value.v == null) ? "" : attr.value.v
+
+                    if(attr.key == 'url'){
+                        // use validator
+                        if(useValidator){
+                            if(attr.value.m != Status.VALIDATOR_URL_IS_VALID.toString())
+                                value = ""
+                        }
+                    }
+                    tipp."${attr.key}" = value
                 }
             }
         }

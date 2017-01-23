@@ -237,12 +237,14 @@ class NormalizerSpec extends Specification {
             def test = [
                 "18.2005 - 27.2014",
                 "Verlag; 18.2005 - 27.2014",
-                "22.2022"
+                "22.2022",
+                "05.1995 - "
                 ]
             def result = [
                 ["18", "27"],
                 ["18", "27"],
-                ["22", "22"]
+                ["22", "22"],
+                ["05", ""]
                 ]
             
         expect:
@@ -252,6 +254,7 @@ class NormalizerSpec extends Specification {
             Normalizer.normCoverageVolume(test[0], Normalizer.IS_START_DATE) == result[0][0]
             Normalizer.normCoverageVolume(test[1], Normalizer.IS_START_DATE) == result[1][0]
             Normalizer.normCoverageVolume(test[2], Normalizer.IS_START_DATE) == result[2][0]
+            Normalizer.normCoverageVolume(test[3], Normalizer.IS_START_DATE) == result[3][0]
             
             test.eachWithIndex{e, i ->
                 println "${test[i]} -> END_DATE: ${result[i][1]}"
@@ -259,6 +262,7 @@ class NormalizerSpec extends Specification {
             Normalizer.normCoverageVolume(test[0], Normalizer.IS_END_DATE) == result[0][1]
             Normalizer.normCoverageVolume(test[1], Normalizer.IS_END_DATE) == result[1][1]
             Normalizer.normCoverageVolume(test[2], Normalizer.IS_END_DATE) == result[2][1]
+            Normalizer.normCoverageVolume(test[3], Normalizer.IS_END_DATE) == result[3][1]
     }
     
     void "normURL(String str) "() {

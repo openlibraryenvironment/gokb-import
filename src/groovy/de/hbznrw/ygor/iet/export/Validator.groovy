@@ -76,7 +76,7 @@ class Validator {
      */
     static isValidURL(String str) {
       
-        if(!str || str.trim().equals("")){
+        if(!str || str.trim().equals("") || str.contains("|")){
             return Status.VALIDATOR_URL_IS_INVALID
         }
         

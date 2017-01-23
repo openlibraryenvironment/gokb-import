@@ -199,7 +199,10 @@ class Normalizer {
                 str = tmp[0]
             }
             else if(dateType.equals(Normalizer.IS_END_DATE)){
-                str = tmp[1]
+                if(tmp.size() > 1)
+                    str = tmp[1]
+                else
+                    str = ""
             }
         }
         if(1 == StringUtils.countOccurrencesOf(str, ".")){
