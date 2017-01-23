@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.iet.export
 
 import org.springframework.util.StringUtils
+
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.PackageHeader
@@ -8,7 +9,6 @@ import de.hbznrw.ygor.iet.export.structure.Tipp
 import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
-import java.sql.Timestamp
 
 class Normalizer {
 
@@ -121,30 +121,27 @@ class Normalizer {
      */
     static String normDate(String str, Object dateType) {
         str = Normalizer.normString(str)
-     
-        if(str && str.contains("/")){
-            def tmp = str.split("/")
-            
-            if(dateType.equals(Normalizer.IS_START_DATE)){
-                str = tmp[0]
-            }
-            else if(dateType.equals(Normalizer.IS_END_DATE)){
-                if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
-                    str = tmp[0].take(2) + tmp[1]
-                }
-                else {
+        
+        if(str){
+            if(str.contains(";")){
+                def tmp = str.split(";")
+                if(tmp.size() == 1)
+                    str = tmp[0]
+                else if(tmp.size() == 2)
                     str = tmp[1]
-                }
+                else
+                    str = tmp.join(' ')
+                    
+                str = str.trim()
             }
-        }
-        else if(str && str.contains("-")){
-            def tmp = str.split("-")
             
-            if(dateType.equals(Normalizer.IS_START_DATE)){
-                str = tmp[0]
-            }
-            else if(dateType.equals(Normalizer.IS_END_DATE)){
-                if(tmp.length == 2) {
+            if(str.contains("/")){
+                def tmp = str.split("/")
+                
+                if(dateType.equals(Normalizer.IS_START_DATE)){
+                    str = tmp[0]
+                }
+                else if(dateType.equals(Normalizer.IS_END_DATE)){
                     if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
                         str = tmp[0].take(2) + tmp[1]
                     }
@@ -152,23 +149,44 @@ class Normalizer {
                         str = tmp[1]
                     }
                 }
-                else {
-                    return ''
+            }
+            else if(str.contains("-")){
+                def tmp = str.split("-")
+                
+                if(dateType.equals(Normalizer.IS_START_DATE)){
+                    str = tmp[0]
+                }
+                else if(dateType.equals(Normalizer.IS_END_DATE)){
+                    if(tmp.length == 2) {
+                        if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
+                            str = tmp[0].take(2) + tmp[1]
+                        }
+                        else {
+                            str = tmp[1]
+                        }
+                    }
+                    else {
+                        return ''
+                    }
+                }
+                
+                if(1 == StringUtils.countOccurrencesOf(str, ".")){
+                    def tmp2 = str.split("\\.")
+                    str = Normalizer.normString(tmp2[1])
                 }
             }
-            
-            if(1 == StringUtils.countOccurrencesOf(str, ".")){
-                def tmp2 = str.split("\\.")
-                str = Normalizer.normString(tmp2[1])
-            }
-        }
         
-        if(str && str != "") {
-            if(dateType.equals(Normalizer.IS_START_DATE)){
-                str += "-01-01 00:00:00.000"
-            }
-            else if(dateType.equals(Normalizer.IS_END_DATE)){
-                str += "-12-31 23:59:59.000"
+            if(str != "") {
+                if(['EZB', 'Verlag', 'Agentur'].contains(str)){
+                    return str
+                }
+                
+                if(dateType.equals(Normalizer.IS_START_DATE)){
+                    str += "-01-01 00:00:00.000"
+                }
+                else if(dateType.equals(Normalizer.IS_END_DATE)){
+                    str += "-12-31 23:59:59.000"
+                }
             }
         }
         
