@@ -5,6 +5,9 @@ import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.bridge.*
 
+import de.hbznrw.ygor.tools.DateToolkit
+
+
 class Mapper {
 
     static Title mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
@@ -36,23 +39,45 @@ class Mapper {
         }
         
         else if(query == Query.GBV_PUBLISHER) {
+            def dummy     = null
+            def dummyDate = null
             
             env.message.each{ e ->
                e.messages['name'].eachWithIndex{ elem, i ->
-                
-                    def tmp = TitleStruct.getNewPublisherHistory()
-                    
-                    tmp.name.v = Normalizer.normString(e.messages['name'][i])
-                
-                    tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
-                    tmp.startDate.m = Validator.isValidDate(tmp.startDate.v)
+                   def tmp = TitleStruct.getNewPublisherHistory()
+                   
+                   tmp.name.v = Normalizer.normString(e.messages['name'][i])
+               
+                   tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
+                   tmp.startDate.m = Validator.isValidDate(tmp.startDate.v)
+                          
+                   tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
+                   tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
+                   
+                   if([e.messages['startDate'][i], e.messages['endDate'][i]].contains("anfangs")){
+                       dummy = tmp
+                   } else {
+                       // store lowest start date for dummy calculation
+                       if(dummyDate == null || (dummyDate > tmp.startDate.v))
+                           dummyDate = tmp.startDate.v
                            
-                    tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
-                    tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
-                    
-                    title.publisher_history << tmp // no pod
+                       title.publisher_history << tmp // no pod
+                   }
                 }
             }
+            
+            if(dummy){
+                if(dummyDate){
+                    dummy.endDate.v = DateToolkit.getDateMinusOneMinute(dummyDate)
+                    dummy.endDate.m = Validator.isValidDate(dummy.endDate.v)
+                    
+                    dummy.startDate.v = ''
+                    dummy.startDate.m = Validator.isValidDate(dummy.startDate.v)
+                }
+                
+                title.publisher_history << dummy // no pod
+            }
+
         }
         
         else if(query == Query.GBV_PUBLISHED_FROM) {
