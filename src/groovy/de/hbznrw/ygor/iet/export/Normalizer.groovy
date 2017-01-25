@@ -37,10 +37,7 @@ class Normalizer {
         if(!str)
             return str
         
-        str = str.replaceAll("\\s+"," ")
-        str = str.replaceAll(" , ",", ").replaceAll(" ,",", ")
-        str = str.replaceAll(" : ",": ").replaceAll(" :",": ")
-        str.trim()
+        str = str.trim().replaceAll(/\s+/," ").replaceAll(/\s*:\s*/,": ").replaceAll(/\s*,\s*/,", ")
     }
     
     /**
@@ -74,7 +71,7 @@ class Normalizer {
             return str
         
         str = Normalizer.normString(str)
-        str = str.replaceAll("-","").replaceAll("/","")
+        str = str.replaceAll(/[\/-]+/,"")
         
         if(type.equals(TitleStruct.EISSN) || type.equals(TitleStruct.PISSN)){
             if(str.length() == 8)
@@ -131,8 +128,6 @@ class Normalizer {
                     str = tmp[1]
                 else
                     str = tmp.join(' ')
-                    
-                str = str.trim()
             }
             
             if(str.contains("/")){
@@ -180,6 +175,8 @@ class Normalizer {
                 if(['EZB', 'Verlag', 'Agentur'].contains(str)){
                     return str
                 }
+                
+                str = str.trim()
                 
                 if(dateType.equals(Normalizer.IS_START_DATE)){
                     str += "-01-01 00:00:00.000"
@@ -252,7 +249,7 @@ class Normalizer {
      * @return
      */
     static String normURL(String str) {    
-        str = Normalizer.normString(str)
+        //str = Normalizer.normString(str)
         
         try {
             if(str && str.indexOf('http://') == -1 && str.indexOf('https://') == -1){

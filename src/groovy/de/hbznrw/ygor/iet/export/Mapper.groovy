@@ -58,7 +58,7 @@ class Mapper {
                        dummy = tmp
                    } else {
                        // store lowest start date for dummy calculation
-                       if(dummyDate == null || (dummyDate > tmp.startDate.v))
+                       if(dummyDate == null || (tmp.startDate.m == Status.VALIDATOR_DATE_IS_VALID && dummyDate > tmp.startDate.v))
                            dummyDate = tmp.startDate.v
                            
                        title.publisher_history << tmp // no pod
@@ -68,14 +68,14 @@ class Mapper {
             
             if(dummy){
                 if(dummyDate){
-                    dummy.endDate.v = DateToolkit.getDateMinusOneMinute(dummyDate)
-                    dummy.endDate.m = Validator.isValidDate(dummy.endDate.v)
-                    
+                    dummy.endDate.v   = DateToolkit.getDateMinusOneMinute(dummyDate)
+                    dummy.endDate.m   = Validator.isValidDate(dummy.endDate.v)
                     dummy.startDate.v = ''
                     dummy.startDate.m = Validator.isValidDate(dummy.startDate.v)
+                    
+                    println "    .. title.publisher_history << (${dummy.endDate.v})"
+                    title.publisher_history << dummy // no pod
                 }
-                
-                title.publisher_history << dummy // no pod
             }
 
         }
@@ -154,19 +154,15 @@ class Mapper {
                     }
                     if(e.messages['startVolume'][i]){
                         tmp.startVolume.v = Normalizer.normCoverageVolume(e.messages['startVolume'][i], Normalizer.IS_START_DATE)
-                        /*tmp.startVolume.m = Normalizer.normString(
-                            (e.states.find{it.toString().startsWith('startVolume_')}).toString().replaceFirst('startVolume_', '')
-                            )*/
                         tmp.startVolume.m = Validator.isValidNumber(tmp.startVolume.v)
                     }
                     if(e.messages['endVolume'][i]){
                         tmp.endVolume.v = Normalizer.normCoverageVolume(e.messages['endVolume'][i], Normalizer.IS_END_DATE)
-                        /*tmp.endVolume.m = Normalizer.normString(
-                            (e.states.find{it.toString().startsWith('endVolume_')}).toString().replaceFirst('endVolume_', '')  
-                            )*/
                         tmp.endVolume.m = Validator.isValidNumber(tmp.endVolume.v)
-                    }  
-                    tipp.coverage << tmp // no pod
+                    } 
+                    
+                    def valid = Validator.isValidCoverage(tmp.startDate, tmp.endDate, tmp.startVolume, tmp.endVolume) ? Status.VALIDATOR_COVERAGE_IS_VALID : Status.VALIDATOR_COVERAGE_IS_INVALID
+                    tipp.coverage << new Pod(tmp, valid)
                 }
             }
         }

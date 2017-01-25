@@ -139,7 +139,7 @@ class ValidatorSpec extends Specification {
         given:
             def test = [
                 "1999-01-01 00:00:00.000",
-                "2000-12-31 23:59:59.000",
+                "1989-12-31 23:59:59.000",
                 "-01-01 00:00:00.000",
                 "-12-31 23:59:59.000",
                 null,
@@ -195,5 +195,66 @@ class ValidatorSpec extends Specification {
             Validator.isValidURL(test[3]) == result[3]
             Validator.isValidURL(test[4]) == result[4]
             Validator.isValidURL(test[5]) == result[5]
+    }
+    
+    void "isValidCoverage(Pod startDate, Pod endDate, Pod startVolume, Pod endVolume)"() {
+        given:
+            def test = [
+                [
+                    new Pod("ads", Status.VALIDATOR_DATE_IS_INVALID),
+                    new Pod("ads", Status.VALIDATOR_DATE_IS_INVALID),
+                    new Pod("11",  Status.VALIDATOR_NUMBER_IS_VALID),
+                    new Pod("11",  Status.VALIDATOR_NUMBER_IS_VALID)
+                ],
+                [
+                    new Pod("ads", Status.VALIDATOR_DATE_IS_INVALID),
+                    new Pod("ads", Status.VALIDATOR_DATE_IS_INVALID),
+                    new Pod("5",   Status.VALIDATOR_NUMBER_IS_VALID),
+                    new Pod("22",  Status.VALIDATOR_NUMBER_IS_VALID)
+                ],
+                [
+                    new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("2012-02-05 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("",  Status.VALIDATOR_NUMBER_IS_INVALID),
+                    new Pod("",  Status.VALIDATOR_NUMBER_IS_INVALID)
+                ],
+                [
+                    new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("2012-02-05 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("3",  Status.VALIDATOR_NUMBER_IS_VALID),
+                    new Pod("6",  Status.VALIDATOR_NUMBER_IS_VALID)
+                ],
+                [
+                    new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("1",  Status.VALIDATOR_NUMBER_IS_VALID),
+                    new Pod("1",  Status.VALIDATOR_NUMBER_IS_VALID)
+                ],
+                [
+                    new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID),
+                    new Pod("5",  Status.VALIDATOR_NUMBER_IS_VALID),
+                    new Pod("10", Status.VALIDATOR_NUMBER_IS_VALID)
+                ],
+            ]
+            def result = [
+                false,
+                true,
+                true,
+                true,
+                false,
+                false
+            ]
+        
+        expect:
+            test.eachWithIndex{e, i ->
+                println "${test[i][0].v} - ${test[i][1].v}, Vol: ${test[i][2].v} - ${test[i][3].v} -> ${result[i]}"
+            }
+            Validator.isValidCoverage(test[0][0],test[0][1],test[0][2],test[0][3]) == result[0]
+            Validator.isValidCoverage(test[1][0],test[1][1],test[1][2],test[1][3]) == result[1]
+            Validator.isValidCoverage(test[2][0],test[2][1],test[2][2],test[2][3]) == result[2]
+            Validator.isValidCoverage(test[3][0],test[3][1],test[3][2],test[3][3]) == result[3]
+            Validator.isValidCoverage(test[4][0],test[4][1],test[4][2],test[4][3]) == result[4]
+            Validator.isValidCoverage(test[5][0],test[5][1],test[5][2],test[5][3]) == result[5]
     }
 }

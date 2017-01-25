@@ -157,6 +157,8 @@ class NormalizerSpec extends Specification {
                 "2002-2003",
                 "10.2005-11.2006",
                 "10.2005 - 11.2006",
+                "2002 - 2003",
+                "Verlag; 17.2012 -",
                 null,
                 ""
                 ]
@@ -170,6 +172,8 @@ class NormalizerSpec extends Specification {
                 ["2002-01-01 00:00:00.000", "2003-12-31 23:59:59.000"],
                 ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
                 ["2005-01-01 00:00:00.000", "2006-12-31 23:59:59.000"],
+                ["2002-01-01 00:00:00.000", "2003-12-31 23:59:59.000"],
+                ["2012-01-01 00:00:00.000", ""],
                 [null, null],
                 ["", ""]
                 ]
@@ -189,8 +193,9 @@ class NormalizerSpec extends Specification {
             Normalizer.normDate(test[8], Normalizer.IS_START_DATE) == result[8][0]
             Normalizer.normDate(test[9], Normalizer.IS_START_DATE) == result[9][0]
             Normalizer.normDate(test[10], Normalizer.IS_START_DATE) == result[10][0]
-            
-            
+            Normalizer.normDate(test[11], Normalizer.IS_START_DATE) == result[11][0]
+            Normalizer.normDate(test[12], Normalizer.IS_START_DATE) == result[12][0]
+
             test.eachWithIndex{e, i ->
                 println "${test[i]} -> END_DATE: ${result[i][1]}"
             }
@@ -205,6 +210,8 @@ class NormalizerSpec extends Specification {
             Normalizer.normDate(test[8], Normalizer.IS_END_DATE) == result[8][1]
             Normalizer.normDate(test[9], Normalizer.IS_END_DATE) == result[9][1]
             Normalizer.normDate(test[10], Normalizer.IS_END_DATE) == result[10][1]
+            Normalizer.normDate(test[11], Normalizer.IS_END_DATE) == result[11][1]
+            Normalizer.normDate(test[12], Normalizer.IS_END_DATE) == result[12][1]
     }
     
     void "normDate(ArrayList list, Object dateType)"() {

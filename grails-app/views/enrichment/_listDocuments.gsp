@@ -57,7 +57,7 @@
 				<div class="row">
 				
 					<div class="col-xs-5 col-xs-offset-1">
-						Pakettitel:
+						Titel:
 						<br /> 
 						<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" />
 						<br />
@@ -75,7 +75,7 @@
 				
 				<div class="row">
 					<div class="col-xs-5 col-xs-offset-1">
-						Paketanbieter:
+						Plattform:
 						<br /> 
 						<g:select name="pkgNominal" from="${PackageStruct.getPackageHeaderNominalPlatformPreset().entrySet()}"
 							optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
@@ -85,7 +85,8 @@
 				
 				<div class="row">
 					<div class="col-xs-10 col-xs-offset-1">
-						<g:checkBox name="ignorePkgData" value="true" checked="true" /> Diese Angabe ignorieren
+						<g:checkBox name="ignorePkgData" value="true" checked="true" /> &nbsp; 
+						<span class="glyphicon glyphicon-warning-sign large" aria-hidden="true"></span> Diese Angaben ignorieren
 						<br />
 					</div>
 				</div><!-- .row -->

@@ -69,7 +69,7 @@ class Statistics {
         }
         
         identifiers.each{ i ->
-            json.meta.stats["title.identifier ${i.key.toUpperCase()} AS VALID RESULTS"]    = i.value[Statistics.OPTION_1]
+            json.meta.stats["title.identifier ${i.key.toUpperCase()} ARE VALID"]    = i.value[Statistics.OPTION_1]
             json.meta.stats["title.identifier ${i.key.toUpperCase()} are invalid"]         = [i.value[Statistics.OPTION_2], i.value[Statistics.OPTION_3].minus("")]
             json.meta.stats["title.identifier ${i.key.toUpperCase()} are in unkown state"] = i.value[Statistics.OPTION_4]
         }
@@ -118,16 +118,25 @@ class Statistics {
                 }
             }
         }
-        json.meta.stats << ["titles.publisher_history FOUND WITH VALID DATES":   phDates[Statistics.OPTION_1]]
-        json.meta.stats << ["titles.publisher_history found with invalid dates": [phDates[Statistics.OPTION_2], phDates[Statistics.OPTION_3].minus("")]]
-        json.meta.stats << ["titles.publisher_history found with missing dates": phDates[Statistics.OPTION_4]]
+        json.meta.stats << ["titles.publisher_history - VALID DATES FOUND":   phDates[Statistics.OPTION_1]]
+        json.meta.stats << ["titles.publisher_history - invalid dates found": [phDates[Statistics.OPTION_2], phDates[Statistics.OPTION_3].minus("")]]
+        json.meta.stats << ["titles.publisher_history - missing dates": phDates[Statistics.OPTION_4]]
         
-        List<Integer> covDates = [0,0,[],0]
+        List<Integer> coverages = [0,0]
+        List<Integer> covDates  = [0,0,[],0]
+        
+        // TODO invalid coverages
         
         json.package.tipps.each{ tipp ->
             tipp.value.v.each{ tippField ->
                 if(tippField.key.equals("coverage")) {
-                    tippField.value.each{ covField ->       
+                    tippField.value.m.each{ m ->
+                        if(m.equals(Status.VALIDATOR_COVERAGE_IS_VALID.toString()))
+                            coverages[Statistics.OPTION_1]++
+                        else if(m.equals(Status.VALIDATOR_COVERAGE_IS_INVALID.toString()))
+                            coverages[Statistics.OPTION_2]++
+                    }
+                    tippField.value.v.each{ covField ->       
                         def sd = covField.startDate
                         def ed = covField.endDate
                        
@@ -150,9 +159,12 @@ class Statistics {
             }
         }
 
-        json.meta.stats << ["tipp.coverage FOUND WITH VALID DATES":   covDates[Statistics.OPTION_1]]
-        json.meta.stats << ["tipp.coverage found with invalid dates": [covDates[Statistics.OPTION_2], covDates[Statistics.OPTION_3].minus("")]]
-        json.meta.stats << ["tipp.coverage found with missing dates": covDates[Statistics.OPTION_4]]
+        json.meta.stats << ["tipp.coverage ARE VALID":   coverages[Statistics.OPTION_1]]
+        json.meta.stats << ["tipp.coverage are invalid": coverages[Statistics.OPTION_2]]
+        
+        json.meta.stats << ["tipp.coverage - VALID DATES FOUND":   covDates[Statistics.OPTION_1]]
+        json.meta.stats << ["tipp.coverage - invalid dates found": [covDates[Statistics.OPTION_2], covDates[Statistics.OPTION_3].minus("")]]
+        json.meta.stats << ["tipp.coverage - missing dates":       covDates[Statistics.OPTION_4]]
         
         json
     }

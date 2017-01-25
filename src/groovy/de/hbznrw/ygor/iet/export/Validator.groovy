@@ -4,6 +4,7 @@ import org.springframework.util.StringUtils
 
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.iet.export.structure.Pod
 import de.hbznrw.ygor.iet.export.structure.Tipp
 import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
@@ -105,5 +106,29 @@ class Validator {
         catch(Exception e) {
             return Status.VALIDATOR_DATE_IS_INVALID
         }
+    }
+    
+    /**
+     * 
+     * @param startDate
+     * @param endDate
+     * @param startVolume
+     * @param endVolume
+     * @return
+     */
+    static isValidCoverage(Pod startDate, Pod endDate, Pod startVolume, Pod endVolume){
+        if((startDate.m == Status.VALIDATOR_DATE_IS_INVALID && endDate.m == Status.VALIDATOR_DATE_IS_INVALID) 
+            && (startVolume.m == Status.VALIDATOR_NUMBER_IS_INVALID && endVolume.m == Status.VALIDATOR_NUMBER_IS_INVALID))
+                return false
+        
+        if((startDate.m == Status.VALIDATOR_DATE_IS_INVALID && endDate.m == Status.VALIDATOR_DATE_IS_INVALID) && (startVolume.v == endVolume.v))
+            return false
+        
+        if((startDate.v == endDate.v) && (startVolume.v == endVolume.v))
+            return false
+        
+        if((startDate.v == endDate.v) && (startDate.m == Status.VALIDATOR_DATE_IS_VALID && endDate.m == Status.VALIDATOR_DATE_IS_VALID))
+            return false
+        true
     }
 }

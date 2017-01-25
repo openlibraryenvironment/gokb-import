@@ -3,10 +3,10 @@
 	<br /><br />
 	
 	<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-	&nbsp; Stellen Sie über den Titel eine Verbindung zu einem existierenden Paket in der GOKb her.
+	&nbsp; Stellen Sie über den <strong>Titel</strong> eine Verbindung zu einem existierenden Paket in der GOKb her.
 	<br />
 	<span class="text-danger">
 	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-	&nbsp; <em>Ohne Identifier wird (im Fall einer Datenübertragung) ein neues Paket in der GOKb angelegt.</em>
+	&nbsp; <em>Ohne Übereinstimmung wird (im Fall einer Datenübertragung) ein neues Paket in der GOKb angelegt.</em>
 	</span>
 </div>

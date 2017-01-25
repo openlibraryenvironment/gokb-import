@@ -197,46 +197,37 @@ class Transformer {
         json.package.tipps.each{ tipp ->
             tipp.coverage.eachWithIndex{ cover, i ->
                 def coverage = [:]
-                cover.each{ attr ->
-                    if(attr.value.v instanceof java.lang.String) {
-                        def value = attr.value.v
-                        
-                        if(['startDate', 'endDate'].contains(attr.key)){
-                            // use validator
-                            if(useValidator){
-                                if(attr.value.m != Status.VALIDATOR_DATE_IS_VALID.toString())
-                                    value = ""
+                
+                // use validator
+                if(!useValidator || (useValidator && cover.m == Status.VALIDATOR_COVERAGE_IS_VALID.toString())){
+                    cover.v.each{ attr ->
+                        if(attr.value.v instanceof java.lang.String) {
+                            def value = attr.value.v
+                            
+                            if(['startDate', 'endDate'].contains(attr.key)){
+                                // use validator
+                                if(useValidator){
+                                    if(attr.value.m != Status.VALIDATOR_DATE_IS_VALID.toString())
+                                        value = ""
+                                }
                             }
+                            else if(['startVolume', 'endVolume'].contains(attr.key)){
+                                // use validator
+                                if(useValidator){
+                                    if(attr.value.m != Status.VALIDATOR_NUMBER_IS_VALID.toString())
+                                        value = ""
+                                }
+                            }
+                            coverage << ["${attr.key}" : value]
                         }
-                        else if(['startVolume', 'endVolume'].contains(attr.key)){
-                            // use validator
-                            if(useValidator){
-                                if(attr.value.m != Status.VALIDATOR_NUMBER_IS_VALID.toString())
-                                    value = ""
-                            }
-                        }      
-                        coverage << ["${attr.key}" : value]
                     }
+                    tipp.coverage[i] = coverage
                 }
-                tipp.coverage[i] = coverage
-            }
-        }
-        
-        // only valid entries
-        if(useValidator){
-
-            json.package.tipps.each{ tipp ->
-                def coverage = []
-                tipp.coverage.each{ cover ->
-                    cover.any { attr ->
-                        if(["startDate", "startVolume", "endDate", "endVolume"].contains(attr.key.toString()) && attr.value.toString() != ""){
-                            coverage << cover
-                            return true
-                        } 
-                    }
+                else {
+                    tipp.coverage[i] = null
                 }
-                tipp.coverage = coverage
             }
+            tipp.coverage = tipp.coverage.minus(null)
         }
         
         json
