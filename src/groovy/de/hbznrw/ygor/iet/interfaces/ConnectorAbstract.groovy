@@ -17,11 +17,11 @@ import de.hbznrw.ygor.iet.enums.Status
  */
 abstract class ConnectorAbstract implements ConnectorInterface {
 
-	protected String requestUrl      = "set-in-extending-class"
+	protected String requestUrl       = "set-in-extending-class"
 	protected String requestHeader
-	protected String queryIdentifier = "set-in-extending-class"
+	protected String queryIdentifier  = "set-in-extending-class"
 		
-    static String formatIdentifier   = 'set-in-extending-class'
+    protected String formatIdentifier = 'set-in-extending-class'
  
 	protected BridgeInterface bridge
 	
@@ -32,14 +32,26 @@ abstract class ConnectorAbstract implements ConnectorInterface {
 	}
 	
     String getAPIQuery(String issn) {
-        // TODO
+        println " -- ConnectorAbstract.getAPIQuery(String issn) not implemented --"
     }
     Envelope poll(String issn) {
-        // TODO
+        println " -- ConnectorAbstract.poll(String issn) not implemented --"
     }
     
-    Envelope query(Query query) {  
+    Envelope query(Query query) {
         getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    }
+    
+    Envelope query(Object record, Query query) {  
+        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    }
+    
+    Envelope getEnvelope(Query query) {
+        println " -- ConnectorAbstract.getEnvelope(Query query) not implemented --"
+    }
+    
+    Envelope getEnvelope(Object record, Query query) { 
+        println " -- ConnectorAbstract.getEnvelope(Object record, Query query) not implemented --"
     }
     
     Envelope getEnvelopeWithMessage(ArrayList message) {

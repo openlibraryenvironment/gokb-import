@@ -24,16 +24,32 @@ interface ConnectorInterface {
     Envelope poll(String issn)
     
     /**
-     *
+     * 
      * @param query
      * @return
      */
     Envelope query(Query query)
     
     /**
+     *
+     * @param record
+     * @param query
+     * @return
+     */
+    Envelope query(Object record, Query query)
+    
+    /**
+     * @param query
      * @return Envelope depending on query
      */
     Envelope getEnvelope(Query query)
+    
+    /**
+     * @param record
+     * @param query
+     * @return Envelope depending on query
+     */
+    Envelope getEnvelope(Object record, Query query)
     
     /**
      * @param status
