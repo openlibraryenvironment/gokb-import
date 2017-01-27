@@ -21,7 +21,7 @@ abstract class ProcessorAbstract implements ProcessorInterface {
 	ProcessorAbstract(BridgeInterface bridge) {
 		this.bridge = bridge
 	}
-		
-	void processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
-	}
+    ProcessorAbstract()
+    {   
+    }
 }

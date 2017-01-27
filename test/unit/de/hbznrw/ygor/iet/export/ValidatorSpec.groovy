@@ -104,6 +104,8 @@ class ValidatorSpec extends Specification {
                 ["1234-X",       ZdbBridge.IDENTIFIER],
                 ["1234-5X",      ZdbBridge.IDENTIFIER],
                 ["1234678910-X", ZdbBridge.IDENTIFIER],
+                ["23",           EzbBridge.IDENTIFIER],
+                ["1234254",      EzbBridge.IDENTIFIER],
                 ["1234678910-X", "unkown identifier"]
                 ]
             def result = [
@@ -113,6 +115,8 @@ class ValidatorSpec extends Specification {
                 Status.VALIDATOR_IDENTIFIER_IS_INVALID,
                 Status.VALIDATOR_IDENTIFIER_IS_INVALID,
                 Status.VALIDATOR_IDENTIFIER_IS_VALID,
+                Status.VALIDATOR_IDENTIFIER_IS_VALID,
+                Status.VALIDATOR_IDENTIFIER_IS_INVALID,
                 Status.VALIDATOR_IDENTIFIER_IS_VALID,
                 Status.VALIDATOR_IDENTIFIER_IS_INVALID,
                 Status.VALIDATOR_IDENTIFIER_IS_VALID,
@@ -133,6 +137,8 @@ class ValidatorSpec extends Specification {
             Validator.isValidIdentifier(test[7][0], test[7][1]) == result[7]
             Validator.isValidIdentifier(test[8][0], test[8][1]) == result[8]
             Validator.isValidIdentifier(test[9][0], test[9][1]) == result[9]
+            Validator.isValidIdentifier(test[10][0], test[10][1]) == result[10]
+            Validator.isValidIdentifier(test[11][0], test[11][1]) == result[11]
     }
     
     void "isValidDate(String str)"() {

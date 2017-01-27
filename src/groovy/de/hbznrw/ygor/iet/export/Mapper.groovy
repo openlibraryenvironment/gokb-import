@@ -10,8 +10,8 @@ import de.hbznrw.ygor.tools.DateToolkit
 
 class Mapper {
 
-    static Title mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
-       
+    static void mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
+
         if(query in [Query.ZDBID, Query.EZBID, Query.GBV_EISSN, Query.GBV_PISSN, Query.GBV_GVKPPN]) {
             def tmp = TitleStruct.getNewIdentifier()
             
@@ -29,6 +29,8 @@ class Mapper {
             tmp.type.m  = Status.IGNORE
             tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
             tmp.value.m = Validator.isValidIdentifier(tmp.value.v, tmp.type.v)
+            
+            // TODO: handle multiple ezbid matches
             
             title.identifiers << tmp // no pod
         }
@@ -89,12 +91,10 @@ class Mapper {
             title.publishedTo.v = Normalizer.normDate(env.message, Normalizer.IS_END_DATE)
             title.publishedTo.m = Validator.isValidDate(title.publishedTo.v)
         }
-        
-        title
     }
     
-    static Tipp mapToTipp(DataContainer dc, Tipp tipp, Query query, Envelope env) {
-        
+    static void mapToTipp(DataContainer dc, Tipp tipp, Query query, Envelope env) {
+
         if(query in [Query.ZDBID, Query.GBV_EISSN]) {
             def tmp = TitleStruct.getNewIdentifier()
             
@@ -166,25 +166,19 @@ class Mapper {
                 }
             }
         }
-       
-        tipp
     }
   
     static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String key) {
-        def result = null
+        if(dc.titles.containsKey("${key}"))
+            return dc.titles.get("${key}").v
 
-        if(dc.titles.containsKey(key))
-            result = dc.titles[key]
-
-        result
+        null
     }
     
     static Tipp getExistingTippByPrimaryIdentifier(DataContainer dc, String key) {
-        def result = null
+        if(dc.pkg.tipps.containsKey("${key}"))
+            return dc.pkg.tipps.get("${key}").v
 
-        if(dc.pkg.tipps.containsKey(key))
-            result = dc.pkg.tipps[key]
-
-        result
+        null
     }
 }

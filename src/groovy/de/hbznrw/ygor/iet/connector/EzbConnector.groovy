@@ -20,7 +20,7 @@ import de.hbznrw.ygor.iet.interfaces.*
 class EzbConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
-	private String queryIdentifier  = 'jq_type1=IS&jq_term1='
+	private String queryIdentifier  = 'jq_type1=ZD&jq_term1='
     
     private String formatIdentifier = 'xmloutput=1&xmlv=3'
     private GPathResult response
@@ -32,15 +32,15 @@ class EzbConnector extends ConnectorAbstract {
     // ConnectorInterface
     
     @Override
-    String getAPIQuery(String issn) {
-        return requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + issn
+    String getAPIQuery(String identifier) {
+        return requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + identifier
     }
     
 	@Override
-	Envelope poll(String issn) {
+	Envelope poll(String identifier) {
 		
 		try {
-			String text = new URL(getAPIQuery(issn)).getText()
+			String text = new URL(getAPIQuery(identifier)).getText()
 			response = new XmlSlurper().parseText(text)
 			
 		} catch(Exception e) {

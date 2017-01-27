@@ -31,11 +31,11 @@ abstract class ConnectorAbstract implements ConnectorInterface {
 		this.bridge = bridge
 	}
 	
-    String getAPIQuery(String issn) {
-        println " -- ConnectorAbstract.getAPIQuery(String issn) not implemented --"
+    String getAPIQuery(String identifier) {
+        println " -- ConnectorAbstract.getAPIQuery(String identifier) not implemented --"
     }
-    Envelope poll(String issn) {
-        println " -- ConnectorAbstract.poll(String issn) not implemented --"
+    Envelope poll(String identifier) {
+        println " -- ConnectorAbstract.poll(String identifier) not implemented --"
     }
     
     Envelope query(Query query) {

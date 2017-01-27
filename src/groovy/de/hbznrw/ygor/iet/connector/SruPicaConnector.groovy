@@ -23,29 +23,31 @@ class SruPicaConnector extends ConnectorAbstract {
 	private String requestUrl       = "http://sru.gbv.de/gvk?version=1.2&operation=searchRetrieve&maximumRecords=10"
 	private String queryIdentifier  = 'query=pica.iss%3D'
     private String queryOnlyJournals = "%20and%20(pica.mak=Obvz%20or%20pica.mak=Obv)"
+    private String queryOrder       = "sortKeys=year,,1"
     
     private String formatIdentifier = 'picaxml'
     private GPathResult response
-    private picaRecords             = []
+    
+    public picaRecords   = []
+    public currentRecord = null
     
 	SruPicaConnector(BridgeInterface bridge) {
 		super(bridge)
 	}
-    
-    
+        
     // ConnectorInterface
     
     @Override
-    String getAPIQuery(String issn) {
-        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn + queryOnlyJournals
+    String getAPIQuery(String identifier) {
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals + "&" + queryOrder
     }
     
     // TODO fix return value
     
     @Override
-    Envelope poll(String issn) {
+    Envelope poll(String identifier) {
         try {
-            String text = new URL(getAPIQuery(issn)).getText()
+            String text = new URL(getAPIQuery(identifier)).getText()
             response = new XmlSlurper().parseText(text)
             
             picaRecords = []
@@ -63,9 +65,9 @@ class SruPicaConnector extends ConnectorAbstract {
     }
     
 	@Override
-	Envelope query(Query query) {
+	Envelope query(Object record, Query query) {
 		try {
-            getEnvelope(query)
+            getEnvelope(record, query)
 		} catch(Exception e) {
 			return getEnvelopeWithStatus(Status.STATUS_ERROR)
 		}
@@ -86,9 +88,14 @@ class SruPicaConnector extends ConnectorAbstract {
     //           </datafield>
        
     @Override
-    Envelope getEnvelope(Query query) {
+    Envelope getEnvelope(Object record, Query query) {
+        
         if(response == null)
             return getEnvelopeWithStatus(Status.STATUS_NO_RESPONSE)
+        
+        currentRecord = record   
+        if(currentRecord == null)
+            return getEnvelopeWithStatus(Status.STATUS_ERROR)
             
         switch(query){
             case Query.ZDBID:
@@ -132,9 +139,7 @@ class SruPicaConnector extends ConnectorAbstract {
     private Envelope getFirstResultOnly(String tag, String code) {
         def result = []
         
-        picaRecords.each { record ->
-            result << getFirstPicaValue(record.recordData.record, tag, code)
-        }
+        result << getFirstPicaValue(currentRecord.recordData.record, tag, code)
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
@@ -162,14 +167,11 @@ class SruPicaConnector extends ConnectorAbstract {
         def result = []
         
         // correction
-        picaRecords.each { record ->
-            result << getFirstPicaValue(record.recordData.record, '025@', 'a')
-        }
+        result << getFirstPicaValue(currentRecord.recordData.record, '025@', 'a')
+
         // or .. main title
         if(result.minus(null).isEmpty()) {
-            picaRecords.each { record ->
-                result << getFirstPicaValue(record.recordData.record,'021A', 'a')
-            }
+            result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
         }
         getEnvelopeWithMessage(result.minus(null).unique())
     }
@@ -181,28 +183,26 @@ class SruPicaConnector extends ConnectorAbstract {
         def resultName      = []
         def resultStatus    = []
         
-        picaRecords.each { record ->
-            record.recordData.record.datafield.findAll{it.'@tag' == '033A'}.each { df ->
-                def n = df.subfield.find{it.'@code' == 'n'}.text() // TODO or use p here ?
-                def h = df.subfield.find{it.'@code' == 'h'}.text()
-                
-                resultName      << n ? n : null
-                resultStartDate << h ? h : null
-                resultEndDate   << h ? h : null
-                resultStatus    << null
-            }
-            println " .. getPicaValues(033An) = " + resultName
-            println " .. getPicaValues(033Ah) = " + resultStartDate
+        currentRecord.recordData.record.datafield.findAll{it.'@tag' == '033A'}.each { df ->
+            def n = df.subfield.find{it.'@code' == 'n'}.text() // TODO or use p here ?
+            def h = df.subfield.find{it.'@code' == 'h'}.text()
             
-            // TODO refactor this
-            
-            result << getEnvelopeWithComplexMessage([
-                'name':      resultName,
-                'startDate': resultStartDate,
-                'endDate':   resultEndDate,
-                'status':    resultStatus,
-            ])
+            resultName      << n ? n : null
+            resultStartDate << h ? h : null
+            resultEndDate   << h ? h : null
+            resultStatus    << null
         }
+        println " .. getPicaValues(033An) = " + resultName
+        println " .. getPicaValues(033Ah) = " + resultStartDate
+        
+        // TODO refactor this
+        
+        result << getEnvelopeWithComplexMessage([
+            'name':      resultName,
+            'startDate': resultStartDate,
+            'endDate':   resultEndDate,
+            'status':    resultStatus,
+        ])
        
         getEnvelopeWithMessage(result)
     } 
@@ -210,18 +210,14 @@ class SruPicaConnector extends ConnectorAbstract {
     private Envelope getAllTippURL() {
         def result = []
         
-        picaRecords.each { record ->
-            result += getAllPicaValues(record.recordData.record, '009P', 'a') // TODO
-        }
+        result += getAllPicaValues(currentRecord.recordData.record, '009P', 'a') // TODO
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
     private Envelope getAllPlattformURL() {
         def result = []
         
-        picaRecords.each { record ->
-            result += getAllPicaValues(record.recordData.record, '009P', '0') // TODO
-        }
+        result += getAllPicaValues(currentRecord.recordData.record, '009P', '0') // TODO
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
@@ -236,37 +232,35 @@ class SruPicaConnector extends ConnectorAbstract {
         def resultStartIssue    = []
         def resultStartVolume   = []
         
-        picaRecords.each { record ->
-            record.recordData.record.datafield.findAll{it.'@tag' == '009P'}.each { df ->
-                def x = df.subfield.find{it.'@code' == 'x'}.text()
-                def z = df.subfield.find{it.'@code' == 'z'}.text()
+        currentRecord.recordData.record.datafield.findAll{it.'@tag' == '009P'}.each { df ->
+            def x = df.subfield.find{it.'@code' == 'x'}.text()
+            def z = df.subfield.find{it.'@code' == 'z'}.text()
 
-                resultCoverageNote  << z ? z : null
-                resultEmbargo       << null
-                resultEndDate       << x ? x : null
-                resultEndIssue      << null
-                resultEndVolume     << x ? x : null
-                resultStartDate     << x ? x : null
-                resultStartIssue    << null
-                resultStartVolume   << x ? x : null
-            }
-            
-            println " .. getPicaValues(009Px) = " + resultStartDate
-            println " .. getPicaValues(009Pz) = " + resultCoverageNote
-            
-            // TODO refactor this
-            
-            result << getEnvelopeWithComplexMessage([
-                'coverageNote': resultCoverageNote,
-                'embargo':      resultEmbargo,
-                'endDate':      resultEndDate,
-                'endIssue':     resultEndIssue,
-                'endVolume':    resultEndVolume,
-                'startDate':    resultStartDate,
-                'startIssue':   resultStartIssue,
-                'startVolume':  resultStartVolume
-            ])
+            resultCoverageNote  << z ? z : null
+            resultEmbargo       << null
+            resultEndDate       << x ? x : null
+            resultEndIssue      << null
+            resultEndVolume     << x ? x : null
+            resultStartDate     << x ? x : null
+            resultStartIssue    << null
+            resultStartVolume   << x ? x : null
         }
+        
+        println " .. getPicaValues(009Px) = " + resultStartDate
+        println " .. getPicaValues(009Pz) = " + resultCoverageNote
+        
+        // TODO refactor this
+        
+        result << getEnvelopeWithComplexMessage([
+            'coverageNote': resultCoverageNote,
+            'embargo':      resultEmbargo,
+            'endDate':      resultEndDate,
+            'endIssue':     resultEndIssue,
+            'endVolume':    resultEndVolume,
+            'startDate':    resultStartDate,
+            'startIssue':   resultStartIssue,
+            'startVolume':  resultStartVolume
+        ])
         
         getEnvelopeWithMessage(result)
     }

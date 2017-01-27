@@ -53,7 +53,6 @@ class Validator {
      * @return
      */
     static isValidIdentifier(String str, Object identifierType) {
-
         if(identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)){
             if(9 == str.length() && 4 == str.indexOf("-"))
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
@@ -62,6 +61,13 @@ class Validator {
         }
         else if(identifierType.equals(ZdbBridge.IDENTIFIER)){
             if(2 < str.length() && str.indexOf("-") == str.length()-2)
+                return Status.VALIDATOR_IDENTIFIER_IS_VALID
+            else
+                return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+        }
+        else if(identifierType.equals(EzbBridge.IDENTIFIER)){
+            // TODO .. no valid definition 
+            if(str.length() > 2)
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             else
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID

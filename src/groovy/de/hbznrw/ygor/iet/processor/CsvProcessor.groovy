@@ -4,14 +4,15 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
-
 import de.hbznrw.ygor.iet.Envelope
+import de.hbznrw.ygor.iet.connector.EzbConnector
+import de.hbznrw.ygor.iet.connector.SruPicaConnector
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.tools.FileToolkit
-
+import de.hbznrw.ygor.iet.bridge.ZdbBridge
 import java.io.ObjectInputStream.ValidationList
 import java.nio.file.Paths
 import java.util.ArrayList
@@ -24,20 +25,26 @@ import java.util.ArrayList
  */
 class CsvProcessor extends ProcessorAbstract {
 
-    private CSVFormat csvFormat = CSVFormat.EXCEL
-    private int indexOfKey 	    = 0
-    private int count 		    = 0
-    private int total		    = 0
-
+    private stash               = [:]
     private String inputFile
-    private String typeOfKey
     
+    private CSVFormat csvFormat = CSVFormat.EXCEL
+    private int total		    = 0
+    
+    public int count            = 0
+
     //
 
     CsvProcessor(BridgeInterface bridge) {
         super(bridge)
     }
+    CsvProcessor() {
+    }
 
+    void setBridge(BridgeInterface bridge) {
+        super.bridge = bridge
+    }
+    
     void setConfiguration(String delimiter, String quote, String recordSeparator) {
         
         if(null != delimiter) {
@@ -55,98 +62,104 @@ class CsvProcessor extends ProcessorAbstract {
         
         println "CsvProcessor.processFile() -> " + options
         
-        this.inputFile  = options.get('inputFile')
-        this.indexOfKey = options.get('indexOfKey')
-        this.typeOfKey  = options.get('typeOfKey')
-        
-        count = 0
-
-        Paths.get(inputFile).withReader { reader ->
-            CSVParser csv = new CSVParser(reader, csvFormat)
-
-            for (record in csv.iterator()) {
-                if(!bridge.master.isRunning) {
-                    println('Aborted by user action.')
-                    return
-                }
-                
-                bridge.increaseProgress()
-                processRecord(record, indexOfKey, typeOfKey, ++count)
-            }
-        }
-    }
-
-    @Override
-    void processRecord(CSVRecord record, int indexOfKey, String typeOfKey, int count) {
-
-        def dc  = bridge.master.enrichment.dataContainer
-        def key = (record.size() <= indexOfKey) ? "" : record.get(indexOfKey).toString()
-        if("" != key) {
-
-            bridge.connector.poll(key)
-          
-            def saveTitle = false
-            def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, key)
-            if(!title) {
-                title     = new Title()
-                saveTitle = true
-            }
+        if(stash.size() == 0){
+            println " .. filling CsvProcessor.stash with initial identifier"
             
-            def saveTipp = false
-            def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, key)
-            if(!tipp) {
-                tipp     = PackageStruct.getNewTipp()
-                saveTipp = true
-            }
-            
-            bridge.tasks.each{ q ->
-                def msg = ""
-                def state = Status.UNKNOWN_REQUEST
-                
-                Envelope env = bridge.connector.query(q)
+            def issn = [:]
+            this.inputFile = options.get('inputFile')
     
-                if(env.type == Envelope.SIMPLE){
-                    
-                    if(Status.RESULT_OK == env.state)
-                        msg = env.message[0]
-                    else if(Status.RESULT_MULTIPLE_MATCHES == env.state)
-                        msg = env.message.join(", ")
-
-                    state = env.state
-                    println("#" + count + " processed " + key + " -> " + msg + " : " + state)
+            Paths.get(inputFile).withReader { reader ->
+                CSVParser csv = new CSVParser(reader, csvFormat)
+                for (record in csv.iterator()) {
+                    def k = (record.size() <= options.get('indexOfKey')) ? "" : record.get(options.get('indexOfKey')).toString()
+                    issn << ["${k}":null]
                 }
-                else if(env.type == Envelope.COMPLEX){
-                    
-                    // used for Publisher
-                    env.states.eachWithIndex { ste, i ->
-                        if(Status.RESULT_OK == ste) {
-                            msg = env.messages[i]
-                        }
-                        else if(Status.RESULT_MULTIPLE_MATCHES == ste) {
-                            if(env.messages[i])
-                                msg = env.messages[i].join("|")
-                            else
-                                msg = null // todo ??
-                        }
+            }
+            stash << ['issn': issn]
+            stash << ['zdb': [:]]
+        }
 
-                        println("#" + count + " processed " + key + " -> " + msg + " : " + state)
-                    }    
-                }
+        bridge.workOffStash(stash)
+    }
+    
+    Title processEntry(DataContainer dc, String hash) {
+        return processEntry(dc, hash, null)
+    }
+    
+    Title processEntry(DataContainer dc, String hash, Object record) {
+        
+        def saveTitle = false
+        def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, hash)
+        if(title) {
+            println " >  modifying existing Title: " + hash
+        }
+        else {
+            title     = new Title()
+            saveTitle = true
+        }
+        
+        def saveTipp = false
+        def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, hash)
+        if(tipp) {
+            println " >  modifying existing Tipp: " + hash
+        }
+        else {
+            tipp     = PackageStruct.getNewTipp()
+            saveTipp = true
+        }
+
+        bridge.tasks.each{ q ->
+            def msg = ""
+            def state = Status.UNKNOWN_REQUEST
+
+            Envelope env
+            if(record)
+                env = bridge.connector.query(record, q)
+            else
+                env = bridge.connector.query(q)
+
+            if(env.type == Envelope.SIMPLE){
                 
-                Mapper.mapToTitle(dc, title, q, env)
-                Mapper.mapToTipp(dc, tipp, q, env)
+                if(Status.RESULT_OK == env.state)
+                    msg = env.message[0]
+                else if(Status.RESULT_MULTIPLE_MATCHES == env.state)
+                    msg = env.message.join(", ")
+
+                state = env.state
+                println("#" + count + " processed " + hash + " -> " + msg + " : " + state)
             }
-            if(saveTitle){
-                println "saveTitle: " + key
-                dc.titles << ["${key}": new Pod(title)]
-            }
-            if(saveTipp){
-                println "saveTipp: " + key
-                dc.pkg.tipps << ["${key}": new Pod(tipp)]
+            else if(env.type == Envelope.COMPLEX){
+                
+                // used for Publisher
+                env.states.eachWithIndex { ste, i ->
+                    if(Status.RESULT_OK == ste) {
+                        msg = env.messages[i]
+                    }
+                    else if(Status.RESULT_MULTIPLE_MATCHES == ste) {
+                        if(env.messages[i])
+                            msg = env.messages[i].join("|")
+                        else
+                            msg = null // todo ??
+                    }
+
+                    println("#" + count + " processed " + hash + " -> " + msg + " : " + state)
+                }
             }
             
-        } else {
-            println("#" + count + " skipped empty ISSN")
+            Mapper.mapToTitle(dc, title, q, env)
+            Mapper.mapToTipp(dc, tipp, q, env)
         }
+        
+        if(saveTitle){
+            println " >  stored as new Title: " + hash
+            dc.titles << ["${hash}": new Pod(title)]
+        }
+        if(saveTipp){
+            println " >  stored as new Tipp: " + hash
+            dc.pkg.tipps << ["${hash}": new Pod(tipp)]
+        }
+        
+        title
     }
+    
 }

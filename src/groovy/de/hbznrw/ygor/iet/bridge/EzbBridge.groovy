@@ -2,6 +2,7 @@ package de.hbznrw.ygor.iet.bridge
 
 import java.util.ArrayList;
 import java.util.HashMap
+import java.util.LinkedHashMap
 
 import org.apache.commons.csv.CSVRecord;
 
@@ -28,14 +29,15 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 		this.options = options
 		
 		this.connector     = new EzbConnector(this)
-		this.processor     = new CsvProcessor(this)
+		this.processor     = master.processor
+        processor.setBridge(this)
 	}
 	
 	@Override
 	void go() throws Exception {
 		println("Input:  " + options.get('inputFile'))
         
-        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
+        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<zdbid>')
         
         processor.setConfiguration(",", null, null)
         processor.processFile(options)
@@ -45,4 +47,22 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	void go(String outputFile) throws Exception {
 		println("deprecated function call go(outputFile)")
 	}
+    
+    @Override
+    void workOffStash(Object stash) throws Exception {
+        println "EzbBridge.processStash()"
+        
+        stash['zdb'].each{ key, value ->
+            
+            if(!master.isRunning) {
+                println('Aborted by user action.')
+                return
+            }
+            
+            increaseProgress()
+            connector.poll(key)
+            
+            processor.processEntry(master.enrichment.dataContainer, value)
+        }
+    }
 }

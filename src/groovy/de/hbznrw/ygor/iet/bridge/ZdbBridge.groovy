@@ -28,7 +28,8 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
         this.options = options
 
 		this.connector     = new SruConnector(this)
-		this.processor     = new CsvProcessor(this)
+		this.processor     = master.processor
+        processor.setBridge(this)
 	}
 	
 	@Override

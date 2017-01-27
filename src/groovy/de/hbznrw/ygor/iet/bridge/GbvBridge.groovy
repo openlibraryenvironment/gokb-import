@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.apache.commons.csv.CSVRecord;
 
 import de.hbznrw.ygor.iet.connector.*
-import de.hbznrw.ygor.iet.enums.Query;
+import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
@@ -36,7 +36,8 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         this.options = options
 
 		this.connector     = new SruPicaConnector(this)
-		this.processor     = new CsvProcessor(this)
+		this.processor     = master.processor
+        processor.setBridge(this)
 	}
 	
 	@Override
@@ -53,4 +54,35 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	void go(String outputFile) throws Exception {
 		println("deprecated function call go(outputFile)")
 	}
+    
+    @Override
+    void workOffStash(Object stash) throws Exception {
+        println "GbvBridge.processStash()"
+
+        stash['issn'].each{ key, value ->
+
+            if(!master.isRunning) {
+                println('Aborted by user action.')
+                return
+            }
+
+            increaseProgress()
+            connector.poll(key)
+            
+            connector.picaRecords.eachWithIndex { pr, i ->
+                
+                def uid   = UUID.randomUUID().toString()
+                def title = processor.processEntry(master.enrichment.dataContainer, uid, pr)
+                def zdbid
+                // TODO: fix empty zdbid
+                
+                title.identifiers.each{ ident ->
+                    if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID && ident.type.v == ZdbBridge.IDENTIFIER){
+                        zdbid = ident.value.v
+                    }
+                }
+                stash['zdb'] << ["${zdbid}":"${uid}"]
+            }
+        }
+    }
 }

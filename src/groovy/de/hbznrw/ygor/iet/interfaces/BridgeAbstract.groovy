@@ -15,7 +15,13 @@ abstract class BridgeAbstract implements BridgeInterface {
 	void go(String outputFile) throws Exception {
 	}
     
+    void workOffStash(stash) throws Exception {
+        println " -- BridgeAbstract.workOffStash(Object stash) not implemented -- "
+    }
+    
     void increaseProgress() {
+        if(processor)
+            processor.count++
         if(master)
             master.increaseProgress()
     }
