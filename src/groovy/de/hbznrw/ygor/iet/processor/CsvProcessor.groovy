@@ -80,6 +80,8 @@ class CsvProcessor extends ProcessorAbstract {
         }
 
         bridge.workOffStash(stash)
+        
+        bridge.finish(stash)
     }
     
     Title processEntry(DataContainer dc, String hash) {
@@ -111,7 +113,7 @@ class CsvProcessor extends ProcessorAbstract {
         bridge.tasks.each{ q ->
             def msg = ""
             def state = Status.UNKNOWN_REQUEST
-
+            
             Envelope env
             if(record)
                 env = bridge.connector.query(record, q)
@@ -146,8 +148,8 @@ class CsvProcessor extends ProcessorAbstract {
                 }
             }
             
-            Mapper.mapToTitle(dc, title, q, env)
-            Mapper.mapToTipp(dc, tipp, q, env)
+            Mapper.mapToTitle (dc, title, q, env)
+            Mapper.mapToTipp  (dc, tipp, q, env)
         }
         
         if(saveTitle){

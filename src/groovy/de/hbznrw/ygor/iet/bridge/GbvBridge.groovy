@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import de.hbznrw.ygor.iet.connector.*
 import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
@@ -26,7 +27,8 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_PUBLISHED_TO,
         Query.GBV_TIPP_URL,
         Query.GBV_PLATFORM_URL,
-        Query.GBV_TIPP_COVERAGE
+        Query.GBV_TIPP_COVERAGE,
+        Query.GBV_HISTORY_EVENTS
         ]
     
     HashMap options
@@ -81,8 +83,17 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
                         zdbid = ident.value.v
                     }
                 }
-                stash['zdb'] << ["${zdbid}":"${uid}"]
+                stash[ZdbBridge.IDENTIFIER] << ["${zdbid}":"${uid}"]
             }
+        }
+    }
+    
+    @Override
+    void finish(Object stash) throws Exception {
+        println "GbvBridge.finish()"
+        
+        master.enrichment.dataContainer.titles.each { key, value ->
+            Mapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
         }
     }
 }

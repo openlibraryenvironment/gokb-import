@@ -13,7 +13,7 @@ import de.hbznrw.ygor.iet.export.*
 
 
 /**
- * Controlling API calls using services.dnb.de/sru
+ * Controlling API calls using sru.gbv.de
  * 
  * @author David Klober
  *
@@ -131,6 +131,9 @@ class SruPicaConnector extends ConnectorAbstract {
             case Query.GBV_TIPP_COVERAGE:
                 return getTippCoverageAsFatEnvelope()
                 break;
+            case Query.GBV_HISTORY_EVENTS:
+                return getHistoryEventAsFatEnvelope()
+                break;
         }
         
         getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
@@ -201,11 +204,49 @@ class SruPicaConnector extends ConnectorAbstract {
             'name':      resultName,
             'startDate': resultStartDate,
             'endDate':   resultEndDate,
-            'status':    resultStatus,
+            'status':    resultStatus
         ])
        
         getEnvelopeWithMessage(result)
     } 
+    
+    private Envelope getHistoryEventAsFatEnvelope() {
+        
+        // TODO:
+        def result                = []
+        def resultType            = []
+        def resultTitle           = []
+        def resultIdentifierValue = []
+        def resultIdentifierType  = []
+        
+        currentRecord.recordData.record.datafield.findAll{it.'@tag' == '039E'}.each { df ->
+            def c  = df.subfield.find{it.'@code' == 'c'}.text()
+            def a  = df.subfield.find{it.'@code' == 'a'}.text()
+            def C  = df.subfield.find{it.'@code' == 'C'}.text()
+            def f6 = df.subfield.find{it.'@code' == '6'}.text()
+            
+            resultType            << c ? c : null
+            resultTitle           << a ? a : null
+            resultIdentifierType  << C ? C : null
+            resultIdentifierValue << f6?f6 : null
+        }
+        
+        println " .. getPicaValues(039Ec) = " + resultType
+        println " .. getPicaValues(039Ea) = " + resultTitle
+        println " .. getPicaValues(039EC) = " + resultIdentifierType
+        println " .. getPicaValues(039E6) = " + resultIdentifierValue
+        
+        // TODO refactor this
+        
+        result << getEnvelopeWithComplexMessage([
+            'type':            resultType,
+            'title':           resultTitle,
+            'identifierType':  resultIdentifierType,
+            'identifierValue': resultIdentifierValue
+        ])
+       
+        getEnvelopeWithMessage(result)
+    }
     
     private Envelope getAllTippURL() {
         def result = []

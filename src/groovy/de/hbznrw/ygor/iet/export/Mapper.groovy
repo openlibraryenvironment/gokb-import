@@ -1,10 +1,11 @@
 package de.hbznrw.ygor.iet.export
 
+import java.util.HashMap
+
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.bridge.*
-
 import de.hbznrw.ygor.tools.DateToolkit
 
 
@@ -55,7 +56,7 @@ class Mapper {
                           
                    tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
                    tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
-                   
+                                   
                    if([e.messages['startDate'][i], e.messages['endDate'][i]].contains("anfangs")){
                        dummy = tmp
                    } else {
@@ -75,7 +76,7 @@ class Mapper {
                     dummy.startDate.v = ''
                     dummy.startDate.m = Validator.isValidDate(dummy.startDate.v)
                     
-                    println "    .. title.publisher_history << (${dummy.endDate.v})"
+                    println "    .. adding virtual end date to title.publisher_history: ${dummy.endDate.v}"
                     title.publisher_history << dummy // no pod
                 }
             }
@@ -90,6 +91,37 @@ class Mapper {
         else if(query == Query.GBV_PUBLISHED_TO) {
             title.publishedTo.v = Normalizer.normDate(env.message, Normalizer.IS_END_DATE)
             title.publishedTo.m = Validator.isValidDate(title.publishedTo.v)
+        }
+        
+        else if(query == Query.GBV_HISTORY_EVENTS) {
+            def tmp =  TitleStruct.getNewHistoryEvent()
+
+            env.message.each{ e ->
+                e.messages['title'].eachWithIndex{ elem, i ->
+                    
+                    def hex = TitleStruct.getNewHistoryEventGeneric()
+                    hex.title.v = Normalizer.normString(e.messages['title'][i])
+                    hex.title.m = Validator.isValidString(hex.title.v)
+                    
+                    if("Vorg.".equals(e.messages['type'][i])){
+                        tmp.to << hex
+                    }
+                    else if("Forts.".equals(e.messages['type'][i])){
+                        tmp.from << hex
+                    }
+
+                    def ident = TitleStruct.getNewIdentifier()
+                    
+                    ident.type.m  = Status.IGNORE
+                    ident.type.v  = e.messages['identifierType'][i].toLowerCase()
+                    ident.value.v = Normalizer.normIdentifier(e.messages['identifierValue'][i], ident.type.v)
+                    ident.value.m = Validator.isValidIdentifier(ident.value.v, ident.type.v)                   
+                    
+                    hex.identifiers << ident
+                }
+            }
+            
+            title.history_events << new Pod(tmp)
         }
     }
     
@@ -167,7 +199,76 @@ class Mapper {
             }
         }
     }
-  
+      
+    static void mapHistoryEvents(DataContainer dc, Title title, Object stash) {
+        
+        println " .. mapHistoryEvents(DataContainer dc, Title title, Object stash) ---"
+
+        title.history_events.each{ he ->
+            
+            def x = TitleStruct.getNewHistoryEventGeneric()
+            x.title.v = title.name.v
+            x.title.m = title.name.m
+
+            title.identifiers.each{ ident ->
+                if([ZdbBridge.IDENTIFIER, TitleStruct.EISSN].contains(ident.type.v))
+                    x.identifiers << ident
+            }
+            
+            // set identifiers
+            // set missing eissn
+            if(he.v.from.size() > 0){
+                he.v.to << x
+                he.v.from.each { from ->
+                    def identifiers = []
+                    from.identifiers.each{ ident ->
+                        identifiers << ident
+                        if(ident.type.v == ZdbBridge.IDENTIFIER){
+                            def target = stash[ZdbBridge.IDENTIFIER].get("${ident.value.v}")
+                            target = dc.titles.get("${target}")
+    
+                            target.v.identifiers.each{ targetIdent ->
+                                if(targetIdent.type.v == TitleStruct.EISSN){
+                                    identifiers << targetIdent
+                                }
+                            }
+                        }
+                    }
+                    from.identifiers = identifiers
+                }
+            }
+            
+            // set identifiers
+            // set missing eissn
+            // set missing title
+            else if(he.v.to.size() > 0){
+                he.v.from << x
+                he.v.to.each { to ->
+                    def identifiers = []
+                    to.identifiers.each{ ident ->
+                        identifiers << ident
+                        if(ident.type.v == ZdbBridge.IDENTIFIER){
+                            def target = stash[ZdbBridge.IDENTIFIER].get("${ident.value.v}")
+                            target = dc.titles.get("${target}")
+    
+                            target.v.identifiers.each{ targetIdent ->
+                                if(targetIdent.type.v == TitleStruct.EISSN){
+                                    identifiers << targetIdent
+                                }
+                            }
+                            
+                            to.title.v = target.v.name.v
+                            to.title.m = target.v.name.m
+                        }
+                    }
+                    to.identifiers = identifiers
+                }
+            }
+           
+            he.m = Validator.isValidHistoryEvent(he)
+        }
+    }
+    
     static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String key) {
         if(dc.titles.containsKey("${key}"))
             return dc.titles.get("${key}").v

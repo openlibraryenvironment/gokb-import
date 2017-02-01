@@ -15,4 +15,12 @@ class TitleStruct {
     static TitlePublisherHistory getNewPublisherHistory() {
         return new TitlePublisherHistory()
     }
+    
+    static TitleHistoryEvent getNewHistoryEvent() {
+        return new TitleHistoryEvent()
+    }
+    
+    static TitleHistoryEventGeneric getNewHistoryEventGeneric() {
+        return new TitleHistoryEventGeneric()
+    }
 }

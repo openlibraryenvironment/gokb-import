@@ -61,6 +61,11 @@ public enum Status {
     // given coverage is invalid
     VALIDATOR_COVERAGE_IS_INVALID  ("VALIDATOR_COVERAGE_IS_INVALID"),
     
+    // given history event seems to be valid
+    VALIDATOR_HISTORYEVENT_IS_VALID    ("VALIDATOR_HISTORYEVENT_IS_VALID"),
+    // given history event is invalid
+    VALIDATOR_HISTORYEVENT_IS_INVALID  ("VALIDATOR_HISTORYEVENT_IS_INVALID")
+    
 	;
 
 

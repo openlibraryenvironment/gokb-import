@@ -19,6 +19,10 @@ abstract class BridgeAbstract implements BridgeInterface {
         println " -- BridgeAbstract.workOffStash(Object stash) not implemented -- "
     }
     
+    void finish(Object stash) throws Exception {
+        println " -- BridgeAbstract.finish(Object stash) not implemented -- "
+    }
+    
     void increaseProgress() {
         if(processor)
             processor.count++

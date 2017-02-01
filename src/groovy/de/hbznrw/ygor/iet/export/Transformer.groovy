@@ -2,6 +2,7 @@ package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.iet.export.structure.Title
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -38,7 +39,8 @@ class Transformer {
         json = Transformer.parseTitles(json, validator)
         json = Transformer.parseTitleIdentifiers(json, validator)
         json = Transformer.parsePublisherHistory(json, validator)
-
+        json = Transformer.parseHistoryEvents(json, validator)
+        
         json = Transformer.cleanUpJSON(json, validator)
         
         if(type.equals(FileType.JSON_DEBUG)){
@@ -358,11 +360,100 @@ class Transformer {
         json
     }
     
+    static Object parseHistoryEvents(Object json, boolean useValidator) {
+        
+        println ". DataTransformer.parseHistoryEvents()"
+        json.titles.each{ title ->
+            title.history_events.eachWithIndex { he, i ->
+
+                he.v.date = he.v.date.v
+                
+                he.v.from.each{ from ->
+                    def validIdentifiers = []
+                    from.identifiers.eachWithIndex{ ident, fi ->
+                        
+                        // use validator
+                        if(useValidator){
+                            if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
+                                ident.type  = ident.type.v
+                                ident.value = ident.value.v
+                                validIdentifiers << ident
+                            }
+                        }
+                        else {
+                            ident.type  = ident.type.v
+                            ident.value = ident.value.v
+                            validIdentifiers << ident
+                        }
+                    }
+                    
+                    // only valid entries
+                    if(useValidator){
+                        if(from.title.m == Status.VALIDATOR_STRING_IS_VALID.toString())
+                            from.title = from.title.v
+                        else
+                            from.title = ""
+                    }
+                    else {
+                        from.title = from.title.v
+                    }
+                }
+                he.v.to.each{ to ->
+                    def validIdentifiers = []
+                    to.identifiers.eachWithIndex{ ident, ti ->
+                        
+                        // use validator
+                        if(useValidator){
+                            if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
+                                ident.type  = ident.type.v
+                                ident.value = ident.value.v
+                                validIdentifiers << ident
+                            }
+                        }
+                        else {
+                            ident.type  = ident.type.v
+                            ident.value = ident.value.v
+                            validIdentifiers << ident
+                        }
+                    }
+                    
+                    // only valid entries
+                    if(useValidator){
+                        if(to.title.m == Status.VALIDATOR_STRING_IS_VALID.toString())
+                            to.title = to.title.v
+                        else
+                            to.title = ""
+                    }
+                    else {
+                        to.title = to.title.v
+                    }
+                }
+            }
+            
+            // TODO refactoring: use Status.VALIDATOR_HISTORYEVENT_IS_VALID
+            
+            def historyEvents = []
+            title.history_events.each{ he ->
+
+                // only valid entries
+                if(useValidator){
+                    if(he.m == Status.VALIDATOR_HISTORYEVENT_IS_VALID.toString())
+                        historyEvents << he.v
+                }
+                else {
+                    historyEvents << he.v
+                }
+            }
+            title.history_events = historyEvents
+        }
+        json
+    }
+    
     static Object cleanUpJSON(Object json, boolean useValidator){
         
         println ". DataTransformer.cleanUpJSON()"
         
-        //remove tipps without name and identifier
+        // remove tipps without name and identifier
         if(useValidator){
             
             def tipps = []
@@ -374,7 +465,7 @@ class Transformer {
             json.package.tipps = tipps
         }
                
-        //remove titles without name and identifier
+        // remove titles without name and identifier
         if(useValidator){
             
             def titles = []

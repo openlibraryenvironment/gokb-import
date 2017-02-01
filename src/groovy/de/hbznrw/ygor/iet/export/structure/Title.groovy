@@ -14,12 +14,11 @@ class Title {
     
     ArrayList<Identifier> identifiers                  = []
     ArrayList<TitlePublisherHistory> publisher_history = []
+    ArrayList<TitleHistoryEvent> history_events        = []
     
-    // ???
     Pod shortcode        = new Pod("")
     Pod status           = new Pod("Current", Status.HARDCODED)
     
-    // ???
     Pod OAStatus         = new Pod("")
     Pod continuingSeries = new Pod("")
     Pod defaultAccessURL = new Pod("")

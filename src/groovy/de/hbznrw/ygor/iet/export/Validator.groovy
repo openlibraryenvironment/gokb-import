@@ -135,6 +135,18 @@ class Validator {
         
         if((startDate.v == endDate.v) && (startDate.m == Status.VALIDATOR_DATE_IS_VALID && endDate.m == Status.VALIDATOR_DATE_IS_VALID))
             return false
+            
         true
+    }
+    
+    static isValidHistoryEvent(Pod historyEvent){
+        if(historyEvent.v.from.size() > 0 && historyEvent.v.to.size() > 0){
+ 
+            // TODO implement
+            // TODO implement unit test
+            return Status.VALIDATOR_HISTORYEVENT_IS_VALID
+        }
+        
+        return Status.VALIDATOR_HISTORYEVENT_IS_INVALID
     }
 }
