@@ -166,6 +166,26 @@ class Statistics {
         json.meta.stats << ["tipp.coverage - invalid dates found": [covDates[Statistics.OPTION_2], covDates[Statistics.OPTION_3].minus("")]]
         json.meta.stats << ["tipp.coverage - missing dates":       covDates[Statistics.OPTION_4]]
         
+        
+        // TODO invalid history events
+        
+         List<Integer> historyEvents = [0,0]
+        
+        json.titles.each{ title ->
+            title.value.v.history_events.each { he ->              
+        
+                if(he?.m.equals(Status.VALIDATOR_HISTORYEVENT_IS_VALID.toString())){
+                    historyEvents[Statistics.OPTION_1]++
+                }
+                if(he?.m.equals(Status.VALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
+                    historyEvents[Statistics.OPTION_2]++
+                }
+                
+            }
+        }
+        json.meta.stats << ["titles.history_events ARE VALID":   historyEvents[Statistics.OPTION_1]]
+        json.meta.stats << ["titles.history_events are invalid": historyEvents[Statistics.OPTION_2]]
+        
         json
     }
     

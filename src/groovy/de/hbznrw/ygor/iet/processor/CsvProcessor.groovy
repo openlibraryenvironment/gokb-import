@@ -62,6 +62,8 @@ class CsvProcessor extends ProcessorAbstract {
         
         println "CsvProcessor.processFile() -> " + options
         
+        count = 0
+        
         if(stash.size() == 0){
             println " .. filling CsvProcessor.stash with initial identifier"
             
@@ -77,6 +79,8 @@ class CsvProcessor extends ProcessorAbstract {
             }
             stash << ['issn': issn]
             stash << ['zdb': [:]]
+            
+            bridge.master.setProgressTotal((int)Math.round(stash['issn'].size() * 2.15))  // TODO dynamic calculation
         }
 
         bridge.workOffStash(stash)

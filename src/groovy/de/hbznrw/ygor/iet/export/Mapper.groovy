@@ -104,10 +104,10 @@ class Mapper {
                     hex.title.m = Validator.isValidString(hex.title.v)
                     
                     if("Vorg.".equals(e.messages['type'][i])){
-                        tmp.to << hex
+                        tmp.from << hex
                     }
                     else if("Forts.".equals(e.messages['type'][i])){
-                        tmp.from << hex
+                        tmp.to << hex
                     }
 
                     def ident = TitleStruct.getNewIdentifier()
@@ -204,6 +204,8 @@ class Mapper {
         
         println " .. mapHistoryEvents(DataContainer dc, Title title, Object stash) ---"
 
+        // todo: handle multiple history events
+        
         title.history_events.each{ he ->
             
             def x = TitleStruct.getNewHistoryEventGeneric()
@@ -217,6 +219,8 @@ class Mapper {
             
             // set identifiers
             // set missing eissn
+            // set missing title
+            // set date
             if(he.v.from.size() > 0){
                 he.v.to << x
                 he.v.from.each { from ->
@@ -227,20 +231,26 @@ class Mapper {
                             def target = stash[ZdbBridge.IDENTIFIER].get("${ident.value.v}")
                             target = dc.titles.get("${target}")
     
-                            target.v.identifiers.each{ targetIdent ->
-                                if(targetIdent.type.v == TitleStruct.EISSN){
-                                    identifiers << targetIdent
+                            if(target){
+                                target.v.identifiers.each{ targetIdent ->
+                                    if(targetIdent.type.v == TitleStruct.EISSN){
+                                        identifiers << targetIdent
+                                    }
                                 }
+                                from.title.v = target.v.name.v
+                                from.title.m = target.v.name.m 
                             }
                         }
                     }
                     from.identifiers = identifiers
                 }
+                he.v.date.v = title.publishedFrom.v
+                he.v.date.m = title.publishedFrom.m
             }
             
             // set identifiers
             // set missing eissn
-            // set missing title
+            // set date
             else if(he.v.to.size() > 0){
                 he.v.from << x
                 he.v.to.each { to ->
@@ -251,14 +261,15 @@ class Mapper {
                             def target = stash[ZdbBridge.IDENTIFIER].get("${ident.value.v}")
                             target = dc.titles.get("${target}")
     
-                            target.v.identifiers.each{ targetIdent ->
-                                if(targetIdent.type.v == TitleStruct.EISSN){
-                                    identifiers << targetIdent
+                            if(target){
+                                target.v.identifiers.each{ targetIdent ->
+                                    if(targetIdent.type.v == TitleStruct.EISSN){
+                                        identifiers << targetIdent
+                                    }
                                 }
+                                he.v.date.v = target.v.publishedFrom.v
+                                he.v.date.m = target.v.publishedFrom.m
                             }
-                            
-                            to.title.v = target.v.name.v
-                            to.title.m = target.v.name.m
                         }
                     }
                     to.identifiers = identifiers

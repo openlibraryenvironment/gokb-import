@@ -45,7 +45,7 @@ class ValidatorSpec extends Specification {
             def result = [
                 Status.VALIDATOR_STRING_IS_VALID,
                 Status.VALIDATOR_STRING_IS_INVALID,
-                Status.VALIDATOR_STRING_IS_INVALID,
+                Status.VALIDATOR_STRING_IS_VALID,
                 Status.VALIDATOR_STRING_IS_INVALID,
                 Status.VALIDATOR_STRING_IS_INVALID
                 ]
@@ -262,5 +262,12 @@ class ValidatorSpec extends Specification {
             Validator.isValidCoverage(test[3][0],test[3][1],test[3][2],test[3][3]) == result[3]
             Validator.isValidCoverage(test[4][0],test[4][1],test[4][2],test[4][3]) == result[4]
             Validator.isValidCoverage(test[5][0],test[5][1],test[5][2],test[5][3]) == result[5]
+    }
+    
+    void "isValidHistoryEvent(Pod historyEvent)"() {
+        given:
+            println "UNIT TEST NOT IMPLEMENTED"
+        expect:
+            1 == 1
     }
 }

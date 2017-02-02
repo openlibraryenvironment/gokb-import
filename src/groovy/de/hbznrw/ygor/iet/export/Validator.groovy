@@ -24,7 +24,7 @@ class Validator {
      * @return
      */
     static isValidString(String str) {
-        if(!str || str.trim().equals("") || str.length() < 3){
+        if(!str || str.trim().equals("") || str.length() < 2){
             return Status.VALIDATOR_STRING_IS_INVALID
         }
         if(str.contains("|")){
@@ -140,7 +140,7 @@ class Validator {
     }
     
     static isValidHistoryEvent(Pod historyEvent){
-        if(historyEvent.v.from.size() > 0 && historyEvent.v.to.size() > 0){
+        if(historyEvent.v.date && historyEvent.v.from.size() > 0 && historyEvent.v.to.size() > 0){
  
             // TODO implement
             // TODO implement unit test

@@ -370,7 +370,7 @@ class Transformer {
                 
                 he.v.from.each{ from ->
                     def validIdentifiers = []
-                    from.identifiers.eachWithIndex{ ident, fi ->
+                    from.identifiers.each{ ident ->
                         
                         // use validator
                         if(useValidator){
@@ -386,6 +386,7 @@ class Transformer {
                             validIdentifiers << ident
                         }
                     }
+                    from.identifiers = validIdentifiers
                     
                     // only valid entries
                     if(useValidator){
@@ -400,7 +401,7 @@ class Transformer {
                 }
                 he.v.to.each{ to ->
                     def validIdentifiers = []
-                    to.identifiers.eachWithIndex{ ident, ti ->
+                    to.identifiers.each{ ident ->
                         
                         // use validator
                         if(useValidator){
@@ -416,6 +417,7 @@ class Transformer {
                             validIdentifiers << ident
                         }
                     }
+                    to.identifiers = validIdentifiers
                     
                     // only valid entries
                     if(useValidator){

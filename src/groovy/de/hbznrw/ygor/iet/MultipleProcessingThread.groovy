@@ -44,14 +44,6 @@ class MultipleProcessingThread extends Thread {
 		println('Starting ..')
         
 		try {  
-            // TODO fix calculation
-            LineNumberReader lnr = new LineNumberReader(
-                new FileReader(new File(enrichment.originPathName))
-                );
-            lnr.skip(Long.MAX_VALUE);
-            progressTotal = lnr.getLineNumber() * options.size()
-            lnr.close();
-
             options.each{
                 option ->
                     switch(option) {
@@ -99,8 +91,12 @@ class MultipleProcessingThread extends Thread {
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}
     
+    void setProgressTotal(int i) {
+        progressTotal = i
+    }
+    
     void increaseProgress() {
         progressCurrent++
         enrichment.setProgress((progressCurrent / progressTotal) * 100)
     }
-}
+}  
