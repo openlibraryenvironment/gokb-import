@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.iet.bridge
 
+import groovy.util.logging.Log4j
+
 import java.util.ArrayList;
 
 import org.apache.commons.csv.CSVRecord;
@@ -11,17 +13,18 @@ import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
 import de.hbznrw.ygor.tools.FileToolkit
 
+@Log4j
 class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'zdb'
 
-	def tasks = [
+	Query[] tasks = [
         Query.ZDBID,
         Query.ZDB_TITLE,
         Query.ZDB_PUBLISHER
         ]
     
-    HashMap options
+    private HashMap options
 	
 	ZdbBridge(Thread master, HashMap options) {
         this.master  = master

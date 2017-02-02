@@ -28,8 +28,8 @@ class SruPicaConnector extends ConnectorAbstract {
     private String formatIdentifier = 'picaxml'
     private GPathResult response
     
-    public picaRecords   = []
-    public currentRecord = null
+    private picaRecords   = []
+    private currentRecord = null
     
 	SruPicaConnector(BridgeInterface bridge) {
 		super(bridge)
@@ -134,6 +134,10 @@ class SruPicaConnector extends ConnectorAbstract {
         }
         
         getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+    }
+    
+    Object getPicaRecords() {
+        picaRecords
     }
     
     private Envelope getFirstResultOnly(String tag, String code) {

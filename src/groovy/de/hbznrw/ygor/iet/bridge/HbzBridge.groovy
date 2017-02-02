@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.iet.bridge
 
+import groovy.util.logging.Log4j
+
 import java.util.ArrayList;
 import java.util.HashMap
 
@@ -11,17 +13,18 @@ import de.hbznrw.ygor.iet.enums.Query;
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
-import de.hbznrw.ygor.tools.FileToolkit
+import de.hbznrw.ygor.tools.FileToolkit 
 
+@Log4j
 class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'hbz'
     
-    def tasks = [
+    Query[] tasks = [
         Query.HBZID
     ]
     
-	HashMap options
+	private HashMap options
 	
 	HbzBridge(Thread master, HashMap options) {
         this.master  = master

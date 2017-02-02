@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.iet.bridge
 
+import groovy.util.logging.Log4j
+
 import java.util.ArrayList;
 
 import org.apache.commons.csv.CSVRecord;
@@ -11,12 +13,14 @@ import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
 import de.hbznrw.ygor.tools.FileToolkit
+import de.hbznrw.ygor.iet.export.structure.TitleStruct
 
+@Log4j
 class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'gbv'
     
-	def tasks = [
+	Query[] tasks = [
         Query.ZDBID,
         Query.GBV_GVKPPN,
         Query.GBV_PISSN,
@@ -30,7 +34,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_HISTORY_EVENTS
         ]
     
-    HashMap options
+    private HashMap options
 	
 	GbvBridge(Thread master, HashMap options) {
         this.master  = master
@@ -57,10 +61,12 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	}
     
     @Override
-    void workOffStash(Object stash) throws Exception {
+    void processStash() throws Exception {
         log.info("processStash()")
 
-        stash['issn'].each{ key, value ->
+        def stash = processor.getStash()
+        
+        stash[TitleStruct.ISSN].each{ key, value ->
 
             if(!master.isRunning) {
                 log.info('Aborted by user action.')
@@ -70,7 +76,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
             increaseProgress()
             connector.poll(key)
             
-            connector.picaRecords.eachWithIndex { pr, i ->
+            connector.getPicaRecords().eachWithIndex { pr, i ->
                 
                 def uid   = UUID.randomUUID().toString()
                 def title = processor.processEntry(master.enrichment.dataContainer, uid, pr)
@@ -88,8 +94,10 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
     }
     
     @Override
-    void finish(Object stash) throws Exception {
+    void finish() throws Exception {
         log.info("finish()")
+        
+        def stash = processor.getStash()
         
         master.enrichment.dataContainer.titles.each { key, value ->
             Mapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)

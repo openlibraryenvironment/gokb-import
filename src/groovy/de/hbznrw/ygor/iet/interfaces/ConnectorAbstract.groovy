@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.iet.interfaces
 
+import groovy.util.logging.Log4j
+
 import java.util.ArrayList
 
 import com.sun.org.apache.xpath.internal.operations.Minus
@@ -15,6 +17,8 @@ import de.hbznrw.ygor.iet.enums.Status
  * @author David Klober
  *
  */
+
+@Log4j
 abstract class ConnectorAbstract implements ConnectorInterface {
 
 	protected String requestUrl       = "set-in-extending-class"

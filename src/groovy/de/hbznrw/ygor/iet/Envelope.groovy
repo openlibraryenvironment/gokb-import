@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.iet
 
+import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.enums.Status
 
 /**
@@ -8,6 +9,8 @@ import de.hbznrw.ygor.iet.enums.Status
  * @author David Klober
  *
  */
+
+@Log4j
 class Envelope {
 
     static final SIMPLE  = 'simple'

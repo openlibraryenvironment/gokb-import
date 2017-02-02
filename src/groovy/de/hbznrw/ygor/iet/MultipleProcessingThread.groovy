@@ -4,10 +4,13 @@ import de.hbznrw.ygor.iet.bridge.*
 import de.hbznrw.ygor.iet.interfaces.BridgeInterface
 import de.hbznrw.ygor.iet.interfaces.ProcessorInterface
 import de.hbznrw.ygor.iet.processor.CsvProcessor
+import groovy.util.logging.Log4j
 import ygor.Enrichment
+
 import java.nio.file.Files
 import java.nio.file.Paths
 
+@Log4j
 class MultipleProcessingThread extends Thread {
 
     public  ProcessorInterface processor

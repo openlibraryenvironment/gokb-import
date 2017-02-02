@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.iet.bridge
 
+import groovy.util.logging.Log4j
+
 import java.util.ArrayList;
 import java.util.HashMap
 import java.util.LinkedHashMap
@@ -14,15 +16,16 @@ import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
 import de.hbznrw.ygor.tools.FileToolkit
 
+@Log4j
 class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
     static final IDENTIFIER = 'ezb'
     
-	def tasks = [
+	Query[] tasks = [
         Query.EZBID
     ]
     
-	HashMap options
+	private HashMap options
 	
 	EzbBridge(Thread master, HashMap options) {
         this.master  = master
@@ -49,10 +52,12 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	}
     
     @Override
-    void workOffStash(Object stash) throws Exception {
+    void processStash() throws Exception {
         log.info("processStash()")
         
-        stash['zdb'].each{ key, value ->
+        def stash = processor.getStash()
+        
+        stash[ZdbBridge.IDENTIFIER].each{ key, value ->
             
             if(!master.isRunning) {
                 log.info('Aborted by user action.')
