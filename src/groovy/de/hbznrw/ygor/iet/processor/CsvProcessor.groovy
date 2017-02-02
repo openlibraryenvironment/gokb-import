@@ -60,12 +60,12 @@ class CsvProcessor extends ProcessorAbstract {
 
     void processFile(HashMap options) throws Exception {
         
-        println "CsvProcessor.processFile() -> " + options
+        log.info("processFile() -> " + options)
         
         count = 0
         
         if(stash.size() == 0){
-            println " .. filling CsvProcessor.stash with initial identifier"
+            log.info("filling stash with initial data ..")
             
             def issn = [:]
             this.inputFile = options.get('inputFile')
@@ -97,7 +97,7 @@ class CsvProcessor extends ProcessorAbstract {
         def saveTitle = false
         def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, hash)
         if(title) {
-            println " >  modifying existing Title: " + hash
+            log.info("> modifying existing Title: " + hash)
         }
         else {
             title     = new Title()
@@ -107,7 +107,7 @@ class CsvProcessor extends ProcessorAbstract {
         def saveTipp = false
         def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, hash)
         if(tipp) {
-            println " >  modifying existing Tipp: " + hash
+            log.info("> modifying existing Tipp: " + hash)
         }
         else {
             tipp     = PackageStruct.getNewTipp()
@@ -132,7 +132,7 @@ class CsvProcessor extends ProcessorAbstract {
                     msg = env.message.join(", ")
 
                 state = env.state
-                println("#" + count + " processed " + hash + " -> " + msg + " : " + state)
+                log.info("#" + count + " processed " + hash + " -> " + msg + " : " + state)
             }
             else if(env.type == Envelope.COMPLEX){
                 
@@ -148,7 +148,7 @@ class CsvProcessor extends ProcessorAbstract {
                             msg = null // todo ??
                     }
 
-                    println("#" + count + " processed " + hash + " -> " + msg + " : " + state)
+                    log.info("#" + count + " processed " + hash + " -> " + msg + " : " + state)
                 }
             }
             
@@ -157,11 +157,11 @@ class CsvProcessor extends ProcessorAbstract {
         }
         
         if(saveTitle){
-            println " >  stored as new Title: " + hash
+            log.info("> stored as new Title: " + hash)
             dc.titles << ["${hash}": new Pod(title)]
         }
         if(saveTipp){
-            println " >  stored as new Tipp: " + hash
+            log.info("> stored as new Tipp: " + hash)
             dc.pkg.tipps << ["${hash}": new Pod(tipp)]
         }
         

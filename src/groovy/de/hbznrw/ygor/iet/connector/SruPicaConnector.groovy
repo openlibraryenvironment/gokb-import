@@ -150,7 +150,7 @@ class SruPicaConnector extends ConnectorAbstract {
         def df = record.datafield.find{it.'@tag' == tag}
         def sf = df.subfield.find{it.'@code' == code}
 
-        println " .. getPicaValue(" +  tag + "" + code + ") = " + sf
+        log.debug("getPicaValue(" +  tag + "" + code + ") = " + sf)
         return sf ? sf.text() : null
     }  
     
@@ -162,7 +162,7 @@ class SruPicaConnector extends ConnectorAbstract {
             result << f.text()      
         }
         
-        println " .. getPicaValues(" +  tag + "" + code + ") = " + result
+        log.debug("getPicaValues(" +  tag + "" + code + ") = " + result)
         result
     }
     
@@ -195,8 +195,8 @@ class SruPicaConnector extends ConnectorAbstract {
             resultEndDate   << h ? h : null
             resultStatus    << null
         }
-        println " .. getPicaValues(033An) = " + resultName
-        println " .. getPicaValues(033Ah) = " + resultStartDate
+        log.debug("getPicaValues(033An) = " + resultName)
+        log.debug("getPicaValues(033Ah) = " + resultStartDate)
         
         // TODO refactor this
         
@@ -231,10 +231,10 @@ class SruPicaConnector extends ConnectorAbstract {
             resultIdentifierValue << f6?f6 : null
         }
         
-        println " .. getPicaValues(039Ec) = " + resultType
-        println " .. getPicaValues(039Ea) = " + resultTitle
-        println " .. getPicaValues(039EC) = " + resultIdentifierType
-        println " .. getPicaValues(039E6) = " + resultIdentifierValue
+        log.debug("getPicaValues(039Ec) = " + resultType)
+        log.debug("getPicaValues(039Ea) = " + resultTitle)
+        log.debug("getPicaValues(039EC) = " + resultIdentifierType)
+        log.debug("getPicaValues(039E6) = " + resultIdentifierValue)
         
         // TODO refactor this
         
@@ -287,8 +287,8 @@ class SruPicaConnector extends ConnectorAbstract {
             resultStartVolume   << x ? x : null
         }
         
-        println " .. getPicaValues(009Px) = " + resultStartDate
-        println " .. getPicaValues(009Pz) = " + resultCoverageNote
+        log.debug("getPicaValues(009Px) = " + resultStartDate)
+        log.debug("getPicaValues(009Pz) = " + resultCoverageNote)
         
         // TODO refactor this
         

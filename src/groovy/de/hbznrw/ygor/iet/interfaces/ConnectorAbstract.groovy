@@ -32,10 +32,10 @@ abstract class ConnectorAbstract implements ConnectorInterface {
 	}
 	
     String getAPIQuery(String identifier) {
-        println " -- ConnectorAbstract.getAPIQuery(String identifier) not implemented --"
+        log.info(" -- getAPIQuery(String identifier) not implemented --")
     }
     Envelope poll(String identifier) {
-        println " -- ConnectorAbstract.poll(String identifier) not implemented --"
+        log.info(" -- poll(String identifier) not implemented --")
     }
     
     Envelope query(Query query) {
@@ -47,11 +47,11 @@ abstract class ConnectorAbstract implements ConnectorInterface {
     }
     
     Envelope getEnvelope(Query query) {
-        println " -- ConnectorAbstract.getEnvelope(Query query) not implemented --"
+        log.info(" -- getEnvelope(Query query) not implemented --")
     }
     
     Envelope getEnvelope(Object record, Query query) { 
-        println " -- ConnectorAbstract.getEnvelope(Object record, Query query) not implemented --"
+        log.info(" -- getEnvelope(Object record, Query query) not implemented --")
     }
     
     Envelope getEnvelopeWithMessage(ArrayList message) {

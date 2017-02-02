@@ -125,7 +125,8 @@ log4j.main = {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
 
-	debug 'ygor.DocumentController'
+	debug  'ygor',
+           'de.hbznrw.ygor'
 	
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP

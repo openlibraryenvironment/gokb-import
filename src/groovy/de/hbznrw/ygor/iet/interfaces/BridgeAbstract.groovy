@@ -16,11 +16,11 @@ abstract class BridgeAbstract implements BridgeInterface {
 	}
     
     void workOffStash(stash) throws Exception {
-        println " -- BridgeAbstract.workOffStash(Object stash) not implemented -- "
+        log.info(" -- workOffStash(Object stash) not implemented -- ")
     }
     
     void finish(Object stash) throws Exception {
-        println " -- BridgeAbstract.finish(Object stash) not implemented -- "
+        log.info(" -- finish(Object stash) not implemented -- ")
     }
     
     void increaseProgress() {

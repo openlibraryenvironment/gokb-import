@@ -1,14 +1,15 @@
 package de.hbznrw.ygor.iet.export
 
-import java.util.HashMap
 
+import java.util.HashMap
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.bridge.*
 import de.hbznrw.ygor.tools.DateToolkit
+import groovy.util.logging.Log4j
 
-
+@Log4j
 class Mapper {
 
     static void mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
@@ -76,7 +77,7 @@ class Mapper {
                     dummy.startDate.v = ''
                     dummy.startDate.m = Validator.isValidDate(dummy.startDate.v)
                     
-                    println "    .. adding virtual end date to title.publisher_history: ${dummy.endDate.v}"
+                    log.info("adding virtual end date to title.publisher_history: ${dummy.endDate.v}")
                     title.publisher_history << dummy // no pod
                 }
             }
@@ -202,7 +203,7 @@ class Mapper {
       
     static void mapHistoryEvents(DataContainer dc, Title title, Object stash) {
         
-        println " .. mapHistoryEvents(DataContainer dc, Title title, Object stash) ---"
+        log.info("mapping history events for title: " + title.name.v)
 
         // todo: handle multiple history events
         

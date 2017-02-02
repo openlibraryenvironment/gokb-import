@@ -23,7 +23,6 @@ class Envelope {
     Envelope(){
     }
     
-    
     Envelope(Status state, ArrayList message) {
         this.state   = state                    // Status.CONST
         this.message = message                  // String | [] | [Envelope,Envelope, Envelope]
@@ -36,17 +35,11 @@ class Envelope {
         this.type     = Envelope.COMPLEX
     }
 
-	/**
-	 * Print containing state and message
-	 */
-	void printInfo() {
-        if(this.type == Envelope.SIMPLE) {
-            println("state:   " + state)
-            println("message: " + message)
-        }
-        if(this.type == Envelope.COMPLEX) {
-            println("states:   " + states)
-            println("messages: " + messages)
-        }
+	String toString() {
+        log.debug("| type:     " + type)
+        log.debug("| state:    " + state)
+        log.debug("| message:  " + message)
+        log.debug("| states:   " + states)
+        log.debug("| messages: " + messages)
 	}
 }

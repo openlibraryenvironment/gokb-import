@@ -34,7 +34,7 @@ class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go() throws Exception {
-        println("Input:  " + options.get('inputFile'))
+        log.info("Input:  " + options.get('inputFile'))
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
         
@@ -44,6 +44,6 @@ class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go(String outputFile) throws Exception {   
-        println("deprecated function call go(outputFile)")
+        log.warn("deprecated function call go(outputFile)")
 	}
 }

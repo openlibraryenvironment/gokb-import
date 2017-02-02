@@ -44,7 +44,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go() throws Exception {
-        println("Input:  " + options.get('inputFile'))
+        log.info("Input:  " + options.get('inputFile'))
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
         
@@ -54,17 +54,17 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go(String outputFile) throws Exception {
-		println("deprecated function call go(outputFile)")
+		log.warn("deprecated function call go(outputFile)")
 	}
     
     @Override
     void workOffStash(Object stash) throws Exception {
-        println "GbvBridge.processStash()"
+        log.info("processStash()")
 
         stash['issn'].each{ key, value ->
 
             if(!master.isRunning) {
-                println('Aborted by user action.')
+                log.info('Aborted by user action.')
                 return
             }
 
@@ -90,7 +90,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
     
     @Override
     void finish(Object stash) throws Exception {
-        println "GbvBridge.finish()"
+        log.info("finish()")
         
         master.enrichment.dataContainer.titles.each { key, value ->
             Mapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)

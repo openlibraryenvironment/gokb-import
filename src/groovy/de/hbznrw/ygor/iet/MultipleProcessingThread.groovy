@@ -41,7 +41,7 @@ class MultipleProcessingThread extends Thread {
 		
 		enrichment.setStatus(Enrichment.ProcessingState.WORKING)
 		
-		println('Starting ..')
+		log.info('Starting ..')
         
 		try {  
             options.each{
@@ -80,13 +80,13 @@ class MultipleProcessingThread extends Thread {
 		} catch(Exception e) {
 			enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
 			
-			println(e.getMessage())
-			println(e.getStackTrace())
+			log.error(e.getMessage())
+			log.error(e.getStackTrace())
 			
-			println('Aborted.')
+			log.info('Aborted.')
 			return
 		}
-		println('Done.')
+		log.info('Done.')
 		
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}

@@ -35,7 +35,7 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go() throws Exception {
-		println("Input:  " + options.get('inputFile'))
+		log.info("Input:  " + options.get('inputFile'))
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<zdbid>')
         
@@ -45,17 +45,17 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go(String outputFile) throws Exception {
-		println("deprecated function call go(outputFile)")
+		log.warn("deprecated function call go(outputFile)")
 	}
     
     @Override
     void workOffStash(Object stash) throws Exception {
-        println "EzbBridge.processStash()"
+        log.info("processStash()")
         
         stash['zdb'].each{ key, value ->
             
             if(!master.isRunning) {
-                println('Aborted by user action.')
+                log.info('Aborted by user action.')
                 return
             }
             
