@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.iet.export
 
-
 import java.util.HashMap
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
@@ -152,19 +151,7 @@ class Mapper {
             tipp.url.v = Normalizer.normTippURL(env.message, dc.pkg.packageHeader.v.nominalPlatform.v)
             tipp.url.m = Validator.isValidURL(tipp.url.v)
         }
-        
-        else if(query == Query.GBV_PLATFORM_URL) {
-            def tmp = PackageStruct.getNewTippPlatform()
-            
-            tmp.name.v = Normalizer.normURL(env.message)
-            tmp.name.m = env.state
-            
-            tmp.primaryUrl.v = Normalizer.normURL(env.message)
-            tmp.primaryUrl.m = env.state
 
-            tipp.platform = new Pod(tmp)
-        }
-        
         else if(query == Query.GBV_TIPP_COVERAGE) {     
             
             env.message.each{ e ->
@@ -278,6 +265,23 @@ class Mapper {
             }
            
             he.m = Validator.isValidHistoryEvent(he)
+        }
+    }
+    
+    static void mapPlatform(Tipp tipp) { 
+        
+        log.info("mapping platform for tipp: " + tipp.title.v.name.v)
+        
+        if(tipp.url.m == Status.VALIDATOR_URL_IS_VALID){
+            def tmp = PackageStruct.getNewTippPlatform()
+
+            tmp.primaryUrl.v = Normalizer.normURL(tipp.url.v)
+            tmp.primaryUrl.m = Validator.isValidURL(tmp.primaryUrl.v)
+            
+            tmp.name.v = Normalizer.normString(tmp.primaryUrl.v)
+            tmp.name.m = Validator.isValidString(tmp.name.v)
+            
+            tipp.platform = new Pod(tmp)
         }
     }
     

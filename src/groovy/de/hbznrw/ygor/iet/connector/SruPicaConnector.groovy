@@ -125,9 +125,6 @@ class SruPicaConnector extends ConnectorAbstract {
             case Query.GBV_TIPP_URL:
                 return getAllTippURL()
                 break;
-            case Query.GBV_PLATFORM_URL:
-                return getAllPlattformURL()
-                break;
             case Query.GBV_TIPP_COVERAGE:
                 return getTippCoverageAsFatEnvelope()
                 break;
@@ -254,14 +251,7 @@ class SruPicaConnector extends ConnectorAbstract {
         result += getAllPicaValues(currentRecord.recordData.record, '009P', 'a') // TODO
         getEnvelopeWithMessage(result.minus(null).unique())
     }
-    
-    private Envelope getAllPlattformURL() {
-        def result = []
-        
-        result += getAllPicaValues(currentRecord.recordData.record, '009P', '0') // TODO
-        getEnvelopeWithMessage(result.minus(null).unique())
-    }
-    
+
     private Envelope getTippCoverageAsFatEnvelope() { 
         def result              = []     
         def resultCoverageNote  = []

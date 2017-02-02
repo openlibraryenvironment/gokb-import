@@ -26,7 +26,6 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_PUBLISHED_FROM,
         Query.GBV_PUBLISHED_TO,
         Query.GBV_TIPP_URL,
-        Query.GBV_PLATFORM_URL,
         Query.GBV_TIPP_COVERAGE,
         Query.GBV_HISTORY_EVENTS
         ]
@@ -94,6 +93,9 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         
         master.enrichment.dataContainer.titles.each { key, value ->
             Mapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
+        }
+        master.enrichment.dataContainer.pkg.tipps.each { key, value ->
+            Mapper.mapPlatform(value.v)
         }
     }
 }

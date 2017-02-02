@@ -2,6 +2,19 @@ package de.hbznrw.ygor.iet.enums;
 
 public enum Status {
 	
+    /*
+     * USE: 
+     * 
+     * title.m.equals(Status.VALIDATOR_STRING_IS_VALID)
+     * tipp.url.m == Status.VALIDATOR_URL_IS_VALID
+     *  
+     * NOT:
+     * 
+     * title.m.equals(Status.VALIDATOR_STRING_IS_VALID.toString()
+     * tipp.url.m == Status.VALIDATOR_URL_IS_VALID.toString()
+     *  
+     */
+    
 	UNKNOWN_REQUEST    ("UNKNOWN_REQUEST"),
 	
 	STATUS_OK          ("STATUS_OK"),
@@ -68,8 +81,6 @@ public enum Status {
     
 	;
 
-
-	
 	private String value;
 	
 	Status(String value) {

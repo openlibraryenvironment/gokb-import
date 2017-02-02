@@ -18,12 +18,23 @@ all 033An						-	Title.publisher_history.name
 	with 033Ah					-	Title.publisher_history.startDate / Title.publisher_history.endDate 
 
 all 009Pa
-all 009P0						-	Package.tipps.platform // TODO
 
 009Px							-	Package.tipps.coverage.(endDate,endVolume,startDate,startVolume)
 009Pz							-	Package.tipps.coverage.note
 
+039E 							- 	Title.tipps.history_events
 
+TO CHECK:
+	
+	031N - Release Dates
+	031Nc 
+	031Nm
+	
+	033B  - alt.Publisher
+	021Ah - Author
+	029Aa - Corp
+	
+	
 HARDCODED:
 
 "No" 							-	Package.packageHeader.breakable

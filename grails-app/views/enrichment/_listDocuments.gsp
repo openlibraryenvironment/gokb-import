@@ -85,8 +85,7 @@
 				
 				<div class="row">
 					<div class="col-xs-10 col-xs-offset-1">
-						<g:checkBox name="ignorePkgData" value="true" checked="true" /> &nbsp; 
-						<span class="glyphicon glyphicon-warning-sign large" aria-hidden="true"></span> Diese Angaben ignorieren
+						<g:checkBox name="ignorePkgData" value="true" checked="false" /> &nbsp; Diese Angaben ignorieren
 						<br />
 					</div>
 				</div><!-- .row -->
