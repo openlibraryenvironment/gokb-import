@@ -36,6 +36,7 @@ class ValidatorSpec extends Specification {
     void "isValidString(String str)"() {
         given:
             def test = [
+                "a",
                 "This is a title",
                 "Multiple|Strings",
                 "ab",
@@ -43,11 +44,12 @@ class ValidatorSpec extends Specification {
                 null
                 ]
             def result = [
-                Status.VALIDATOR_STRING_IS_VALID,
                 Status.VALIDATOR_STRING_IS_INVALID,
                 Status.VALIDATOR_STRING_IS_VALID,
-                Status.VALIDATOR_STRING_IS_INVALID,
-                Status.VALIDATOR_STRING_IS_INVALID
+                Status.VALIDATOR_STRING_IS_NOT_ATOMIC,
+                Status.VALIDATOR_STRING_IS_VALID,
+                Status.VALIDATOR_STRING_IS_MISSING,
+                Status.VALIDATOR_STRING_IS_MISSING
                 ]
             
         expect:
@@ -59,6 +61,7 @@ class ValidatorSpec extends Specification {
             Validator.isValidString(test[2]) == result[2]
             Validator.isValidString(test[3]) == result[3]
             Validator.isValidString(test[4]) == result[4]
+            Validator.isValidString(test[5]) == result[5]
     }
     
     void "isValidNumber(String str)"() {
@@ -68,6 +71,7 @@ class ValidatorSpec extends Specification {
                 "124,5",
                 "333.6",
                 "ab",
+                "123|456",
                 "",
                 null
                 ]
@@ -76,8 +80,9 @@ class ValidatorSpec extends Specification {
                 Status.VALIDATOR_NUMBER_IS_INVALID,
                 Status.VALIDATOR_NUMBER_IS_INVALID,
                 Status.VALIDATOR_NUMBER_IS_INVALID,
-                Status.VALIDATOR_NUMBER_IS_INVALID,
-                Status.VALIDATOR_NUMBER_IS_INVALID
+                Status.VALIDATOR_NUMBER_IS_NOT_ATOMIC,
+                Status.VALIDATOR_NUMBER_IS_MISSING,
+                Status.VALIDATOR_NUMBER_IS_MISSING
                 ]
             
         expect:
@@ -90,6 +95,7 @@ class ValidatorSpec extends Specification {
             Validator.isValidNumber(test[3]) == result[3]
             Validator.isValidNumber(test[4]) == result[4]
             Validator.isValidNumber(test[5]) == result[5]
+            Validator.isValidNumber(test[6]) == result[6]
     }
     
     void "isValidIdentifier(String str, Object identifierType)"() {
@@ -106,7 +112,9 @@ class ValidatorSpec extends Specification {
                 ["1234678910-X", ZdbBridge.IDENTIFIER],
                 ["23",           EzbBridge.IDENTIFIER],
                 ["1234254",      EzbBridge.IDENTIFIER],
-                ["1234678910-X", "unkown identifier"]
+                ["1234678910-X", "unkown identifier"],
+                ["",             TitleStruct.EISSN],
+                [null,           EzbBridge.IDENTIFIER]
                 ]
             def result = [
                 Status.VALIDATOR_IDENTIFIER_IS_VALID,
@@ -120,7 +128,9 @@ class ValidatorSpec extends Specification {
                 Status.VALIDATOR_IDENTIFIER_IS_VALID,
                 Status.VALIDATOR_IDENTIFIER_IS_INVALID,
                 Status.VALIDATOR_IDENTIFIER_IS_VALID,
-                Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
+                Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE,
+                Status.VALIDATOR_IDENTIFIER_IS_MISSING,
+                Status.VALIDATOR_IDENTIFIER_IS_MISSING,
                 ]
 
         expect:
@@ -139,6 +149,8 @@ class ValidatorSpec extends Specification {
             Validator.isValidIdentifier(test[9][0], test[9][1]) == result[9]
             Validator.isValidIdentifier(test[10][0], test[10][1]) == result[10]
             Validator.isValidIdentifier(test[11][0], test[11][1]) == result[11]
+            Validator.isValidIdentifier(test[12][0], test[12][1]) == result[12]
+            Validator.isValidIdentifier(test[13][0], test[13][1]) == result[13]
     }
     
     void "isValidDate(String str)"() {
@@ -186,9 +198,9 @@ class ValidatorSpec extends Specification {
                 Status.VALIDATOR_URL_IS_VALID,
                 Status.VALIDATOR_URL_IS_VALID,
                 Status.VALIDATOR_URL_IS_INVALID,
-                Status.VALIDATOR_URL_IS_INVALID,
-                Status.VALIDATOR_URL_IS_INVALID,
-                Status.VALIDATOR_URL_IS_INVALID
+                Status.VALIDATOR_URL_IS_NOT_ATOMIC,
+                Status.VALIDATOR_URL_IS_MISSING,
+                Status.VALIDATOR_URL_IS_MISSING
                 ]
             
         expect:

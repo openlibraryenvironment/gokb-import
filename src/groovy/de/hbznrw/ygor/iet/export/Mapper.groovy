@@ -297,7 +297,7 @@ class Mapper {
             log.debug("checking: " + ph.name.v)
             def prefLabelMatch = false
             
-            orgMap.any { prefLabel ->
+            orgMap?.any { prefLabel ->
                 if(ph.name.v == prefLabel) {
                     log.debug("matched prefLabel: " + prefLabel)
                     ph.name.v = Normalizer.normString(prefLabel)
@@ -307,16 +307,18 @@ class Mapper {
                 }
             }
             if(!prefLabelMatch){
-                orgMap.any { prefLabel, altLabels ->
+                // catch multiple altLabel matches ..
+                def prefLabels = []
+                orgMap?.any { prefLabel, altLabels ->
                     altLabels?.any { altLabel ->
                         if(ph.name.v == altLabel) {
                             log.debug("matched altLabel: " + altLabel + " -> set prefLabel: " + prefLabel)
-                            ph.name.v = Normalizer.normString(prefLabel)
-                            ph.name.m = Validator.isValidString(ph.name.v)
-                            return true
+                            prefLabels << prefLabel
                         }
                     }
                 }
+                ph.name.v = Normalizer.normString(prefLabels)
+                ph.name.m = Validator.isValidString(ph.name.v)
             }
         }
     }

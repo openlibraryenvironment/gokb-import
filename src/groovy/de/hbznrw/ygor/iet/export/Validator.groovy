@@ -24,11 +24,14 @@ class Validator {
      * @return
      */
     static isValidString(String str) {
-        if(!str || str.trim().equals("") || str.length() < 2){
+        if(!str || str.trim().equals("")){
+            return Status.VALIDATOR_STRING_IS_MISSING
+        }
+        else if(str.length() < 2){
             return Status.VALIDATOR_STRING_IS_INVALID
         }
-        if(str.contains("|")){
-            return Status.VALIDATOR_STRING_IS_INVALID
+        else if(str.contains("|")){
+            return Status.VALIDATOR_STRING_IS_NOT_ATOMIC
         }
         return Status.VALIDATOR_STRING_IS_VALID
     }
@@ -39,10 +42,16 @@ class Validator {
      * @return
      */
     static isValidNumber(String str) {
-        if(str && !str.trim().equals("")){
-            if(str.isInteger())
-                return Status.VALIDATOR_NUMBER_IS_VALID
+        if(!str || str.trim().equals("")){
+            return Status.VALIDATOR_NUMBER_IS_MISSING
+        } 
+        else if(str.contains("|")){
+            return Status.VALIDATOR_NUMBER_IS_NOT_ATOMIC
         }
+        else if(str.isInteger()){
+            return Status.VALIDATOR_NUMBER_IS_VALID
+        }
+        
         return Status.VALIDATOR_NUMBER_IS_INVALID
     }
     
@@ -53,6 +62,10 @@ class Validator {
      * @return
      */
     static isValidIdentifier(String str, Object identifierType) {
+        if(!str || str.trim().equals("")){
+            return Status.VALIDATOR_IDENTIFIER_IS_MISSING
+        }
+        
         if(identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)){
             if(9 == str.length() && 4 == str.indexOf("-"))
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
@@ -83,8 +96,11 @@ class Validator {
      */
     static isValidURL(String str) {
       
-        if(!str || str.trim().equals("") || str.contains("|")){
-            return Status.VALIDATOR_URL_IS_INVALID
+        if(!str || str.trim().equals("")){
+            return Status.VALIDATOR_URL_IS_MISSING
+        }
+        else if(str.contains("|")){
+            return Status.VALIDATOR_URL_IS_NOT_ATOMIC
         }
         
         try {

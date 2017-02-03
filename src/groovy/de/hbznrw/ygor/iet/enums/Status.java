@@ -50,23 +50,39 @@ public enum Status {
 	VALIDATOR_IDENTIFIER_IS_VALID          ("VALIDATOR_IDENTIFIER_IS_VALID"),
 	// given identifier is not valid
 	VALIDATOR_IDENTIFIER_IS_INVALID        ("VALIDATOR_IDENTIFIER_IS_INVALID"),
+	// given identifier seems to contain multiple matches
+	VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC     ("VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC"),
+	// no given identifier
+	VALIDATOR_IDENTIFIER_IS_MISSING        ("VALIDATOR_IDENTIFIER_IS_MISSING"),
 	// e.g. not implemented yet
-	VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE  ("VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE"),
+    VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE  ("VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE"),
 	
 	// given title seems to be valid
-    VALIDATOR_STRING_IS_VALID    ("VALIDATOR_STRING_IS_VALID"),
-    // given title is not valid
-    VALIDATOR_STRING_IS_INVALID  ("VALIDATOR_STRING_IS_INVALID"),
-    
-    // given title seems to be valid
-    VALIDATOR_NUMBER_IS_VALID    ("VALIDATOR_NUMBER_IS_VALID"),
-    // given title is not valid
-    VALIDATOR_NUMBER_IS_INVALID  ("VALIDATOR_NUMBER_IS_INVALID"),
+    VALIDATOR_STRING_IS_VALID       ("VALIDATOR_STRING_IS_VALID"),
+    // given title is given but not valid
+    VALIDATOR_STRING_IS_INVALID     ("VALIDATOR_STRING_IS_INVALID"),
+    // given title seems to contain multiple matches
+    VALIDATOR_STRING_IS_NOT_ATOMIC  ("VALIDATOR_STRING_IS_NOT_ATOMIC"),
+    // no given title 
+    VALIDATOR_STRING_IS_MISSING     ("VALIDATOR_STRING_IS_MISSING"),    
     
     // given url seems to be valid
-    VALIDATOR_URL_IS_VALID    ("VALIDATOR_URL_IS_VALID"),
+    VALIDATOR_URL_IS_VALID      ("VALIDATOR_URL_IS_VALID"),
     // given url is invalid
-    VALIDATOR_URL_IS_INVALID  ("VALIDATOR_URL_IS_INVALID"),
+    VALIDATOR_URL_IS_INVALID    ("VALIDATOR_URL_IS_INVALID"),
+    // given url seems to contain multiple matches
+    VALIDATOR_URL_IS_NOT_ATOMIC ("VALIDATOR_URL_IS_NOT_ATOMIC"),
+    // no given url
+    VALIDATOR_URL_IS_MISSING    ("VALIDATOR_URL_IS_MISSING"),
+    
+    // given number seems to be valid
+    VALIDATOR_NUMBER_IS_VALID       ("VALIDATOR_NUMBER_IS_VALID"),
+    // given number is not valid
+    VALIDATOR_NUMBER_IS_INVALID     ("VALIDATOR_NUMBER_IS_INVALID"),
+    // given number seems to contain multiple matches
+    VALIDATOR_NUMBER_IS_NOT_ATOMIC  ("VALIDATOR_NUMBER_IS_NOT_ATOMIC"),
+    // no given number
+    VALIDATOR_NUMBER_IS_MISSING     ("VALIDATOR_NUMBER_IS_MISSING"),
     
     
     // given coverage seems to be valid
