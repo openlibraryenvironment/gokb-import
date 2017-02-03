@@ -28,12 +28,10 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	private HashMap options
 	
 	EzbBridge(Thread master, HashMap options) {
-        this.master  = master
-		this.options = options
-		
-		this.connector     = new EzbConnector(this)
-		this.processor     = master.processor
-        processor.setBridge(this)
+        this.master    = master
+		this.options   = options
+		this.connector = new EzbConnector(this)
+		this.processor = master.processor
 	}
 	
 	@Override
@@ -42,6 +40,7 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<zdbid>')
         
+        processor.setBridge(this)
         processor.setConfiguration(",", null, null)
         processor.processFile(options)
 	}

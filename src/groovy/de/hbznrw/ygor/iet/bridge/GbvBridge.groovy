@@ -12,12 +12,12 @@ import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.processor.CsvProcessor
-import de.hbznrw.ygor.tools.FileToolkit
+import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 
 @Log4j
 class GbvBridge extends BridgeAbstract implements BridgeInterface {
-	
+
     static final IDENTIFIER = 'gbv'
     
 	Query[] tasks = [
@@ -37,12 +37,10 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
     private HashMap options
 	
 	GbvBridge(Thread master, HashMap options) {
-        this.master  = master
-        this.options = options
-
-		this.connector     = new SruPicaConnector(this)
-		this.processor     = master.processor
-        processor.setBridge(this)
+        this.master    = master
+        this.options   = options
+		this.connector = new SruPicaConnector(this)
+		this.processor = master.processor
 	}
 	
 	@Override
@@ -51,6 +49,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
         
+        processor.setBridge(this)
         processor.setConfiguration(",", null, null)
         processor.processFile(options)
 	}
@@ -97,10 +96,12 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
     void finish() throws Exception {
         log.info("finish()")
         
-        def stash = processor.getStash()
+        def stash  = processor.getStash()
+        def orgMap = Mapper.getOrganisationMap()
         
         master.enrichment.dataContainer.titles.each { key, value ->
             Mapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
+            Mapper.mapOrganisations(orgMap, value.v)
         }
         master.enrichment.dataContainer.pkg.tipps.each { key, value ->
             Mapper.mapPlatform(value.v)

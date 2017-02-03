@@ -3,6 +3,8 @@ package de.hbznrw.ygor.tools
 import java.security.MessageDigest
 import java.nio.file.Paths
 import org.codehaus.groovy.runtime.DateGroovyMethods
+import org.springframework.core.io.Resource
+import grails.util.Holders
 
 class FileToolkit {
 
@@ -19,5 +21,9 @@ class FileToolkit {
     
     static String getMD5Hash(String s) {
         MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8")).encodeHex().toString()
+    }
+    
+    static Resource getResourceByClassPath(String path) {
+        Holders.getGrailsApplication().parentContext.getResource('classpath:' + path)
     }
 }

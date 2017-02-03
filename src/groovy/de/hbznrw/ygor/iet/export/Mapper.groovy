@@ -7,10 +7,12 @@ import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.bridge.*
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
+import de.hbznrw.ygor.tools.*
+
 
 @Log4j
 class Mapper {
-
+    
     static void mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
 
         if(query in [Query.ZDBID, Query.EZBID, Query.GBV_EISSN, Query.GBV_PISSN, Query.GBV_GVKPPN]) {
@@ -283,6 +285,52 @@ class Mapper {
             
             tipp.platform = new Pod(tmp)
         }
+    }
+    
+    static void mapOrganisations(HashMap orgMap, Title title) {
+
+        log.info("mapping publisher history organisations for title: " + title.name.v)
+        
+        // TODO: store state for statistics
+        
+        title.publisher_history.each { ph ->
+            log.debug("checking: " + ph.name.v)
+            def prefLabelMatch = false
+            
+            orgMap.any { prefLabel ->
+                if(ph.name.v == prefLabel) {
+                    log.debug("matched prefLabel: " + prefLabel)
+                    ph.name.v = Normalizer.normString(prefLabel)
+                    ph.name.m = Validator.isValidString(ph.name.v)
+                    prefLabelMatch = true
+                    return true
+                }
+            }
+            if(!prefLabelMatch){
+                orgMap.any { prefLabel, altLabels ->
+                    altLabels?.any { altLabel ->
+                        if(ph.name.v == altLabel) {
+                            log.debug("matched altLabel: " + altLabel + " -> set prefLabel: " + prefLabel)
+                            ph.name.v = Normalizer.normString(prefLabel)
+                            ph.name.m = Validator.isValidString(ph.name.v)
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+    }
+  
+    static HashMap getOrganisationMap() {
+        
+        def resource = FileToolkit.getResourceByClassPath('/de/hbznrw/ygor/resources/ONLD.jsonld')
+        def orgJson  = JsonToolkit.parseFileToJson(resource.file.path)
+        def orgMap   = [:]
+
+        orgJson.'@graph'.each { e ->
+            orgMap.put(e.'skos:prefLabel', e.'skos:altLabel')
+        }
+        orgMap
     }
     
     static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String key) {

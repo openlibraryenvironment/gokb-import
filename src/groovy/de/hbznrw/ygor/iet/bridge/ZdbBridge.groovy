@@ -27,12 +27,10 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
     private HashMap options
 	
 	ZdbBridge(Thread master, HashMap options) {
-        this.master  = master
-        this.options = options
-
-		this.connector     = new SruConnector(this)
-		this.processor     = master.processor
-        processor.setBridge(this)
+        this.master    = master
+        this.options   = options
+		this.connector = new SruConnector(this)
+		this.processor = master.processor
 	}
 	
 	@Override
@@ -41,6 +39,7 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
         
+        processor.setBridge(this)
         processor.setConfiguration(",", null, null)
         processor.processFile(options)
 	}
