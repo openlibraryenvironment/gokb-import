@@ -124,12 +124,7 @@ class Transformer {
     static Object parseCuratoryGroups(Object json) {
         
         json.package.packageHeader.curatoryGroups.eachWithIndex{ cg, i ->
-            
-            def curatoryGroup = [:]
-            cg.each{ attr ->
-                curatoryGroup << ["${attr.key}" : attr.value.v]
-            }
-            json.package.packageHeader.curatoryGroups[i] = curatoryGroup
+            json.package.packageHeader.curatoryGroups[i] = cg.v
         }
         
         json
@@ -153,13 +148,9 @@ class Transformer {
     static Object parseVariantNames(Object json) {
                 
         json.package.packageHeader.variantNames.eachWithIndex{ vn, i ->
-            
-            def variantName = [:]
-            vn.each{ attr ->
-                variantName << ["${attr.key}" : attr.value.v]
-            }
-            json.package.packageHeader.variantNames[i] = variantName
+            json.package.packageHeader.variantNames[i] = vn.v
         }
+        
         json
     }
     

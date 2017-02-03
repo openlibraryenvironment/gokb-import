@@ -9,11 +9,12 @@ import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.entity.mime.content.StringBody
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
+import de.hbznrw.ygor.tools.*
 
 class EnrichmentService {
     
     def grailsApplication
-
+    
     void addFile(CommonsMultipartFile file, HashMap documents) {
         
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
@@ -54,9 +55,7 @@ class EnrichmentService {
                 ph.v.nominalProvider.v = pkgNominal.key
             }
             
-            def vn =  PackageStruct.getNewPackageHeaderVariantName()
-            vn.variantName.v = pm['pkgVariantName'][0]
-            ph.v.variantNames << vn
+            ph.v.variantNames << new Pod(pm['pkgVariantName'][0])
         }
         
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)

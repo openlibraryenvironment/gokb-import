@@ -23,6 +23,6 @@ class PackageHeader {
     Pod source = new Pod(PackageStruct.getNewPackageHeaderSource())
     
     def additionalProperties = [] // TODO
-    ArrayList<PackageHeaderCuratoryGroup> curatoryGroups = []
-    def variantNames         = [] // TODO
+    ArrayList curatoryGroups = []
+    ArrayList variantNames   = []
 }
