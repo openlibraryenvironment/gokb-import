@@ -1,19 +1,23 @@
 package ygor
 
 import java.io.File
+
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import groovyx.net.http.HTTPBuilder
+
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.entity.mime.content.StringBody
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
+
 import de.hbznrw.ygor.tools.*
 
 class EnrichmentService {
     
     def grailsApplication
+    PlatformService platformService
     
     void addFile(CommonsMultipartFile file, HashMap documents) {
         
@@ -47,8 +51,8 @@ class EnrichmentService {
             
             ph.v.name.v = new Pod(pm['pkgTitle'][0])
             
-            def preset = PackageStruct.getPackageHeaderNominalPlatformPreset()
-            def pkgNominal = preset.find{it.key == pm['pkgNominal'][0]}
+            def map = platformService.getMap()
+            def pkgNominal = map.find{it.key == pm['pkgNominal'][0]}
             if(pkgNominal){
                 ph.v.nominalPlatform.v = pkgNominal.value
                 ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.v)

@@ -95,11 +95,15 @@ environments {
         }
         gokbApi {
             xrTitleUri   = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
-            xrPackageUri = 'http://localhost:8080//gokb/integration/crossReferencePackage'
-            user = ''
-            pwd  = ''
+            xrPackageUri = 'http://localhost:8080/gokb/integration/crossReferencePackage'
+            user         = ''
+            pwd          = ''
         }
-        
+        gokbDB {
+            dbUri = "jdbc:postgresql://localhost:5432/gokb"
+            user  = ''
+            pwd   = ''
+        }   
     }
     production {
         grails.logging.jul.usebridge = false
@@ -111,8 +115,13 @@ environments {
         gokbApi {
             xrTitleUri   = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
             xrPackageUri = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
-            user = ''
-            pwd  = ''
+            user         = ''
+            pwd          = ''
+        }
+        gokbDB {
+            dbUri = "jdbc:postgresql://phaeton.hbz-nrw.de:5432/gokb"
+            user  = ''
+            pwd   = ''
         }
     }
 }

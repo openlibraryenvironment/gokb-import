@@ -2,6 +2,7 @@
 
 <%@ page 
 	import="ygor.Enrichment" 
+	import="ygor.PlatformService"
 	import="de.hbznrw.ygor.iet.export.structure.TitleStruct"
 	import="de.hbznrw.ygor.iet.export.structure.PackageStruct"
 	import="de.hbznrw.ygor.iet.bridge.*"
@@ -77,7 +78,7 @@
 					<div class="col-xs-5 col-xs-offset-1">
 						Plattform:
 						<br /> 
-						<g:select name="pkgNominal" from="${PackageStruct.getPackageHeaderNominalPlatformPreset().entrySet()}"
+						<g:select name="pkgNominal" from="${platformService.getMap().entrySet()}"
 							optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
 						<br /> 
 					</div>

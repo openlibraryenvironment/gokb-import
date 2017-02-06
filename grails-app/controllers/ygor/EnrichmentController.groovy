@@ -15,6 +15,7 @@ class EnrichmentController {
     static scope = "session"
 
     EnrichmentService enrichmentService
+    PlatformService   platformService
     
     def documents = [:]
 
@@ -25,7 +26,7 @@ class EnrichmentController {
     def process = {
         render(
             view:'process',
-            model:[documents:documents, currentView:'process']
+            model:[documents:documents, platformService:platformService, currentView:'process']
             )
     }
     
