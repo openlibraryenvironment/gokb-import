@@ -102,8 +102,6 @@ class Normalizer {
     }
     
     /**
-     * Following matches will be processed correctly
-     * 
      * - "2008"
      * - "2005/06"
      * - "2002/2003"
@@ -117,9 +115,13 @@ class Normalizer {
      * @return "YYYY-01-01 00:00:00.000"|"YYYY-12-31 00:00:00.000"
      */
     static String normDate(String str, Object dateType) {
-        str = Normalizer.normString(str)
         
+        str = Normalizer.normString(str)
+
         if(str){
+            str = str.replace('Verlag', '').replace('Verlag;', '')
+            str = str.replace('Agentur', '').replace('Agentur;', '')
+                
             if(str.contains(";")){
                 def tmp = str.split(";")
                 if(tmp.size() == 1)
@@ -137,12 +139,28 @@ class Normalizer {
                     str = tmp[0]
                 }
                 else if(dateType.equals(Normalizer.IS_END_DATE)){
-                    if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
+
+                    // [1] '88 -' -> '88'
+                    tmp[1] = tmp[1].replace(' -', '').replace('-', '')
+
+                    // [0] 1988 & [1] 89 -> 1989        
+                    if(tmp[1].length()<tmp[0].length() && tmp[1].length() == 2){
+                        
+                        // [0] '1.1988' -> '1988'
+                        if(tmp[0].contains('.')){
+                            def tmp2 = tmp[0].split('\\.')
+                            tmp[0] = tmp2[1]
+                        }
                         str = tmp[0].take(2) + tmp[1]
                     }
                     else {
                         str = tmp[1]
                     }
+                }
+                
+                if(1 == StringUtils.countOccurrencesOf(str, ".")){
+                    def tmp2 = str.split("\\.")
+                    str = Normalizer.normString(tmp2[1])
                 }
             }
             else if(str.contains("-")){
@@ -153,7 +171,18 @@ class Normalizer {
                 }
                 else if(dateType.equals(Normalizer.IS_END_DATE)){
                     if(tmp.length == 2) {
-                        if(tmp[1].length()<tmp[0].length() && tmp[0].length() == 4 && tmp[1].length() == 2){
+                        
+                        // [1] '88 -' -> '88'
+                        tmp[1] = tmp[1].replace(' -', '').replace('-', '')
+
+                        // [0] '1988' & [1] '89' -> '1989'
+                        if(tmp[1].length()<tmp[0].length() && tmp[1].length() == 2){
+                            
+                            // [0] '1.1988' -> '1988'
+                            if(tmp[0].contains('.')){
+                                def tmp2 = tmp[0].split('\\.')
+                                tmp[0] = tmp2[1]
+                            }
                             str = tmp[0].take(2) + tmp[1]
                         }
                         else {
@@ -172,17 +201,15 @@ class Normalizer {
             }
         
             if(str != "") {
-                if(['EZB', 'Verlag', 'Agentur'].contains(str)){
-                    return str
-                }
-                
                 str = str.trim()
                 
-                if(dateType.equals(Normalizer.IS_START_DATE)){
-                    str += "-01-01 00:00:00.000"
-                }
-                else if(dateType.equals(Normalizer.IS_END_DATE)){
-                    str += "-12-31 23:59:59.000"
+                if(str.size() == 4) {
+                    if(dateType.equals(Normalizer.IS_START_DATE)){
+                        str += "-01-01 00:00:00.000"
+                    }
+                    else if(dateType.equals(Normalizer.IS_END_DATE)){
+                        str += "-12-31 23:59:59.000"
+                    }
                 }
             }
         }

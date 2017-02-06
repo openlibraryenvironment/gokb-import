@@ -223,17 +223,24 @@ class SruPicaConnector extends ConnectorAbstract {
         currentRecord.recordData.record.datafield.findAll{it.'@tag' == '039E'}.each { df ->
             def c  = df.subfield.find{it.'@code' == 'c'}.text()
             def a  = df.subfield.find{it.'@code' == 'a'}.text()
+            def t  = df.subfield.find{it.'@code' == 't'}.text()
             def C  = df.subfield.find{it.'@code' == 'C'}.text()
             def f6 = df.subfield.find{it.'@code' == '6'}.text()
-            
+
             resultType            << c ? c : null
-            resultTitle           << a ? a : null
+            
+            // resultTitle        << a ? a : (t ? t : null)
+            if(a) {
+                resultTitle       << a
+            } else {
+                resultTitle       << t ? t : null
+            }
             resultIdentifierType  << C ? C : null
             resultIdentifierValue << f6?f6 : null
         }
         
         log.debug("getPicaValues(039Ec) = " + resultType)
-        log.debug("getPicaValues(039Ea) = " + resultTitle)
+        log.debug("getPicaValues(039E(a|t)) = " + resultTitle)
         log.debug("getPicaValues(039EC) = " + resultIdentifierType)
         log.debug("getPicaValues(039E6) = " + resultIdentifierValue)
         

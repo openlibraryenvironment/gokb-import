@@ -184,7 +184,15 @@ class Mapper {
                     } 
                     
                     def valid = Validator.isValidCoverage(tmp.startDate, tmp.endDate, tmp.startVolume, tmp.endVolume) ? Status.VALIDATOR_COVERAGE_IS_VALID : Status.VALIDATOR_COVERAGE_IS_INVALID
-                    tipp.coverage << new Pod(tmp, valid)
+                    
+                    
+                    if(Status.VALIDATOR_COVERAGE_IS_INVALID == valid && tmp.startDate.v == tmp.endDate.v && tmp.startVolume.v == tmp.endVolume.v) {
+                        // prefilter to reduce crappy results
+                        log.debug("! ignore crappy tipp coverage")
+                    }
+                    else {
+                        tipp.coverage << new Pod(tmp, valid)
+                    }
                 }
             }
         }
@@ -195,6 +203,7 @@ class Mapper {
         log.info("mapping history events for title: " + title.name.v)
 
         // todo: handle multiple history events
+        def historyEvents = []
         
         title.history_events.each{ he ->
             
@@ -266,8 +275,19 @@ class Mapper {
                 }
             }
            
-            he.m = Validator.isValidHistoryEvent(he)
+            def valid = Validator.isValidHistoryEvent(he)
+            
+            if(Status.VALIDATOR_HISTORYEVENT_IS_INVALID == valid && he.v.date.m == Status.UNDEFINED && he.v.from.size() == 0 && he.v.to.size() == 0) {
+                // prefilter to reduce crappy results
+                log.debug("! ignore crappy title history event")
+            } 
+            else {
+                he.m = valid
+                historyEvents << he
+            }
         }
+        
+        title.history_events = historyEvents
     }
     
     static void mapPlatform(Tipp tipp) { 
