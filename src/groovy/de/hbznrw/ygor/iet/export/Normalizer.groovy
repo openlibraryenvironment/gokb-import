@@ -12,8 +12,8 @@ import de.hbznrw.ygor.iet.bridge.*
 
 class Normalizer {
 
-    final static IS_START_DATE  = 1000
-    final static IS_END_DATE    = 1001
+    final static IS_START_DATE  = "IS_START_DATE"
+    final static IS_END_DATE    = "IS_END_DATE"
     
     
     
@@ -119,8 +119,8 @@ class Normalizer {
         str = Normalizer.normString(str)
 
         if(str){
-            str = str.replace('Verlag', '').replace('Verlag;', '')
-            str = str.replace('Agentur', '').replace('Agentur;', '')
+            str = str.replace('Verlag;', '').replace('Verlag', '')
+            str = str.replace('Agentur;', '').replace('Agentur', '')
                 
             if(str.contains(";")){
                 def tmp = str.split(";")
@@ -137,9 +137,16 @@ class Normalizer {
                 
                 if(dateType.equals(Normalizer.IS_START_DATE)){
                     str = tmp[0]
+                    // '1.1971 - 38.2001/02' => '1.1971 - 38.2001' -> '1.1971'
+                    if(str.contains("-")){
+                        def tmp3 = str.split("-")
+                        str = tmp3[0]
+                    }
                 }
                 else if(dateType.equals(Normalizer.IS_END_DATE)){
 
+                    // '1.1971 - 38.2001/02' => [0] '1.1971 - 38.2001' & [1] '02' -> '2002' ??? TODO
+                    
                     // [1] '88 -' -> '88'
                     tmp[1] = tmp[1].replace(' -', '').replace('-', '')
 
@@ -199,7 +206,11 @@ class Normalizer {
                     str = Normalizer.normString(tmp2[1])
                 }
             }
-        
+            else if(str.contains(",")){
+                def tmp = str.split(",")
+                str = tmp[0]
+            }
+            
             if(str != "") {
                 str = str.trim()
                 
@@ -246,6 +257,10 @@ class Normalizer {
                 else
                     str = ""
             }
+        }
+        if(str && str.contains(",")){
+            def tmp = str.split(",")
+            str = tmp[1]
         }
         if(1 == StringUtils.countOccurrencesOf(str, ".")){
             def tmp2 = str.split("\\.")

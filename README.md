@@ -9,3 +9,8 @@ A spare hand when needed ..
 
 Eclipse/GGTS &rarr; Import &rarr; Grails Project
 
+##### Testing
+
+Current normalizer and validator support
+
+	$grails test-app
