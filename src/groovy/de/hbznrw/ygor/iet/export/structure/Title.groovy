@@ -3,6 +3,8 @@ package de.hbznrw.ygor.iet.export.structure
 import de.hbznrw.ygor.iet.enums.*
 
 class Title {
+    
+    Pod _hash
         
     Pod imprint          = new Pod("")
     Pod issuer           = new Pod("")

@@ -162,10 +162,12 @@ class CsvProcessor extends ProcessorAbstract {
         
         if(saveTitle){
             log.info("> stored as new Title: " + hash)
+            title._hash = new Pod(hash, Status.IGNORE)
             dc.titles << ["${hash}": new Pod(title)]
         }
         if(saveTipp){
             log.info("> stored as new Tipp: " + hash)
+            tipp._hash = new Pod(hash, Status.IGNORE)
             dc.pkg.tipps << ["${hash}": new Pod(tipp)]
         }
         

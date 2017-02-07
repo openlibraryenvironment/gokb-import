@@ -4,6 +4,8 @@ import de.hbznrw.ygor.iet.enums.*
 
 class Tipp {
     
+    Pod _hash
+    
     Pod accessEnd   = new Pod()
     Pod accessStart = new Pod()
     
