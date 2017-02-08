@@ -52,6 +52,7 @@ class Mapper {
                    def tmp = TitleStruct.getNewPublisherHistory()
                    
                    tmp.name.v = Normalizer.normString(e.messages['name'][i])
+                   tmp.name.m = Validator.isValidString(tmp.name.v)
                
                    tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
                    tmp.startDate.m = Validator.isValidDate(tmp.startDate.v)
@@ -82,7 +83,6 @@ class Mapper {
                     title.publisher_history << dummy // no pod
                 }
             }
-
         }
         
         else if(query == Query.GBV_PUBLISHED_FROM) {
@@ -317,21 +317,22 @@ class Mapper {
             log.debug("checking: " + ph.name.v)
             def prefLabelMatch = false
             
-            orgMap?.any { prefLabel ->
-                if(ph.name.v == prefLabel) {
-                    log.debug("matched prefLabel: " + prefLabel)
-                    ph.name.v = Normalizer.normString(prefLabel)
+            // find prefLabel
+            orgMap.any { prefLabel ->
+                if(ph.name.v.equalsIgnoreCase(prefLabel.key)) {
+                    log.debug("matched prefLabel: " + prefLabel.key)
+                    ph.name.v = Normalizer.normString(prefLabel.key)
                     ph.name.m = Validator.isValidString(ph.name.v)
                     prefLabelMatch = true
                     return true
                 }
             }
+            // find all altLabels
             if(!prefLabelMatch){
-                // catch multiple altLabel matches ..
                 def prefLabels = []
-                orgMap?.any { prefLabel, altLabels ->
-                    altLabels?.any { altLabel ->
-                        if(ph.name.v == altLabel) {
+                orgMap.each { prefLabel, altLabels ->
+                    altLabels.each { altLabel ->
+                        if(ph.name.v.equalsIgnoreCase(altLabel)) {
                             log.debug("matched altLabel: " + altLabel + " -> set prefLabel: " + prefLabel)
                             prefLabels << prefLabel
                         }
