@@ -16,31 +16,34 @@ class Mapper {
     static void mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
 
         if(query in [Query.ZDBID, Query.EZBID, Query.GBV_EISSN, Query.GBV_PISSN, Query.GBV_GVKPPN]) {
-            def tmp = TitleStruct.getNewIdentifier()
+            def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
-                tmp.type.v = ZdbBridge.IDENTIFIER
+                ident.type.v = ZdbBridge.IDENTIFIER
             else if(Query.EZBID == query)
-                tmp.type.v = EzbBridge.IDENTIFIER
+                ident.type.v = EzbBridge.IDENTIFIER
             else if(Query.GBV_EISSN == query)
-                tmp.type.v = TitleStruct.EISSN
+                ident.type.v = TitleStruct.EISSN
             else if(Query.GBV_PISSN == query)
-                tmp.type.v = TitleStruct.PISSN
+                ident.type.v = TitleStruct.PISSN
             else if(Query.GBV_GVKPPN == query)
-                tmp.type.v = "gvk_ppn"
+                ident.type.v = "gvk_ppn"
                 
-            tmp.type.m  = Status.IGNORE
-            tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
-            tmp.value.m = Validator.isValidIdentifier(tmp.value.v, tmp.type.v)
+            ident.type.m  = Status.IGNORE
+            
+            //ident.value.org = env.message
+            ident.value.v   = Normalizer.normIdentifier  (env.message, ident.type.v)
+            ident.value.m   = Validator.isValidIdentifier(ident.value.v, ident.type.v)
             
             // TODO: handle multiple ezbid matches
             
-            title.identifiers << tmp // no pod
+            title.identifiers << ident // no pod
         }
         
         else if(query == Query.GBV_TITLE) {
-            title.name.v = Normalizer.normString(env.message)
-            title.name.m = Validator.isValidString(title.name.v)
+            title.name.org = env.message
+            title.name.v   = Normalizer.normString  (title.name.org)
+            title.name.m   = Validator.isValidString(title.name.v)
         }
         
         else if(query == Query.GBV_PUBLISHER) {
@@ -49,25 +52,28 @@ class Mapper {
             
             env.message.each{ e ->
                e.messages['name'].eachWithIndex{ elem, i ->
-                   def tmp = TitleStruct.getNewPublisherHistory()
+                   def pubHist = TitleStruct.getNewPublisherHistory()
                    
-                   tmp.name.v = Normalizer.normString(e.messages['name'][i])
-                   tmp.name.m = Validator.isValidString(tmp.name.v)
+                   pubHist.name.org = e.messages['name'][i]
+                   pubHist.name.v   = Normalizer.normString  (pubHist.name.org)
+                   pubHist.name.m   = Validator.isValidString(pubHist.name.v)
                
-                   tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
-                   tmp.startDate.m = Validator.isValidDate(tmp.startDate.v)
-                          
-                   tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
-                   tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
+                   pubHist.startDate.org = e.messages['startDate'][i]
+                   pubHist.startDate.v   = Normalizer.normDate  (pubHist.startDate.org, Normalizer.IS_START_DATE)
+                   pubHist.startDate.m   = Validator.isValidDate(pubHist.startDate.v)
+                   
+                   pubHist.endDate.org = e.messages['endDate'][i]
+                   pubHist.endDate.v   = Normalizer.normDate  (pubHist.endDate.org, Normalizer.IS_END_DATE)
+                   pubHist.endDate.m   = Validator.isValidDate(pubHist.endDate.v)
                                    
                    if([e.messages['startDate'][i], e.messages['endDate'][i]].contains("anfangs")){
-                       dummy = tmp
+                       dummy = pubHist
                    } else {
                        // store lowest start date for dummy calculation
-                       if(dummyDate == null || (tmp.startDate.m == Status.VALIDATOR_DATE_IS_VALID && dummyDate > tmp.startDate.v))
-                           dummyDate = tmp.startDate.v
+                       if(dummyDate == null || (pubHist.startDate.m == Status.VALIDATOR_DATE_IS_VALID && dummyDate > pubHist.startDate.v))
+                           dummyDate = pubHist.startDate.v
                            
-                       title.publisher_history << tmp // no pod
+                       title.publisher_history << pubHist // no pod
                    }
                 }
             }
@@ -80,78 +86,84 @@ class Mapper {
                     dummy.startDate.m = Validator.isValidDate(dummy.startDate.v)
                     
                     log.info("adding virtual end date to title.publisher_history: ${dummy.endDate.v}")
+                    
                     title.publisher_history << dummy // no pod
                 }
             }
         }
         
         else if(query == Query.GBV_PUBLISHED_FROM) {
-            title.publishedFrom.v = Normalizer.normDate(env.message, Normalizer.IS_START_DATE)
-            title.publishedFrom.m = Validator.isValidDate(title.publishedFrom.v)
+            title.publishedFrom.org = env.message
+            title.publishedFrom.v   = Normalizer.normDate  (title.publishedFrom.org, Normalizer.IS_START_DATE)
+            title.publishedFrom.m   = Validator.isValidDate(title.publishedFrom.v)
         }
         
         else if(query == Query.GBV_PUBLISHED_TO) {
-            title.publishedTo.v = Normalizer.normDate(env.message, Normalizer.IS_END_DATE)
-            title.publishedTo.m = Validator.isValidDate(title.publishedTo.v)
+            title.publishedTo.org = env.message
+            title.publishedTo.v   = Normalizer.normDate  (title.publishedTo.org, Normalizer.IS_END_DATE)
+            title.publishedTo.m   = Validator.isValidDate(title.publishedTo.v)
         }
         
         else if(query == Query.GBV_HISTORY_EVENTS) {
-            def tmp =  TitleStruct.getNewHistoryEvent()
+            def histEvent =  TitleStruct.getNewHistoryEvent()
 
             env.message.each{ e ->
                 e.messages['title'].eachWithIndex{ elem, i ->
                     
                     def hex = TitleStruct.getNewHistoryEventGeneric()
-                    hex.title.v = Normalizer.normString(e.messages['title'][i])
-                    hex.title.m = Validator.isValidString(hex.title.v)
+                    hex.title.org = e.messages['title'][i]
+                    hex.title.v   = Normalizer.normString  (hex.title.org)
+                    hex.title.m   = Validator.isValidString(hex.title.v)
                     
                     if("Vorg.".equals(e.messages['type'][i])){
-                        tmp.from << hex
+                        histEvent.from << hex
                     }
                     else if("Forts.".equals(e.messages['type'][i])){
-                        tmp.to << hex
+                        histEvent.to << hex
                     }
 
                     def ident = TitleStruct.getNewIdentifier()
                     
                     ident.type.m  = Status.IGNORE
                     ident.type.v  = e.messages['identifierType'][i].toLowerCase()
-                    ident.value.v = Normalizer.normIdentifier(e.messages['identifierValue'][i], ident.type.v)
+                    ident.value.v = Normalizer.normIdentifier (e.messages['identifierValue'][i], ident.type.v)
                     ident.value.m = Validator.isValidIdentifier(ident.value.v, ident.type.v)                   
                     
                     hex.identifiers << ident
                 }
             }
             
-            title.history_events << new Pod(tmp)
+            title.history_events << new Pod(histEvent)
         }
     }
     
     static void mapToTipp(DataContainer dc, Tipp tipp, Query query, Envelope env) {
 
         if(query in [Query.ZDBID, Query.GBV_EISSN]) {
-            def tmp = TitleStruct.getNewIdentifier()
+            def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
-                tmp.type.v = ZdbBridge.IDENTIFIER
+                ident.type.v = ZdbBridge.IDENTIFIER
             else if(Query.GBV_EISSN == query)
-                tmp.type.v = TitleStruct.EISSN
+                ident.type.v = TitleStruct.EISSN
 
-            tmp.type.m  = Status.IGNORE
-            tmp.value.v = Normalizer.normIdentifier(env.message, tmp.type.v)
-            tmp.value.m = Validator.isValidIdentifier(tmp.value.v, tmp.type.v)
+            ident.type.m  = Status.IGNORE
+            ident.value.v = Normalizer.normIdentifier  (env.message, ident.type.v)
+            ident.value.m = Validator.isValidIdentifier(ident.value.v, ident.type.v)
 
-            tipp.title.v.identifiers << tmp // no pod
+            tipp.title.v.identifiers << ident // no pod
         }
         
         else if(query == Query.GBV_TITLE) {
-            tipp.title.v.name.v = Normalizer.normString(env.message)
-            tipp.title.v.name.m = Validator.isValidString(tipp.title.v.name.v)
+            tipp.title.v.name.org = env.message
+            tipp.title.v.name.v   = Normalizer.normString  (tipp.title.v.name.org)
+            tipp.title.v.name.m   = Validator.isValidString(tipp.title.v.name.v)
         }
         
         else if(query == Query.GBV_TIPP_URL) {
-            tipp.url.v = Normalizer.normTippURL(env.message, dc.pkg.packageHeader.v.nominalPlatform.v)
-            tipp.url.m = Validator.isValidURL(tipp.url.v)
+            tipp.url.org = env.message
+            tipp.url.v   = Normalizer.normTippURL(tipp.url.org, dc.pkg.packageHeader.v.nominalPlatform.v)
+            tipp.url.m   = Validator.isValidURL  (tipp.url.v)
         }
 
         else if(query == Query.GBV_TIPP_COVERAGE) {     
@@ -159,39 +171,43 @@ class Mapper {
             env.message.each{ e ->
                 e.messages['coverageNote'].eachWithIndex{ elem, i ->
                     
-                    def tmp = PackageStruct.getNewTippCoverage()
+                    def coverage = PackageStruct.getNewTippCoverage()
                     // TODO
-                    tmp.coverageNote.v = Normalizer.normString(e.messages['coverageNote'][i])
-                    tmp.coverageNote.m = Normalizer.normString(
+                    coverage.coverageNote.org = e.messages['coverageNote'][i]
+                    coverage.coverageNote.v   = Normalizer.normString(coverage.coverageNote.org)
+                    coverage.coverageNote.m   = Normalizer.normString(
                         (e.states.find{it.toString().startsWith('coverageNote_')}).toString().replaceFirst('coverageNote_', '')
-                        )
+                    )
                     
                     if(e.messages['startDate'][i]){
-                        tmp.startDate.v = Normalizer.normDate(e.messages['startDate'][i], Normalizer.IS_START_DATE)
-                        tmp.startDate.m = Validator.isValidDate(tmp.startDate.v)   
+                        coverage.startDate.org = e.messages['startDate'][i]
+                        coverage.startDate.v   = Normalizer.normDate  (coverage.startDate.org, Normalizer.IS_START_DATE)
+                        coverage.startDate.m   = Validator.isValidDate(coverage.startDate.v)   
                     }
                     if(e.messages['endDate'][i]){
-                        tmp.endDate.v = Normalizer.normDate(e.messages['endDate'][i], Normalizer.IS_END_DATE)
-                        tmp.endDate.m = Validator.isValidDate(tmp.endDate.v)
+                        coverage.endDate.org = e.messages['endDate'][i]
+                        coverage.endDate.v   = Normalizer.normDate  (coverage.endDate.org, Normalizer.IS_END_DATE)
+                        coverage.endDate.m   = Validator.isValidDate(coverage.endDate.v)
                     }
                     if(e.messages['startVolume'][i]){
-                        tmp.startVolume.v = Normalizer.normCoverageVolume(e.messages['startVolume'][i], Normalizer.IS_START_DATE)
-                        tmp.startVolume.m = Validator.isValidNumber(tmp.startVolume.v)
+                        coverage.startVolume.org = e.messages['startVolume'][i]
+                        coverage.startVolume.v   = Normalizer.normCoverageVolume(coverage.startVolume.org, Normalizer.IS_START_DATE)
+                        coverage.startVolume.m   = Validator.isValidNumber      (coverage.startVolume.v)
                     }
                     if(e.messages['endVolume'][i]){
-                        tmp.endVolume.v = Normalizer.normCoverageVolume(e.messages['endVolume'][i], Normalizer.IS_END_DATE)
-                        tmp.endVolume.m = Validator.isValidNumber(tmp.endVolume.v)
+                        coverage.endVolume.org = e.messages['endVolume'][i]
+                        coverage.endVolume.v   = Normalizer.normCoverageVolume(coverage.endVolume.org, Normalizer.IS_END_DATE)
+                        coverage.endVolume.m   = Validator.isValidNumber      (coverage.endVolume.v)
                     } 
                     
-                    def valid = Validator.isValidCoverage(tmp.startDate, tmp.endDate, tmp.startVolume, tmp.endVolume) ? Status.VALIDATOR_COVERAGE_IS_VALID : Status.VALIDATOR_COVERAGE_IS_INVALID
+                    def valid = Validator.isValidCoverage(coverage.startDate, coverage.endDate, coverage.startVolume, coverage.endVolume) ? Status.VALIDATOR_COVERAGE_IS_VALID : Status.VALIDATOR_COVERAGE_IS_INVALID
                     
-                    
-                    if(Status.VALIDATOR_COVERAGE_IS_INVALID == valid && tmp.startDate.v == tmp.endDate.v && tmp.startVolume.v == tmp.endVolume.v) {
+                    if(Status.VALIDATOR_COVERAGE_IS_INVALID == valid && coverage.startDate.v == coverage.endDate.v && coverage.startVolume.v == coverage.endVolume.v) {
                         // prefilter to reduce crappy results
                         log.debug("! ignore crappy tipp coverage")
                     }
                     else {
-                        tipp.coverage << new Pod(tmp, valid)
+                        tipp.coverage << new Pod(coverage, valid)
                     }
                 }
             }
@@ -207,13 +223,13 @@ class Mapper {
         
         title.history_events.each{ he ->
             
-            def x = TitleStruct.getNewHistoryEventGeneric()
-            x.title.v = title.name.v
-            x.title.m = title.name.m
+            def hex = TitleStruct.getNewHistoryEventGeneric()
+            hex.title.v = title.name.v
+            hex.title.m = title.name.m
 
             title.identifiers.each{ ident ->
                 if([ZdbBridge.IDENTIFIER, TitleStruct.EISSN].contains(ident.type.v))
-                    x.identifiers << ident
+                    hex.identifiers << ident
             }
             
             // set identifiers
@@ -221,7 +237,7 @@ class Mapper {
             // set missing title
             // set date
             if(he.v.from.size() > 0){
-                he.v.to << x
+                he.v.to << hex
                 he.v.from.each { from ->
                     def identifiers = []
                     from.identifiers.each{ ident ->
@@ -251,7 +267,7 @@ class Mapper {
             // set missing eissn
             // set date
             else if(he.v.to.size() > 0){
-                he.v.from << x
+                he.v.from << hex
                 he.v.to.each { to ->
                     def identifiers = []
                     to.identifiers.each{ ident ->
@@ -295,15 +311,17 @@ class Mapper {
         log.info("mapping platform for tipp: " + tipp.title.v.name.v)
         
         if(tipp.url.m == Status.VALIDATOR_URL_IS_VALID){
-            def tmp = PackageStruct.getNewTippPlatform()
+            def platform = PackageStruct.getNewTippPlatform()
 
-            tmp.primaryUrl.v = Normalizer.normURL(tipp.url.v)
-            tmp.primaryUrl.m = Validator.isValidURL(tmp.primaryUrl.v)
+            platform.primaryUrl.org = tipp.url.v
+            platform.primaryUrl.v   = Normalizer.normURL  (tipp.url.v)
+            platform.primaryUrl.m   = Validator.isValidURL(platform.primaryUrl.v)
             
-            tmp.name.v = Normalizer.normString(tmp.primaryUrl.v)
-            tmp.name.m = Validator.isValidString(tmp.name.v)
+            platform.name.org = platform.primaryUrl.v
+            platform.name.v   = Normalizer.normString  (platform.primaryUrl.v)
+            platform.name.m   = Validator.isValidString(platform.name.v)
             
-            tipp.platform = new Pod(tmp)
+            tipp.platform = new Pod(platform)
         }
     }
     

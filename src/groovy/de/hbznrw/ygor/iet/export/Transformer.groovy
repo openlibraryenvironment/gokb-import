@@ -28,52 +28,36 @@ class Transformer {
         
         if(type.equals(FileType.JSON_DEBUG)){
             validator = Transformer.NO_VALIDATOR
-            json = Statistics.getStatsBeforeParsing(json)
         }
         
-        log.debug("parsePackageHeader()")
-        json = Transformer.parsePackageHeader(json)
+        Statistics.getStatsBeforeParsing(json)
         
-        log.debug("parseHashMaps()")
-        json = Transformer.parseHashMaps(json)
+        Transformer.parsePackageHeader(json)
 
-        //json = Transformer.parseAdditionalProperties(json)
-        
-        log.debug("parseCuratoryGroups()")
-        json = Transformer.parseCuratoryGroups(json)
-        
-        log.debug("parseSource()")
-        json = Transformer.parseSource(json)
-        
-        log.debug("parseVariantNames()")
-        json = Transformer.parseVariantNames(json)
-        
-        log.debug("parseTipps()")
-        json = Transformer.parseTipps(json, validator)
-        
-        log.debug("parseTippTitleIdentifiers()")
-        json = Transformer.parseTippTitleIdentifiers(json, validator)
-        
-        log.debug("parseTippCoverage()")
-        json = Transformer.parseTippCoverage(json, validator)
+        Transformer.parseHashMaps(json)
 
-        log.debug("parseTitles()")    
-        json = Transformer.parseTitles(json, validator)
+        //Transformer.parseAdditionalProperties(json)
         
-        log.debug("parseTitleIdentifiers()")
-        json = Transformer.parseTitleIdentifiers(json, validator)
+        Transformer.parseCuratoryGroups(json)
+        Transformer.parseSource(json)
+        Transformer.parseVariantNames(json)
         
-        log.debug("parsePublisherHistory()")
-        json = Transformer.parsePublisherHistory(json, validator)
-        
-        log.debug("parseHistoryEvents()")
-        json = Transformer.parseHistoryEvents(json, validator)
-        
-        log.debug("cleanUpJSON()")
-        json = Transformer.cleanUpJSON(json, validator)
+        Transformer.parseTipps(json, validator)
+        Transformer.parseTippTitleIdentifiers(json, validator)
+        Transformer.parseTippCoverage(json, validator)
+
+        Transformer.parseTitles(json, validator)
+        Transformer.parseTitleIdentifiers(json, validator)
+        Transformer.parsePublisherHistory(json, validator)
+        Transformer.parseHistoryEvents(json, validator)
+
+        Transformer.cleanUpJSON(json, validator)
         
         if(type.equals(FileType.JSON_DEBUG)){
-            json = Statistics.getStatsAfterCleanUp(json)
+            Statistics.getStatsAfterCleanUp(json)
+        }
+        else {
+            json.meta.stats = []
         }
         
         if(type.equals(FileType.JSON_PACKAGE)){
@@ -87,6 +71,7 @@ class Transformer {
     }
     
     static Object parsePackageHeader(Object json) {
+        log.debug("parsePackageHeader()")
         
         json.package.packageHeader = json.package.packageHeader.v
         json.package.packageHeader.additionalProperties = json.package.packageHeader.additionalProperties.v
@@ -105,7 +90,8 @@ class Transformer {
     }
     
     static Object parseHashMaps(Object json) {
-
+         log.debug("parseHashMaps()")
+        
          def tipps = []
          json.package.tipps.each{ tipp ->
              tipps << tipp.value.v
@@ -122,6 +108,7 @@ class Transformer {
     }
      
     static Object parseCuratoryGroups(Object json) {
+        log.debug("parseCuratoryGroups()")
         
         json.package.packageHeader.curatoryGroups.eachWithIndex{ cg, i ->
             json.package.packageHeader.curatoryGroups[i] = cg.v
@@ -131,6 +118,7 @@ class Transformer {
     }
     
     static Object parseSource(Object json) {
+        log.debug("parseSource()")
         
         json.package.packageHeader.source = json.package.packageHeader.source.v
         
@@ -146,7 +134,8 @@ class Transformer {
     }
     
     static Object parseVariantNames(Object json) {
-                
+        log.debug("parseVariantNames()")
+        
         json.package.packageHeader.variantNames.eachWithIndex{ vn, i ->
             json.package.packageHeader.variantNames[i] = vn.v
         }
@@ -155,6 +144,7 @@ class Transformer {
     }
     
     static Object parseTipps(Object json, boolean useValidator) {
+        log.debug("parseTipps()")
         
         json.package.tipps.each{ tipp ->
             tipp.each{ attr ->
@@ -201,7 +191,8 @@ class Transformer {
     }
    
     static Object parseTippCoverage(Object json, boolean useValidator) {
-
+        log.debug("parseTippCoverage()")
+        
         json.package.tipps.each{ tipp ->
             tipp.coverage.eachWithIndex{ cover, i ->
                 def coverage = [:]
@@ -242,7 +233,8 @@ class Transformer {
     }
     
     static Object parseTippTitleIdentifiers(Object json, boolean useValidator) {
-
+         log.debug("parseTippTitleIdentifiers()")
+        
          json.package.tipps.each{ tipp ->
              def validIdentifiers = []
              tipp.title.identifiers.each{ ident ->
@@ -267,8 +259,9 @@ class Transformer {
          json
      }
         
-    static parseTitles(Object json, boolean useValidator) {
-
+    static Object parseTitles(Object json, boolean useValidator) {
+        log.debug("parseTitles()")
+        
         json.titles.each{ title ->
             title.each{ attr ->
                 if(attr.value.v instanceof java.lang.String) {
@@ -293,7 +286,8 @@ class Transformer {
     }
   
     static Object parseTitleIdentifiers(Object json, boolean useValidator) {
-
+         log.debug("parseTitleIdentifiers()")
+        
          json.titles.each{ title ->
              def validIdentifiers = []
              title.identifiers.each{ ident ->
@@ -319,6 +313,7 @@ class Transformer {
     }
          
     static Object parsePublisherHistory(Object json, boolean useValidator) {
+        log.debug("parsePublisherHistory()")
         
         json.titles.each{ title ->
             title.publisher_history.eachWithIndex { ph, i ->
@@ -359,6 +354,7 @@ class Transformer {
     }
     
     static Object parseHistoryEvents(Object json, boolean useValidator) {
+        log.debug("parseHistoryEvents()")
         
         json.titles.each{ title ->
             title.history_events.eachWithIndex { he, i ->
@@ -449,6 +445,7 @@ class Transformer {
     }
     
     static Object cleanUpJSON(Object json, boolean useValidator){
+        log.debug("cleanUpJSON()")
         
         // remove tipps without name and identifier
         if(useValidator){

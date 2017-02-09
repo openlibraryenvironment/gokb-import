@@ -78,7 +78,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
             connector.getPicaRecords().eachWithIndex { pr, i ->
                 
                 def uid   = UUID.randomUUID().toString()
-                def title = processor.processEntry(master.enrichment.dataContainer, uid, pr)
+                def title = processor.processEntry(master.enrichment.dataContainer, uid, key, pr) 
                 def zdbid
                 // TODO: fix empty zdbid
                 

@@ -4,8 +4,9 @@ import de.hbznrw.ygor.iet.enums.*
 
 class Pod {
     
-    def m  = Status.UNDEFINED
-    def v
+    def m  = Status.UNDEFINED   // meta
+    def v                       // value
+    def org                     // orgValue
     
     Pod() {        
     }

@@ -5,6 +5,8 @@ import de.hbznrw.ygor.iet.enums.*
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import de.hbznrw.ygor.iet.export.structure.Tipp
+import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
 
@@ -24,10 +26,12 @@ class Statistics {
         json.meta.stats << ['general':[:]]
         json.meta.stats << ['tipps':[:]]
         json.meta.stats << ['titles':[:]]
-        json.meta.stats << ['identifiers':[:]]
         
-        json.meta.stats.tipps  << ['coverage':[:]]
-        json.meta.stats.tipps  << ['title':[:]]
+        json.meta.stats.tipps        << ['coverage':[:]]
+        json.meta.stats.tipps        << ['title':[:]]
+        json.meta.stats.tipps.title  << ['identifiers':[:]]
+        
+        json.meta.stats.titles << ['identifiers':[:]]
         json.meta.stats.titles << ['publisher_history':[:]]
         json.meta.stats.titles << ['history_events':[:]]
 
@@ -36,6 +40,9 @@ class Statistics {
         json.meta.stats.general << ["tipps before cleanUp":  json.package.tipps.size()]
         json.meta.stats.general << ["titles before cleanUp": json.titles.size()] 
         
+        
+        
+        // titles
         // titles
         
         List<Integer> tName = [0,[],0,[],0,[]]
@@ -45,15 +52,21 @@ class Statistics {
             
             if(name?.m.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
                 tName[Statistics.OPTION_1]++
-                tName[Statistics.OPTION_2] << "${title.key} :: ${name.v}"
+                tName[Statistics.OPTION_2] << "${name.v}"
+                
+                    Statistics.addMeta(title, 'title.name', name)
             }
             else if(name?.m.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
-                 tName[Statistics.OPTION_3]++
-                 tName[Statistics.OPTION_4] << "${title.key} :: ${name.v}"
+                tName[Statistics.OPTION_3]++
+                tName[Statistics.OPTION_4] << "${name.v}"
+                 
+                    Statistics.addMeta(title, 'title.name', name)
             }
             else if(name?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
                 tName[Statistics.OPTION_5]++
-                tName[Statistics.OPTION_6] << "${title.key}"
+                //tName[Statistics.OPTION_6] << "${title.key}"
+                
+                    Statistics.addMeta(title, 'title.name', name)
             }
         }
         
@@ -61,18 +74,21 @@ class Statistics {
         Statistics.format(tName, "names are not valid",  Statistics.OPTION_3, Statistics.OPTION_4, json.meta.stats.titles)
         Statistics.format(tName, "names are missing",    Statistics.OPTION_5, Statistics.OPTION_6, json.meta.stats.titles)
           
+        
+        
+        // titles.identifiers
         // titles.identifiers
         
-        HashMap<String, List<Integer>> identifiers = [:]
+        HashMap<String, List<Integer>> titleIdentifiers = [:]
         
-        identifiers[TitleStruct.PISSN]    = [0,0,[],0,[],0,[],0]
-        identifiers[TitleStruct.EISSN]    = [0,0,[],0,[],0,[],0]   
-        identifiers[ZdbBridge.IDENTIFIER] = [0,0,[],0,[],0,[],0]       
-        identifiers[EzbBridge.IDENTIFIER] = [0,0,[],0,[],0,[],0]
+        titleIdentifiers[TitleStruct.PISSN]    = [0, 0,[],0,[],0,[],0]
+        titleIdentifiers[TitleStruct.EISSN]    = [0, 0,[],0,[],0,[],0]   
+        titleIdentifiers[ZdbBridge.IDENTIFIER] = [0, 0,[],0,[],0,[],0]       
+        titleIdentifiers[EzbBridge.IDENTIFIER] = [0, 0,[],0,[],0,[],0]
         
         json.titles.each{ title ->
-            title.value.v.identifiers.each { ident ->
-                def tmp = identifiers["${ident.type.v}"]
+            title.value.v.titleIdentifiers.each { ident ->
+                def tmp = titleIdentifiers["${ident.type.v}"]
                 
                 if(tmp) {
                     if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
@@ -80,33 +96,44 @@ class Statistics {
                     }
                     else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
                         tmp[Statistics.OPTION_2]++
-                        tmp[Statistics.OPTION_3] << "${title.key} :: ${ident.value.v}"
+                        tmp[Statistics.OPTION_3] << "${ident.value.v}"
+                        
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
                     }
                     else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC.toString())) {
                         tmp[Statistics.OPTION_4]++
-                        tmp[Statistics.OPTION_5] << "${title.key} :: ${ident.value.v}"
+                        tmp[Statistics.OPTION_5] << "${ident.value.v}"
+                            
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
                     }
                     else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_MISSING.toString())) {
                         tmp[Statistics.OPTION_6]++
-                        tmp[Statistics.OPTION_7] << "${title.key}"
+                        //tmp[Statistics.OPTION_7] << "${title.key}"
+                        
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
                     }
                     else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
                         tmp[Statistics.OPTION_8]++
+                        
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
                     }
                 }
             }
         }
-        identifiers.each{ i ->
+        titleIdentifiers.each{ i ->
             
-            json.meta.stats.identifiers["${i.key.toUpperCase()} ARE VALID"]           =  i.value[Statistics.OPTION_1]
-            json.meta.stats.identifiers["${i.key.toUpperCase()} are in unkown state"] =  i.value[Statistics.OPTION_8]  
+            json.meta.stats.titles.identifiers["${i.key.toUpperCase()} ARE VALID"]           = i.value[Statistics.OPTION_1]
+            json.meta.stats.titles.identifiers["${i.key.toUpperCase()} are in unkown state"] = i.value[Statistics.OPTION_8]  
             
-            Statistics.format(i.value, "${i.key.toUpperCase()} are invalid",    Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.identifiers)
-            Statistics.format(i.value, "${i.key.toUpperCase()} are not atomic", Statistics.OPTION_4, Statistics.OPTION_5, json.meta.stats.identifiers)
-            Statistics.format(i.value, "${i.key.toUpperCase()} are missing",    Statistics.OPTION_6, Statistics.OPTION_7, json.meta.stats.identifiers)
+            Statistics.format(i.value, "${i.key.toUpperCase()} are invalid",    Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.titles.identifiers)
+            Statistics.format(i.value, "${i.key.toUpperCase()} are not atomic", Statistics.OPTION_4, Statistics.OPTION_5, json.meta.stats.titles.identifiers)
+            Statistics.format(i.value, "${i.key.toUpperCase()} are missing",    Statistics.OPTION_6, Statistics.OPTION_7, json.meta.stats.titles.identifiers)
             
         }
         
+        
+        
+        // titles.publisher_history
         // titles.publisher_history
         
         List<Integer> phName = [0,[],0,[],0,[]]
@@ -116,16 +143,22 @@ class Statistics {
                 def name = ph.name
 
                 if(name?.m.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
-                     phName[Statistics.OPTION_1]++
-                     phName[Statistics.OPTION_2] << "${title.key} :: ${name.v}"
+                    phName[Statistics.OPTION_1]++
+                    phName[Statistics.OPTION_2] << "${name.v}"
+                     
+                        Statistics.addMeta(title, 'title.publisher_history.name', name)
                 }
                 else if(name?.m.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
                     phName[Statistics.OPTION_3]++
-                    phName[Statistics.OPTION_4] << "${title.key} :: ${name.v}"
+                    phName[Statistics.OPTION_4] << "${name.v}"
+                    
+                        Statistics.addMeta(title, 'title.publisher_history.name', name)
                 }
                 else if(name?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
-                     phName[Statistics.OPTION_5]++
-                     phName[Statistics.OPTION_6] << "${title.key}"
+                    phName[Statistics.OPTION_5]++
+                    //phName[Statistics.OPTION_6] << "${title.key}"
+                     
+                        Statistics.addMeta(title, 'title.publisher_history.name', name)
                 }
             }
         }
@@ -134,9 +167,12 @@ class Statistics {
         Statistics.format(phName, "names are not atomic", Statistics.OPTION_3, Statistics.OPTION_4, json.meta.stats.titles.publisher_history)
         Statistics.format(phName, "names are missing",    Statistics.OPTION_5, Statistics.OPTION_6, json.meta.stats.titles.publisher_history)
  
-        // tipps  
         
-        List<Integer> tippUrls = [0,0,[],0,[],0,[]]
+        
+        // tipps 
+        // tipps
+        
+        List<Integer> tippUrls = [0, 0,[],0,[],0,[]]
         
         json.package.tipps.each{ tipp ->
             def url = tipp.value.v.url
@@ -146,27 +182,36 @@ class Statistics {
             }
             else if(url?.m.equals(Status.VALIDATOR_URL_IS_INVALID.toString())) {
                 tippUrls[Statistics.OPTION_2]++
-                tippUrls[Statistics.OPTION_3] << "${tipp.key} :: ${url.v}"
+                tippUrls[Statistics.OPTION_3] << "${url.v}"
+                
+                    Statistics.addMeta(tipp, 'tipp.url', url)
             }
             else if(url?.m.equals(Status.VALIDATOR_URL_IS_NOT_ATOMIC.toString())) {
                 tippUrls[Statistics.OPTION_4]++
-                tippUrls[Statistics.OPTION_5] << "${tipp.key} :: ${url.v}"
+                tippUrls[Statistics.OPTION_5] << "${url.v}"
+                
+                    Statistics.addMeta(tipp, 'tipp.url', url)
             }
             else if(url?.m.equals(Status.VALIDATOR_URL_IS_MISSING.toString())) {
                 tippUrls[Statistics.OPTION_6]++
-                tippUrls[Statistics.OPTION_7] << "${tipp.key}"
+                //tippUrls[Statistics.OPTION_7] << "${tipp.key}"
+                
+                    Statistics.addMeta(tipp, 'tipp.url', url)
             }
         }
         
-        json.meta.stats.tipps.title << ["url ARE VALID":  tippUrls[Statistics.OPTION_1]]
+        json.meta.stats.tipps << ["url ARE VALID":  tippUrls[Statistics.OPTION_1]]
         
-        Statistics.format(tippUrls, "url are not valid",  Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.tipps.title)
-        Statistics.format(tippUrls, "url are not atomic", Statistics.OPTION_4, Statistics.OPTION_5, json.meta.stats.tipps.title)
-        Statistics.format(tippUrls, "url are missing",    Statistics.OPTION_6, Statistics.OPTION_7, json.meta.stats.tipps.title)
+        Statistics.format(tippUrls, "url are not valid",  Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.tipps)
+        Statistics.format(tippUrls, "url are not atomic", Statistics.OPTION_4, Statistics.OPTION_5, json.meta.stats.tipps)
+        Statistics.format(tippUrls, "url are missing",    Statistics.OPTION_6, Statistics.OPTION_7, json.meta.stats.tipps)
         
-        // dates
         
-        List<Integer> phDates = [0,0,[],0,[]]
+        
+        // title.publisher_history.dates
+        // title.publisher_history.dates
+        
+        List<Integer> phDates = [0, 0,[],0,[]]
         
         json.titles.each{ title ->
             title.value.v.publisher_history.each { ph ->              
@@ -178,15 +223,27 @@ class Statistics {
                 }
                 if(sd?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                     phDates[Statistics.OPTION_2]++
-                    phDates[Statistics.OPTION_3] << "${title.key} :: ${sd.v}"
+                    phDates[Statistics.OPTION_3] << "${sd.v}"
+                    
+                        Statistics.addMeta(title, 'title.publisher_history.startDate', sd)
                 }
                 if(ed?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                     phDates[Statistics.OPTION_2]++
-                    phDates[Statistics.OPTION_3] << "${title.key} :: ${ed.v}"
+                    phDates[Statistics.OPTION_3] << "${ed.v}"
+                    
+                        Statistics.addMeta(title, 'title.publisher_history.endDate', ed)
                 }
-                if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
                     phDates[Statistics.OPTION_4]++
-                    phDates[Statistics.OPTION_5] << "${title.key}"
+                    //phDates[Statistics.OPTION_5] << "${title.key}"
+                    
+                        Statistics.addMeta(title, 'title.publisher_history.startDate', sd)
+                }
+                if(ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                    phDates[Statistics.OPTION_4]++
+                    //phDates[Statistics.OPTION_5] << "${title.key}"
+                    
+                        Statistics.addMeta(title, 'title.publisher_history.endDate', ed)
                 }
             }
         }     
@@ -196,10 +253,15 @@ class Statistics {
         Statistics.format(phDates, "invalid dates", Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.titles.publisher_history)
         Statistics.format(phDates, "missing dates", Statistics.OPTION_4, Statistics.OPTION_5, json.meta.stats.titles.publisher_history)
         
+        
+        
         // TODO invalid coverages
         
+        // tipp.coverage.dates
+        // tipp.coverage.dates
+        
         List<Integer> coverages = [0,0]
-        List<Integer> covDates  = [0,0,[],0,[]]
+        List<Integer> covDates  = [0, 0,[],0,[]]
         
         json.package.tipps.each{ tipp ->
             tipp.value.v.each{ tippField ->
@@ -219,15 +281,27 @@ class Statistics {
                         }
                         if(sd?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                             covDates[Statistics.OPTION_2]++
-                            covDates[Statistics.OPTION_3] << "${tipp.key} :: ${sd.v}"
+                            covDates[Statistics.OPTION_3] << "${sd.v}"
+                            
+                                Statistics.addMeta(tipp, 'tipp.coverage.startDate', sd)
                         }
                         if(ed?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                             covDates[Statistics.OPTION_2]++
-                            covDates[Statistics.OPTION_3] << "${tipp.key} :: ${ed.v}"
+                            covDates[Statistics.OPTION_3] << "${ed.v}"
+                            
+                                Statistics.addMeta(tipp, 'tipp.coverage.endDate', ed)
                         }
-                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
                             covDates[Statistics.OPTION_4]++
-                            covDates[Statistics.OPTION_5] << "${tipp.key}"
+                            //covDates[Statistics.OPTION_5] << "${tipp.key}"
+                            
+                                Statistics.addMeta(tipp, 'tipp.coverage.startDate', sd)
+                        }
+                        if(ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                            covDates[Statistics.OPTION_4]++
+                            //covDates[Statistics.OPTION_5] << "${tipp.key}"
+                            
+                                Statistics.addMeta(tipp, 'tipp.coverage.endDate', ed)
                         }
                     }
                 }
@@ -242,7 +316,67 @@ class Statistics {
         Statistics.format(covDates, "invalid dates", Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.tipps.coverage)
         Statistics.format(covDates, "missing dates", Statistics.OPTION_4, Statistics.OPTION_5, json.meta.stats.tipps.coverage)
 
+        
+        
+        // tipp.title.identifiers
+        // tipp.title.identifiers
+        
+        HashMap<String, List<Integer>> tippIdentifiers = [:]
+        
+        tippIdentifiers[TitleStruct.EISSN]    = [0, 0,[],0,[],0,[],0]
+        tippIdentifiers[ZdbBridge.IDENTIFIER] = [0, 0,[],0,[],0,[],0]
+        
+        json.package.tipps.each{ tipp ->
+            tipp.value.v.title.identifiers.each { ident ->
+                def tmp = tippIdentifiers["${ident.type.v}"]
+                
+                if(tmp) {
+                    if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
+                        tmp[Statistics.OPTION_1]++
+                    }
+                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
+                        tmp[Statistics.OPTION_2]++
+                        tmp[Statistics.OPTION_3] << "${ident.value.v}"
+                        
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
+                    }
+                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC.toString())) {
+                        tmp[Statistics.OPTION_4]++
+                        tmp[Statistics.OPTION_5] << "${ident.value.v}"
+                            
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
+                    }
+                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_MISSING.toString())) {
+                        tmp[Statistics.OPTION_6]++
+                        //tmp[Statistics.OPTION_7] << "${title.key}"
+                        
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
+                    }
+                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
+                        tmp[Statistics.OPTION_8]++
+                        
+                            Statistics.addMeta(title, "title.identifier(${ident.type.v})", ident.value)
+                    }
+                }
+            }
+        }
+        tippIdentifiers.each{ i ->
+            
+            json.meta.stats.tipps.title.identifiers["${i.key.toUpperCase()} ARE VALID"]           = i.value[Statistics.OPTION_1]
+            json.meta.stats.tipps.title.identifiers["${i.key.toUpperCase()} are in unkown state"] = i.value[Statistics.OPTION_8]
+            
+            Statistics.format(i.value, "${i.key.toUpperCase()} are invalid",    Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.tipps.title.identifiers)
+            Statistics.format(i.value, "${i.key.toUpperCase()} are not atomic", Statistics.OPTION_4, Statistics.OPTION_5, json.meta.stats.tipps.title.identifiers)
+            Statistics.format(i.value, "${i.key.toUpperCase()} are missing",    Statistics.OPTION_6, Statistics.OPTION_7, json.meta.stats.tipps.title.identifiers)
+            
+        } 
+        
+        
+        
         // TODO invalid history events
+        
+        // title.history_events
+        // title.history_events
         
          List<Integer> historyEvents = [0,0]
         
@@ -260,7 +394,7 @@ class Statistics {
         }
         json.meta.stats.titles.history_events << ["history_events ARE VALID":   historyEvents[Statistics.OPTION_1]]
         json.meta.stats.titles.history_events << ["history_events are invalid": historyEvents[Statistics.OPTION_2]]
-
+        
         json
     }
     
@@ -276,11 +410,17 @@ class Statistics {
     
     static format(List data, String text, int count, int result, Object target) {
         
-        if(data[count] > 0) {
+        if(data[count] > 0 && data[result].minus("").size() > 0) {
             target.put("${text}", [data[count], data[result].minus("")])
         }
         else {
-            target.put("${text}", 0)
+            target.put("${text}", data[count])
         }
+    }
+    
+    static addMeta(Object target, String dom, Object obj) {
+        
+        obj.dom = dom
+        target.value.v._meta.add(obj)
     }
 }

@@ -4,7 +4,7 @@ import de.hbznrw.ygor.iet.enums.*
 
 class Title {
     
-    Pod _hash
+    def _meta            = []
         
     Pod imprint          = new Pod("")
     Pod issuer           = new Pod("")

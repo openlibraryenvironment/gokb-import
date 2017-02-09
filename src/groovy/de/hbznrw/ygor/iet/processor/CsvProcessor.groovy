@@ -92,16 +92,16 @@ class CsvProcessor extends ProcessorAbstract {
         bridge.finish()
     }
     
-    Title processEntry(DataContainer dc, String hash) {
-        return processEntry(dc, hash, null)
+    Title processEntry(DataContainer dc, String uid) {
+        return processEntry(dc, uid, null, null)
     }
     
-    Title processEntry(DataContainer dc, String hash, Object record) {
+    Title processEntry(DataContainer dc, String uid, String queryKey, Object record) {
         
         def saveTitle = false
-        def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, hash)
+        def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, uid)
         if(title) {
-            log.info("> modifying existing Title: " + hash)
+            log.info("> modifying existing Title: " + uid)
         }
         else {
             title     = new Title()
@@ -109,9 +109,9 @@ class CsvProcessor extends ProcessorAbstract {
         }
         
         def saveTipp = false
-        def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, hash)
+        def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, uid)
         if(tipp) {
-            log.info("> modifying existing Tipp: " + hash)
+            log.info("> modifying existing Tipp: " + uid)
         }
         else {
             tipp     = PackageStruct.getNewTipp()
@@ -136,7 +136,7 @@ class CsvProcessor extends ProcessorAbstract {
                     msg = env.message.join(", ")
 
                 state = env.state
-                log.info("#" + count + " processed " + hash + " -> " + msg + " : " + state)
+                log.info("#" + count + " processed " + uid + " -> " + msg + " : " + state)
             }
             else if(env.type == Envelope.COMPLEX){
                 
@@ -152,7 +152,7 @@ class CsvProcessor extends ProcessorAbstract {
                             msg = null // todo ??
                     }
 
-                    log.info("#" + count + " processed " + hash + " -> " + msg + " : " + state)
+                    log.info("#" + count + " processed " + uid + " -> " + msg + " : " + state)
                 }
             }
             
@@ -161,14 +161,18 @@ class CsvProcessor extends ProcessorAbstract {
         }
         
         if(saveTitle){
-            log.info("> stored as new Title: " + hash)
-            title._hash = new Pod(hash, Status.IGNORE)
-            dc.titles << ["${hash}": new Pod(title)]
+            log.info("> stored as new Title: " + uid)
+            
+            dc.titles   << ["${uid}": new Pod(title)]
+            title._meta << ['uid':    uid]
+            title._meta << ['api':    bridge.getConnector().getAPIQuery(queryKey)]
         }
         if(saveTipp){
-            log.info("> stored as new Tipp: " + hash)
-            tipp._hash = new Pod(hash, Status.IGNORE)
-            dc.pkg.tipps << ["${hash}": new Pod(tipp)]
+            log.info("> stored as new Tipp: " + uid)
+            
+            dc.pkg.tipps << ["${uid}": new Pod(tipp)]
+            tipp._meta   << ['uid':    uid]
+            tipp._meta   << ['api':    bridge.getConnector().getAPIQuery(queryKey)]
         }
         
         title
