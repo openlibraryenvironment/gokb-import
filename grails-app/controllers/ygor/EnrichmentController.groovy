@@ -131,7 +131,7 @@ class EnrichmentController {
     
     def stopProcessingFile = {
         
-        enrichmentService.exportFile(getEnrichment())
+        enrichmentService.stopProcessing(getEnrichment())
         deleteFile()
     }
     
@@ -195,8 +195,12 @@ class EnrichmentController {
     def showStats = {
         
         def en   = getEnrichment()
-        def json = Transformer.getSimpleJSON(en.dataContainer, Enrichment.FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
+        def json = null
         
+        if(en){
+            json = Transformer.getSimpleJSON(en.dataContainer, Enrichment.FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
+        }
+
         render(view:'statistics', model:[
             documents:documents,
             json:json,

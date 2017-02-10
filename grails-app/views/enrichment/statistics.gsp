@@ -8,7 +8,8 @@
 	<div class="col-xs-12">
 
 		<div id="statistics"></div>
-		
+	
+	<g:if test="${json}">	
 	<script>
 
 		var json = ${raw(json)}
@@ -134,6 +135,7 @@
 		})
 		
 	</script>
+	</g:if>
 
 	</div>
 </div>
