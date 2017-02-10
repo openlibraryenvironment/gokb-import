@@ -147,7 +147,7 @@ class EnrichmentController {
     def downloadPackageFile = {
 
         def en     = getEnrichment()
-        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE)
+        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
         render(
             file:result,
             fileName:"${en.resultName}.package.json"
@@ -157,7 +157,7 @@ class EnrichmentController {
     def downloadTitlesFile = {
         
         def en     = getEnrichment()
-        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES)
+        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
         render(
             file:result,
             fileName:"${en.resultName}.titles.json"
@@ -177,7 +177,7 @@ class EnrichmentController {
     def downloadRawFile = {
         
         def en     = getEnrichment()
-        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_RAW)
+        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
         render(
             file:result,
             fileName:"${en.resultName}.raw.json"
@@ -190,6 +190,19 @@ class EnrichmentController {
         
         enrichmentService.exportFile(enrichment)
         process()
+    }
+    
+    def showStats = {
+        
+        def en   = getEnrichment()
+        def json = Transformer.getSimpleJSON(en.dataContainer, Enrichment.FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
+        
+        render(view:'statistics', model:[
+            documents:documents,
+            json:json,
+            currentView: 'process'
+            ]
+        )
     }
     
     def ajaxGetStatus = {

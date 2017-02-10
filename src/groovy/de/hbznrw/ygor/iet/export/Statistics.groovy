@@ -87,7 +87,7 @@ class Statistics {
         titleIdentifiers[EzbBridge.IDENTIFIER] = [0, 0,[],0,[],0,[],0]
         
         json.titles.each{ title ->
-            title.value.v.titleIdentifiers.each { ident ->
+            title.value.v.identifiers.each { ident ->
                 def tmp = titleIdentifiers["${ident.type.v}"]
                 
                 if(tmp) {

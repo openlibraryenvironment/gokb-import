@@ -31,3 +31,22 @@ h3 {
 #ygor-messages {
 	min-height: 1px;
 }
+
+#statistics table thead {
+	color: #ccc;
+}
+#statistics table thead tr th:nth-of-type(1) {
+	width: 20%;
+}
+#statistics table thead tr th:nth-of-type(2) {
+	width: 20%;
+}
+#statistics table thead tr th:nth-of-type(3) {
+	width: 35%;
+}
+#statistics table thead tr th:nth-of-type(4) {
+	width: 25%;
+}
+#statistics .domTitle + .table {
+	margin-top: -7px;
+}

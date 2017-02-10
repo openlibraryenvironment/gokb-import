@@ -29,14 +29,12 @@ class Mapper {
             else if(Query.GBV_GVKPPN == query)
                 ident.type.v = "gvk_ppn"
                 
-            ident.type.m  = Status.IGNORE
+            ident.type.m    = Status.IGNORE
             
-            //ident.value.org = env.message
+            ident.value.org = 'YGOR: NOT IMPL.' // TODO: ident.value.org = 'YGOR: NOT IMPL.'
             ident.value.v   = Normalizer.normIdentifier  (env.message, ident.type.v)
             ident.value.m   = Validator.isValidIdentifier(ident.value.v, ident.type.v)
-            
-            // TODO: handle multiple ezbid matches
-            
+
             title.identifiers << ident // no pod
         }
         
@@ -147,9 +145,11 @@ class Mapper {
             else if(Query.GBV_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
 
-            ident.type.m  = Status.IGNORE
-            ident.value.v = Normalizer.normIdentifier  (env.message, ident.type.v)
-            ident.value.m = Validator.isValidIdentifier(ident.value.v, ident.type.v)
+            ident.type.m    = Status.IGNORE
+            
+            ident.value.org = env.message
+            ident.value.v   = Normalizer.normIdentifier  (env.message, ident.type.v)
+            ident.value.m   = Validator.isValidIdentifier(ident.value.v, ident.type.v)
 
             tipp.title.v.identifiers << ident // no pod
         }

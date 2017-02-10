@@ -66,6 +66,10 @@ class Validator {
             return Status.VALIDATOR_IDENTIFIER_IS_MISSING
         }
         
+        if(str.contains("|")){
+            return Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC
+        }
+        
         if(identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)){
             if(9 == str.length() && 4 == str.indexOf("-"))
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID

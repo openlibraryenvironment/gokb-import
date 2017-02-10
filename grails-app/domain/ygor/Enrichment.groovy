@@ -8,7 +8,15 @@ import de.hbznrw.ygor.iet.export.Mapper
 
 class Enrichment {
 
-    static enum FileType {ORIGIN, RESULT, JSON, JSON_PACKAGE, JSON_TITLES, JSON_DEBUG, JSON_RAW}
+    static enum FileType {
+        ORIGIN, 
+        RESULT, 
+        JSON, 
+        JSON_PACKAGE_ONLY, 
+        JSON_TITLES_ONLY, 
+        JSON_DEBUG, 
+        JSON_OO_RAW
+        }
     
 	static enum ProcessingState {UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR}
 	ProcessingState status
@@ -82,25 +90,25 @@ class Enrichment {
                 break
             case FileType.JSON:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON), "UTF-8")
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
-            case FileType.JSON_PACKAGE:
+            case FileType.JSON_PACKAGE_ONLY:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE), "UTF-8")
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE_ONLY, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
-            case FileType.JSON_TITLES:
+            case FileType.JSON_TITLES_ONLY:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES), "UTF-8")
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES_ONLY, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_DEBUG:
                 def file = new File(resultPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_DEBUG), "UTF-8")
+                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_DEBUG, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
-            case FileType.JSON_RAW:
+            case FileType.JSON_OO_RAW:
                 def file = new File(resultPathName)
                 file.write(JsonToolkit.parseDataToJson(dataContainer), "UTF-8")
                 return file

@@ -17,8 +17,11 @@ class Transformer {
     
     static final USE_VALIDATOR = true
     static final NO_VALIDATOR  = false
+    
+    static final USE_PRETTY_PRINT = true
+    static final NO_PRETTY_PRINT  = false
 
-    static String getSimpleJSON(DataContainer dc, FileType type) {
+    static String getSimpleJSON(DataContainer dc, FileType type, boolean prettyPrint) {
      
         log.info("getSimpleJSON()")
         
@@ -26,14 +29,12 @@ class Transformer {
         def jsonSlurper = new JsonSlurper()
         def json        = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
         
-        if(type.equals(FileType.JSON_DEBUG)){
+        if(type.equals(FileType.JSON_DEBUG))
             validator = Transformer.NO_VALIDATOR
-        }
         
         Statistics.getStatsBeforeParsing(json)
         
         Transformer.parsePackageHeader(json)
-
         Transformer.parseHashMaps(json)
 
         //Transformer.parseAdditionalProperties(json)
@@ -53,21 +54,21 @@ class Transformer {
 
         Transformer.cleanUpJSON(json, validator)
         
-        if(type.equals(FileType.JSON_DEBUG)){
+        if(type.equals(FileType.JSON_DEBUG))
             Statistics.getStatsAfterCleanUp(json)
-        }
-        else {
+        else
             json.meta.stats = []
-        }
         
-        if(type.equals(FileType.JSON_PACKAGE)){
+        if(type.equals(FileType.JSON_PACKAGE_ONLY))
             json = json.package
-        }
-        else if(type.equals(FileType.JSON_TITLES)){
+        else if(type.equals(FileType.JSON_TITLES_ONLY))
             json = json.titles
-        }
+
         
-        new JsonBuilder(json).toPrettyString() 
+        if(prettyPrint)
+            return new JsonBuilder(json).toPrettyString()
+        else
+            return new JsonBuilder(json).toString()
     }
     
     static Object parsePackageHeader(Object json) {

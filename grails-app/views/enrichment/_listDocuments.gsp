@@ -143,6 +143,9 @@
 					</g:if>
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
+						
+						<g:link action="showStats" params="[originHash:doc.key]" target="_blank" class="btn btn-warning">Statistik anzeigen</g:link>
+						
 						<g:actionSubmit action="downloadPackageFile" value="Package/Tipps speichern" class="btn btn-success"/>
 		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
 		    			
@@ -154,6 +157,7 @@
 		    			
 		    			<g:actionSubmit action="downloadDebugFile" value="Debug-Datei speichern" class="btn"/>
 		    			<g:actionSubmit action="downloadRawFile" value="Datenstruktur speichern" class="btn"/>
+
 		    		</g:if>
 		    		
 				</div>
