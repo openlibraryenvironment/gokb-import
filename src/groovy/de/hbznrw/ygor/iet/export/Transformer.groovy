@@ -52,18 +52,27 @@ class Transformer {
         Transformer.parsePublisherHistory(json, validator)
         Transformer.parseHistoryEvents(json, validator)
 
-        Transformer.cleanUpJSON(json, validator)
+        Transformer.removeEmpty(json, validator)
         
         if(type.equals(FileType.JSON_DEBUG))
             Statistics.getStatsAfterCleanUp(json)
         else
             json.meta.stats = []
         
-        if(type.equals(FileType.JSON_PACKAGE_ONLY))
+        if(type.equals(FileType.JSON_PACKAGE_ONLY)){
+            
+            json.package.tipps.any{ tipp ->
+                tipp.remove("_meta")
+            }
             json = json.package
-        else if(type.equals(FileType.JSON_TITLES_ONLY))
+        }
+        else if(type.equals(FileType.JSON_TITLES_ONLY)){
+            
+            json.titles.any{ title ->
+                title.remove("_meta")
+            }
             json = json.titles
-
+        }
         
         if(prettyPrint)
             return new JsonBuilder(json).toPrettyString()
@@ -445,9 +454,9 @@ class Transformer {
         json
     }
     
-    static Object cleanUpJSON(Object json, boolean useValidator){
-        log.debug("cleanUpJSON()")
-        
+    static Object removeEmpty(Object json, boolean useValidator){
+        log.debug("removeEmpty()")
+   
         // remove tipps without name and identifier
         if(useValidator){
             
@@ -459,7 +468,7 @@ class Transformer {
             }
             json.package.tipps = tipps
         }
-               
+            
         // remove titles without name and identifier
         if(useValidator){
             

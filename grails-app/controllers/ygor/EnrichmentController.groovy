@@ -186,9 +186,17 @@ class EnrichmentController {
     
     def exportFile = {
         
-        // TODO
+        def status = enrichmentService.exportFile(enrichment)
         
-        enrichmentService.exportFile(enrichment)
+        status.each{ st ->
+            if(st.get('info'))
+                flash.info = st.get('info')
+            if(st.get('warning'))
+                flash.warning = st.get('warning')
+            if(st.get('error'))
+                flash.error = st.get('error')
+        }
+
         process()
     }
     

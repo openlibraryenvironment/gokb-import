@@ -73,13 +73,12 @@
 						<br /> 
 					</div>
 				</div><!-- .row -->
-				
+
 				<div class="row">
 					<div class="col-xs-5 col-xs-offset-1">
 						Plattform:
 						<br /> 
-						<g:select name="pkgNominal" from="${platformService.getMap().entrySet()}"
-							optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
+						<g:select name="pkgNominal" from="${platformService.getMap().entrySet()}" optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
 						<br /> 
 					</div>
 				</div><!-- .row -->
@@ -149,9 +148,14 @@
 						<g:actionSubmit action="downloadPackageFile" value="Package/Tipps speichern" class="btn btn-success"/>
 		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
 		    			
-						<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success disabled"
-		    				data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" disabled="disabled"/>
-		    			
+		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
+							<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success"
+		    					data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" />
+	    				</g:if>
+	    				<g:else>
+							<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success disabled"
+		    					data-toggle="tooltip" data-placement="top" title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}" disabled="disabled"/>
+	    				</g:else>
 		    			
 		    			<br /><br />
 		    			

@@ -9,7 +9,25 @@ A spare hand when needed ..
 
 Eclipse/GGTS &rarr; Import &rarr; Grails Project
 
-##### Testing
+### Config
+
+Upload json result to knowledgebase
+
+	ygor.enableGokbUpload = true|false
+	
+	ygor.gokbApi.xrTitleUri   = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
+	ygor.gokbApi.xrPackageUri = 'http://localhost:8080/gokb/integration/crossReferencePackage'
+	ygor.gokbApi.user = ''
+	ygor.gokbApi.pwd  = ''
+
+Use knowledge base to obtain actual map with platform/provider. Fallback to hardcoded map 
+	
+	ygor.gokbDB.dbUri = 'jdbc:postgresql://localhost:5432/gokb'
+	ygor.gokbDB.user  = ''
+	ygor.gokbDB.pwd   = ''
+	
+
+### Testing
 
 Current normalizer and validator support
 

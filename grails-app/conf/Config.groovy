@@ -89,9 +89,10 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ygor {
-            version        = grails.util.Metadata.current.'app.version'
-            type           = 'development'
-            uploadLocation = "/tmp/ygor/dev"
+            version          = grails.util.Metadata.current.'app.version'
+            type             = 'development'
+            uploadLocation   = '/tmp/ygor/dev'
+            enableGokbUpload = true
         }
         gokbApi {
             xrTitleUri   = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
@@ -100,7 +101,7 @@ environments {
             pwd          = ''
         }
         gokbDB {
-            dbUri = "jdbc:postgresql://localhost:5432/gokb"
+            dbUri = 'jdbc:postgresql://localhost:5432/gokb'
             user  = ''
             pwd   = ''
         }   
@@ -108,9 +109,10 @@ environments {
     production {
         grails.logging.jul.usebridge = false
         ygor {
-            version        = grails.util.Metadata.current.'app.version'
-            type           = 'production'
-            uploadLocation = "/tmp/ygor/prod"
+            version          = grails.util.Metadata.current.'app.version'
+            type             = 'production'
+            uploadLocation   = '/tmp/ygor/prod'
+            enableGokbUpload = false
         }      
         gokbApi {
             xrTitleUri   = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
@@ -119,7 +121,7 @@ environments {
             pwd          = ''
         }
         gokbDB {
-            dbUri = "jdbc:postgresql://phaeton.hbz-nrw.de:5432/gokb"
+            dbUri = 'jdbc:postgresql://phaeton.hbz-nrw.de:5432/gokb'
             user  = ''
             pwd   = ''
         }

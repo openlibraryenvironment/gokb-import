@@ -5,7 +5,7 @@ import java.io.File
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import groovyx.net.http.HTTPBuilder
-
+import static groovyx.net.http.Method.POST
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.entity.mime.content.StringBody
@@ -70,47 +70,52 @@ class EnrichmentService {
         enrichment.thread.isRunning = false
     }
     
-    void exportFile(Enrichment enrichment) {
+    List exportFile(Enrichment enrichment) {
         
-        // TODO split file
-        //return only json.package
-        //return only json.titles
+        def result = []
+        
+        def jsonPackage = enrichment.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
+        def jsonTitles  = enrichment.getFile(Enrichment.FileType.JSON_TITLES_ONLY)
+        
+        result << exportFileToGOKb(enrichment, jsonPackage, grailsApplication.config.gokbApi.xrPackageUri)
+        result << exportFileToGOKb(enrichment, jsonTitles, grailsApplication.config.gokbApi.xrTitleUri)
 
-        def rawFile = enrichment.getFile(Enrichment.FileType.JSON)
-        def result  = Mapper.clearUp(rawFile)
-        def http    = new HTTPBuilder(grailsApplication.config.gokbApi.xrTitleUri)
+        result
+    }
+    
+    private Map exportFileToGOKb(Enrichment enrichment, Object json, String url){
         
+        log.info("exportFile: " + enrichment.resultHash + " -> " + url)
+        
+        def http = new HTTPBuilder(url)
         http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd
-
-        println "EC.exportFile(" + en.resultHash + ") -> " + grailsApplication.config.gokbApi.xrTitleUri
         
         http.request(POST) { req ->
             headers.'User-Agent' = 'ygor'
             req.getParams().setParameter("http.socket.timeout", new Integer(5000))
             
             MultipartEntity entity = new MultipartEntity()
-            entity.addPart("file", new FileBody(result))
+            entity.addPart("file", new FileBody(json))
             entity.addPart("info", new StringBody("greetings from ygor"))
             req.setEntity(entity)
             
             response.success = { resp, html ->
-                println "server response: ${resp.statusLine}"
-                println "server:          ${resp.headers.'Server'}"
-                println "content length:  ${resp.headers.'Content-Length'}"
+                log.info("server response: ${resp.statusLine}")
+                log.debug("server:          ${resp.headers.'Server'}")
+                log.debug("content length:  ${resp.headers.'Content-Length'}")
                 if(resp.status < 400){
-                    flash.warning = html
+                    return ['warning':html]
                 }
                 else {
-                    flash.info = html
+                    return ['info':html]
                 }
             }
             response.failure = { resp ->
-                println "server response: ${resp.statusLine}"
-                flash.error = resp.statusLine
+                log.error("server response: ${resp.statusLine}")
+                return ['error':resp.statusLine]
             }
         }
     }
-    
     
     /**
      * Return session depending directory for file upload.
