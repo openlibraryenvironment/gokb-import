@@ -1,11 +1,6 @@
 package de.hbznrw.ygor.iet.interfaces
 
 import groovy.util.logging.Log4j
-
-import java.util.ArrayList
-
-import com.sun.org.apache.xpath.internal.operations.Minus
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Query
 import de.hbznrw.ygor.iet.enums.Status

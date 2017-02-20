@@ -1,11 +1,8 @@
 package de.hbznrw.ygor.tools;
 
-import java.io.File;
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVRecord
 import de.hbznrw.ygor.iet.export.DataContainer
-import ygor.Enrichment
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 

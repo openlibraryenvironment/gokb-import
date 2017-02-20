@@ -1,7 +1,5 @@
 package ygor
 
-import java.util.Map
-import java.util.prefs.FileSystemPreferences.Put
 import java.sql.*
 
 class PlatformService {
@@ -36,7 +34,7 @@ class PlatformService {
         }
         
         if(platformMap.size() == 0)
-            return getPackageHeaderNominalPlatformPreset()
+            platformMap = getPackageHeaderNominalPlatformPreset()
         
         platformMap
     }

@@ -2,10 +2,8 @@ package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.export.structure.Title
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
 import groovy.util.logging.Log4j
 
 //import org.apache.commons.logging.Log
@@ -29,8 +27,9 @@ class Transformer {
         def jsonSlurper = new JsonSlurper()
         def json        = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
         
-        if(type.equals(FileType.JSON_DEBUG))
+        if(type.equals(FileType.JSON_DEBUG)){
             validator = Transformer.NO_VALIDATOR
+        }
         
         Statistics.getStatsBeforeParsing(json)
         
@@ -54,10 +53,12 @@ class Transformer {
 
         Transformer.removeEmpty(json, validator)
         
-        if(type.equals(FileType.JSON_DEBUG))
+        if(type.equals(FileType.JSON_DEBUG)){
             Statistics.getStatsAfterCleanUp(json)
-        else
+        }
+        else {
             json.meta.stats = []
+        }
         
         if(type.equals(FileType.JSON_PACKAGE_ONLY)){
             
@@ -74,10 +75,12 @@ class Transformer {
             json = json.titles
         }
         
-        if(prettyPrint)
+        if(prettyPrint){
             return new JsonBuilder(json).toPrettyString()
-        else
+        }
+        else {
             return new JsonBuilder(json).toString()
+        }
     }
     
     static Object parsePackageHeader(Object json) {
@@ -393,10 +396,12 @@ class Transformer {
                     
                     // only valid entries
                     if(useValidator){
-                        if(from.title.m == Status.VALIDATOR_STRING_IS_VALID.toString())
+                        if(from.title.m == Status.VALIDATOR_STRING_IS_VALID.toString()){
                             from.title = from.title.v
-                        else
+                        }
+                        else {
                             from.title = ""
+                        }
                     }
                     else {
                         from.title = from.title.v
@@ -424,10 +429,12 @@ class Transformer {
                     
                     // only valid entries
                     if(useValidator){
-                        if(to.title.m == Status.VALIDATOR_STRING_IS_VALID.toString())
+                        if(to.title.m == Status.VALIDATOR_STRING_IS_VALID.toString()){
                             to.title = to.title.v
-                        else
+                        }
+                        else {
                             to.title = ""
+                        }
                     }
                     else {
                         to.title = to.title.v

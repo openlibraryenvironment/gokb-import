@@ -1,14 +1,6 @@
 package ygor
 
-// ignore strange errors ..
-import grails.util.Environment
-import groovyx.net.http.HTTPBuilder
-import static groovyx.net.http.Method.POST
-import org.apache.commons.io.IOUtils
 import de.hbznrw.ygor.iet.export.*
-import de.hbznrw.ygor.iet.export.structure.Pod
-import de.hbznrw.ygor.iet.export.structure.PackageStruct
-
 
 class EnrichmentController {
 
@@ -146,42 +138,50 @@ class EnrichmentController {
     
     def downloadPackageFile = {
 
-        def en     = getEnrichment()
-        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
-        render(
-            file:result,
-            fileName:"${en.resultName}.package.json"
-            )
+        def en = getEnrichment()
+        if(en){
+            def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
+            render(file:result, fileName:"${en.resultName}.package.json")
+        }
+        else {
+            noValidEnrichment()
+        }
     }
     
     def downloadTitlesFile = {
         
-        def en     = getEnrichment()
-        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
-        render(
-            file:result,
-            fileName:"${en.resultName}.titles.json"
-            )
+        def en = getEnrichment()
+        if(en){
+            def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
+            render(file:result, fileName:"${en.resultName}.titles.json")
+        }
+        else {
+            noValidEnrichment()
+        }
     }
     
     def downloadDebugFile = {
         
-        def en     = getEnrichment()
-        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_DEBUG)
-        render(
-            file:result,
-            fileName:"${en.resultName}.debug.json"
-            )
+        def en = getEnrichment()
+        if(en){
+            def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_DEBUG)
+            render(file:result, fileName:"${en.resultName}.debug.json")
+        }
+        else {
+            noValidEnrichment()
+        }
     }
     
     def downloadRawFile = {
         
-        def en     = getEnrichment()
-        def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
-        render(
-            file:result,
-            fileName:"${en.resultName}.raw.json"
-            )
+        def en = getEnrichment()
+        if(en){
+            def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
+            render(file:result, fileName:"${en.resultName}.raw.json")
+        }
+        else {
+            noValidEnrichment()
+        }
     }
     
     def exportFile = {
@@ -227,5 +227,14 @@ class EnrichmentController {
         
         def hash = (String) request.parameterMap['originHash'][0]
         documents.get("${hash}")
+    }
+    
+    void noValidEnrichment() {
+        
+        flash.info    = null
+        flash.warning = 'Es existiert keine Datei. Vielleicht ist Ihre Session abgelaufen?'
+        flash.error   = null
+        
+        redirect(action:'process')
     }
 }

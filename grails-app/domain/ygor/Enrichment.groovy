@@ -4,7 +4,6 @@ import de.hbznrw.ygor.iet.MultipleProcessingThread
 import de.hbznrw.ygor.iet.export.DataContainer
 import de.hbznrw.ygor.iet.export.Transformer
 import de.hbznrw.ygor.tools.*
-import de.hbznrw.ygor.iet.export.Mapper
 
 class Enrichment {
 

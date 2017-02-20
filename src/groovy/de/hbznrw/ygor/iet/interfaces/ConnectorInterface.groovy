@@ -1,7 +1,5 @@
 package de.hbznrw.ygor.iet.interfaces
 
-import java.util.ArrayList
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.Query
 import de.hbznrw.ygor.iet.enums.Status

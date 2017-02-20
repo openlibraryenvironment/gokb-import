@@ -1,17 +1,10 @@
 package de.hbznrw.ygor.iet.bridge
 
 import groovy.util.logging.Log4j
-
-import java.util.ArrayList;
-
-import org.apache.commons.csv.CSVRecord;
-
 import de.hbznrw.ygor.iet.connector.*
-import de.hbznrw.ygor.iet.enums.Query;
+import de.hbznrw.ygor.iet.enums.Query
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.iet.processor.CsvProcessor
-import de.hbznrw.ygor.tools.FileToolkit
 
 @Log4j
 class ZdbBridge extends BridgeAbstract implements BridgeInterface {
@@ -29,7 +22,7 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	ZdbBridge(Thread master, HashMap options) {
         this.master    = master
         this.options   = options
-		this.connector = new SruConnector(this)
+		this.connector = new DnbSruOiaDcConnector(this)
 		this.processor = master.processor
 	}
 	

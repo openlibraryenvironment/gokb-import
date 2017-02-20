@@ -1,24 +1,16 @@
 package de.hbznrw.ygor.iet.processor
 
 import org.apache.commons.csv.CSVParser
-import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVRecord
-
 import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.connector.EzbConnector
-import de.hbznrw.ygor.iet.connector.SruPicaConnector
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.tools.FileToolkit
 import de.hbznrw.ygor.iet.bridge.ZdbBridge
 import groovy.util.logging.Log4j
-
-import java.io.ObjectInputStream.ValidationList
 import java.nio.file.Paths
-import java.util.ArrayList
+
 
 /**
  * Class for reading and processing csv files
@@ -123,17 +115,21 @@ class CsvProcessor extends ProcessorAbstract {
             def state = Status.UNKNOWN_REQUEST
             
             Envelope env
-            if(record)
+            if(record){
                 env = bridge.getConnector().query(record, q)
-            else
+            }
+            else {
                 env = bridge.getConnector().query(q)
-
+            }
+            
             if(env.type == Envelope.SIMPLE){
                 
-                if(Status.RESULT_OK == env.state)
+                if(Status.RESULT_OK == env.state){
                     msg = env.message[0]
-                else if(Status.RESULT_MULTIPLE_MATCHES == env.state)
+                }
+                else if(Status.RESULT_MULTIPLE_MATCHES == env.state){
                     msg = env.message.join(", ")
+                }
 
                 state = env.state
                 log.info("#" + count + " processed " + uid + " -> " + msg + " : " + state)
@@ -146,18 +142,20 @@ class CsvProcessor extends ProcessorAbstract {
                         msg = env.messages[i]
                     }
                     else if(Status.RESULT_MULTIPLE_MATCHES == ste) {
-                        if(env.messages[i])
+                        if(env.messages[i]){
                             msg = env.messages[i].join("|")
-                        else
+                        }
+                        else {
                             msg = null // todo ??
+                        }
                     }
 
                     log.info("#" + count + " processed " + uid + " -> " + msg + " : " + state)
                 }
             }
             
-            Mapper.mapToTitle (dc, title, q, env)
-            Mapper.mapToTipp  (dc, tipp, q, env)
+            Mapper.mapToTitle(title, q, env)
+            Mapper.mapToTipp (tipp, q, env, dc)
         }
         
         if(saveTitle){

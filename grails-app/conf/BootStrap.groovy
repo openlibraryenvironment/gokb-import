@@ -5,7 +5,7 @@ class BootStrap {
 
     def init = { servletContext ->
 		
-			println('''
+			log.info('''
 
   ▓██   ██▓  ▄████  ▒█████   ██▀███  
    ▒██  ██▒ ██▒ ▀█▒▒██▒  ██▒▓██ ▒ ██▒
@@ -17,10 +17,10 @@ class BootStrap {
    ░░                     
                        Yes, Master?
 			''')
-			println('Environment: ' + Environment.current)
+            log.info('Environment: ' + Environment.current)
     }
 	
     def destroy = {
-		println('I\'ll leave')
+		log.info('I\'ll leave')
     }
 }

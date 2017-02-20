@@ -1,19 +1,10 @@
 package de.hbznrw.ygor.iet.bridge
 
 import groovy.util.logging.Log4j
-
-import java.util.ArrayList;
-import java.util.HashMap
-
-import org.apache.commons.csv.CSVRecord;
-
-import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.connector.*
-import de.hbznrw.ygor.iet.enums.Query;
+import de.hbznrw.ygor.iet.enums.Query
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.iet.processor.CsvProcessor
-import de.hbznrw.ygor.tools.FileToolkit 
 
 @Log4j
 class HbzBridge extends BridgeAbstract implements BridgeInterface {
@@ -29,7 +20,7 @@ class HbzBridge extends BridgeAbstract implements BridgeInterface {
 	HbzBridge(Thread master, HashMap options) {
         this.master    = master
         this.options   = options
-		this.connector = new LobidConnector(this)
+		this.connector = new LobidJldConnector(this)
 		this.processor = master.processor
 	}
 	

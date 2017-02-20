@@ -1,7 +1,5 @@
 package de.hbznrw.ygor.iet.export.structure
 
-import java.util.ArrayList
-
 import de.hbznrw.ygor.iet.enums.*
 
 class Package {

@@ -1,17 +1,11 @@
 package de.hbznrw.ygor.iet.bridge
 
 import groovy.util.logging.Log4j
-
-import java.util.ArrayList;
-
-import org.apache.commons.csv.CSVRecord;
-
 import de.hbznrw.ygor.iet.connector.*
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.iet.processor.CsvProcessor
 import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 
@@ -39,7 +33,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	GbvBridge(Thread master, HashMap options) {
         this.master    = master
         this.options   = options
-		this.connector = new SruPicaConnector(this)
+		this.connector = new GbvSruPicaConnector(this)
 		this.processor = master.processor
 	}
 	

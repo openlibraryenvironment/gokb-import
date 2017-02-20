@@ -1,15 +1,14 @@
 package de.hbznrw.ygor.iet.export
 
+import groovy.util.logging.Log4j
+
 import org.springframework.util.StringUtils
 
-import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.export.structure.PackageHeader
-import de.hbznrw.ygor.iet.export.structure.Tipp
-import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
 
+@Log4j
 class Normalizer {
 
     final static IS_START_DATE  = "IS_START_DATE"
@@ -124,12 +123,15 @@ class Normalizer {
                 
             if(str.contains(";")){
                 def tmp = str.split(";")
-                if(tmp.size() == 1)
+                if(tmp.size() == 1){
                     str = tmp[0]
-                else if(tmp.size() == 2)
+                }
+                else if(tmp.size() == 2){
                     str = tmp[1]
-                else
+                }
+                else {
                     str = tmp.join(' ')
+                }
             }
             
             if(str.contains("/")){
@@ -252,10 +254,12 @@ class Normalizer {
                 str = tmp[0]
             }
             else if(dateType.equals(Normalizer.IS_END_DATE)){
-                if(tmp.size() > 1)
+                if(tmp.size() > 1){
                     str = tmp[1]
-                else
+                }
+                else {
                     str = ""
+                }
             }
         }
         if(str && str.contains(",")){
@@ -302,7 +306,10 @@ class Normalizer {
             if(url) {
                 str = url.getAuthority()
             }
-        } catch(Exception e) {}
+        } catch(Exception e) {
+            log.error(e.getMessage())
+            log.error(e.getStackTrace())
+        }
         
         str
     }

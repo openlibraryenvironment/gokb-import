@@ -2,11 +2,6 @@ package de.hbznrw.ygor.iet.export
 
 import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.enums.*
-import groovy.json.JsonBuilder
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
-import de.hbznrw.ygor.iet.export.structure.Tipp
-import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
 

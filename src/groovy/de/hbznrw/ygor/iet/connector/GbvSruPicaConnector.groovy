@@ -1,11 +1,6 @@
 package de.hbznrw.ygor.iet.connector
 
 import groovy.util.slurpersupport.GPathResult
-
-import java.util.ArrayList
-
-import org.apache.commons.csv.CSVRecord
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.interfaces.*
@@ -14,12 +9,12 @@ import de.hbznrw.ygor.iet.export.*
 
 /**
  * Controlling API calls using sru.gbv.de
- * 
- * @author David Klober
- *
  */
-class SruPicaConnector extends ConnectorAbstract {
+class GbvSruPicaConnector extends ConnectorAbstract {
 	
+    static final QUERY_PICA_ISS = "query=pica.iss%3D"
+    static final QUERY_PICA_ZDB = "query=pica.zdb%3D"
+    
 	private String requestUrl       = "http://sru.gbv.de/gvk?version=1.2&operation=searchRetrieve&maximumRecords=10"
 	private String queryIdentifier  = 'query=pica.iss%3D'
     private String queryOnlyJournals = "%20and%20(pica.mak=Obvz%20or%20pica.mak=Obv)"
@@ -31,7 +26,7 @@ class SruPicaConnector extends ConnectorAbstract {
     private picaRecords   = []
     private currentRecord = null
     
-	SruPicaConnector(BridgeInterface bridge) {
+	GbvSruPicaConnector(BridgeInterface bridge) {
 		super(bridge)
 	}
         

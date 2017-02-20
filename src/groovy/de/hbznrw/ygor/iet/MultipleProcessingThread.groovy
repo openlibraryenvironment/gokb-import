@@ -7,9 +7,6 @@ import de.hbznrw.ygor.iet.processor.CsvProcessor
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 
-import java.nio.file.Files
-import java.nio.file.Paths
-
 @Log4j
 class MultipleProcessingThread extends Thread {
 

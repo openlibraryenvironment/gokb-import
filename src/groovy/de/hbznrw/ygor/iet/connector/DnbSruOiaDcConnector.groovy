@@ -1,11 +1,6 @@
 package de.hbznrw.ygor.iet.connector
 
 import groovy.util.slurpersupport.GPathResult
-
-import java.util.ArrayList
-
-import org.apache.commons.csv.CSVRecord
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.interfaces.*
@@ -17,7 +12,7 @@ import de.hbznrw.ygor.iet.interfaces.*
  * @author David Klober
  *
  */
-class SruConnector extends ConnectorAbstract {
+class DnbSruOiaDcConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve"
 	private String queryIdentifier  = 'query=iss='
@@ -25,7 +20,7 @@ class SruConnector extends ConnectorAbstract {
     private String formatIdentifier = 'oai_dc'
     private GPathResult response
 
-	SruConnector(BridgeInterface bridge) {
+	DnbSruOiaDcConnector(BridgeInterface bridge) {
 		super(bridge)
 	}
     

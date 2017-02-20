@@ -1,11 +1,6 @@
 package de.hbznrw.ygor.iet.connector
 
 import groovy.util.slurpersupport.GPathResult
-
-import java.util.ArrayList
-
-import org.apache.commons.csv.CSVRecord
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.interfaces.*
@@ -17,7 +12,7 @@ import de.hbznrw.ygor.iet.interfaces.*
  * @author David Klober
  *
  */
-class EzbConnector extends ConnectorAbstract {
+class EzbXmlConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
 	private String queryIdentifier  = 'jq_type1=ZD&jq_term1='
@@ -25,7 +20,7 @@ class EzbConnector extends ConnectorAbstract {
     private String formatIdentifier = 'xmloutput=1&xmlv=3'
     private GPathResult response
 	
-	EzbConnector(BridgeInterface bridge) {
+	EzbXmlConnector(BridgeInterface bridge) {
 		super(bridge)
 	}
 	

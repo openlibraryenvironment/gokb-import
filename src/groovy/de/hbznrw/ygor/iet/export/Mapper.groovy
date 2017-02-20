@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.iet.export
 
-import java.util.HashMap
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.*
@@ -13,7 +12,7 @@ import de.hbznrw.ygor.tools.*
 @Log4j
 class Mapper {
     
-    static void mapToTitle(DataContainer dc, Title title, Query query, Envelope env) {
+    static void mapToTitle(Title title, Query query, Envelope env) {
 
         if(query in [Query.ZDBID, Query.EZBID, Query.GBV_EISSN, Query.GBV_PISSN, Query.GBV_GVKPPN]) {
             def ident = TitleStruct.getNewIdentifier()
@@ -135,7 +134,7 @@ class Mapper {
         }
     }
     
-    static void mapToTipp(DataContainer dc, Tipp tipp, Query query, Envelope env) {
+    static void mapToTipp(Tipp tipp, Query query, Envelope env, DataContainer dc) {
 
         if(query in [Query.ZDBID, Query.GBV_EISSN]) {
             def ident = TitleStruct.getNewIdentifier()

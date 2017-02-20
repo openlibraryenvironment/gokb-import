@@ -1,12 +1,7 @@
 package de.hbznrw.ygor.iet.export
 
-import org.springframework.util.StringUtils
-
-import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.Pod
-import de.hbznrw.ygor.iet.export.structure.Tipp
-import de.hbznrw.ygor.iet.export.structure.Title
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
 
@@ -71,23 +66,29 @@ class Validator {
         }
         
         if(identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)){
-            if(9 == str.length() && 4 == str.indexOf("-"))
+            if(9 == str.length() && 4 == str.indexOf("-")){
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
-            else 
+            }
+            else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            }
         }
         else if(identifierType.equals(ZdbBridge.IDENTIFIER)){
-            if(2 < str.length() && str.indexOf("-") == str.length()-2)
+            if(2 < str.length() && str.indexOf("-") == str.length()-2){
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
-            else
+            }
+            else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            }
         }
         else if(identifierType.equals(EzbBridge.IDENTIFIER)){
             // TODO .. no valid definition 
-            if(str.length() > 2)
+            if(str.length() > 2){
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
-            else
+            }
+            else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            }
         }
         return Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
     }

@@ -1,11 +1,6 @@
 package de.hbznrw.ygor.iet.connector
 
 import groovy.json.JsonSlurper
-
-import java.util.ArrayList
-
-import org.apache.commons.csv.CSVRecord
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.interfaces.*
@@ -17,7 +12,7 @@ import de.hbznrw.ygor.iet.interfaces.*
  * @author David Klober
  *
  */
-class LobidConnector extends ConnectorAbstract {
+class LobidJldConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "https://lobid.org/resource?"
 	private String requestHeader    = "application/json, application/ld+json"
@@ -26,7 +21,7 @@ class LobidConnector extends ConnectorAbstract {
     private String formatIdentifier = 'jld'
     private ArrayList response 
 	
-	LobidConnector(BridgeInterface bridge) {
+	LobidJldConnector(BridgeInterface bridge) {
 		super(bridge)
 	}
     

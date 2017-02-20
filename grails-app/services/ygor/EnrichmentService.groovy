@@ -1,7 +1,5 @@
 package ygor
 
-import java.io.File
-
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import groovyx.net.http.HTTPBuilder
