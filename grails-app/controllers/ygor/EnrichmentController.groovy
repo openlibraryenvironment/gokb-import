@@ -184,9 +184,25 @@ class EnrichmentController {
         }
     }
     
-    def exportFile = {
+    def sendPackageFile = {
         
-        def status = enrichmentService.exportFile(enrichment)
+        def status = enrichmentService.sendFile(enrichment, Enrichment.FileType.JSON_PACKAGE_ONLY)
+        
+        status.each{ st ->
+            if(st.get('info'))
+                flash.info = st.get('info')
+            if(st.get('warning'))
+                flash.warning = st.get('warning')
+            if(st.get('error'))
+                flash.error = st.get('error')
+        }
+
+        process()
+    }
+    
+    def sendTitlesFile = {
+        
+        def status = enrichmentService.sendFile(enrichment, Enrichment.FileType.JSON_TITLES_ONLY)
         
         status.each{ st ->
             if(st.get('info'))

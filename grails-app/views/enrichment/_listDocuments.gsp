@@ -145,15 +145,21 @@
 						
 						<g:link action="showStats" params="[originHash:doc.key]" target="_blank" class="btn btn-warning">Statistik anzeigen</g:link>
 						
-						<g:actionSubmit action="downloadPackageFile" value="Package/Tipps speichern" class="btn btn-success"/>
+						<g:actionSubmit action="downloadPackageFile" value="Package speichern" class="btn btn-success"/>
 		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
 		    			
+		    			<br /><br />
+		    			
 		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-							<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success"
+							<g:actionSubmit action="sendPackageFile" value="Package zur GOKb senden" class="btn btn-success"
+		    					data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrPackageUri}" />
+		    				<g:actionSubmit action="sendTitlesFile" value="Titles zur GOKb senden" class="btn btn-success"
 		    					data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" />
 	    				</g:if>
 	    				<g:else>
-							<g:actionSubmit action="exportFile" value="JSON zur GOKb senden" class="btn btn-success disabled"
+							<g:actionSubmit action="sendPackageFile" value="Package zur GOKb senden" class="btn btn-success disabled"
+		    					data-toggle="tooltip" data-placement="top" title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}" disabled="disabled"/>
+		    				<g:actionSubmit action="sendTitlesFile" value="Titles zur GOKb senden" class="btn btn-success disabled"
 		    					data-toggle="tooltip" data-placement="top" title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}" disabled="disabled"/>
 	    				</g:else>
 		    			
@@ -182,7 +188,7 @@
 						var ygorDocumentStatus${doc.key} = function(){
 							jQuery.ajax({
 								type:       'GET',
-								url:         '/ygor/enrichment/ajaxGetStatus',
+								url:         '${grailsApplication.config.grails.app.context}/enrichment/ajaxGetStatus',
 								data:        'originHash=${doc.key}',
 								success:function(data, textStatus){
 									
@@ -196,10 +202,10 @@
 									jQuery('#progress-${doc.key} > .progress-bar').text(progress + '%');
 	
 									if(status == 'FINISHED') {
-										window.location = '/ygor/enrichment/process';
+										window.location = '${grailsApplication.config.grails.app.context}/enrichment/process';
 									}
 									if(status == 'ERROR') {
-										window.location = '/ygor/enrichment/process';
+										window.location = '${grailsApplication.config.grails.app.context}/enrichment/process';
 									}
 									
 								},

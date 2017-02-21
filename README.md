@@ -26,6 +26,15 @@ Use knowledge base to obtain actual map with platform/provider. Fallback to hard
 	ygor.gokbDB.user  = ''
 	ygor.gokbDB.pwd   = ''
 	
+### Running
+
+In _development_ environment
+
+	$grails run-app
+	
+In _production_ environment
+
+	$grails prod run-app
 
 ### Testing
 

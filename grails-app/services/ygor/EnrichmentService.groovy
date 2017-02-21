@@ -68,15 +68,21 @@ class EnrichmentService {
         enrichment.thread.isRunning = false
     }
     
-    List exportFile(Enrichment enrichment) {
+    List sendFile(Enrichment enrichment, Object fileType) {
         
         def result = []
+        def json
         
-        def jsonPackage = enrichment.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
-        def jsonTitles  = enrichment.getFile(Enrichment.FileType.JSON_TITLES_ONLY)
-        
-        result << exportFileToGOKb(enrichment, jsonPackage, grailsApplication.config.gokbApi.xrPackageUri)
-        result << exportFileToGOKb(enrichment, jsonTitles, grailsApplication.config.gokbApi.xrTitleUri)
+        if(fileType == Enrichment.FileType.JSON_PACKAGE_ONLY){
+            json = enrichment.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
+            
+            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri)
+        }
+        else if(fileType == Enrichment.FileType.JSON_TITLES_ONLY){
+            json = enrichment.getFile(Enrichment.FileType.JSON_TITLES_ONLY)
+            
+            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrTitleUri)
+        }
 
         result
     }
