@@ -17,7 +17,7 @@ class EnrichmentService {
     def grailsApplication
     PlatformService platformService
     
-    void addFile(CommonsMultipartFile file, HashMap documents) {
+    void addFile(CommonsMultipartFile file, Map documents) {
         
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
         en.setStatus(Enrichment.ProcessingState.PREPARE)
@@ -31,7 +31,7 @@ class EnrichmentService {
         enrichment.getFile(type)
     }
     
-    void deleteFile(Enrichment enrichment, HashMap documents) {
+    void deleteFile(Enrichment enrichment, Map documents) {
 
         if(enrichment) {
             def origin = enrichment.getFile(Enrichment.FileType.ORIGIN)
@@ -41,7 +41,7 @@ class EnrichmentService {
         }
     }
 
-    void prepareFile(Enrichment enrichment, HashMap pm){
+    void prepareFile(Enrichment enrichment, Map pm){
         
         def ph = enrichment.dataContainer.pkg.packageHeader
         
