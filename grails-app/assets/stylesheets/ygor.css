@@ -32,6 +32,9 @@ h3 {
 	min-height: 1px;
 }
 
+#statistics-filter .badge {
+	margin-left: 0.5em;
+}
 #statistics table thead {
 	color: #ccc;
 }
