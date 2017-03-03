@@ -38,158 +38,180 @@
 	<g:if test="${json}">	
 	<script>
 
-		var json = ${raw(json)}
+		var statisticsController = {
 
-
-		function domTitle(name, url, count){
-			if(url){
-				return $('<h4 class="domTitle"><strong>' + count + '. <a href="' + url + '" target="_blank">' + name + '</a></strong></h4>')
-			}
-			else{
-				return $('<h4 class="domTitle"><strong>' + count + '. ' + name + '</strong></h4>')
-			}
-		}
-		
-		function domTable(){
-			return $('<table class="table"><thead><th>Status</th><th>Element</th><th>Vorlage</th><th>Resultat</th></thead><tbody></tbody></table>')
-		}
-
-		function domState(elem, row){
-			if(elem.m.includes('INVALID')){
-				$(row).attr('class', 'danger')
-			}
-			/*
-			else if(elem.m.includes('VALIDATOR_DATE_IS_MISSING')){
-				$(row).attr('class', 'default')
-			}
-			*/
-			else if(elem.m.includes('MISSING')){
-				$(row).attr('class', 'info')
-			}
-			else if(elem.m.includes('ATOMIC')){
-				$(row).attr('class', 'warning')
-			}
-		}
-
-		function domValue(elem){
-			if(elem && Array.isArray(elem))
-				return elem.join('<br/>')
-
-			return elem
-		}
-
-		function blockTitle(elem, count){
-
-			if(elem._meta){
-				var display = false
-				var div = $('<div></div>')
+			buildDomTitle: function (name, url, count){
 				
-				var table = domTable()
-				$(div).append(table)
-				
-				$(elem._meta).each( function(ii, ielem){
-					var row = $('<tr></tr>')
-					$(table).append(row)
-						
-					if(ielem.api){
-						$(div).prepend(domTitle(elem.name, ielem.api, count))
-					}
-					else if(ielem.dom){
-						display = true
-						
-						$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
-						$(row).append('<td>' + domValue(ielem.org) + '</td><td>' + domValue(ielem.v) + '</td>')
-						$(row).attr('data-code', ielem.m)
-						
-						domState(ielem, row)
-					}
-				})
-
-				if(display){
-					$('#statistics #tab-package').append(div)
+				if(url){
+					return $('<h4 class="domTitle"><strong>' + count + '. <a href="' + url + '" target="_blank">' + name + '</a></strong></h4>')
 				}
 				else{
-					$('#statistics #tab-package').append($('<div></div>')).append(domTitle(elem.name, null, count))
+					return $('<h4 class="domTitle"><strong>' + count + '. ' + name + '</strong></h4>')
 				}
-			}
-		}
-
-		function blockTipp(elem, count){
-
-			if(elem._meta){
-				var display = false
-				var div = $('<div></div>')
+			},
+			
+			buildDomTable: function (){
 				
-				var table = domTable()
-				$(div).append(table)
+				return $('<table class="table"><thead><th>Status</th><th>Element</th><th>Vorlage</th><th>Resultat</th></thead><tbody></tbody></table>')
+			},
+			
+			buildDomState: function (elem, row){
 				
-				$(elem._meta).each( function(ii, ielem){
-					var row = $('<tr></tr>')
-					$(table).append(row)
+				if(elem.m.includes('INVALID')){
+					$(row).attr('class', 'danger')
+				}
+				/*
+				else if(elem.m.includes('VALIDATOR_DATE_IS_MISSING')){
+					$(row).attr('class', 'default')
+				}
+				*/
+				else if(elem.m.includes('MISSING')){
+					$(row).attr('class', 'info')
+				}
+				else if(elem.m.includes('ATOMIC')){
+					$(row).attr('class', 'warning')
+				}
+			},
+			
+			buildDomValue: function (elem){
+				
+				if(elem && Array.isArray(elem))
+					return elem.join('<br/>')
+
+				return elem
+			},
+			
+			buildBlockTitle: function (elem, count){
+
+				if(elem._meta){
+					var display = false
+					var div = $('<div></div>')
 					
-					if(ielem.api){
-						$(div).prepend(domTitle(elem.title.name, ielem.api, count))
-					}
-					else if(ielem.dom){
-						display = true
-						
-						$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
-						$(row).append('<td>' + domValue(ielem.org) + '</td><td>' + domValue(ielem.v) + '</td>')
-						$(row).attr('data-code', ielem.m)
+					var table = statisticsController.buildDomTable()
+					$(div).append(table)
+					
+					$(elem._meta).each( function(ii, ielem){
+						var row = $('<tr></tr>')
+							
+						if(ielem.api){
+							$(div).prepend(statisticsController.buildDomTitle(elem.name, ielem.api, count))
+						}
+						else if(ielem.dom){
+							display = true
+							$(table).append(row)
+							
+							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
+							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td><td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+							$(row).attr('data-code', ielem.m)
+							
+							statisticsController.buildDomState(ielem, row)
+						}
+					})
 
-						domState(ielem, row)
+					if(display){
+						$('#statistics #tab-package').append(div)
 					}
-				})
+					else{
+						$('#statistics #tab-package').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.name, null, count))
+					}
+				}
+			},
+
+			buildBlockTipp: function(elem, count){
+
+				if(elem._meta){
+					var display = false
+					var div = $('<div></div>')
+					
+					var table = statisticsController.buildDomTable()
+					$(div).append(table)
+					
+					$(elem._meta).each( function(ii, ielem){
+						var row = $('<tr></tr>')
+						
+						if(ielem.api){
+							$(div).prepend(statisticsController.buildDomTitle(elem.title.name, ielem.api, count))
+						}
+						else if(ielem.dom){
+							display = true
+							$(table).append(row)
+							
+							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
+							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td><td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+							$(row).attr('data-code', ielem.m)
+
+							statisticsController.buildDomState(ielem, row)
+						}
+					})
+					
+					if(display){
+						$('#statistics #tab-titles').append(div)
+					}
+					else{
+						$('#statistics #tab-titles').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.title.name, null, count))
+					}
+				}
+			},
+
+			buildMarkUp: function(json){
 				
-				if(display){
-					$('#statistics #tab-titles').append(div)
-				}
-				else{
-					$('#statistics #tab-titles').append($('<div></div>')).append(domTitle(elem.title.name, null, count))
-				}
+				$(json.package.tipps).sort(function(a,b){return a.title.name > b.title.name}).each( function(i, elem){
+					statisticsController.buildBlockTipp(elem, i+1)
+				})
+			
+				$(json.titles).sort(function(a,b){return a.name > b.name}).each( function(i, elem){
+					statisticsController.buildBlockTitle(elem, i+1)
+				})
+
+				$('#statistics div table').addClass('active')
+				$('#statistics div table tbody tr').addClass('active')
+				
+				$('#statistics-filter button').each(function(i, e){
+					var filter = '[data-code=' + $(this).attr('data-code') + ']'
+					var counts = $('#statistics div table tr' + filter).size()
+				
+					$(e).addClass('active').addClass($(e).attr('data-class'))
+					$(e).find('.badge').text(counts)
+				})
+
+				statisticsController.appendEventHandler()
+			},
+
+			appendEventHandler: function(){
+	
+				$('#statistics-filter button').click(function(){
+					$(this).toggleClass($(this).attr('data-class'))
+					$(this).blur()
+						
+					var filter = '[data-code=' + $(this).attr('data-code') + ']'
+	
+					$('#statistics-filter button' + filter).toggleClass('active')
+					
+					$('#statistics div table tr' + filter).each(function(i, e){
+						
+						if($('#statistics-filter button' + filter).hasClass('active')){
+							$(e).show().addClass('active')
+						}
+						else {
+							$(e).hide().removeClass('active')
+						}
+					})
+					
+					$('#statistics div table tbody tr').each(function(i, e){
+
+						if(0 == $(e).parent('tbody').find('tr.active').size()) {
+							$(e).parent('tbody').parent('table').removeClass('active')
+						}
+						else {
+							$(e).parent('tbody').parent('table').addClass('active')
+						}
+					})
+				})
 			}
 		}
 
-		// output 
-		
-		$(json.package.tipps).sort(function(a,b){return a.title.name > b.title.name}).each( function(i, elem){
-			blockTipp(elem, i+1)
-		})
-		
-		$(json.titles).sort(function(a,b){return a.name > b.name}).each( function(i, elem){
-			blockTitle(elem, i+1)
-		})
-		
-		// filter
-		
-		$('#statistics-filter button').each(function(i, e){
-			var filter = '[data-code=' + $(this).attr('data-code') + ']'
-			var counts = $('#statistics div table tr' + filter).size()
-			
-			$(e).addClass('active').addClass($(e).attr('data-class'))
-			$(e).find('.badge').text(counts)
-		})
-		
-		$('#statistics-filter button').click(function(){
-			
-			var filter = '[data-code=' + $(this).attr('data-code') + ']'
+		statisticsController.buildMarkUp(${raw(json)})
 
-			$('#statistics-filter button' + filter).toggleClass('active')
-			
-			$('#statistics div table tr' + filter).each(function(i, e){
-				
-				if($('#statistics-filter button' + filter).hasClass('active')){
-					$(e).show().addClass('active')
-				}
-				else {
-					$(e).hide().removeClass('active')
-				}
-			})
-			
-			$(this).toggleClass($(this).attr('data-class'))
-			$(this).blur()
-		})
-		
 	</script>
 	</g:if>
 

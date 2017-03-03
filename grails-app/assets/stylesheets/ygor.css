@@ -43,9 +43,18 @@ select#processIndex {
 #statistics-filter .badge {
 	margin-left: 0.5em;
 }
+
+#statistics table {
+	display: none;
+}
+#statistics table.active {
+	display: table;
+}
+
 #statistics table thead {
 	color: #ccc;
 }
+
 #statistics table thead tr th:nth-of-type(1) {
 	width: 20%;
 }
