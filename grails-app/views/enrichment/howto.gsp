@@ -10,6 +10,7 @@
 		<g:render template="howtostep1" />
 		<g:render template="howtostep2" />	
 		<g:render template="howtostep3" />
-		<g:render template="howtostep4" />		
+		<g:render template="howtostep4" />
+		<g:render template="howtostep4hint" />		
 	</div>
 </div>

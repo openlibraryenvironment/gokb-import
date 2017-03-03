@@ -1,15 +1,21 @@
 package de.hbznrw.ygor.iet.interfaces
 
+import java.util.HashMap
+
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.enums.Query
 
 @Log4j
 abstract class BridgeAbstract implements BridgeInterface {
 
-    protected Thread master
-    public Query[] tasks
+    protected Thread master 
 	protected ConnectorInterface connector
 	protected ProcessorInterface processor
+    
+    public Query[] tasks
+    
+    protected HashMap options
+    protected stashIndex
 	
 	void go() throws Exception {
 	}

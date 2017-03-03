@@ -11,11 +11,11 @@
 			<em>Ygor</em> ist ein kleines Werkzeug zur Anreicherung existierender Daten.
 			Im CSV-Format <em>(Comma-separated values)</em> vorliegende Dateien können durch automatisierte Nutzung externer Webservices
 			um verschiedene Informationen erweitert werden.
-			Dieses Verfahren orientiert wird durch vorhandene ISSN-Angaben <em>(International Standard Serial Number)</em> gesteuert. 
+			Dieses Verfahren benötigt geeignete Identifikatoren, z.B. ISSN-Angaben oder ID-Nummern der Zeitschriftendatenbank ZDB. 
 		</p>
 		
 		<p>
-			Die so angereicherten Daten können anschließend über eine Schnittstelle an eine vorgegebene <em><strong>Knowledgebase</strong></em> übermittelt werden.
+			Die angereicherten Daten können anschließend über eine Schnittstelle an eine vorgegebene <em><strong>Knowledgebase</strong></em> übermittelt werden.
 		</p>
 		<p>
 			Richten Sie sich nach den Anweisungen in den grauen Informationsfeldern.

@@ -14,14 +14,13 @@ class HbzBridge extends BridgeAbstract implements BridgeInterface {
     Query[] tasks = [
         Query.HBZID
     ]
-    
-	private HashMap options
-	
+
 	HbzBridge(Thread master, HashMap options) {
-        this.master    = master
-        this.options   = options
-		this.connector = new LobidJldConnector(this)
-		this.processor = master.processor
+        this.master     = master
+        this.options    = options
+		this.connector  = new LobidJldConnector(this)
+		this.processor  = master.processor
+        this.stashIndex = null
 	}
 	
 	@Override

@@ -93,7 +93,7 @@ class CsvProcessor extends ProcessorAbstract {
         def saveTitle = false
         def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, uid)
         if(title) {
-            log.info("> modifying existing Title: " + uid)
+            log.debug("> modifying existing Title: " + uid)
         }
         else {
             title     = new Title()
@@ -103,7 +103,7 @@ class CsvProcessor extends ProcessorAbstract {
         def saveTipp = false
         def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, uid)
         if(tipp) {
-            log.info("> modifying existing Tipp: " + uid)
+            log.debug("> modifying existing Tipp: " + uid)
         }
         else {
             tipp     = PackageStruct.getNewTipp()
@@ -159,14 +159,14 @@ class CsvProcessor extends ProcessorAbstract {
         }
         
         if(saveTitle){
-            log.info("> stored as new Title: " + uid)
+            log.debug("> stored as new Title: " + uid)
             
             dc.titles   << ["${uid}": new Pod(title)]
             title._meta << ['uid':    uid]
             title._meta << ['api':    bridge.getConnector().getAPIQuery(queryKey)]
         }
         if(saveTipp){
-            log.info("> stored as new Tipp: " + uid)
+            log.debug("> stored as new Tipp: " + uid)
             
             dc.pkg.tipps << ["${uid}": new Pod(tipp)]
             tipp._meta   << ['uid':    uid]

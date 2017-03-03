@@ -16,7 +16,7 @@ class GbvSruPicaConnector extends ConnectorAbstract {
     static final QUERY_PICA_ZDB = "query=pica.zdb%3D"
     
 	private String requestUrl       = "http://sru.gbv.de/gvk?version=1.2&operation=searchRetrieve&maximumRecords=10"
-	private String queryIdentifier  = 'query=pica.iss%3D'
+	private String queryIdentifier
     private String queryOnlyJournals = "%20and%20(pica.mak=Obvz%20or%20pica.mak=Obv)"
     private String queryOrder       = "sortKeys=year,,1"
     
@@ -26,8 +26,9 @@ class GbvSruPicaConnector extends ConnectorAbstract {
     private picaRecords   = []
     private currentRecord = null
     
-	GbvSruPicaConnector(BridgeInterface bridge) {
+	GbvSruPicaConnector(BridgeInterface bridge, String queryIdentifier) {
 		super(bridge)
+        this.queryIdentifier = queryIdentifier
 	}
         
     // ConnectorInterface

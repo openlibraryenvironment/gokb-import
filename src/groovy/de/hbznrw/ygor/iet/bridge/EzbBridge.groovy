@@ -14,14 +14,13 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
 	Query[] tasks = [
         Query.EZBID
     ]
-    
-	private HashMap options
-	
+
 	EzbBridge(Thread master, HashMap options) {
-        this.master    = master
-		this.options   = options
-		this.connector = new EzbXmlConnector(this)
-		this.processor = master.processor
+        this.master     = master
+		this.options    = options
+		this.connector  = new EzbXmlConnector(this)
+		this.processor  = master.processor
+        this.stashIndex = ZdbBridge.IDENTIFIER
 	}
 	
 	@Override
@@ -46,7 +45,7 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
         
         def stash = processor.getStash()
         
-        stash[ZdbBridge.IDENTIFIER].each{ key, value ->
+        stash[this.stashIndex].each{ key, value ->
             
             if(!master.isRunning) {
                 log.info('Aborted by user action.')

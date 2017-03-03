@@ -16,14 +16,13 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
         Query.ZDB_TITLE,
         Query.ZDB_PUBLISHER
         ]
-    
-    private HashMap options
 	
 	ZdbBridge(Thread master, HashMap options) {
-        this.master    = master
-        this.options   = options
-		this.connector = new DnbSruOiaDcConnector(this)
-		this.processor = master.processor
+        this.master     = master
+        this.options    = options
+		this.connector  = new DnbSruOiaDcConnector(this)
+		this.processor  = master.processor
+        this.stashIndex = null
 	}
 	
 	@Override

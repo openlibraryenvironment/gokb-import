@@ -32,6 +32,14 @@ h3 {
 	min-height: 1px;
 }
 
+select#pkgNominal {
+	width: 405px;
+}
+select#processIndex {
+	width: 405px;
+	display: inline-block;
+}
+
 #statistics-filter .badge {
 	margin-left: 0.5em;
 }

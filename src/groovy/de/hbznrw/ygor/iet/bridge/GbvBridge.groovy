@@ -27,21 +27,27 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_TIPP_COVERAGE,
         Query.GBV_HISTORY_EVENTS
         ]
-    
-    private HashMap options
-	
+
 	GbvBridge(Thread master, HashMap options) {
         this.master    = master
         this.options   = options
-		this.connector = new GbvSruPicaConnector(this)
-		this.processor = master.processor
+        this.processor = master.processor
+        
+        if(options.get('typeOfKey') == ZdbBridge.IDENTIFIER){
+            this.connector  = new GbvSruPicaConnector(this, GbvSruPicaConnector.QUERY_PICA_ZDB)
+            this.stashIndex = TitleStruct.ISSN
+        }
+        else {
+            this.connector  = new GbvSruPicaConnector(this, GbvSruPicaConnector.QUERY_PICA_ISS)
+            this.stashIndex = TitleStruct.ISSN
+        }
 	}
 	
 	@Override
 	void go() throws Exception {
         log.info("Input:  " + options.get('inputFile'))
         
-        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
+        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>')
         
         processor.setBridge(this)
         processor.setConfiguration(",", null, null)
@@ -59,7 +65,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 
         def stash = processor.getStash()
         
-        stash[TitleStruct.ISSN].each{ key, value ->
+        stash[this.stashIndex].each{ key, value ->
 
             if(!master.isRunning) {
                 log.info('Aborted by user action.')

@@ -14,7 +14,7 @@
 			<g:hiddenField name="originHash" value="${doc.key}" />
 			
 			<div class="row">
-				<div class="col-xs-10 col-xs-offset-1">
+				<div class="col-xs-12">
 					
 					<span class="glyphicon glyphicon-file" aria-hidden="true"></span>
 					<span title="${doc.value.originHash}">${doc.value.originName}</span>
@@ -42,7 +42,7 @@
 			<br />
 			
 			<div class="row">
-				<div class="col-xs-10 col-xs-offset-1">
+				<div class="col-xs-12">
 					<div id="progress-${doc.key}"class="progress">
 						<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 							<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%;">100%</div>
@@ -57,17 +57,17 @@
 			<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
 				<div class="row">
 				
-					<div class="col-xs-5 col-xs-offset-1">
+					<div class="col-xs-6">
 						Titel:
-						<br /> 
+						<br /><br />  
 						<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" />
 						<br />
 						<br /> 
 					</div>
 					
-					<div class="col-xs-4 col-xs-offset-1">
+					<div class="col-xs-6">
 						ZDB-Paketsigel:
-						<br /> 
+						<br /><br /> 
 						<g:textField name="pkgVariantName" size="24" value="ZDB-0815" />
 						<br />
 						<br /> 
@@ -75,16 +75,16 @@
 				</div><!-- .row -->
 
 				<div class="row">
-					<div class="col-xs-5 col-xs-offset-1">
+					<div class="col-xs-12">
 						Plattform:
-						<br /> 
+						<br /><br /> 
 						<g:select name="pkgNominal" from="${platformService.getMap().entrySet()}" optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
 						<br /> 
 					</div>
 				</div><!-- .row -->
 				
 				<div class="row">
-					<div class="col-xs-10 col-xs-offset-1">
+					<div class="col-xs-12">
 						<g:checkBox name="ignorePkgData" value="true" checked="false" /> &nbsp; Diese Angaben ignorieren
 						<br />
 					</div>
@@ -93,13 +93,18 @@
 				<br />
 			</g:if>
 			
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">			
+			<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 				<div class="row">
-					<div class="col-xs-4 col-xs-offset-1">
+					<div class="col-xs-12">
+						Einstiegungspunkt für die Anreicherung:
+						<br /><br />
+						
 						<g:select name="processIndex" from="${1..15}" value="0" 
 							noSelection="['':'Spaltenindex der .. ']"  class="form-control"/>
-					</div>
-					<div class="col-xs-6">
+							
+						&nbsp;
+						<g:radio name="processIndexType" value="${ZdbBridge.IDENTIFIER}"/> ZDB-ID
+						&nbsp;
 						<g:radio name="processIndexType" checked="true" value="${TitleStruct.PISSN}"/> pISSN
 						&nbsp;
 						<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/> eISSN
@@ -109,10 +114,10 @@
 				<br />
 
 				<div class="row">
-					<div class="col-xs-10 col-xs-offset-1">
-						Weitere Information sollen über die folgenden Schnittstellen hinzugefügt werden ..
-						<br /><br />
-						&nbsp;
+					<div class="col-xs-12">
+						Über die folgenden Schnittstellen sollen weitere Information hinzugefügt werden:
+						<br /><br />	
+						
 						<g:checkBox name="processOption" required="true" checked="true" value="${GbvBridge.IDENTIFIER}"/> GBV
 						&nbsp;
 						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB
@@ -126,7 +131,7 @@
 			
 			<div class="row">
 			
-				<div class="col-xs-10 col-xs-offset-1">
+				<div class="col-xs-12">
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 		    			<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-default"/>
@@ -147,9 +152,7 @@
 						
 						<g:actionSubmit action="downloadPackageFile" value="Package speichern" class="btn btn-success"/>
 		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
-		    			
-		    			<br /><br />
-		    			
+
 		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
 							<g:actionSubmit action="sendPackageFile" value="Package zur GOKb senden" class="btn btn-success"
 		    					data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrPackageUri}" />
