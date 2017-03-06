@@ -89,6 +89,7 @@ class MultipleProcessingThread extends Thread {
 		log.info('Done.')
 		
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+        enrichment.saveStatisticFile()
 	}
     
     void setProgressTotal(int i) {

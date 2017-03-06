@@ -215,24 +215,7 @@ class EnrichmentController {
 
         process()
     }
-    
-    def showStats = {
-        
-        def en   = getEnrichment()
-        def json = null
-        
-        if(en){
-            json = Transformer.getSimpleJSON(en.dataContainer, Enrichment.FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
-        }
 
-        render(view:'statistics', model:[
-            documents:documents,
-            json:json,
-            currentView: 'process'
-            ]
-        )
-    }
-    
     def ajaxGetStatus = {
         
         def en = getEnrichment()

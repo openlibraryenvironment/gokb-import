@@ -7,6 +7,8 @@ import de.hbznrw.ygor.tools.*
 
 class Enrichment {
 
+    def enrichmentService
+    
     static enum FileType {
         ORIGIN, 
         RESULT, 
@@ -113,5 +115,15 @@ class Enrichment {
                 return file
                 break
         }
+    }
+    
+    String saveStatisticFile() {
+        
+        def json = Transformer.getSimpleJSON(dataContainer, Enrichment.FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
+        
+        File file = new File(resultPathName)
+        file.setText(json.toString())
+        
+        json
     }
 }

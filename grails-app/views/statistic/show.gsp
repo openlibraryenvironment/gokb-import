@@ -2,10 +2,6 @@
 
 <div class="row">
 	<div class="col-xs-12">
-		<br />
-		<br />
-	</div>
-	<div class="col-xs-12">
 	
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -42,6 +38,9 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
+				<br />
+				<br />
+				<p class="text-right">Statistik-Hash: ${sthash}</p>
 			</div>
 		</div>
 
@@ -124,7 +123,9 @@
 							$(table).append(row)
 							
 							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
-							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td><td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td>')
+							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+							//$(row).append('<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '"></td>')
 							$(row).attr('data-code', ielem.m)
 							
 							statisticsController.buildDomState(ielem, row)
@@ -160,7 +161,9 @@
 							$(table).append(row)
 							
 							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
-							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td><td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td')
+							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+							//$(row).append('<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '"></td>')
 							$(row).attr('data-code', ielem.m)
 
 							statisticsController.buildDomState(ielem, row)

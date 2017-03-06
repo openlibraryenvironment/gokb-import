@@ -148,7 +148,7 @@
 					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 						
-						<g:link action="showStats" params="[originHash:doc.key]" target="_blank" class="btn btn-warning">Statistik anzeigen</g:link>
+						<g:link controller="statistic" action="show" params="[sthash:doc?.value?.resultHash]" target="_blank" class="btn btn-warning">Statistik anzeigen</g:link>
 						
 						<g:actionSubmit action="downloadPackageFile" value="Package speichern" class="btn btn-success"/>
 		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
