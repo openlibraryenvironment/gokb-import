@@ -12,15 +12,36 @@
 				<h3 class="panel-title">Filter</h3>
 			</div>
 			<div id="statistics-filter" class="panel-body">
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_DATE_IS_INVALID">DATE_IS_INVALID <span class="badge">0</span></button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_DATE_IS_INVALID">DATE_IS_INVALID 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
 				<br /><br />
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC">IDENTIFIER_IS_NOT_ATOMIC <span class="badge">0</span></button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_URL_IS_NOT_ATOMIC">URL_IS_NOT_ATOMIC <span class="badge">0</span></button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC">IDENTIFIER_IS_NOT_ATOMIC 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_URL_IS_NOT_ATOMIC">URL_IS_NOT_ATOMIC 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
 				<br /><br />
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_DATE_IS_MISSING">DATE_IS_MISSING <span class="badge">0</span></button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_IDENTIFIER_IS_MISSING">IDENTIFIER_IS_MISSING <span class="badge">0</span></button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING <span class="badge">0</span></button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_URL_IS_MISSING">URL_IS_MISSING <span class="badge">0</span></button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_DATE_IS_MISSING">DATE_IS_MISSING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_IDENTIFIER_IS_MISSING">IDENTIFIER_IS_MISSING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_URL_IS_MISSING">URL_IS_MISSING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
 			</div>
 		</div>
 
@@ -43,7 +64,9 @@
 			buildDomTitle: function (name, url, count){
 				
 				if(url){
-					return $('<h4 class="domTitle"><strong>' + count + '. <a href="' + url + '" target="_blank">' + name + '</a></strong></h4>')
+					return $('<h4 class="domTitle"><strong>' + count + '. ' + name + ' - '
+								+ '<a href="' + url + '" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>'
+								+ '</strong></h4>')
 				}
 				else{
 					return $('<h4 class="domTitle"><strong>' + count + '. ' + name + '</strong></h4>')
@@ -168,10 +191,12 @@
 				
 				$('#statistics-filter button').each(function(i, e){
 					var filter = '[data-code=' + $(this).attr('data-code') + ']'
-					var counts = $('#statistics div table tr' + filter).size()
+					var countPackage = $('#statistics #tab-package div table tr' + filter).size()
+					var countTitles  = $('#statistics #tab-titles div table tr' + filter).size()
 				
 					$(e).addClass('active').addClass($(e).attr('data-class'))
-					$(e).find('.badge').text(counts)
+					$($(e).find('.badge').get(0)).text(countPackage)
+					$($(e).find('.badge').get(1)).text(countTitles)
 				})
 
 				statisticsController.appendEventHandler()
@@ -190,10 +215,10 @@
 					$('#statistics div table tr' + filter).each(function(i, e){
 						
 						if($('#statistics-filter button' + filter).hasClass('active')){
-							$(e).show().addClass('active')
+							$(e).addClass('active')
 						}
 						else {
-							$(e).hide().removeClass('active')
+							$(e).removeClass('active')
 						}
 					})
 					

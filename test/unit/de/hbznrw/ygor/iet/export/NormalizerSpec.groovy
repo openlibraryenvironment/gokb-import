@@ -1,7 +1,5 @@
 package de.hbznrw.ygor.iet.export
 
-import java.util.ArrayList
-
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
@@ -21,18 +19,24 @@ class NormalizerSpec extends Specification {
     // helper methods
     
     // run before every feature method
-    def setup() {}
+    def setup() {
+        true
+    }
 
     // run after every feature method
-    def cleanup() {}
+    def cleanup() {
+        true
+    }
     
     // run before the first feature method
-    def setupSpec() {}     
+    def setupSpec() {
+        true
+    }     
     
     // run after the last feature method
-    def cleanupSpec() {}   
-    
-    
+    def cleanupSpec() {
+        true
+    }
     
     void "normString(String str)"() { 
          

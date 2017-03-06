@@ -19,198 +19,122 @@ class ValidatorSpec extends Specification {
     // helper methods
     
     // run before every feature method
-    def setup() {}
+    def setup() {
+        true
+    }
 
     // run after every feature method
-    def cleanup() {}
+    def cleanup() {
+        true
+    }
     
     // run before the first feature method
-    def setupSpec() {}     
+    def setupSpec() {
+        true
+    }     
     
     // run after the last feature method
-    def cleanupSpec() {}   
-    
+    def cleanupSpec() {
+        true
+    }   
     
     void "isValidString(String str)"() {
-        given:
-            def test = [
-                "a",
-                "This is a title",
-                "Multiple|Strings",
-                "ab",
-                "",
-                null
-                ]
-            def result = [
-                Status.VALIDATOR_STRING_IS_INVALID,
-                Status.VALIDATOR_STRING_IS_VALID,
-                Status.VALIDATOR_STRING_IS_NOT_ATOMIC,
-                Status.VALIDATOR_STRING_IS_VALID,
-                Status.VALIDATOR_STRING_IS_MISSING,
-                Status.VALIDATOR_STRING_IS_MISSING
-                ]
-            
-        expect:
-            test.eachWithIndex{e, i ->
-                println "${test[i]} -> ${result[i]}"
-            }
-            Validator.isValidString(test[0]) == result[0]
-            Validator.isValidString(test[1]) == result[1]
-            Validator.isValidString(test[2]) == result[2]
-            Validator.isValidString(test[3]) == result[3]
-            Validator.isValidString(test[4]) == result[4]
-            Validator.isValidString(test[5]) == result[5]
+        
+        when:
+            println "${raw} -> ${result}"
+        
+        then:
+            Validator.isValidString(raw) == result
+        
+        where:
+            raw                 | result
+            "a"                 | Status.VALIDATOR_STRING_IS_INVALID
+            "This is a title"   | Status.VALIDATOR_STRING_IS_VALID
+            "Multiple|Strings"  | Status.VALIDATOR_STRING_IS_NOT_ATOMIC
+            "ab"                | Status.VALIDATOR_STRING_IS_VALID
+            ""                  | Status.VALIDATOR_STRING_IS_MISSING
+            null                | Status.VALIDATOR_STRING_IS_MISSING
     }
     
     void "isValidNumber(String str)"() {
-        given:
-            def test = [
-                "124",
-                "124,5",
-                "333.6",
-                "ab",
-                "123|456",
-                "",
-                null
-                ]
-            def result = [
-                Status.VALIDATOR_NUMBER_IS_VALID,
-                Status.VALIDATOR_NUMBER_IS_INVALID,
-                Status.VALIDATOR_NUMBER_IS_INVALID,
-                Status.VALIDATOR_NUMBER_IS_INVALID,
-                Status.VALIDATOR_NUMBER_IS_NOT_ATOMIC,
-                Status.VALIDATOR_NUMBER_IS_MISSING,
-                Status.VALIDATOR_NUMBER_IS_MISSING
-                ]
-            
-        expect:
-            test.eachWithIndex{e, i ->
-                println "${test[i]} -> ${result[i]}"
-            }
-            Validator.isValidNumber(test[0]) == result[0]
-            Validator.isValidNumber(test[1]) == result[1]
-            Validator.isValidNumber(test[2]) == result[2]
-            Validator.isValidNumber(test[3]) == result[3]
-            Validator.isValidNumber(test[4]) == result[4]
-            Validator.isValidNumber(test[5]) == result[5]
-            Validator.isValidNumber(test[6]) == result[6]
+        
+        when:
+            println "${raw} -> ${result}"
+        
+        then:
+            Validator.isValidNumber(raw) == result
+        
+        where:
+            raw                 | result
+            "124"               | Status.VALIDATOR_NUMBER_IS_VALID
+            "124,5"             | Status.VALIDATOR_NUMBER_IS_INVALID
+            "333.6"             | Status.VALIDATOR_NUMBER_IS_INVALID
+            "ab"                | Status.VALIDATOR_NUMBER_IS_INVALID
+            "123|456"           | Status.VALIDATOR_NUMBER_IS_NOT_ATOMIC
+            ""                  | Status.VALIDATOR_NUMBER_IS_MISSING
+            null                | Status.VALIDATOR_NUMBER_IS_MISSING
     }
     
     void "isValidIdentifier(String str, Object identifierType)"() {
-        given:
-            def test = [
-                ["1234-5678",    TitleStruct.EISSN],
-                ["12345-678",    TitleStruct.EISSN],
-                ["12345678",     TitleStruct.EISSN],
-                ["1234-56789",   TitleStruct.EISSN],
-                ["1234-56X",     TitleStruct.PISSN],
-                ["1234-567X",    TitleStruct.PISSN],
-                ["1234-X",       ZdbBridge.IDENTIFIER],
-                ["1234-5X",      ZdbBridge.IDENTIFIER],
-                ["1234678910-X", ZdbBridge.IDENTIFIER],
-                ["23",           EzbBridge.IDENTIFIER],
-                ["1234254",      EzbBridge.IDENTIFIER],
-                ["1234678910-X", "unkown identifier"],
-                ["",             TitleStruct.EISSN],
-                [null,           EzbBridge.IDENTIFIER]
-                ]
-            def result = [
-                Status.VALIDATOR_IDENTIFIER_IS_VALID,
-                Status.VALIDATOR_IDENTIFIER_IS_INVALID,
-                Status.VALIDATOR_IDENTIFIER_IS_INVALID,
-                Status.VALIDATOR_IDENTIFIER_IS_INVALID,
-                Status.VALIDATOR_IDENTIFIER_IS_INVALID,
-                Status.VALIDATOR_IDENTIFIER_IS_VALID,
-                Status.VALIDATOR_IDENTIFIER_IS_VALID,
-                Status.VALIDATOR_IDENTIFIER_IS_INVALID,
-                Status.VALIDATOR_IDENTIFIER_IS_VALID,
-                Status.VALIDATOR_IDENTIFIER_IS_INVALID,
-                Status.VALIDATOR_IDENTIFIER_IS_VALID,
-                Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE,
-                Status.VALIDATOR_IDENTIFIER_IS_MISSING,
-                Status.VALIDATOR_IDENTIFIER_IS_MISSING,
-                ]
-
-        expect:
-            test.eachWithIndex{e, i ->
-                println "${test[i]} -> ${result[i]}"
-            }
-            Validator.isValidIdentifier(test[0][0], test[0][1]) == result[0]
-            Validator.isValidIdentifier(test[1][0], test[1][1]) == result[1]
-            Validator.isValidIdentifier(test[2][0], test[2][1]) == result[2]
-            Validator.isValidIdentifier(test[3][0], test[3][1]) == result[3]
-            Validator.isValidIdentifier(test[4][0], test[4][1]) == result[4]
-            Validator.isValidIdentifier(test[5][0], test[5][1]) == result[5]
-            Validator.isValidIdentifier(test[6][0], test[6][1]) == result[6]
-            Validator.isValidIdentifier(test[7][0], test[7][1]) == result[7]
-            Validator.isValidIdentifier(test[8][0], test[8][1]) == result[8]
-            Validator.isValidIdentifier(test[9][0], test[9][1]) == result[9]
-            Validator.isValidIdentifier(test[10][0], test[10][1]) == result[10]
-            Validator.isValidIdentifier(test[11][0], test[11][1]) == result[11]
-            Validator.isValidIdentifier(test[12][0], test[12][1]) == result[12]
-            Validator.isValidIdentifier(test[13][0], test[13][1]) == result[13]
+        
+        when:
+            println "${raw1}, ${raw2} -> ${result}"
+        
+        then:
+            Validator.isValidIdentifier(raw1, raw2) == result
+        
+        where:
+            raw1            | raw2                  | result
+            "1234-5678"     | TitleStruct.EISSN     | Status.VALIDATOR_IDENTIFIER_IS_VALID
+            "12345-678"     | TitleStruct.EISSN     | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            "12345678"      | TitleStruct.EISSN     | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            "1234-56789"    | TitleStruct.EISSN     | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            "1234-56X"      | TitleStruct.PISSN     | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            "1234-567X"     | TitleStruct.PISSN     | Status.VALIDATOR_IDENTIFIER_IS_VALID
+            "1234-X"        | ZdbBridge.IDENTIFIER  | Status.VALIDATOR_IDENTIFIER_IS_VALID
+            "1234-5X"       | ZdbBridge.IDENTIFIER  | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            "1234678910-X"  | ZdbBridge.IDENTIFIER  | Status.VALIDATOR_IDENTIFIER_IS_VALID
+            "23"            | EzbBridge.IDENTIFIER  | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            "1234254"       | EzbBridge.IDENTIFIER  | Status.VALIDATOR_IDENTIFIER_IS_VALID
+            "1234678910-X"  | "unkown identifier"   | Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
+            ""              | TitleStruct.EISSN     | Status.VALIDATOR_IDENTIFIER_IS_MISSING
+            null            | EzbBridge.IDENTIFIER  | Status.VALIDATOR_IDENTIFIER_IS_MISSING
     }
     
     void "isValidDate(String str)"() {
-        given:
-            def test = [
-                "1999-01-01 00:00:00.000",
-                "1989-12-31 23:59:59.000",
-                "-01-01 00:00:00.000",
-                "-12-31 23:59:59.000",
-                null,
-                ""
-                ]
-            def result = [
-                Status.VALIDATOR_DATE_IS_VALID,
-                Status.VALIDATOR_DATE_IS_VALID,
-                Status.VALIDATOR_DATE_IS_INVALID,
-                Status.VALIDATOR_DATE_IS_INVALID,
-                Status.VALIDATOR_DATE_IS_MISSING,
-                Status.VALIDATOR_DATE_IS_MISSING
-                ]
-            
-        expect:
-            test.eachWithIndex{e, i ->
-                println "${test[i]} -> ${result[i]}"
-            }
-            Validator.isValidDate(test[0]) == result[0]
-            Validator.isValidDate(test[1]) == result[1]
-            Validator.isValidDate(test[2]) == result[2]
-            Validator.isValidDate(test[3]) == result[3]
-            Validator.isValidDate(test[4]) == result[4]
-            Validator.isValidDate(test[5]) == result[5]
+        
+        when:
+            println "${raw} -> ${result}"
+        
+        then:
+            Validator.isValidDate(raw) == result
+        
+        where:
+            raw                         | result
+            "1999-01-01 00:00:00.000"   | Status.VALIDATOR_DATE_IS_VALID
+            "1989-12-31 23:59:59.000"   | Status.VALIDATOR_DATE_IS_VALID
+            "-01-01 00:00:00.000"       | Status.VALIDATOR_DATE_IS_INVALID
+            "-12-31 23:59:59.000"       | Status.VALIDATOR_DATE_IS_INVALID
+            ""                          | Status.VALIDATOR_DATE_IS_MISSING
+            null                        | Status.VALIDATOR_DATE_IS_MISSING
     }
     
     void "isValidURL(String str)"() {
-        given:
-            def test = [
-                "https://google.de/",
-                "http://google.de/?123",
-                "google.de",
-                "http://bib.uni-regensburg.de/ezeit/?2007988|http://www.emeraldinsight.com/loi/bij",
-                null,
-                ""
-                ]
-            def result = [
-                Status.VALIDATOR_URL_IS_VALID,
-                Status.VALIDATOR_URL_IS_VALID,
-                Status.VALIDATOR_URL_IS_INVALID,
-                Status.VALIDATOR_URL_IS_NOT_ATOMIC,
-                Status.VALIDATOR_URL_IS_MISSING,
-                Status.VALIDATOR_URL_IS_MISSING
-                ]
-            
-        expect:
-            test.eachWithIndex{e, i ->
-                println "${test[i]} -> ${result[i]}"
-            }
-            Validator.isValidURL(test[0]) == result[0]
-            Validator.isValidURL(test[1]) == result[1]
-            Validator.isValidURL(test[2]) == result[2]
-            Validator.isValidURL(test[3]) == result[3]
-            Validator.isValidURL(test[4]) == result[4]
-            Validator.isValidURL(test[5]) == result[5]
+        
+        when:
+            println "${raw} -> ${result}"
+        
+        then:
+            Validator.isValidURL(raw) == result
+        
+        where:
+            raw                     | result
+            "https://google.de/"    | Status.VALIDATOR_URL_IS_VALID
+            "http://google.de/?123" | Status.VALIDATOR_URL_IS_VALID
+            "google.de"             | Status.VALIDATOR_URL_IS_INVALID
+            "http://bib.uni-regensburg.de/ezeit/?2007988|http://www.emeraldinsight.com/loi/bij" | Status.VALIDATOR_URL_IS_NOT_ATOMIC
+            ""                      | Status.VALIDATOR_URL_IS_MISSING
+            null                    | Status.VALIDATOR_URL_IS_MISSING
     }
     
     void "isValidCoverage(Pod startDate, Pod endDate, Pod startVolume, Pod endVolume)"() {

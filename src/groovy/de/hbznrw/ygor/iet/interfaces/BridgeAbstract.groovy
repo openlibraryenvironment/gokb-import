@@ -1,7 +1,5 @@
 package de.hbznrw.ygor.iet.interfaces
 
-import java.util.HashMap
-
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.enums.Query
 

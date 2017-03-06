@@ -10,8 +10,10 @@ import spock.lang.Specification
 class EnrichmentSpec extends Specification {
 
     def setup() {
+        true
     }
 
     def cleanup() {
+        true
     }
 }

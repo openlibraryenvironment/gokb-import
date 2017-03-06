@@ -41,3 +41,8 @@ In _production_ environment
 Current normalizer and validator support
 
 	$grails test-app
+
+Results are generated here
+
+	<projectDir>/target/test-reports
+	

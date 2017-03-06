@@ -1,8 +1,6 @@
 package de.hbznrw.ygor.tools
 
 import java.text.SimpleDateFormat
-import java.util.Formatter.DateTime
-import java.util.Calendar
 import groovy.time.TimeCategory
 
 class DateToolkit {
