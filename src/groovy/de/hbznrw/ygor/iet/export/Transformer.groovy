@@ -68,15 +68,15 @@ class Transformer {
         
         if(type.equals(FileType.JSON_PACKAGE_ONLY)){
             
-            json.package.tipps.any{ tipp ->
-                tipp.remove("_meta")
+            json.package.tipps.eachWithIndex{ tipp, i ->
+                json.package.tipps[i].remove("_meta")
             }
             json = json.package
         }
         else if(type.equals(FileType.JSON_TITLES_ONLY)){
             
-            json.titles.any{ title ->
-                title.remove("_meta")
+            json.titles.eachWithIndex{ title, i ->
+                json.titles[i].remove("_meta")
             }
             json = json.titles
         }
