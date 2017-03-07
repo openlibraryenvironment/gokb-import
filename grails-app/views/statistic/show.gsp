@@ -8,21 +8,8 @@
 				<h3 class="panel-title">Filter</h3>
 			</div>
 			<div id="statistics-filter" class="panel-body">
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_DATE_IS_INVALID">DATE_IS_INVALID 
-					<span class="badge">0</span>
-					<span class="badge">0</span>
-				</button>
-				<br /><br />
+				
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC">IDENTIFIER_IS_NOT_ATOMIC 
-					<span class="badge">0</span>
-					<span class="badge">0</span>
-				</button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_URL_IS_NOT_ATOMIC">URL_IS_NOT_ATOMIC 
-					<span class="badge">0</span>
-					<span class="badge">0</span>
-				</button>
-				<br /><br />
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_DATE_IS_MISSING">DATE_IS_MISSING 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
@@ -30,12 +17,31 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				<br/><br />
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING 
+				
+				<br /><br />
+				
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_DATE_IS_INVALID">DATE_IS_INVALID 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_DATE_IS_MISSING">DATE_IS_MISSING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				
+				<br /><br />
+				
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_URL_IS_NOT_ATOMIC">URL_IS_NOT_ATOMIC 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_URL_IS_MISSING">URL_IS_MISSING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				
+				<br /><br />
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
