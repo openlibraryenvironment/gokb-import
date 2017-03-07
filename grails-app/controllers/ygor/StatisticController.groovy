@@ -47,9 +47,9 @@ class StatisticController {
         render(
             view:'show',
             model:[
-                json:json,
-                sthash: sthash,
-                currentView:'statistic'
+                json:        json,
+                sthash:      sthash,
+                currentView: 'statistic'
             ])
     }
 }

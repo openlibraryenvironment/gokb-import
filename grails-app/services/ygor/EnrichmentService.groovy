@@ -4,7 +4,7 @@ import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import groovyx.net.http.HTTPBuilder
 import javax.servlet.http.HttpSession
-import static groovyx.net.http.Method.POST
+import groovyx.net.http.*
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.entity.mime.content.StringBody
@@ -92,19 +92,14 @@ class EnrichmentService {
     private Map exportFileToGOKb(Enrichment enrichment, Object json, String url){
         
         log.info("exportFile: " + enrichment.resultHash + " -> " + url)
-        
+
         def http = new HTTPBuilder(url)
         http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd
         
-        http.request(POST) { req ->
+        http.request(Method.POST, ContentType.JSON) { req ->
             headers.'User-Agent' = 'ygor'
-            req.getParams().setParameter("http.socket.timeout", new Integer(5000))
-            
-            MultipartEntity entity = new MultipartEntity()
-            entity.addPart("file", new FileBody(json))
-            entity.addPart("info", new StringBody("greetings from ygor"))
-            req.setEntity(entity)
-            
+
+            body = json.getText()
             response.success = { resp, html ->
                 log.info("server response: ${resp.statusLine}")
                 log.debug("server:          ${resp.headers.'Server'}")
