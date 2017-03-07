@@ -3,7 +3,7 @@
 
 <div class="row">
 
-	<g:if test="${documents.size() == 0}">
+	<g:if test="${enrichments.size() == 0}">
 	
 		<div class="col-xs-12">
 			<h3>Quelldaten bestimmen</h3>
@@ -15,9 +15,9 @@
 		
 	</g:if>
 
-	<g:if test="${documents.size() == 1}">
+	<g:if test="${enrichments.size() == 1}">
 
-		<g:each in="${documents}" var="doc">
+		<g:each in="${enrichments}" var="doc">
 
 			<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
 				<div class="col-xs-12">

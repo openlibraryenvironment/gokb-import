@@ -1,8 +1,10 @@
 package ygor
 
 import de.hbznrw.ygor.tools.*
-import groovy.json.JsonOutput
 import groovy.util.logging.Log4j
+import ygor.Enrichment.FileType
+import groovy.json.*
+import de.hbznrw.ygor.iet.export.Transformer
 
 @Log4j
 class StatisticController {
@@ -24,14 +26,15 @@ class StatisticController {
         def sthash = (String) request.parameterMap['sthash'][0]
         def json = {}
          
-        log.info('reading statistic file: ' + sthash)
+        log.info('reading file: ' + sthash)
         
         try {
             new File(grailsApplication.config.ygor.uploadLocation).eachDir() { dir ->
                 dir.eachFile() { file ->
                     if(file.getName() == sthash){
-                        json = JsonToolkit.parseFileToJson(file.getAbsolutePath())
-                        json = JsonOutput.toJson(json)   
+                        def raw = JsonToolkit.parseFileToJson(file.getAbsolutePath())
+                        def tmp = Transformer.getSimpleJSON(raw, FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
+                        json = tmp.toString()
                     }
                 }
             }

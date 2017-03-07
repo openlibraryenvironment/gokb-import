@@ -1,8 +1,8 @@
 <meta name="layout" content="enrichment">
 
 <div class="row">
-	<div class="col-xs-12">
-	
+
+	<div class="col-xs-8">	
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Filter</h3>
@@ -30,6 +30,7 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
+				<br/><br />
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
@@ -38,12 +39,31 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				<br />
-				<br />
-				<p class="text-right">Statistik-Hash: ${sthash}</p>
 			</div>
 		</div>
-
+	</div>
+	
+	<div class="col-xs-4">	
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Meta</h3>
+			</div>
+			<div id="statistics-meta" class="panel-body">
+				<p class="text-right">
+					<strong>Erstellung</strong><br />
+					<span class="meta-date"></span>
+					<br />
+					<strong>Ygor-Version</strong><br />
+					<span class="meta-ygor"></span>
+					<br />
+					<strong>Statistik-Hash</strong><br />
+					${sthash}
+				</p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-xs-12">
 		<div id="statistics">
 			<ul class="nav nav-tabs">
 				<li role="presentation" class="active"><a href="#tab-package" data-toggle="tab">Package</a></li>
@@ -180,6 +200,9 @@
 			},
 
 			buildMarkUp: function(json){
+
+				$('#statistics-meta .meta-date').text(json.meta.date)
+				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
 				
 				$(json.package.tipps).sort(function(a,b){return a.title.name > b.title.name}).each( function(i, elem){
 					statisticsController.buildBlockTipp(elem, i+1)

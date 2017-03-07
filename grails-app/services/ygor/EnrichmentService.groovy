@@ -3,13 +3,13 @@ package ygor
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
 import groovyx.net.http.HTTPBuilder
+import javax.servlet.http.HttpSession
 import static groovyx.net.http.Method.POST
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.entity.mime.content.StringBody
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
-
 import de.hbznrw.ygor.tools.*
 
 class EnrichmentService {
@@ -17,12 +17,14 @@ class EnrichmentService {
     def grailsApplication
     PlatformService platformService
     
-    void addFile(CommonsMultipartFile file, Map documents) {
+    void addFile(CommonsMultipartFile file) {
         
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
         en.setStatus(Enrichment.ProcessingState.PREPARE)
-        documents << ["${en.originHash}":en]
         
+        def enrichments = getSessionDocs()
+        enrichments << ["${en.originHash}":en]
+
         file.transferTo(new File(en.originPathName))
     }
 
@@ -31,13 +33,13 @@ class EnrichmentService {
         enrichment.getFile(type)
     }
     
-    void deleteFile(Enrichment enrichment, Map documents) {
+    void deleteFile(Enrichment enrichment) {
 
         if(enrichment) {
             def origin = enrichment.getFile(Enrichment.FileType.ORIGIN)
             if(origin)
                 origin.delete()
-            documents.remove("${enrichment.originHash}")
+            getSessionDocs().remove("${enrichment.originHash}")
         }
     }
 
@@ -119,6 +121,14 @@ class EnrichmentService {
                 return ['error':resp.statusLine]
             }
         }
+    }
+    
+    def getSessionDocs(){
+        HttpSession session = SessionToolkit.getSession()
+        if(!session.enrichments){
+            session.enrichments = [:]
+        }
+        session.enrichments
     }
     
     /**

@@ -20,12 +20,18 @@ class Transformer {
     static final NO_PRETTY_PRINT  = false
 
     static String getSimpleJSON(DataContainer dc, FileType type, boolean prettyPrint) {
+        
+        def jsonSlurper = new JsonSlurper()
+        def json = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
+        
+        Transformer.getSimpleJSON(json, type, prettyPrint)
+    }
+    
+    static String getSimpleJSON(Object json, FileType type, boolean prettyPrint) {
      
         log.info("getSimpleJSON()")
         
         def validator   = Transformer.USE_VALIDATOR
-        def jsonSlurper = new JsonSlurper()
-        def json        = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
         
         if(type.equals(FileType.JSON_DEBUG)){
             validator = Transformer.NO_VALIDATOR

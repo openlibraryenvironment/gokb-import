@@ -8,8 +8,6 @@ class EnrichmentController {
 
     EnrichmentService enrichmentService
     PlatformService   platformService
-    
-    def documents = [:]
 
     def index = { 
         redirect(action:'process')   
@@ -18,14 +16,21 @@ class EnrichmentController {
     def process = {
         render(
             view:'process',
-            model:[documents:documents, platformService:platformService, currentView:'process']
+            model:[
+                enrichments:     enrichmentService.getSessionDocs(), 
+                platformService: platformService, 
+                currentView:    'process'
+                ]
             )
     }
     
     def json = {
         render(
             view:'json',
-            model:[documents:documents, currentView:'json']
+            model:[
+                enrichments: enrichmentService.getSessionDocs(), 
+                currentView: 'json'
+                ]
             )
     }
     
@@ -57,14 +62,15 @@ class EnrichmentController {
             flash.info    = null
             flash.warning = null
             flash.error   = 'Sie müssen eine gültige Datei auswählen.'
-            render(view:'process', model:[
-                documents:documents,
-                currentView: 'process'
+            render(view:'process', 
+                model:[
+                    enrichments: enrichmentService.getSessionDocs(),
+                    currentView: 'process'
                 ]
             )
             return
         }
-        enrichmentService.addFile(file, documents)
+        enrichmentService.addFile(file)
 
         redirect(action:'process')
     }
@@ -112,7 +118,7 @@ class EnrichmentController {
         render(
             view:'process',
             model:[
-                documents:   documents, 
+                enrichments: enrichmentService.getSessionDocs(), 
                 currentView: 'process',
                 pIndex:      pmIndex,
                 pIndexType:  pmIndexType,
@@ -129,10 +135,13 @@ class EnrichmentController {
     
     def deleteFile = {
 
-        enrichmentService.deleteFile(getEnrichment(), documents)    
+        enrichmentService.deleteFile(getEnrichment())    
         render(
             view:'process',
-            model:[documents:documents, currentView:'process']
+            model:[
+                enrichments: enrichmentService.getSessionDocs(), 
+                currentView: 'process'
+                ]
             )
     }
     
@@ -225,7 +234,7 @@ class EnrichmentController {
     Enrichment getEnrichment() {
         
         def hash = (String) request.parameterMap['originHash'][0]
-        documents.get("${hash}")
+        enrichmentService.getSessionDocs().get("${hash}")
     }
     
     void noValidEnrichment() {

@@ -8,7 +8,7 @@
 	import="de.hbznrw.ygor.iet.bridge.*"
 %>
 
-	<g:each in="${documents}" var="doc">
+	<g:each in="${enrichments}" var="doc">
 
 		<g:form controller="enrichment" action="process">
 			<g:hiddenField name="originHash" value="${doc.key}" />

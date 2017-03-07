@@ -117,13 +117,13 @@ class Enrichment {
         }
     }
     
-    String saveStatisticFile() {
+    void saveResult() {
         
-        def json = Transformer.getSimpleJSON(dataContainer, Enrichment.FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
+        // TODO refactoring
+        
+        def json = JsonToolkit.parseDataToJson(dataContainer)
         
         File file = new File(resultPathName)
-        file.setText(json.toString())
-        
-        json
+        file.write(json.toString(), "UTF-8")
     }
 }
