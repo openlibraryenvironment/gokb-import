@@ -90,27 +90,27 @@ class Enrichment {
                 return new File(originPathName)
                 break
             case FileType.JSON:
-                def file = new File(resultPathName)
+                def file = new File(originPathName)
                 file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_PACKAGE_ONLY:
-                def file = new File(resultPathName)
+                def file = new File(originPathName)
                 file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE_ONLY, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_TITLES_ONLY:
-                def file = new File(resultPathName)
+                def file = new File(originPathName)
                 file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES_ONLY, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_DEBUG:
-                def file = new File(resultPathName)
+                def file = new File(originPathName)
                 file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_DEBUG, Transformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_OO_RAW:
-                def file = new File(resultPathName)
+                def file = new File(originPathName)
                 file.write(JsonToolkit.parseDataToJson(dataContainer), "UTF-8")
                 return file
                 break
@@ -120,7 +120,6 @@ class Enrichment {
     void saveResult() {
         
         // TODO refactoring
-        
         def json = JsonToolkit.parseDataToJson(dataContainer)
         
         File file = new File(resultPathName)
