@@ -28,7 +28,7 @@ class Envelope {
     
     Envelope(Status state, ArrayList message) {
         this.state   = state                    // Status.CONST
-        this.message = message                  // String | [] | [Envelope,Envelope, Envelope]
+        this.message = message                  // String | [] | [Envelope,Envelope,Envelope]
         this.type    = Envelope.SIMPLE
     }
     

@@ -86,6 +86,23 @@
 
 		var statisticsController = {
 
+			cache: {
+				'VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC': [],
+				'VALIDATOR_IDENTIFIER_IS_MISSING': [],
+				'VALIDATOR_DATE_IS_INVALID': [],
+				'VALIDATOR_DATE_IS_MISSING': [],
+				'VALIDATOR_URL_IS_NOT_ATOMIC': [],
+				'VALIDATOR_URL_IS_MISSING': [],
+				'VALIDATOR_STRING_IS_MISSING': []
+			},
+
+			initCache: function(){
+
+				for(key in statisticsController.cache){
+					statisticsController.cache[key] = $('#statistics tr[data-code="' + key + '"]')	
+				}
+			},
+					
 			buildDomTitle: function (name, url, count){
 				
 				if(url){
@@ -151,7 +168,7 @@
 							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td>')
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
-							//$(row).append('<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '"></td>')
+							
 							$(row).attr('data-code', ielem.m)
 							
 							statisticsController.buildDomState(ielem, row)
@@ -189,7 +206,7 @@
 							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td')
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
-							//$(row).append('<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '"></td>')
+							
 							$(row).attr('data-code', ielem.m)
 
 							statisticsController.buildDomState(ielem, row)
@@ -218,13 +235,15 @@
 					statisticsController.buildBlockTitle(elem, i+1)
 				})
 
+				statisticsController.initCache()
+				
 				$('#statistics div table').addClass('active')
 				$('#statistics div table tbody tr').addClass('active')
 				
 				$('#statistics-filter button').each(function(i, e){
-					var filter = '[data-code=' + $(this).attr('data-code') + ']'
-					var countPackage = $('#statistics #tab-package div table tr' + filter).size()
-					var countTitles  = $('#statistics #tab-titles div table tr' + filter).size()
+					var filter       = $(this).attr('data-code')
+					var countPackage = $('#statistics #tab-package div table tr[data-code=' + filter + ']').size()
+					var countTitles  = $('#statistics #tab-titles div table tr[data-code=' + filter + ']').size()
 				
 					$(e).addClass('active').addClass($(e).attr('data-class'))
 					$($(e).find('.badge').get(0)).text(countPackage)
@@ -239,14 +258,15 @@
 				$('#statistics-filter button').click(function(){
 					$(this).toggleClass($(this).attr('data-class'))
 					$(this).blur()
-						
-					var filter = '[data-code=' + $(this).attr('data-code') + ']'
-	
-					$('#statistics-filter button' + filter).toggleClass('active')
+
+					var filter = $(this).attr('data-code')
+					$('#statistics-filter button[data-code=' + filter + ']').toggleClass('active')
 					
-					$('#statistics div table tr' + filter).each(function(i, e){
-						
-						if($('#statistics-filter button' + filter).hasClass('active')){
+					var elems = statisticsController.cache[filter]
+					var filterActive = $('#statistics-filter button[data-code=' + filter + ']').hasClass('active')
+
+					elems.each(function(i, e){	
+						if(filterActive){
 							$(e).addClass('active')
 						}
 						else {
@@ -255,7 +275,6 @@
 					})
 					
 					$('#statistics div table tbody tr').each(function(i, e){
-
 						if(0 == $(e).parent('tbody').find('tr.active').size()) {
 							$(e).parent('tbody').parent('table').removeClass('active')
 						}

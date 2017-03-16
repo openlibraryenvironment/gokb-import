@@ -30,7 +30,7 @@ class Mapper {
                 
             ident.type.m    = Status.IGNORE
             
-            ident.value.org = 'YGOR: NOT IMPL.' // TODO: ident.value.org = 'YGOR: NOT IMPL.'
+            ident.value.org = env.message.join("|")
             ident.value.v   = Normalizer.normIdentifier  (env.message, ident.type.v)
             ident.value.m   = Validator.isValidIdentifier(ident.value.v, ident.type.v)
 

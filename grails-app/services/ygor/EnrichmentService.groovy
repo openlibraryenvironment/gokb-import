@@ -5,9 +5,6 @@ import de.hbznrw.ygor.iet.export.structure.*
 import groovyx.net.http.HTTPBuilder
 import javax.servlet.http.HttpSession
 import groovyx.net.http.*
-import org.apache.http.entity.mime.MultipartEntity
-import org.apache.http.entity.mime.content.FileBody
-import org.apache.http.entity.mime.content.StringBody
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
