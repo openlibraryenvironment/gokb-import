@@ -124,6 +124,9 @@ class NormalizerSpec extends Specification {
         where:
             raw                                 | resultStartDate               | resultEndDate
             "2008"                              | "2008-01-01 00:00:00.000"     | "2008-12-31 23:59:59.000"
+            "2010,2"                            | "2010-01-01 00:00:00.000"     | "2010-12-31 23:59:59.000"
+            "4.2010"                            | "2010-01-01 00:00:00.000"     | "2010-12-31 23:59:59.000"
+            "8.2010,6"                          | "2010-01-01 00:00:00.000"     | "2010-12-31 23:59:59.000"
             "2005/06"                           | "2005-01-01 00:00:00.000"     | "2006-12-31 23:59:59.000"
             "2002/2003"                         | "2002-01-01 00:00:00.000"     | "2003-12-31 23:59:59.000"
             "2005-"                             | "2005-01-01 00:00:00.000"     | ""
@@ -138,8 +141,11 @@ class NormalizerSpec extends Specification {
             ""                                  | ""                            | ""
             "1977, 1"                           | "1977-01-01 00:00:00.000"     | "1977-12-31 23:59:59.000"
             "Verlag; 1981 - 1995"               | "1981-01-01 00:00:00.000"     | "1995-12-31 23:59:59.000"
-            "Verlag; 1.1981/82 -"               | "1981-01-01 00:00:00.000"     | "1982-12-31 23:59:59.000"
-            //"Verlag; 1.1971 - 38.2001/02"       | "1971-01-01 00:00:00.000"     | "2002-12-31 23:59:59.000" // TODO !!!
+            "Verlag; 1.1981/82 -"               | "1981-01-01 00:00:00.000"     | ""
+            "Verlag; 4.2010,2 - 10.2016"        | "2010-01-01 00:00:00.000"     | "2016-12-31 23:59:59.000"
+            "Verlag; 4.2010 - 10.2016,2"        | "2010-01-01 00:00:00.000"     | "2016-12-31 23:59:59.000"
+            "Verlag; 4.2011,2 - 10.2017,2"      | "2011-01-01 00:00:00.000"     | "2017-12-31 23:59:59.000"
+            "[2022-2023]"                       | "2022-01-01 00:00:00.000"     | "2023-12-31 23:59:59.000"
     }
     
     void "normDate(ArrayList list, Object dateType)"() {
@@ -171,15 +177,15 @@ class NormalizerSpec extends Specification {
     void "normCoverageVolume(String str, Object dateType)"() {
         
         when:
-            println "${raw}, ${Normalizer.IS_START_DATE} -> ${resultStartDate}"
-            println "${raw}, ${Normalizer.IS_END_DATE} -> ${resultEndDate}"
+            println "${raw}, ${Normalizer.IS_START_DATE} -> ${resultStartVol}"
+            println "${raw}, ${Normalizer.IS_END_DATE} -> ${resultEndVol}"
             
         then:
-            Normalizer.normCoverageVolume(raw, Normalizer.IS_START_DATE) == resultStartDate
-            Normalizer.normCoverageVolume(raw, Normalizer.IS_END_DATE) == resultEndDate
+            Normalizer.normCoverageVolume(raw, Normalizer.IS_START_DATE) == resultStartVol
+            Normalizer.normCoverageVolume(raw, Normalizer.IS_END_DATE) == resultEndVol
         
         where:
-            raw                                     | resultStartDate   | resultEndDate
+            raw                                     | resultStartVol    | resultEndVol
             "18.2005 - 27.2014"                     | "18"              | "27"
             "Verlag; 18.2005 - 27.2014"             | "18"              | "27"
             "22.2022"                               | "22"              | "22"
@@ -296,4 +302,45 @@ class NormalizerSpec extends Specification {
              Normalizer.normTippURL(test[4][0], test[4][1]) == result[4]
            
     }
+    
+    void "parseDate(String str, Object dateType)"() {
+        
+        when:
+            println "${raw}, ${Normalizer.IS_START_DATE} -> ${resultStartDate}"
+            println "${raw}, ${Normalizer.IS_END_DATE} -> ${resultEndDate}"
+        
+
+        then:
+            Normalizer.parseDate(raw, Normalizer.IS_START_DATE) == resultStartDate
+            Normalizer.parseDate(raw, Normalizer.IS_END_DATE) == resultEndDate
+    
+        where:
+            raw                                     | resultStartDate | resultEndDate
+            "05"                                    | "2005"          | "2005"
+            "2022"                                  | "2022"          | "2022"
+            "2010/11"                               | "2010"          | "2011"
+            "10/11"                                 | "2010"          | "2011"
+            "15-16"                                 | "2015"          | "2016"
+            "1997-1998"                             | "1997"          | "1998"
+            "1991/1992"                             | "1991"          | "1992"
+            "1.1981/82"                             | "1981"          | "1982"
+    }
+    
+    void "parseCoverageVolume(String str)"() {
+        
+        when:
+            println "${raw} -> ${result}"
+        
+
+        then:
+            Normalizer.parseCoverageVolume(raw) == result
+    
+        where:
+            raw                                     | result
+            "22.2022"                               | "22"
+            "23. 2022"                              | "23"
+            "1997,1"                                | "1"
+            "1997, 2"                               | "2"
+    }
+    
 }

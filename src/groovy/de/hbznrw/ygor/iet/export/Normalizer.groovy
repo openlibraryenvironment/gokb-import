@@ -116,113 +116,32 @@ class Normalizer {
     static String normDate(String str, Object dateType) {
         
         str = Normalizer.normString(str)
-
+        
         if(str){
-            str = str.replace('Verlag;', '').replace('Verlag', '')
-            str = str.replace('Agentur;', '').replace('Agentur', '')
-                
-            if(str.contains(";")){
-                def tmp = str.split(";")
-                if(tmp.size() == 1){
-                    str = tmp[0]
-                }
-                else if(tmp.size() == 2){
-                    str = tmp[1]
-                }
-                else {
-                    str = tmp.join(' ')
-                }
-            }
-            
-            if(str.contains("/")){
-                def tmp = str.split("/")
-                
-                if(dateType.equals(Normalizer.IS_START_DATE)){
-                    str = tmp[0]
-                    // '1.1971 - 38.2001/02' => '1.1971 - 38.2001' -> '1.1971'
-                    if(str.contains("-")){
-                        def tmp3 = str.split("-")
-                        str = tmp3[0]
-                    }
-                }
-                else if(dateType.equals(Normalizer.IS_END_DATE)){
-
-                    // '1.1971 - 38.2001/02' => [0] '1.1971 - 38.2001' & [1] '02' -> '2002' ??? TODO
-                    
-                    // [1] '88 -' -> '88'
-                    tmp[1] = tmp[1].replace(' -', '').replace('-', '')
-
-                    // [0] 1988 & [1] 89 -> 1989        
-                    if(tmp[1].length()<tmp[0].length() && tmp[1].length() == 2){
-                        
-                        // [0] '1.1988' -> '1988'
-                        if(tmp[0].contains('.')){
-                            def tmp2 = tmp[0].split('\\.')
-                            tmp[0] = tmp2[1]
-                        }
-                        str = tmp[0].take(2) + tmp[1]
-                    }
-                    else {
-                        str = tmp[1]
-                    }
-                }
-                
-                if(1 == StringUtils.countOccurrencesOf(str, ".")){
-                    def tmp2 = str.split("\\.")
-                    str = Normalizer.normString(tmp2[1])
-                }
-            }
-            else if(str.contains("-")){
+            if(str.contains("-")){
                 def tmp = str.split("-")
                 
                 if(dateType.equals(Normalizer.IS_START_DATE)){
-                    str = tmp[0]
+                    if(tmp.size() > 1){
+                        str = tmp[0]
+                    }
                 }
                 else if(dateType.equals(Normalizer.IS_END_DATE)){
-                    if(tmp.length == 2) {
-                        
-                        // [1] '88 -' -> '88'
-                        tmp[1] = tmp[1].replace(' -', '').replace('-', '')
-
-                        // [0] '1988' & [1] '89' -> '1989'
-                        if(tmp[1].length()<tmp[0].length() && tmp[1].length() == 2){
-                            
-                            // [0] '1.1988' -> '1988'
-                            if(tmp[0].contains('.')){
-                                def tmp2 = tmp[0].split('\\.')
-                                tmp[0] = tmp2[1]
-                            }
-                            str = tmp[0].take(2) + tmp[1]
-                        }
-                        else {
-                            str = tmp[1]
-                        }
+                    if(tmp.size() > 1){
+                        str = tmp[1]
                     }
-                    else {
-                        return ''
-                    }
-                }
-                
-                if(1 == StringUtils.countOccurrencesOf(str, ".")){
-                    def tmp2 = str.split("\\.")
-                    str = Normalizer.normString(tmp2[1])
-                }
-            }
-            else if(str.contains(",")){
-                def tmp = str.split(",")
-                str = tmp[0]
+                }  
             }
             
-            if(str != "") {
-                str = str.trim()
-                
-                if(str.size() == 4) {
-                    if(dateType.equals(Normalizer.IS_START_DATE)){
-                        str += "-01-01 00:00:00.000"
-                    }
-                    else if(dateType.equals(Normalizer.IS_END_DATE)){
-                        str += "-12-31 23:59:59.000"
-                    }
+            str = Normalizer.parseDate(str, dateType)
+            str = str.trim()
+            
+            if(str.size() == 4) {
+                if(dateType.equals(Normalizer.IS_START_DATE)){
+                    str += "-01-01 00:00:00.000"
+                }
+                else if(dateType.equals(Normalizer.IS_END_DATE)){
+                    str += "-12-31 23:59:59.000"
                 }
             }
         }
@@ -242,33 +161,27 @@ class Normalizer {
      */  
     static String normCoverageVolume(String str, Object dateType) {
         str = Normalizer.normString(str)
-     
-        if(str && str.contains(";")){
-            def tmp = str.split(";")
-            str = tmp[1]
-        }
-        if(str && str.contains("-")){
-            def tmp = str.split("-")
+
+        if(str){
+            if(str.contains("-")){
+                def tmp = str.split("-")
+                
+                if(dateType.equals(Normalizer.IS_START_DATE)){
+                    str = Normalizer.parseCoverageVolume(tmp[0])
+                }
+                else if(dateType.equals(Normalizer.IS_END_DATE)){
+                    if(tmp.size() > 1){
+                        str = Normalizer.parseCoverageVolume(tmp[1])
+                    }
+                    else {
+                        str = ""
+                    }
+                }
+            }
+            else {
+                str = Normalizer.parseCoverageVolume(str)
+            }
             
-            if(dateType.equals(Normalizer.IS_START_DATE)){
-                str = tmp[0]
-            }
-            else if(dateType.equals(Normalizer.IS_END_DATE)){
-                if(tmp.size() > 1){
-                    str = tmp[1]
-                }
-                else {
-                    str = ""
-                }
-            }
-        }
-        if(str && str.contains(",")){
-            def tmp = str.split(",")
-            str = tmp[1]
-        }
-        if(1 == StringUtils.countOccurrencesOf(str, ".")){
-            def tmp2 = str.split("\\.")
-            str = tmp2[0]
         }
         
         Normalizer.normString(str)
@@ -348,5 +261,182 @@ class Normalizer {
             return str
         
         ""
+    }
+    
+    static String parseDate(String str, Object dateType) {
+        
+        if(!str)
+            return ''
+
+        str = Normalizer.removeText(str)
+        str = str.replaceAll(/\s+/,'').trim()
+        
+        // 22.2010/11 or 22.2011-12 -> [22.2010/11, 2, 0, /, 1]
+        def matches8 = (str =~ /^(\d)+[.](\d){4}(\/|-)(\d){2}$/)
+        if(matches8){
+            str = str.split("[.]")[1]
+            if(dateType.equals(Normalizer.IS_START_DATE)){
+                str = str.split(matches8[0][3])[0]
+            }
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
+                str = str.take(2) + str.split(matches8[0][3])[1]
+            }
+         
+        }
+        // 22.2010/11- -> [22.2010/11-, 2, 0, 1]
+        def matches10 = (str =~ /^(\d)+[.](\d){4}\/(\d){2}-$/)
+        if(matches10){
+            str = str.split("[.]")[1]
+            if(dateType.equals(Normalizer.IS_START_DATE)){
+                str = str.split("/")[0]
+            }
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
+                str = ''
+            }
+        }
+        
+        // 4.2010,2 -> [4.2010,2, 4, 0, 2]
+        def matches1 = (str =~ /^(\d)+[.](\d){4},(\d)+$/)
+        if(matches1){
+            str = str.split("[.]")[1]
+            str = str.split(',')[0]
+            return str
+        }
+        
+        // 4.2010 or 5.2011- -> [4.2010, 4, 0]
+        def matches2 = (str =~ /^(\d)+[.](\d){4}-?$/)
+        if(matches2){
+            if(str.contains("-")){
+                if(dateType.equals(Normalizer.IS_START_DATE)){
+                    str = str.split("-")[0]
+                    str = str.split("[.]")[1]
+                }
+                else {
+                    str = ''
+                }
+            }
+            else {
+                str = str.split("[.]")[1]
+            }
+            return str
+        }
+         
+        // 2010,2 -> [2010,2, 0, 2]
+        def matches3 = (str =~ /^(\d){4},(\d)+$/)
+        if(matches3){
+            str = str.split(',')[0]
+            return str
+        }
+         
+        // 2010-2011 or 2011/2012 -> [2010/2011, 0, -, 1]
+        def matches5 = (str =~ /^(\d){4}(\/|-)(\d){4}$/)
+        if(matches5){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
+                str = str.split(matches5[0][2])[0]
+            }
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
+                str = str.split(matches5[0][2])[1]
+            }
+            return str
+        }
+        
+        // 2010/11 or 2011-12 -> [2010-11, 0, /, 1]
+        def matches4 = (str =~ /^(\d){4}(\/|-)(\d){2}$/)
+        if(matches4){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
+                str = str.split(matches4[0][2])[0]
+            }
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
+                str = str.take(2) + str.split(matches4[0][2])[1]
+            }
+            return str
+        }
+        
+        // 10-11 or 11/12 -> [10-11, 0, -, 1]
+        def matches6 = (str =~ /^(\d){2}(\/|-)(\d){2}$/)
+        if(matches6){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
+                str = '20' + str.split(matches6[0][2])[0]
+            }
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
+                str = '20' + str.split(matches6[0][2])[1]
+            }
+            return str
+        }
+        
+        // 2010- -> [2010-, 0]
+        def matches9 = (str =~ /^(\d){4}-$/)
+        if(matches9){
+            if(dateType.equals(Normalizer.IS_START_DATE)){
+                str = str.split("-")[0]
+            }
+            else {
+                str = ""
+            }
+            return str
+        }
+        
+        // 00 or 17 -> [00, 0]
+        def matches7 = (str =~ /^(\d){2}$/)
+        if(matches7){
+            str = '20' + str
+            return str
+        }
+        
+        if(dateType.equals(Normalizer.IS_START_DATE) && str.startsWith("[")){
+            str = str.replaceFirst("\\[", '')
+        }
+        else if(dateType.equals(Normalizer.IS_END_DATE) && str.endsWith("]")){
+            str = str.take(str.length() - 1)
+        }
+        
+        str
+    }
+    
+    static String parseCoverageVolume(String str) {
+        
+        if(!str)
+            return ''
+        
+        str = Normalizer.removeText(str) 
+        str = str.replaceAll(/\s+/,'').trim()
+        
+        // 4.2010,2 -> [4.2010,2, 4, 0, 2]
+        def matches1 = (str =~ /(\d)+[.](\d){4},(\d)+/)
+        if(matches1){
+            // TODO parseCoverageVolume
+            return str
+        }
+        
+        // 4.2010 -> [4.2010, 4, 0]
+        def matches2 = (str =~ /(\d)+[.](\d){4}/)
+        if(matches2){
+            str = str.split("[.]")[0]
+            return str
+        }
+        
+        // 2010,2 -> [2010,2, 0, 2]
+        def matches3 = (str =~ /(\d){4},(\d)+/)
+        if(matches3){
+            str = str.split(',')[1]
+            return str
+        }
+
+        str
+    }
+    
+    static String removeText(String str){
+        
+        if(!str)
+            return ''
+            
+        str = str.replace('Vol.', '').replace('Vol', '')
+        str = str.replace('Nr.', '').replace('Nr', '')
+        str = str.replace('Verlag;', '').replace('Verlag', '')
+        str = str.replace('Agentur;', '').replace('Agentur', '')
+        str = str.replace('Archivierung;', '').replace('Archivierung', '')
+        str = str.replace('Digitalisierung;', '').replace('Digitalisierung', '')
+        
+        str
     }
 }
