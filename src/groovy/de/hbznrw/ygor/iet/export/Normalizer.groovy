@@ -139,15 +139,22 @@ class Normalizer {
                 str = strList[0]
                 
                 if(strList[1]){
-                    LocalDate date = LocalDate.of(Integer.parseInt(strList[0]), Integer.parseInt(strList[1]), 1)
-                    def tmp1 = String.format('%02d', Integer.parseInt(strList[1]))
-                    def tmp2 = String.format('%02d', date.lengthOfMonth())
-                    
-                    if(dateType.equals(Normalizer.IS_START_DATE)){
-                        str += ("-" + tmp1 + "-01 00:00:00.000")
+                    def y = Integer.parseInt(strList[0])
+                    def m = Integer.parseInt(strList[1])
+                    if(m >= 1 && m <= 12) {
+                        LocalDate date = LocalDate.of(y, m, 1)
+                        def mm = String.format('%02d', m)
+                        def dd = String.format('%02d', date.lengthOfMonth())
+                        
+                        if(dateType.equals(Normalizer.IS_START_DATE)){
+                            str += ("-" + mm + "-01 00:00:00.000")
+                        }
+                        else if(dateType.equals(Normalizer.IS_END_DATE)){
+                            str += ("-" + mm + "-" + dd + " 23:59:59.000")
+                        }
                     }
-                    else if(dateType.equals(Normalizer.IS_END_DATE)){
-                        str += ("-" + tmp1 + "-" + tmp2 + " 23:59:59.000")
+                    else {
+                        str = ''
                     }
                 }
                 else {
