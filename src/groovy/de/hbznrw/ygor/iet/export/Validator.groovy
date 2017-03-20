@@ -10,8 +10,7 @@ import java.sql.Timestamp
 class Validator {
 
     final static IS_START_DATE  = 1000
-    final static IS_END_DATE    = 1001
-    
+    final static IS_END_DATE    = 1001 
     
     /**
      *
@@ -133,41 +132,5 @@ class Validator {
         catch(Exception e) {
             return Status.VALIDATOR_DATE_IS_INVALID
         }
-    }
-    
-    /**
-     * 
-     * @param startDate
-     * @param endDate
-     * @param startVolume
-     * @param endVolume
-     * @return
-     */
-    static isValidCoverage(Pod startDate, Pod endDate, Pod startVolume, Pod endVolume){
-        if((startDate.m == Status.VALIDATOR_DATE_IS_INVALID && endDate.m == Status.VALIDATOR_DATE_IS_INVALID) 
-            && (startVolume.m == Status.VALIDATOR_NUMBER_IS_INVALID && endVolume.m == Status.VALIDATOR_NUMBER_IS_INVALID))
-                return false
-        
-        if((startDate.m == Status.VALIDATOR_DATE_IS_INVALID && endDate.m == Status.VALIDATOR_DATE_IS_INVALID) && (startVolume.v == endVolume.v))
-            return false
-        
-        if((startDate.v == endDate.v) && (startVolume.v == endVolume.v))
-            return false
-        
-        if((startDate.v == endDate.v) && (startDate.m == Status.VALIDATOR_DATE_IS_VALID && endDate.m == Status.VALIDATOR_DATE_IS_VALID))
-            return false
-            
-        true
-    }
-    
-    static isValidHistoryEvent(Pod historyEvent){
-        if(historyEvent.v.date && historyEvent.v.from.size() > 0 && historyEvent.v.to.size() > 0){
- 
-            // TODO implement
-            // TODO implement unit test
-            return Status.VALIDATOR_HISTORYEVENT_IS_VALID
-        }
-        
-        return Status.VALIDATOR_HISTORYEVENT_IS_INVALID
     }
 }

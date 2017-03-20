@@ -131,10 +131,22 @@ class Statistics {
         // titles.publisher_history
         // titles.publisher_history
         
+        List<Integer> publisher_history = [0,0,0]
         List<Integer> phName = [0,[],0,[],0,[]]
         
         json.titles.each{ title ->
-            title.value.v.publisher_history?.each { ph ->               
+            title.value.v.publisher_history?.each { ph ->
+                
+                if(ph.m.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID.toString())){
+                    publisher_history[Statistics.OPTION_1]++
+                }
+                else if(ph.m.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID.toString())){
+                    publisher_history[Statistics.OPTION_2]++
+                }
+                else if(ph.m.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF.toString())){
+                    publisher_history[Statistics.OPTION_3]++
+                }
+                
                 def name = ph.name
 
                 if(name?.m.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
@@ -158,6 +170,10 @@ class Statistics {
             }
         }
 
+        json.meta.stats.titles << ["publisher_history ARE VALID":     publisher_history[Statistics.OPTION_1]]
+        json.meta.stats.titles << ["publisher_history are invalid":   publisher_history[Statistics.OPTION_2]]
+        json.meta.stats.titles << ["publisher_history are undefined": publisher_history[Statistics.OPTION_3]]
+        
         Statistics.format(phName, "names are not valid",  Statistics.OPTION_1, Statistics.OPTION_2, json.meta.stats.titles.publisher_history)
         Statistics.format(phName, "names are not atomic", Statistics.OPTION_3, Statistics.OPTION_4, json.meta.stats.titles.publisher_history)
         Statistics.format(phName, "names are missing",    Statistics.OPTION_5, Statistics.OPTION_6, json.meta.stats.titles.publisher_history)
@@ -209,7 +225,8 @@ class Statistics {
         List<Integer> phDates = [0, 0,[],0,[]]
         
         json.titles.each{ title ->
-            title.value.v.publisher_history.each { ph ->              
+            title.value.v.publisher_history.each { ph -> 
+                                    
                 def sd = ph.startDate
                 def ed = ph.endDate
 
@@ -242,7 +259,7 @@ class Statistics {
                 }
             }
         }     
-                  
+        
         json.meta.stats.titles.publisher_history << ["VALID DATES FOUND": phDates[Statistics.OPTION_1]]
         
         Statistics.format(phDates, "invalid dates", Statistics.OPTION_2, Statistics.OPTION_3, json.meta.stats.titles.publisher_history)
@@ -255,17 +272,22 @@ class Statistics {
         // tipp.coverage.dates
         // tipp.coverage.dates
         
-        List<Integer> coverages = [0,0]
+        List<Integer> coverages = [0,0,0]
         List<Integer> covDates  = [0, 0,[],0,[]]
         
         json.package.tipps.each{ tipp ->
             tipp.value.v.each{ tippField ->
                 if(tippField.key.equals("coverage")) {
                     tippField.value.m.each{ m ->
-                        if(m.equals(Status.VALIDATOR_COVERAGE_IS_VALID.toString()))
+                        if(m.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())){
                             coverages[Statistics.OPTION_1]++
-                        else if(m.equals(Status.VALIDATOR_COVERAGE_IS_INVALID.toString()))
+                        }
+                        else if(m.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID.toString())){
                             coverages[Statistics.OPTION_2]++
+                        }
+                        else if(m.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_UNDEF.toString())){
+                            coverages[Statistics.OPTION_3]++
+                        }
                     }
                     tippField.value.v.each{ covField ->       
                         def sd = covField.startDate
@@ -303,8 +325,9 @@ class Statistics {
             }
         }
         
-        json.meta.stats.tipps << ["coverage ARE VALID":   coverages[Statistics.OPTION_1]]
-        json.meta.stats.tipps << ["coverage are invalid": coverages[Statistics.OPTION_2]]
+        json.meta.stats.tipps << ["coverage ARE VALID":     coverages[Statistics.OPTION_1]]
+        json.meta.stats.tipps << ["coverage are invalid":   coverages[Statistics.OPTION_2]]
+        json.meta.stats.tipps << ["coverage are undefined": coverages[Statistics.OPTION_3]]
         
         json.meta.stats.tipps.coverage << ["VALID DATES FOUND": covDates[Statistics.OPTION_1]]
         
@@ -373,22 +396,26 @@ class Statistics {
         // title.history_events
         // title.history_events
         
-         List<Integer> historyEvents = [0,0]
+        List<Integer> historyEvents = [0,0,0]
         
         json.titles.each{ title ->
             title.value.v.history_events.each { he ->              
         
-                if(he?.m.equals(Status.VALIDATOR_HISTORYEVENT_IS_VALID.toString())){
+                if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())){
                     historyEvents[Statistics.OPTION_1]++
                 }
-                if(he?.m.equals(Status.VALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
+                else if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
                     historyEvents[Statistics.OPTION_2]++
+                }
+                else if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF.toString())){
+                    historyEvents[Statistics.OPTION_3]++
                 }
                 
             }
         }
-        json.meta.stats.titles.history_events << ["history_events ARE VALID":   historyEvents[Statistics.OPTION_1]]
-        json.meta.stats.titles.history_events << ["history_events are invalid": historyEvents[Statistics.OPTION_2]]
+        json.meta.stats.titles.history_events << ["history_events ARE VALID":     historyEvents[Statistics.OPTION_1]]
+        json.meta.stats.titles.history_events << ["history_events are invalid":   historyEvents[Statistics.OPTION_2]]
+        json.meta.stats.titles.history_events << ["history_events are undefined": historyEvents[Statistics.OPTION_3]]
         
         json
     }

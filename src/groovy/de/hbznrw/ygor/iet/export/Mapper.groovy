@@ -67,10 +67,19 @@ class Mapper {
                        dummy = pubHist
                    } else {
                        // store lowest start date for dummy calculation
-                       if(dummyDate == null || (pubHist.startDate.m == Status.VALIDATOR_DATE_IS_VALID && dummyDate > pubHist.startDate.v))
+                       if(dummyDate == null || (pubHist.startDate.m == Status.VALIDATOR_DATE_IS_VALID && dummyDate > pubHist.startDate.v)){
                            dummyDate = pubHist.startDate.v
-                           
-                       title.publisher_history << pubHist // no pod
+                       }
+
+                       def valid = StructValidator.isValidPublisherHistory(pubHist)
+                       def pod = new Pod(pubHist, valid)
+                       
+                       if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){    
+                           title.publisher_history << pod
+                       }
+                       else {
+                           log.debug("! ignore crappy title publisher history")
+                       }
                    }
                 }
             }
@@ -84,7 +93,15 @@ class Mapper {
                     
                     log.info("adding virtual end date to title.publisher_history: ${dummy.endDate.v}")
                     
-                    title.publisher_history << dummy // no pod
+                    def valid = StructValidator.isValidPublisherHistory(dummy)
+                    def pod = new Pod(dummy, valid)
+                    
+                    if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+                        title.publisher_history << pod
+                    }
+                    else {
+                        log.debug("! ignore crappy title publisher history")
+                    }  
                 }
             }
         }
@@ -199,14 +216,14 @@ class Mapper {
                         coverage.endVolume.m   = Validator.isValidNumber      (coverage.endVolume.v)
                     } 
                     
-                    def valid = Validator.isValidCoverage(coverage.startDate, coverage.endDate, coverage.startVolume, coverage.endVolume) ? Status.VALIDATOR_COVERAGE_IS_VALID : Status.VALIDATOR_COVERAGE_IS_INVALID
+                    def valid = StructValidator.isValidCoverage(coverage)
+                    def pod = new Pod(coverage, valid)
                     
-                    if(Status.VALIDATOR_COVERAGE_IS_INVALID == valid && coverage.startDate.v == coverage.endDate.v && coverage.startVolume.v == coverage.endVolume.v) {
-                        // prefilter to reduce crappy results
-                        log.debug("! ignore crappy tipp coverage")
+                    if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+                        tipp.coverage << pod
                     }
                     else {
-                        tipp.coverage << new Pod(coverage, valid)
+                        log.debug("! ignore crappy tipp coverage")
                     }
                 }
             }
@@ -290,15 +307,14 @@ class Mapper {
                 }
             }
            
-            def valid = Validator.isValidHistoryEvent(he)
-            
-            if(Status.VALIDATOR_HISTORYEVENT_IS_INVALID == valid && he.v.date.m == Status.UNDEFINED && he.v.from.size() == 0 && he.v.to.size() == 0) {
-                // prefilter to reduce crappy results
-                log.debug("! ignore crappy title history event")
+            def valid = StructValidator.isValidHistoryEvent(he.v)
+            he.m = valid
+
+            if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+                historyEvents << he
             } 
             else {
-                he.m = valid
-                historyEvents << he
+                log.debug("! ignore crappy title history event")
             }
         }
         
@@ -331,15 +347,15 @@ class Mapper {
         // TODO: store state for statistics
         
         title.publisher_history.each { ph ->
-            log.debug("checking: " + ph.name.v)
+            log.debug("checking: " + ph.v.name.v)
             def prefLabelMatch = false
             
             // find prefLabel
             orgMap.any { prefLabel ->
-                if(ph.name.v.equalsIgnoreCase(prefLabel.key)) {
+                if(ph.v.name.v.equalsIgnoreCase(prefLabel.key)) {
                     log.debug("matched prefLabel: " + prefLabel.key)
-                    ph.name.v = Normalizer.normString(prefLabel.key)
-                    ph.name.m = Validator.isValidString(ph.name.v)
+                    ph.v.name.v = Normalizer.normString(prefLabel.key)
+                    ph.v.name.m = Validator.isValidString(ph.v.name.v)
                     prefLabelMatch = true
                     return true
                 }
@@ -349,14 +365,14 @@ class Mapper {
                 def prefLabels = []
                 orgMap.each { prefLabel, altLabels ->
                     altLabels.each { altLabel ->
-                        if(ph.name.v.equalsIgnoreCase(altLabel)) {
+                        if(ph.v.name.v.equalsIgnoreCase(altLabel)) {
                             log.debug("matched altLabel: " + altLabel + " -> set prefLabel: " + prefLabel)
                             prefLabels << prefLabel
                         }
                     }
                 }
-                ph.name.v = Normalizer.normString(prefLabels)
-                ph.name.m = Validator.isValidString(ph.name.v)
+                ph.v.name.v = Normalizer.normString(prefLabels)
+                ph.v.name.m = Validator.isValidString(ph.v.name.v)
             }
         }
     }

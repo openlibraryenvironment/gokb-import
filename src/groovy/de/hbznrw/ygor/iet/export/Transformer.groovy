@@ -217,7 +217,7 @@ class Transformer {
                 def coverage = [:]
                 
                 // use validator
-                if(!useValidator || (useValidator && cover.m == Status.VALIDATOR_COVERAGE_IS_VALID.toString())){
+                if(!useValidator || (useValidator && cover.m == Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())){
                     cover.v.each{ attr ->
                         if(attr.value.v instanceof java.lang.String) {
                             def value = attr.value.v
@@ -337,7 +337,7 @@ class Transformer {
         json.titles.each{ title ->
             title.publisher_history.eachWithIndex { ph, i ->
                 def publisher_history = [:]
-                ph.each{ attr -> 
+                ph.v.each{ attr -> 
                     def value = attr.value.v
 
                     if(['startDate', 'endDate'].contains(attr.key)){
@@ -455,7 +455,7 @@ class Transformer {
 
                 // only valid entries
                 if(useValidator){
-                    if(he.m == Status.VALIDATOR_HISTORYEVENT_IS_VALID.toString())
+                    if(he.m == Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())
                         historyEvents << he.v
                 }
                 else {

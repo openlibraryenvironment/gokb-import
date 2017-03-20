@@ -21,7 +21,9 @@ public enum Status {
 	STATUS_ERROR       ("STATUS_ERROR"),
 	STATUS_NO_RESPONSE ("STATUS_NO_RESPONSE"),   
 	
-   // api responses
+	
+    // api responses
+	//
     
     RESULT_OK               ("RESULT_OK"),
     RESULT_NO_MATCH         ("RESULT_NO_MATCH"),
@@ -29,6 +31,7 @@ public enum Status {
 	
     
     // use for the non processed
+    //
     
 	// default value
 	UNDEFINED          ("UNDEFINED"),
@@ -37,14 +40,16 @@ public enum Status {
 	// constants, tmp vars, etc
 	IGNORE             ("IGNORE"),
 	
-	// after validator check
+	
+	// Validator
+	//
 	
 	// use for valid date values
-	VALIDATOR_DATE_IS_VALID    ("VALIDATOR_DATE_IS_VALID"),
+	VALIDATOR_DATE_IS_VALID        ("VALIDATOR_DATE_IS_VALID"),
 	// use for non conform date values
-	VALIDATOR_DATE_IS_INVALID  ("VALIDATOR_DATE_IS_INVALID"),
+	VALIDATOR_DATE_IS_INVALID      ("VALIDATOR_DATE_IS_INVALID"),
 	// no value given
-	VALIDATOR_DATE_IS_MISSING  ("VALIDATOR_DATE_IS_MISSING"),
+	VALIDATOR_DATE_IS_MISSING      ("VALIDATOR_DATE_IS_MISSING"),
 	
 	// given identifier seems to be valid
 	VALIDATOR_IDENTIFIER_IS_VALID          ("VALIDATOR_IDENTIFIER_IS_VALID"),
@@ -67,13 +72,13 @@ public enum Status {
     VALIDATOR_STRING_IS_MISSING     ("VALIDATOR_STRING_IS_MISSING"),    
     
     // given url seems to be valid
-    VALIDATOR_URL_IS_VALID      ("VALIDATOR_URL_IS_VALID"),
+    VALIDATOR_URL_IS_VALID          ("VALIDATOR_URL_IS_VALID"),
     // given url is invalid
-    VALIDATOR_URL_IS_INVALID    ("VALIDATOR_URL_IS_INVALID"),
+    VALIDATOR_URL_IS_INVALID        ("VALIDATOR_URL_IS_INVALID"),
     // given url seems to contain multiple matches
-    VALIDATOR_URL_IS_NOT_ATOMIC ("VALIDATOR_URL_IS_NOT_ATOMIC"),
+    VALIDATOR_URL_IS_NOT_ATOMIC     ("VALIDATOR_URL_IS_NOT_ATOMIC"),
     // no given url
-    VALIDATOR_URL_IS_MISSING    ("VALIDATOR_URL_IS_MISSING"),
+    VALIDATOR_URL_IS_MISSING        ("VALIDATOR_URL_IS_MISSING"),
     
     // given number seems to be valid
     VALIDATOR_NUMBER_IS_VALID       ("VALIDATOR_NUMBER_IS_VALID"),
@@ -85,16 +90,32 @@ public enum Status {
     VALIDATOR_NUMBER_IS_MISSING     ("VALIDATOR_NUMBER_IS_MISSING"),
     
     
+    // StructValidator
+    //
+    
+    // parsing crap
+    STRUCTVALIDATOR_REMOVE_FLAG                 ("STRUCTVALIDATOR_REMOVE_FLAG"),
+    
     // given coverage seems to be valid
-    VALIDATOR_COVERAGE_IS_VALID    ("VALIDATOR_COVERAGE_IS_VALID"),
+    STRUCTVALIDATOR_COVERAGE_IS_VALID           ("STRUCTVALIDATOR_COVERAGE_IS_VALID"),
     // given coverage is invalid
-    VALIDATOR_COVERAGE_IS_INVALID  ("VALIDATOR_COVERAGE_IS_INVALID"),
+    STRUCTVALIDATOR_COVERAGE_IS_INVALID         ("STRUCTVALIDATOR_COVERAGE_IS_INVALID"),
+    // default case
+    STRUCTVALIDATOR_COVERAGE_IS_UNDEF           ("STRUCTVALIDATOR_COVERAGE_IS_UNDEF"),
     
     // given history event seems to be valid
-    VALIDATOR_HISTORYEVENT_IS_VALID    ("VALIDATOR_HISTORYEVENT_IS_VALID"),
+    STRUCTVALIDATOR_HISTORYEVENT_IS_VALID       ("STRUCTVALIDATOR_HISTORYEVENT_IS_VALID"),
     // given history event is invalid
-    VALIDATOR_HISTORYEVENT_IS_INVALID  ("VALIDATOR_HISTORYEVENT_IS_INVALID")
+    STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID     ("STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID"),
+    // default case
+    STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF       ("STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF"),
     
+    // given publisher history seems to be valid
+    STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID     ("STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID"),
+    // given publisher history is invalid
+    STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID   ("STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID"),
+    // default case
+    STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF     ("STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF")
 	;
 
 	private String value;
