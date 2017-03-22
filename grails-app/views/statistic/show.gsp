@@ -56,6 +56,9 @@
 			</div>
 			<div id="statistics-meta" class="panel-body">
 				<p class="text-right">
+					<strong>Dateiname</strong><br />
+					<span class="meta-file"></span>
+					<br />
 					<strong>Erstellung</strong><br />
 					<span class="meta-date"></span>
 					<br />
@@ -169,6 +172,10 @@
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td>')
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
 							
+							//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
+							//tb +=    '<button>-</button><button>+</button></td>'
+							//$(row).append(tb)
+							
 							$(row).attr('data-code', ielem.m)
 							
 							statisticsController.buildDomState(ielem, row)
@@ -207,6 +214,10 @@
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td')
 							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
 							
+							//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
+							//tb +=    '<button>+</button><button>-</button></td>'
+							//$(row).append(tb)
+								
 							$(row).attr('data-code', ielem.m)
 
 							statisticsController.buildDomState(ielem, row)
@@ -224,6 +235,7 @@
 
 			buildMarkUp: function(json){
 
+				$('#statistics-meta .meta-file').text(json.meta.file)
 				$('#statistics-meta .meta-date').text(json.meta.date)
 				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
 				

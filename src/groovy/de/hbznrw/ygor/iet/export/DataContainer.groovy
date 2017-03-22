@@ -12,6 +12,7 @@ class DataContainer {
     DataContainer() {
 
         info = new Meta(
+            file:   "TODO",
             type:   "TODO",
             ygor:   "TODO",
             date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),

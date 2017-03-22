@@ -57,6 +57,7 @@ class Enrichment {
 		resultHash 	   = FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName = sessionFolder.getPath() + File.separator + resultHash
 		
+        dataContainer.info.file = originName
         dataContainer.info.ygor = options.get('ygorVersion')
         dataContainer.info.type = options.get('ygorType')
         
