@@ -6,6 +6,8 @@ import de.hbznrw.ygor.iet.bridge.*
 
 import java.sql.Timestamp
 
+// checks if given value meets the requirements
+
 class Validator {
 
     final static IS_START_DATE  = 1000

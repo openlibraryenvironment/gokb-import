@@ -91,7 +91,7 @@ class CsvProcessor extends ProcessorAbstract {
     Title processEntry(DataContainer dc, String uid, String queryKey, Object record) {
         
         def saveTitle = false
-        def title     = Mapper.getExistingTitleByPrimaryIdentifier(dc, uid)
+        def title     = DataMapper.getExistingTitleByPrimaryIdentifier(dc, uid)
         if(title) {
             log.debug("> modifying existing Title: " + uid)
         }
@@ -101,7 +101,7 @@ class CsvProcessor extends ProcessorAbstract {
         }
         
         def saveTipp = false
-        def tipp     = Mapper.getExistingTippByPrimaryIdentifier(dc, uid)
+        def tipp     = DataMapper.getExistingTippByPrimaryIdentifier(dc, uid)
         if(tipp) {
             log.debug("> modifying existing Tipp: " + uid)
         }
@@ -124,10 +124,10 @@ class CsvProcessor extends ProcessorAbstract {
             
             if(env.type == Envelope.SIMPLE){
                 
-                if(Status.RESULT_OK == env.state){
+                if(Status.API_RESULT_OK == env.state){
                     msg = env.message[0]
                 }
-                else if(Status.RESULT_MULTIPLE_MATCHES == env.state){
+                else if(Status.API_RESULT_MULTIPLE_MATCHES == env.state){
                     msg = env.message.join(", ")
                 }
 
@@ -138,10 +138,10 @@ class CsvProcessor extends ProcessorAbstract {
                 
                 // used for Publisher
                 env.states.eachWithIndex { ste, i ->
-                    if(Status.RESULT_OK == ste) {
+                    if(Status.API_RESULT_OK == ste) {
                         msg = env.messages[i]
                     }
-                    else if(Status.RESULT_MULTIPLE_MATCHES == ste) {
+                    else if(Status.API_RESULT_MULTIPLE_MATCHES == ste) {
                         if(env.messages[i]){
                             msg = env.messages[i].join("|")
                         }
@@ -154,8 +154,8 @@ class CsvProcessor extends ProcessorAbstract {
                 }
             }
             
-            Mapper.mapToTitle(title, q, env)
-            Mapper.mapToTipp (tipp, q, env, dc)
+            DataMapper.mapEnvelopeToTitle(title, q, env)
+            DataMapper.mapEnvelopeToTipp (tipp, q, env, dc)
         }
         
         if(saveTitle){

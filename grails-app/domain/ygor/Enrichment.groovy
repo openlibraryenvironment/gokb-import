@@ -2,7 +2,7 @@ package ygor
 
 import de.hbznrw.ygor.iet.MultipleProcessingThread
 import de.hbznrw.ygor.iet.export.DataContainer
-import de.hbznrw.ygor.iet.export.Transformer
+import de.hbznrw.ygor.iet.export.JsonTransformer
 import de.hbznrw.ygor.tools.*
 
 class Enrichment {
@@ -92,22 +92,22 @@ class Enrichment {
                 break
             case FileType.JSON:
                 def file = new File(originPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON, Transformer.USE_PRETTY_PRINT), "UTF-8")
+                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_PACKAGE_ONLY:
                 def file = new File(originPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE_ONLY, Transformer.USE_PRETTY_PRINT), "UTF-8")
+                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE_ONLY, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_TITLES_ONLY:
                 def file = new File(originPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES_ONLY, Transformer.USE_PRETTY_PRINT), "UTF-8")
+                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES_ONLY, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_DEBUG:
                 def file = new File(originPathName)
-                file.write(Transformer.getSimpleJSON(dataContainer, FileType.JSON_DEBUG, Transformer.USE_PRETTY_PRINT), "UTF-8")
+                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON_DEBUG, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
                 return file
                 break
             case FileType.JSON_OO_RAW:

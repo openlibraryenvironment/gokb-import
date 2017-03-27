@@ -68,7 +68,10 @@ class NormalizerSpec extends Specification {
             [null, null, null]                      | "null|null|null"
             [null, "value1", "value2"]              | "null|value1|value2"
             ["a", "b", "c", "d"]                    | "a|b|c|d"
+            ["x"]                                   | "x"
             []                                      | ""
+            null                                    | null
+            ""                                      | ""
     }
        
     void "normIdentifier(String str, Object type)"() {
@@ -102,7 +105,7 @@ class NormalizerSpec extends Specification {
             def list2 = [null,"1234-88XX","999966"]
             def result1 = "1234-5678|1234-88XX|999966"
             def result2 = "null|1234-88XX|999966"
-        
+
         expect:
             println "${list1} -> ${result1}"
             println "${list2} -> ${result2}"
@@ -195,6 +198,8 @@ class NormalizerSpec extends Specification {
             "Verlag; 1.1981/82 -"                   | "1"               | ""
             "Verlag; 1.1971 - 38.2001/02"           | "1"               | "38"
             "1997, 1"                               | ""                | ""
+            null                                    | null              | null
+            
     }
     
     void "normURL(String str) "() {
@@ -205,14 +210,18 @@ class NormalizerSpec extends Specification {
                 "http://yahoo.de?q=laser",
                 "https://google.de/this/and/that",
                 "http://laser.hbz-nrw.de:8080/and/some/more",
-                "golem.de"
+                "golem.de",
+                "",
+                null
                 ]
             def result = [
                 "google.de",
                 "yahoo.de",
                 "google.de",
                 "laser.hbz-nrw.de:8080",
-                "golem.de"
+                "golem.de",
+                "",
+                null
                 ]
             
         expect:
@@ -224,6 +233,8 @@ class NormalizerSpec extends Specification {
             Normalizer.normURL(test[2]) == result[2]
             Normalizer.normURL(test[3]) == result[3]
             Normalizer.normURL(test[4]) == result[4]
+            Normalizer.normURL(test[5]) == result[5]
+            Normalizer.normURL(test[6]) == result[6]
     }
     
     void "normURL(ArrayList list)"() {

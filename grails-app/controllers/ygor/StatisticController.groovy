@@ -4,7 +4,7 @@ import de.hbznrw.ygor.tools.*
 import groovy.util.logging.Log4j
 import ygor.Enrichment.FileType
 import groovy.json.*
-import de.hbznrw.ygor.iet.export.Transformer
+import de.hbznrw.ygor.iet.export.JsonTransformer
 
 @Log4j
 class StatisticController {
@@ -33,7 +33,7 @@ class StatisticController {
                 dir.eachFile() { file ->
                     if(file.getName() == sthash){
                         def raw = JsonToolkit.parseFileToJson(file.getAbsolutePath())
-                        def tmp = Transformer.getSimpleJSON(raw, FileType.JSON_DEBUG, Transformer.NO_PRETTY_PRINT)
+                        def tmp = JsonTransformer.getSimpleJSON(raw, FileType.JSON_DEBUG, JsonTransformer.NO_PRETTY_PRINT)
                         json = tmp.toString()
                     }
                 }

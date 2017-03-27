@@ -8,26 +8,18 @@ import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
 
+// Trying to normalize values, but may return crap
+
 @Log4j
 class Normalizer {
 
     final static IS_START_DATE  = "IS_START_DATE"
     final static IS_END_DATE    = "IS_END_DATE"
     
-    
-    
     /**
-     * Contatenates list elements with "|" as delimiter
-     * 
-     * @param list
-     * @return  
-     */
-    static String normString(ArrayList list) {
-        list ? Normalizer.normString(list.join("|")) : ""
-    }
-    
-    /**
-     * Removes double spaces. Removes leading and ending spaces
+     * Removes double spaces. Removes leading and ending spaces.
+     * Returns null if null given.
+     * Returns "" if empty string given
      * 
      * @param str
      * @return
@@ -40,26 +32,27 @@ class Normalizer {
     }
     
     /**
-     * Concatenates list elements with "|" as delimiter
+     * Contatenates list elements with "|" as delimiter.
+     * Returns null if null given. 
+     * Returns "" if empty list given
      *
-     * @param type
      * @param list
      * @return
      */
-    static String normIdentifier(ArrayList list, Object type) {
+    static String normString(ArrayList list) {
+        if(null == list)
+            return null
+        
         def result = []
         list.each{ e ->
-            result << Normalizer.normIdentifier(e.toString(), type)
+            result << Normalizer.normString(e.toString())
         }
-        result ? result.join("|") : ""
+        result.join("|")
     }
     
     /**
-     * eissn/pissn: "12345678"  -> "1234-5678"
-     * eissn/pissn: "1234567"   -> "1234567"
-     * eissn/pissn: "123456789" -> "123456789"
-     * zdb:         "12345"     -> "1234-5"
-     * zdb:         "12345678"  -> "1234567-8"
+     * Returns null if null given.
+     * Returns "" if empty string given.  
      * 
      * @param type
      * @param str
@@ -68,7 +61,7 @@ class Normalizer {
     static String normIdentifier(String str, Object type) {
         if(!str)
             return str
-        
+            
         str = Normalizer.normString(str)
         str = str.replaceAll(/[\/-]+/,"")
         
@@ -85,93 +78,112 @@ class Normalizer {
 
         str
     }
-
-    /**
-     * 
-     * @param list
-     * @param dateType DataMapper.IS_START_DATE|DataMapper.IS_END_DATE
-     * @return
-     */
-    static String normDate(ArrayList list, Object dateType) {
-        def result = []
-        list.each{ e ->
-            result << Normalizer.normDate(e, dateType)
-        }
-        result ? result.join("|") : ""
-    }
     
     /**
-     * - "2008"
-     * - "2005/06"
-     * - "2002/2003"
-     * - "2005-"
-     * - "2005-06"
-     * - "2002-2003"
-     * - "20.2008 - 30.2010"
+     * Concatenates list elements with "|" as delimiter.
+     * Returns null if null given.
+     * Returns "" if empty list given
+     *
+     * @param type
+     * @param list
+     * @return
+     */
+    static String normIdentifier(ArrayList list, Object type) {
+        if(null == list)
+            return null
+            
+        def result = []
+        list.each{ e ->
+            result << Normalizer.normIdentifier(e.toString(), type)
+        }
+        result.join("|")
+    }
+        
+    /**
+     * Returns null if null given
      * 
      * @param str
      * @param dateType DataMapper.IS_START_DATE|DataMapper.IS_END_DATE
      * @return "YYYY-01-01 00:00:00.000"|"YYYY-12-31 00:00:00.000"
      */
     static String normDate(String str, Object dateType) {
-        
+        if(!str)
+            return str
+            
         str = Normalizer.normString(str)
         
-        if(str){
-            if(str.contains("-")){
-                def tmp = str.split("-")
-                
-                if(dateType.equals(Normalizer.IS_START_DATE)){
-                    if(tmp.size() > 1){
-                        str = tmp[0]
-                    }
+        if(str.contains("-")){
+            def tmp = str.split("-")
+            
+            if(dateType.equals(Normalizer.IS_START_DATE)){
+                if(tmp.size() > 1){
+                    str = tmp[0]
                 }
-                else if(dateType.equals(Normalizer.IS_END_DATE)){
-                    if(tmp.size() > 1){
-                        str = tmp[1]
-                    }
-                }  
             }
+            else if(dateType.equals(Normalizer.IS_END_DATE)){
+                if(tmp.size() > 1){
+                    str = tmp[1]
+                }
+            }  
+        }
+        
+        def strList = Normalizer.parseDate(str, dateType)
+        
+        if(4 == strList[0].size()) {
+            str = strList[0]
             
-            def strList = Normalizer.parseDate(str, dateType)
-            
-            if(4 == strList[0].size()) {
-                str = strList[0]
-                
-                if(strList[1]){
-                    def y = Integer.parseInt(strList[0])
-                    def m = Integer.parseInt(strList[1])
-                    if(m >= 1 && m <= 12) {
-                        LocalDate date = LocalDate.of(y, m, 1)
-                        def mm = String.format('%02d', m)
-                        def dd = String.format('%02d', date.lengthOfMonth())
-                        
-                        if(dateType.equals(Normalizer.IS_START_DATE)){
-                            str += ("-" + mm + "-01 00:00:00.000")
-                        }
-                        else if(dateType.equals(Normalizer.IS_END_DATE)){
-                            str += ("-" + mm + "-" + dd + " 23:59:59.000")
-                        }
+            if(strList[1]){
+                def y = Integer.parseInt(strList[0])
+                def m = Integer.parseInt(strList[1])
+                if(m >= 1 && m <= 12) {
+                    LocalDate date = LocalDate.of(y, m, 1)
+                    def mm = String.format('%02d', m)
+                    def dd = String.format('%02d', date.lengthOfMonth())
+                    
+                    if(dateType.equals(Normalizer.IS_START_DATE)){
+                        str += ("-" + mm + "-01 00:00:00.000")
                     }
-                    else {
-                        str = ''
+                    else if(dateType.equals(Normalizer.IS_END_DATE)){
+                        str += ("-" + mm + "-" + dd + " 23:59:59.000")
                     }
                 }
                 else {
-                    if(dateType.equals(Normalizer.IS_START_DATE)){
-                        str += "-01-01 00:00:00.000"
-                    }
-                    else if(dateType.equals(Normalizer.IS_END_DATE)){
-                        str += "-12-31 23:59:59.000"
-                    }
+                    str = ''
                 }
             }
             else {
-                str = ''
+                if(dateType.equals(Normalizer.IS_START_DATE)){
+                    str += "-01-01 00:00:00.000"
+                }
+                else if(dateType.equals(Normalizer.IS_END_DATE)){
+                    str += "-12-31 23:59:59.000"
+                }
             }
+        }
+        else {
+            str = ''
         }
         
         str
+    }
+    
+    /**
+     * Returns null if null given.
+     * Returns "" if empty list given
+     * 
+     * @param list
+     * @param dateType DataMapper.IS_START_DATE|DataMapper.IS_END_DATE
+     * @return
+     */
+    static String normDate(ArrayList list, Object dateType) {
+        if(null == list)
+            return null
+            
+        def result = []
+        list.each{ e ->
+            result << Normalizer.normDate(e, dateType)
+        }
+        result.join("|")
     }
     
     /**
@@ -211,21 +223,7 @@ class Normalizer {
         
         Normalizer.normString(str)
     }
-    
-    /**
-     * Concatenates list elements with "|" as delimiter
-     *
-     * @param list
-     * @return
-     */
-    static String normURL(ArrayList list) {
-        def result = []
-        list.each{ e ->
-            result << Normalizer.normURL(e)
-        }
-        result ? result.join("|") : ""
-    }
-    
+        
     /**
      * Returns an url authority
      * 
@@ -233,50 +231,42 @@ class Normalizer {
      * @return
      */
     static String normURL(String str) {    
-        //str = Normalizer.normString(str)
+        if(!str)
+            return str
         
-        try {
-            if(str && str.indexOf('http://') == -1 && str.indexOf('https://') == -1){
-                str = 'http://' + str
-            }
-            
-            def url = new URL(str)
-            if(url) {
-                str = url.getAuthority()
-            }
-        } catch(Exception e) {
-            log.error(e.getMessage())
-            log.error(e.getStackTrace())
-        }
-        
-        str
+        Normalizer.getURLAuthority(str)
     }
     
     /**
      * Concatenates list elements with "|" as delimiter.
-     * Eliminates null and empty values
-     *
+     * Returns null if null given.
+     * Returns "" if empty list given
+     * 
      * @param list
-     * @param nominalPlatform
      * @return
      */
-    static String normTippURL(ArrayList list, String nominalPlatform) {
+    static String normURL(ArrayList list) {
+        if(null == list)
+            return null
+            
         def result = []
         list.each{ e ->
-            result << Normalizer.normTippURL(e, nominalPlatform)
+            result << Normalizer.normURL(e)
         }
-        result ? result.minus(null).minus("").join("|") : ""
+        result.join("|")
     }
-    
+
     /**
      * Returns given url if it matches to nominal platform url
-     * 
+     *
      * @param str
      * @param nominalPlatform
      * @return
      */
     static String normTippURL(String str, String nominalPlatform) {
-        
+        if(!str)
+            return str
+            
         def npTmp  = Normalizer.normURL(nominalPlatform)
         if(!npTmp)
             return str
@@ -288,8 +278,30 @@ class Normalizer {
         ""
     }
     
-    static List parseDate(String str, Object dateType) {
-        
+    /**
+     * Concatenates list elements with "|" as delimiter.
+     * Eliminates null and empty values.
+     * Returns null if null given.
+     * Returns "" if empty list given
+     *
+     * @param list
+     * @param nominalPlatform
+     * @return
+     */
+    static String normTippURL(ArrayList list, String nominalPlatform) {
+        if(null == list)
+            return null
+            
+        def result = []
+        list.each{ e ->
+            result << Normalizer.normTippURL(e, nominalPlatform)
+        }
+        result.minus(null).minus("").join("|")
+    }
+    
+
+    
+    static List parseDate(String str, Object dateType) {       
         if(!str)
             return ['', null]
 
@@ -425,10 +437,9 @@ class Normalizer {
         return ['', null]
     }
     
-    static String parseCoverageVolume(String str) {
-        
+    static String parseCoverageVolume(String str) {       
         if(!str)
-            return ''
+            return str
         
         str = Normalizer.removeText(str) 
         str = str.replaceAll(/\s+/,'').trim()
@@ -452,10 +463,9 @@ class Normalizer {
         str
     }
     
-    static String removeText(String str){
-        
+    static String removeText(String str){       
         if(!str)
-            return ''
+            return str
             
         str = str.replace('Vol.', '').replace('Vol', '')
         str = str.replace('Nr.', '').replace('Nr', '')
@@ -464,6 +474,27 @@ class Normalizer {
         str = str.replace('Archivierung;', '').replace('Archivierung', '')
         str = str.replace('Digitalisierung;', '').replace('Digitalisierung', '')
         
+        str
+    }
+    
+    static getURLAuthority(String str){  
+        if(!str)
+            return str
+            
+        try {
+            def tmp = str
+            if(tmp && tmp.indexOf('http://') == -1 && tmp.indexOf('https://') == -1){
+                tmp = 'http://' + tmp
+            }
+            
+            def url = new URL(tmp)
+            if(url) {
+                return url.getAuthority()
+            }
+        } catch(Exception e) {
+            log.error(e.getMessage())
+            log.error(e.getStackTrace())
+        }       
         str
     }
 }

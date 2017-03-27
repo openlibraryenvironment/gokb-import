@@ -97,14 +97,14 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         log.info("finish()")
         
         def stash  = processor.getStash()
-        def orgMap = Mapper.getOrganisationMap()
+        def orgMap = DataMapper.getOrganisationMap()
         
         master.enrichment.dataContainer.titles.each { key, value ->
-            Mapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
-            Mapper.mapOrganisations(orgMap, value.v)
+            DataMapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
+            DataMapper.mapOrganisations(orgMap, value.v)
         }
         master.enrichment.dataContainer.pkg.tipps.each { key, value ->
-            Mapper.mapPlatform(value.v)
+            DataMapper.mapPlatform(value.v)
         }
     }
 }

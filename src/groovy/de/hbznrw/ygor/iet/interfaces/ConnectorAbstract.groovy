@@ -54,14 +54,14 @@ abstract class ConnectorAbstract implements ConnectorInterface {
     }
     
     Envelope getEnvelopeWithMessage(ArrayList message) {
-        def state = Status.RESULT_OK
+        def state = Status.API_RESULT_OK
         
         switch(message.size()) {
             case 0:
-                state = Status.RESULT_NO_MATCH
+                state = Status.API_RESULT_NO_MATCH
             break;
             case {it > 1}:
-                state = Status.RESULT_MULTIPLE_MATCHES
+                state = Status.API_RESULT_MULTIPLE_MATCHES
             break;
         }
         new Envelope(state, message)
@@ -79,13 +79,13 @@ abstract class ConnectorAbstract implements ConnectorInterface {
             def tmp = item.value.minus(null) // TODO CHECK, or use e.g. Status.EMPTY_SLOT
             switch(tmp.size()) {
                 case 0:
-                    states << item.key + '_' + Status.RESULT_NO_MATCH
+                    states << item.key + '_' + Status.API_RESULT_NO_MATCH
                 break;
                 case 1:
-                    states << item.key + '_' + Status.RESULT_OK
+                    states << item.key + '_' + Status.API_RESULT_OK
                     break;
                 case {it > 1}:
-                    states << item.key + '_' + Status.RESULT_MULTIPLE_MATCHES
+                    states << item.key + '_' + Status.API_RESULT_MULTIPLE_MATCHES
                 break;
             }
         }

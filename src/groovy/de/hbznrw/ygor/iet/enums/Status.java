@@ -25,9 +25,9 @@ public enum Status {
     // api responses
 	//
     
-    RESULT_OK               ("RESULT_OK"),
-    RESULT_NO_MATCH         ("RESULT_NO_MATCH"),
-    RESULT_MULTIPLE_MATCHES ("RESULT_MULTIPLE_MATCHES"),
+    API_RESULT_OK               ("API_RESULT_OK"),
+    API_RESULT_NO_MATCH         ("API_RESULT_NO_MATCH"),
+    API_RESULT_MULTIPLE_MATCHES ("API_RESULT_MULTIPLE_MATCHES"),
 	
     
     // use for the non processed
@@ -41,7 +41,7 @@ public enum Status {
 	IGNORE             ("IGNORE"),
 	
 	
-	// Validator
+	// result after Validator
 	//
 	
 	// use for valid date values
@@ -90,7 +90,7 @@ public enum Status {
     VALIDATOR_NUMBER_IS_MISSING     ("VALIDATOR_NUMBER_IS_MISSING"),
     
     
-    // StructValidator
+    // result after StructValidator
     //
     
     // parsing crap

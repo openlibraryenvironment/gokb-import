@@ -11,7 +11,7 @@ import groovy.util.logging.Log4j
 import ygor.Enrichment.FileType
 
 @Log4j
-class Transformer {
+class JsonTransformer {
     
     static final USE_VALIDATOR = true
     static final NO_VALIDATOR  = false
@@ -24,40 +24,40 @@ class Transformer {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
         
-        Transformer.getSimpleJSON(json, type, prettyPrint)
+        JsonTransformer.getSimpleJSON(json, type, prettyPrint)
     }
     
     static String getSimpleJSON(Object json, FileType type, boolean prettyPrint) {
      
         log.info("getSimpleJSON()")
         
-        def validator   = Transformer.USE_VALIDATOR
+        def validator = JsonTransformer.USE_VALIDATOR
         
         if(type.equals(FileType.JSON_DEBUG)){
-            validator = Transformer.NO_VALIDATOR
+            validator = JsonTransformer.NO_VALIDATOR
         }
         
         Statistics.getStatsBeforeParsing(json)
         
-        Transformer.parsePackageHeader(json)
-        Transformer.parseHashMaps(json)
+        JsonTransformer.parsePackageHeader(json)
+        JsonTransformer.parseHashMaps(json)
 
         //Transformer.parseAdditionalProperties(json)
         
-        Transformer.parseCuratoryGroups(json)
-        Transformer.parseSource(json)
-        Transformer.parseVariantNames(json)
+        JsonTransformer.parseCuratoryGroups(json)
+        JsonTransformer.parseSource(json)
+        JsonTransformer.parseVariantNames(json)
         
-        Transformer.parseTipps(json, validator)
-        Transformer.parseTippTitleIdentifiers(json, validator)
-        Transformer.parseTippCoverage(json, validator)
+        JsonTransformer.parseTipps(json, validator)
+        JsonTransformer.parseTippTitleIdentifiers(json, validator)
+        JsonTransformer.parseTippCoverage(json, validator)
 
-        Transformer.parseTitles(json, validator)
-        Transformer.parseTitleIdentifiers(json, validator)
-        Transformer.parsePublisherHistory(json, validator)
-        Transformer.parseHistoryEvents(json, validator)
+        JsonTransformer.parseTitles(json, validator)
+        JsonTransformer.parseTitleIdentifiers(json, validator)
+        JsonTransformer.parsePublisherHistory(json, validator)
+        JsonTransformer.parseHistoryEvents(json, validator)
 
-        Transformer.removeEmpty(json, validator)
+        JsonTransformer.removeEmpty(json, validator)
         
         if(type.equals(FileType.JSON_DEBUG)){
             Statistics.getStatsAfterCleanUp(json)
@@ -217,7 +217,10 @@ class Transformer {
                 def coverage = [:]
                 
                 // use validator
-                if(!useValidator || (useValidator && cover.m == Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())){
+                //if(!useValidator || (useValidator && cover.m == Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())){
+                // TODO remove if struct validator is implemented
+                // workaround
+                if(!useValidator || (useValidator && cover.m != Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID.toString())){
                     cover.v.each{ attr ->
                         if(attr.value.v instanceof java.lang.String) {
                             def value = attr.value.v
@@ -353,12 +356,14 @@ class Transformer {
             }
         }
         
-        // only valid entries
-        if(useValidator){
-
-            json.titles.each{ title ->
-                def publisher_history = []
-                title.publisher_history.each{ ph ->
+        json.titles.each{ title ->
+            def publisher_history = []
+            title.publisher_history.each{ ph ->
+                
+                // only valid entries
+                // TODO remove if struct validator is implemented
+                // workaround
+                if(useValidator && ph.m != Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID.toString()){
                     ph.any { attr ->
                         if(["startDate", "endDate"].contains(attr.key.toString()) && attr.value.toString() != ""){
                             publisher_history << ph
@@ -369,6 +374,7 @@ class Transformer {
                 }
             }
         }
+
         json
     }
     
@@ -455,7 +461,10 @@ class Transformer {
 
                 // only valid entries
                 if(useValidator){
-                    if(he.m == Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())
+                    //if(he.m == Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())
+                    // TODO remove if struct validator is implemented
+                    // workaround
+                    if(he.m != Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())
                         historyEvents << he.v
                 }
                 else {
