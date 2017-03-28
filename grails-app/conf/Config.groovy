@@ -11,7 +11,7 @@
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
-// http://localhost:8080<grails.app.context>
+// http://localhost:8080/
 grails.app.context = "/ygor"
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
@@ -92,10 +92,11 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ygor {
-            version          = grails.util.Metadata.current.'app.version'
-            type             = 'development'
-            uploadLocation   = '/tmp/ygor/dev'
-            enableGokbUpload = true
+            version             = grails.util.Metadata.current.'app.version'
+            type                = 'development'
+            uploadLocation      = '/tmp/ygor/dev'
+            enableGokbUpload    = true
+            enableDebugDownload = true
         }
         gokbApi {
             xrTitleUri   = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
@@ -107,15 +108,16 @@ environments {
             dbUri = 'jdbc:postgresql://localhost:5432/gokb'
             user  = ''
             pwd   = ''
-        }   
+        }
     }
     production {
         grails.logging.jul.usebridge = false
         ygor {
-            version          = grails.util.Metadata.current.'app.version'
-            type             = 'production'
-            uploadLocation   = '/tmp/ygor/prod'
-            enableGokbUpload = false
+            version             = grails.util.Metadata.current.'app.version'
+            type                = 'production'
+            uploadLocation      = '/tmp/ygor/prod'
+            enableGokbUpload    = false
+            enableDebugDownload = false
         }      
         gokbApi {
             xrTitleUri   = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'

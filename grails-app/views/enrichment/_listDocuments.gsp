@@ -179,8 +179,10 @@
 		    			
 		    			<br /><br />
 		    			
-		    			<g:actionSubmit action="downloadDebugFile" value="Debug-Datei speichern" class="btn"/>
-		    			<g:actionSubmit action="downloadRawFile" value="Datenstruktur speichern" class="btn"/>
+		    			<g:if test="${grailsApplication.config.ygor.enableDebugDownload}">
+		    				<g:actionSubmit action="downloadDebugFile" value="Debug-Datei speichern" class="btn"/>
+		    				<g:actionSubmit action="downloadRawFile" value="Datenstruktur speichern" class="btn"/>
+		    			</g:if>
 
 		    		</g:if>
 		    		
