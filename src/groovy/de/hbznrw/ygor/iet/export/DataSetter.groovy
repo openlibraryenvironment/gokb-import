@@ -23,7 +23,7 @@ class DataSetter {
             obj.m = normMeta
         }
         else {
-            obj.v = DataSetter.flattenList(orgValue)
+            obj.v = ''
             obj.m = normMeta
         }
     }
@@ -38,7 +38,7 @@ class DataSetter {
             obj.m = normMeta
         }
         else {
-            obj.v = DataSetter.flattenList(orgValue)
+            obj.v = ''
             obj.m = normMeta
         }
     }
@@ -53,7 +53,7 @@ class DataSetter {
             obj.m = normMeta
         }
         else {
-            obj.v = DataSetter.flattenList(orgValue)
+            obj.v = ''
             obj.m = normMeta
         }
     }
@@ -68,22 +68,35 @@ class DataSetter {
             obj.m = normMeta
         }
         else {
-            obj.v = DataSetter.flattenList(orgValue)
+            obj.v = ''
             obj.m = normMeta
         }
     }
-        
+    /**
+     * tipp.url is checked against packageHeader.nominalPlatform
+     *     
+     * @param obj
+     * @param nominalPlatform
+     * @param orgValue
+     * @return
+     */
     static def setTippURL(Object obj, Object nominalPlatform, Object orgValue){
         obj.org       = orgValue
         def normValue = Normalizer.normTippURL(orgValue, nominalPlatform)
-        def normMeta  = Validator.isValidURL  (normValue)
+        // VALIDATOR_URL_IS_MISSING if not matching
+        def normMeta  = Validator.isValidURL  (normValue) 
         
         if(Status.VALIDATOR_URL_IS_VALID == normMeta){
             obj.v = normValue
             obj.m = normMeta
         }
+        // TODO STATUS for nonmatching
+        else if(Status.VALIDATOR_URL_IS_MISSING == normMeta){
+            obj.v = ''
+            obj.m = normMeta
+        }
         else {
-            obj.v = DataSetter.flattenList(orgValue)
+            obj.v = ''
             obj.m = normMeta
         }
     }
@@ -98,22 +111,8 @@ class DataSetter {
             obj.m = normMeta
         }
         else {
-            obj.v = DataSetter.flattenList(orgValue)
+            obj.v = ''
             obj.m = normMeta
         }
     }
-    
-    static def flattenList(Object obj){
-       if(obj instanceof List){
-           if(obj.size() == 0){
-               return ""
-           }
-           else if(obj.size() == 1){
-               return obj.getAt(0)
-           }
-           else {
-               return obj.join("|")
-           }
-       }
-    } 
 }

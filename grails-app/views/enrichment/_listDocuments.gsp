@@ -99,9 +99,8 @@
 						Einstiegungspunkt für die Anreicherung:
 						<br /><br />
 						
-						<g:select name="processIndex" from="${1..15}" value="0" 
-							noSelection="['':'Spaltenindex der .. ']"  class="form-control"/>
-							
+						<g:textField name="processIndex" size="18" value="" />
+						
 						&nbsp;
 						<g:radio name="processIndexType" value="${ZdbBridge.IDENTIFIER}"/> ZDB-ID
 						&nbsp;
@@ -110,6 +109,18 @@
 						<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/> eISSN
 					</div>
 				</div><!-- .row -->
+				
+				<script>
+					$(function(){
+						var processIndexDefault = 'Spaltenindex der ..'
+						$('input[name=processIndex]').attr('value', processIndexDefault)
+						$('input[name=processIndex]').click(function(){
+							if($(this).attr('value') == processIndexDefault){
+								$('input[name=processIndex]').attr('value', '')
+							}
+						})
+					})
+				</script>
 				
 				<br />
 

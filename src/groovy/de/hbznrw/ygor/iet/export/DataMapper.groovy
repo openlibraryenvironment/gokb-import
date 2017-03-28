@@ -46,9 +46,6 @@ class DataMapper {
             ident.type.m    = Status.IGNORE
             
             DataSetter.setIdentifier(ident.value, ident.type.v, env.message.join("|"))
-            //ident.value.org = env.message.join("|")
-            //ident.value.v   = Normalizer.normIdentifier  (env.message, ident.type.v)
-            //ident.value.m   = Validator.isValidIdentifier(ident.value.v, ident.type.v)
 
             title.identifiers << ident // no pod
         }
@@ -104,12 +101,6 @@ class DataMapper {
                     
                     DataSetter.setDate(virtPubHistory.startDate, Normalizer.IS_START_DATE, '')
                     DataSetter.setDate(virtPubHistory.endDate,   Normalizer.IS_END_DATE,   DateToolkit.getDateMinusOneMinute(virtEndDate))
-                    /*
-                    virtPubHistory.endDate.v   = DateToolkit.getDateMinusOneMinute(virtEndDate)
-                    virtPubHistory.endDate.m   = Validator.isValidDate(virtPubHistory.endDate.v)
-                    virtPubHistory.startDate.v = ''
-                    virtPubHistory.startDate.m = Validator.isValidDate(virtPubHistory.startDate.v)
-                    */
 
                     def valid = StructValidator.isValidPublisherHistory(virtPubHistory)
                     def pod = new Pod(virtPubHistory, valid)
@@ -344,8 +335,11 @@ class DataMapper {
     /**
      * Creating:
      * 
-     * - platform.primaryUl
+     * - platform.primaryUrl
      * - platform.name
+     * 
+     * platform.primaryUrl is checked against tipp.url
+     * platform.name is checked against platform.primaryUrl
      * 
      * @param tipp
      */
@@ -354,14 +348,15 @@ class DataMapper {
         log.info("mapping platform for tipp: " + tipp.title.v.name.v)
         
         def platform = PackageStruct.getNewTippPlatform()
-         
-        // TODO: check against packageHeader.nominalPlatform and tipp.url
         
-        def url = ''
+        def url = null
         if(tipp.url.m == Status.VALIDATOR_URL_IS_VALID){
             url = 'http://' + Normalizer.getURLAuthority(tipp.url.v)
         }
-        DataSetter.setURL   (platform.primaryUrl, url)
+        platform.primaryUrl.org = tipp.url.v
+        platform.primaryUrl.v   = url
+        platform.primaryUrl.m   = Validator.isValidURL(url)
+        
         DataSetter.setString(platform.name, platform.primaryUrl.v)
                     
         tipp.platform = new Pod(platform)
@@ -387,11 +382,9 @@ class DataMapper {
             
             // find prefLabel
             orgMap.any { prefLabel ->
-                if(ph.v.name.v.equalsIgnoreCase(prefLabel.key)) {
+                if(ph.v.name.v?.equalsIgnoreCase(prefLabel.key)) {
                     log.debug("matched prefLabel: " + prefLabel.key)
                     DataSetter.setString(ph.v.name, prefLabel.key)
-                    //ph.v.name.v = Normalizer.normString(prefLabel.key)
-                    //ph.v.name.m = Validator.isValidString(ph.v.name.v)
                     prefLabelMatch = true
                     return true
                 }
@@ -401,15 +394,13 @@ class DataMapper {
                 def prefLabels = []
                 orgMap.each { prefLabel, altLabels ->
                     altLabels.each { altLabel ->
-                        if(ph.v.name.v.equalsIgnoreCase(altLabel)) {
+                        if(ph.v.name.v?.equalsIgnoreCase(altLabel)) {
                             log.debug("matched altLabel: " + altLabel + " -> set prefLabel: " + prefLabel)
                             prefLabels << prefLabel
                         }
                     }
                 }
                 DataSetter.setString(ph.v.name, prefLabels)
-                //ph.v.name.v = Normalizer.normString(prefLabels)
-                //ph.v.name.m = Validator.isValidString(ph.v.name.v)
             }
         }
     }

@@ -41,7 +41,7 @@ class Enrichment {
 	
 	Enrichment(File sessionFolder, String originalFilename) {
 		this.sessionFolder 	= sessionFolder
-		originName 			= originalFilename
+		originName 			= originalFilename.replaceAll(/\s+/,'_')
 		originHash 			= FileToolkit.getMD5Hash(originName + Math.random())
 		originPathName 		= this.sessionFolder.getPath() + File.separator + originHash
 		

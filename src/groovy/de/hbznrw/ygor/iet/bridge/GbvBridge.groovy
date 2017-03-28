@@ -24,7 +24,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_PUBLISHED_FROM,
         Query.GBV_PUBLISHED_TO,
         Query.GBV_TIPP_URL,
-        Query.GBV_TIPP_COVERAGE,
+        //ygor 0.13: Query.GBV_TIPP_COVERAGE,
         Query.GBV_HISTORY_EVENTS
         ]
 

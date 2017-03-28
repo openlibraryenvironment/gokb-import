@@ -87,7 +87,7 @@ class EnrichmentController {
         def pmIndexType = request.parameterMap['processIndexType'][0]
         def pmOptions   = request.parameterMap['processOption']
         
-        if(!pmIndex) {
+        if(!pmIndex || !pmIndex.isInteger()) {
             flash.info    = null
             flash.warning = 'Geben Sie einen gültigen Index an.'
             flash.error   = null
