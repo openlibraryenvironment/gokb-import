@@ -377,30 +377,43 @@ class DataMapper {
         // TODO: store state for statistics
         
         title.publisher_history.each { ph ->
-            log.debug("checking: " + ph.v.name.v)
-            def prefLabelMatch = false
+            def pubName = ph.v.name.v
+            def match = false
             
-            // find prefLabel
-            orgMap.any { prefLabel ->
-                if(ph.v.name.v?.equalsIgnoreCase(prefLabel.key)) {
-                    log.debug("matched prefLabel: " + prefLabel.key)
-                    DataSetter.setString(ph.v.name, prefLabel.key)
-                    prefLabelMatch = true
-                    return true
-                }
-            }
-            // find all altLabels
-            if(!prefLabelMatch){
-                def prefLabels = []
-                orgMap.each { prefLabel, altLabels ->
-                    altLabels.each { altLabel ->
-                        if(ph.v.name.v?.equalsIgnoreCase(altLabel)) {
-                            log.debug("matched altLabel: " + altLabel + " -> set prefLabel: " + prefLabel)
-                            prefLabels << prefLabel
-                        }
+            log.debug("checking: " + pubName)        
+            
+            if(pubName){
+                // find prefLabel
+                orgMap.any { prefLabel ->
+                    if(pubName.equalsIgnoreCase(prefLabel.key)) {
+                        log.debug("matched prefLabel: " + prefLabel.key)
+                        DataSetter.setString(ph.v.name, prefLabel.key)
+                        match = true
+                        return true
                     }
                 }
-                DataSetter.setString(ph.v.name, prefLabels)
+                // find all altLabels
+                if(!match){
+                    def prefLabels = []
+                    orgMap.each { prefLabel, altLabels ->
+                        altLabels.each { altLabel ->
+                            if(pubName.equalsIgnoreCase(altLabel)) {
+                                log.debug("matched altLabel: " + altLabel + " -> set prefLabel: " + prefLabel)
+                                prefLabels << prefLabel
+                                match = true
+                            }
+                        }
+                    }
+                    if(match){
+                        DataSetter.setString(ph.v.name, prefLabels)
+                    }
+                }
+            }
+            // store non matching
+            if(!match){
+                ph.v.name.org = pubName
+                ph.v.name.v   = ''
+                ph.v.name.m   = Status.VALIDATOR_PUBLISHER_NOT_MATCHING
             }
         }
     }

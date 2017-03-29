@@ -41,6 +41,11 @@
 				</button>
 				
 				<br /><br />
+				
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_PUBLISHER_NOT_MATCHING">PUBLISHER_NOT_MATCHING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
@@ -77,10 +82,12 @@
 			<ul class="nav nav-tabs">
 				<li role="presentation" class="active"><a href="#tab-package" data-toggle="tab">Package</a></li>
 				<li role="presentation"><a href="#tab-titles" data-toggle="tab">Titles</a></li>
+				<!--<li role="presentation"><a href="#tab-stats" data-toggle="tab">Stats</a></li>-->
 			</ul>
 			<div class="tab-content">
 				<div id="tab-package" role="tabpanel" class="tab-pane active"><br /></div>
 				<div id="tab-titles" role="tabpanel" class="tab-pane"><br /></div>
+				<!--<div id="tab-stats" role="tabpanel" class="tab-pane active"><br /></div>-->
 			</div>
 		</div>
 	
@@ -96,7 +103,8 @@
 				'VALIDATOR_DATE_IS_MISSING': [],
 				'VALIDATOR_URL_IS_NOT_ATOMIC': [],
 				'VALIDATOR_URL_IS_MISSING': [],
-				'VALIDATOR_STRING_IS_MISSING': []
+				'VALIDATOR_STRING_IS_MISSING': [],
+				'VALIDATOR_PUBLISHER_NOT_MATCHING': []
 			},
 
 			initCache: function(){
@@ -106,24 +114,24 @@
 				}
 			},
 					
-			buildDomTitle: function (name, url, count){
+			buildDomTitle: function(name, url, count){
 				
 				if(url){
-					return $('<h4 class="domTitle"><strong>' + count + '. ' + name + ' - '
+					return $('<p class="domTitle"><strong>' + count + '. ' + name + ' - '
 								+ '<a href="' + url + '" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>'
-								+ '</strong></h4>')
+								+ '</strong></p>')
 				}
 				else{
-					return $('<h4 class="domTitle"><strong>' + count + '. ' + name + '</strong></h4>')
+					return $('<p class="domTitle"><strong>' + count + '. ' + name + '</strong></p>')
 				}
 			},
 			
-			buildDomTable: function (){
+			buildDomTable: function(){
 				
 				return $('<table class="table"><thead><th>Status</th><th>Element</th><th>Vorlage</th><th>Resultat</th></thead><tbody></tbody></table>')
 			},
 			
-			buildDomState: function (elem, row){
+			buildDomState: function(elem, row){
 				
 				if(elem.m.includes('INVALID')){
 					$(row).attr('class', 'danger')
@@ -133,6 +141,9 @@
 					$(row).attr('class', 'default')
 				}
 				*/
+				else if(elem.m.includes('MATCHING')){
+					$(row).attr('class', 'danger')
+				}
 				else if(elem.m.includes('MISSING')){
 					$(row).attr('class', 'info')
 				}
@@ -141,7 +152,7 @@
 				}
 			},
 			
-			buildDomValue: function (elem){
+			buildDomValue: function(elem){
 				
 				if(elem && Array.isArray(elem))
 					return elem.join('<br/>')
@@ -149,7 +160,7 @@
 				return elem
 			},
 			
-			buildBlockTitle: function (elem, count){
+			buildBlockTitle: function(elem, count){
 
 				if(elem._meta){
 					var display = false

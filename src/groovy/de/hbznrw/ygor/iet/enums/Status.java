@@ -89,6 +89,9 @@ public enum Status {
     // no given number
     VALIDATOR_NUMBER_IS_MISSING     ("VALIDATOR_NUMBER_IS_MISSING"),
     
+    // specials
+    
+    VALIDATOR_PUBLISHER_NOT_MATCHING    ("VALIDATOR_PUBLISHER_NOT_MATCHING"),
     
     // result after StructValidator
     //

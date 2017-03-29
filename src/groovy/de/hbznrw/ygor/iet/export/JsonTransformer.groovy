@@ -34,11 +34,11 @@ class JsonTransformer {
         def validator = JsonTransformer.USE_VALIDATOR
         
         if(type.equals(FileType.JSON_DEBUG)){
+            
             validator = JsonTransformer.NO_VALIDATOR
+            Statistics.getStatsBeforeParsing(json)
         }
-        
-        Statistics.getStatsBeforeParsing(json)
-        
+
         JsonTransformer.parsePackageHeader(json)
         JsonTransformer.parseHashMaps(json)
 
@@ -60,7 +60,10 @@ class JsonTransformer {
         JsonTransformer.removeEmpty(json, validator)
         
         if(type.equals(FileType.JSON_DEBUG)){
+            
             Statistics.getStatsAfterCleanUp(json)
+            //json.package = []
+            //json.titles  = []
         }
         else {
             json.meta.stats = []
