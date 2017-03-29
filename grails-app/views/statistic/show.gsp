@@ -82,12 +82,12 @@
 			<ul class="nav nav-tabs">
 				<li role="presentation" class="active"><a href="#tab-package" data-toggle="tab">Package</a></li>
 				<li role="presentation"><a href="#tab-titles" data-toggle="tab">Titles</a></li>
-				<!--<li role="presentation"><a href="#tab-stats" data-toggle="tab">Stats</a></li>-->
+				<li role="presentation"><a href="#tab-debug" data-toggle="tab">Debug</a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="tab-package" role="tabpanel" class="tab-pane active"><br /></div>
 				<div id="tab-titles" role="tabpanel" class="tab-pane"><br /></div>
-				<!--<div id="tab-stats" role="tabpanel" class="tab-pane active"><br /></div>-->
+				<div id="tab-debug" role="tabpanel" class="tab-pane active"><br /><pre></pre><br /></div>
 			</div>
 		</div>
 	
@@ -194,10 +194,10 @@
 					})
 
 					if(display){
-						$('#statistics #tab-package').append(div)
+						$('#statistics #tab-titles').append(div)
 					}
 					else{
-						$('#statistics #tab-package').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.name, null, count))
+						$('#statistics #tab-titles').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.name, null, count))
 					}
 				}
 			},
@@ -236,10 +236,10 @@
 					})
 					
 					if(display){
-						$('#statistics #tab-titles').append(div)
+						$('#statistics #tab-package').append(div)
 					}
 					else{
-						$('#statistics #tab-titles').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.title.name, null, count))
+						$('#statistics #tab-package').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.title.name, null, count))
 					}
 				}
 			},
@@ -249,6 +249,8 @@
 				$('#statistics-meta .meta-file').text(json.meta.file)
 				$('#statistics-meta .meta-date').text(json.meta.date)
 				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
+				
+				$('#statistics #tab-debug pre').text(JSON.stringify(json.meta.stats, null, '\t'))
 				
 				$(json.package.tipps).sort(function(a,b){return a.title.name > b.title.name}).each( function(i, elem){
 					statisticsController.buildBlockTipp(elem, i+1)
