@@ -358,7 +358,9 @@ class DataMapper {
         platform.primaryUrl.m   = Validator.isValidURL(url)
         
         DataSetter.setString(platform.name, platform.primaryUrl.v)
-                    
+        // hotfix: ygor 0.14 - string normalizer behavior
+        platform.name.v         = platform.name.v.replace(": ", ":")
+        
         tipp.platform = new Pod(platform)
     }
     
