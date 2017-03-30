@@ -9,7 +9,7 @@
 			</div>
 			<div id="statistics-filter" class="panel-body">
 				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC">IDENTIFIER_IS_NOT_ATOMIC 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC">IDENTIFIER_IS_NOT_ATOMIC 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
@@ -31,7 +31,7 @@
 				
 				<br /><br />
 				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_URL_IS_NOT_ATOMIC">URL_IS_NOT_ATOMIC 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_URL_IS_NOT_ATOMIC">URL_IS_NOT_ATOMIC 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
@@ -42,11 +42,18 @@
 				
 				<br /><br />
 				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_PUBLISHER_NOT_MATCHING">PUBLISHER_NOT_MATCHING 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_PUBLISHER_NOT_MATCHING">PUBLISHER_NOT_MATCHING 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING 
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				
+				<br /><br />
+				
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_TIPPURL_NOT_MATCHING">TIPPURL_NOT_MATCHING 
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
@@ -87,7 +94,7 @@
 			<div class="tab-content">
 				<div id="tab-package" role="tabpanel" class="tab-pane active"><br /></div>
 				<div id="tab-titles" role="tabpanel" class="tab-pane"><br /></div>
-				<div id="tab-debug" role="tabpanel" class="tab-pane active"><br /><pre></pre><br /></div>
+				<div id="tab-debug" role="tabpanel" class="tab-pane"><br /><pre></pre></div>
 			</div>
 		</div>
 	
@@ -104,7 +111,8 @@
 				'VALIDATOR_URL_IS_NOT_ATOMIC': [],
 				'VALIDATOR_URL_IS_MISSING': [],
 				'VALIDATOR_STRING_IS_MISSING': [],
-				'VALIDATOR_PUBLISHER_NOT_MATCHING': []
+				'VALIDATOR_PUBLISHER_NOT_MATCHING': [],
+				'VALIDATOR_TIPPURL_NOT_MATCHING': []
 			},
 
 			initCache: function(){
@@ -136,19 +144,14 @@
 				if(elem.m.includes('INVALID')){
 					$(row).attr('class', 'danger')
 				}
-				/*
-				else if(elem.m.includes('VALIDATOR_DATE_IS_MISSING')){
-					$(row).attr('class', 'default')
-				}
-				*/
 				else if(elem.m.includes('MATCHING')){
-					$(row).attr('class', 'danger')
+					$(row).attr('class', 'warning')
 				}
 				else if(elem.m.includes('MISSING')){
 					$(row).attr('class', 'info')
 				}
 				else if(elem.m.includes('ATOMIC')){
-					$(row).attr('class', 'warning')
+					$(row).attr('class', 'danger')
 				}
 			},
 			
@@ -250,7 +253,8 @@
 				$('#statistics-meta .meta-date').text(json.meta.date)
 				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
 				
-				$('#statistics #tab-debug pre').text(JSON.stringify(json.meta.stats, null, '\t'))
+				var debug = JSON.stringify(json.meta.stats, null, '\t', false)
+				$('#statistics #tab-debug pre').text(debug)
 				
 				$(json.package.tipps).sort(function(a,b){return a.title.name > b.title.name}).each( function(i, elem){
 					statisticsController.buildBlockTipp(elem, i+1)
@@ -275,7 +279,7 @@
 					$($(e).find('.badge').get(1)).text(countTitles)
 				})
 
-				statisticsController.appendEventHandler()
+				statisticsController.appendEventHandler()	
 			},
 
 			appendEventHandler: function(){

@@ -181,8 +181,16 @@ class DataMapper {
         }
         
         else if(query == Query.GBV_TIPP_URL) {
-            // TODO check if valid url
-            DataSetter.setTippURL(tipp.url, dc.pkg.packageHeader.v.nominalPlatform.v, env.message)
+
+            // check if tipp.url is matching packageHeader.nominalPlatform
+            def matching = UrlToolkit.sortUrl(env.message, dc.pkg.packageHeader.v.nominalPlatform.v)
+            
+            DataSetter.setURL(tipp.url, matching)
+            
+            if(matching.size() == 0 && env.message.size() > 0){
+                tipp.url.org = env.message
+                tipp.url.m   = Status.VALIDATOR_TIPPURL_NOT_MATCHING
+            }
         }
 
         else if(query == Query.GBV_TIPP_COVERAGE) {     
@@ -338,29 +346,29 @@ class DataMapper {
      * - platform.primaryUrl
      * - platform.name
      * 
-     * platform.primaryUrl is checked against tipp.url
-     * platform.name is checked against platform.primaryUrl
+     * platform.primaryUrl is taken from packageHeader.nominalPlatform, if tipp.url is valid
+     * platform.name is taken from platform.primaryUrl
      * 
      * @param tipp
+     * @param dc
      */
-    static void mapPlatform(Tipp tipp) { 
+    static void mapPlatform(Tipp tipp, DataContainer dc) { 
         
         log.info("mapping platform for tipp: " + tipp.title.v.name.v)
         
         def platform = PackageStruct.getNewTippPlatform()
-        
-        def url = null
+
         if(tipp.url.m == Status.VALIDATOR_URL_IS_VALID){
-            url = 'http://' + Normalizer.getURLAuthority(tipp.url.v)
+            DataSetter.setURL(platform.primaryUrl, dc.pkg.packageHeader.v.nominalPlatform.v)
         }
-        platform.primaryUrl.org = tipp.url.v
-        platform.primaryUrl.v   = url
-        platform.primaryUrl.m   = Validator.isValidURL(url)
+        else {
+            DataSetter.setURL(platform.primaryUrl, '')
+        }
         
         DataSetter.setString(platform.name, platform.primaryUrl.v)
-        // hotfix: ygor 0.14 - string normalizer behavior
-        platform.name.v         = platform.name.v.replace(": ", ":")
         
+        platform.name.v = platform.name.v.replace(": ", ":") // hotfix: string normalizer behavior
+       
         tipp.platform = new Pod(platform)
     }
     

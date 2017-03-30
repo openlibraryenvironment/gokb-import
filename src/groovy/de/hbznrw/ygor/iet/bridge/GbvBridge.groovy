@@ -104,7 +104,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
             DataMapper.mapOrganisations(orgMap, value.v)
         }
         master.enrichment.dataContainer.pkg.tipps.each { key, value ->
-            DataMapper.mapPlatform(value.v)
+            DataMapper.mapPlatform(value.v, master.enrichment.dataContainer)
         }
     }
 }

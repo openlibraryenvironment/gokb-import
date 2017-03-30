@@ -183,11 +183,11 @@ class Statistics {
         Statistics.format("name is not atomic", pubHistName, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.titles.publisher_history)
         Statistics.format("name is missing",    pubHistName, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.titles.publisher_history)
         
-        Statistics.format("name is not matching against ONLD.jsonld", pubHistName, 
-            Statistics.COUNT_5, Statistics.LIST_5, json.meta.stats.titles.publisher_history)
+        Statistics.format("name is not matching against ONLD.jsonld", 
+            pubHistName, Statistics.COUNT_5, Statistics.LIST_5, json.meta.stats.titles.publisher_history)
 
-        // tipps 
-        // tipps
+        // tipps.url 
+        // tipps.url
         
         List<Integer> tippUrls = Statistics.getStorage()
         
@@ -214,12 +214,21 @@ class Statistics {
                 
                     Statistics.addMeta(tipp, 'tipp.url', url)
             }
+            else if(url?.m.equals(Status.VALIDATOR_TIPPURL_NOT_MATCHING.toString())) {
+                tippUrls[Statistics.COUNT_5]++
+                tippUrls[Statistics.LIST_5] << "${url.org}"
+                
+                    Statistics.addMeta(tipp, 'tipp.url', url)
+            }
         }
         
         Statistics.format("URL IS VALID",      tippUrls, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.tipps)
         Statistics.format("url is not valid",  tippUrls, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.tipps)
         Statistics.format("url is not atomic", tippUrls, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps)
         Statistics.format("url is missing",    tippUrls, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.tipps)
+        
+        Statistics.format("url is not matching against packageHeader.nominalPlattform", 
+            tippUrls, Statistics.COUNT_5, Statistics.LIST_5, json.meta.stats.tipps)
 
         // tipp.title.identifiers
         // tipp.title.identifiers

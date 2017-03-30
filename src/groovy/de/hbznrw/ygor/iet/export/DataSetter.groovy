@@ -72,27 +72,14 @@ class DataSetter {
             obj.m = normMeta
         }
     }
-    /**
-     * tipp.url is checked against packageHeader.nominalPlatform
-     *     
-     * @param obj
-     * @param nominalPlatform
-     * @param orgValue
-     * @return
-     */
-    static def setTippURL(Object obj, Object nominalPlatform, Object orgValue){
+
+    static def setURL(Object obj, Object orgValue){
         obj.org       = orgValue
-        def normValue = Normalizer.normTippURL(orgValue, nominalPlatform)
-        // VALIDATOR_URL_IS_MISSING if not matching
-        def normMeta  = Validator.isValidURL  (normValue) 
+        def normValue = Normalizer.normURL  (orgValue, false)
+        def normMeta  = Validator.isValidURL(normValue)
         
         if(Status.VALIDATOR_URL_IS_VALID == normMeta){
             obj.v = normValue
-            obj.m = normMeta
-        }
-        // TODO STATUS for nonmatching
-        else if(Status.VALIDATOR_URL_IS_MISSING == normMeta){
-            obj.v = ''
             obj.m = normMeta
         }
         else {
@@ -101,9 +88,9 @@ class DataSetter {
         }
     }
     
-    static def setURL(Object obj, Object orgValue){
+    static def setURLAuthorityOnly(Object obj, Object orgValue){
         obj.org       = orgValue
-        def normValue = Normalizer.normURL  (orgValue)
+        def normValue = Normalizer.normURL  (orgValue, true)
         def normMeta  = Validator.isValidURL(normValue)
         
         if(Status.VALIDATOR_URL_IS_VALID == normMeta){

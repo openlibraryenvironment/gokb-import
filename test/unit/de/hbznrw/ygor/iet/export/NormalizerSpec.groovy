@@ -202,120 +202,49 @@ class NormalizerSpec extends Specification {
             
     }
     
-    void "normURL(String str) "() {
+    void "normURL(String str, boolean onlyAuthority) "() {
         
-        given:
-            def test = [
-                "https://google.de/",
-                "http://yahoo.de?q=laser",
-                "https://google.de/this/and/that",
-                "http://laser.hbz-nrw.de:8080/and/some/more",
-                "golem.de",
-                "",
-                null
-                ]
-            def result = [
-                "google.de",
-                "yahoo.de",
-                "google.de",
-                "laser.hbz-nrw.de:8080",
-                "golem.de",
-                "",
-                null
-                ]
+        when:
+            println "${raw} & ${onlyAuthority} -> ${result}"
             
-        expect:
-            test.eachWithIndex{e, i ->
-                println "${test[i]} -> ${result[i]}"
-            }
-            Normalizer.normURL(test[0]) == result[0]
-            Normalizer.normURL(test[1]) == result[1]
-            Normalizer.normURL(test[2]) == result[2]
-            Normalizer.normURL(test[3]) == result[3]
-            Normalizer.normURL(test[4]) == result[4]
-            Normalizer.normURL(test[5]) == result[5]
-            Normalizer.normURL(test[6]) == result[6]
-    }
-    
-    void "normURL(ArrayList list)"() {
-        
-        given:
-            def test = [
-                ["http://google.de/", null, "http://yahoo.de?q=laser"]
-            ]
-            def result = [
-                "google.de|null|yahoo.de"
-                ]
-         expect:
-             println "${test[0]} -> ${result[0]}"
-             Normalizer.normURL(test[0]) == result[0]
-    }
-    
-    void "normTippURL(String str, String nominalPlatform) "() {
-        
-        given:
-            def test = [
-                    ["https://google.de/?123"        , "https://google.de"],
-                    ["http://yahoo.de?q=laser"       , "https://yahoo.de/etc"],
-                    ["https://google.de/sub/?123"    , "https://google.de"],
-                    ["http://yahoo.de/a/b/c?q=laser" , "http://yahoo.de/v/w"],
-                    ["https://google.de"             , "https://yahoo.de"],
-                    ["https://google.de/?123"        , ""],
-                    [""                              , "https://google.de"]
-                ]
-            def result = [
-                "https://google.de/?123",
-                "http://yahoo.de?q=laser" ,
-                "https://google.de/sub/?123",
-                "http://yahoo.de/a/b/c?q=laser",
-                "",
-                "https://google.de/?123",
-                ""
-                ]
+        then:
+            Normalizer.normURL(raw, onlyAuthority) == result
             
-        expect:
-            test.eachWithIndex{e, i ->
-                println "${test[i][0]} matches ${test[i][1]} -> ${result[i]}"
-            }
-            Normalizer.normTippURL(test[0][0], test[0][1]) == result[0]
-            Normalizer.normTippURL(test[1][0], test[1][1]) == result[1]
-            Normalizer.normTippURL(test[2][0], test[2][1]) == result[2]
-            Normalizer.normTippURL(test[3][0], test[3][1]) == result[3]
-            Normalizer.normTippURL(test[4][0], test[4][1]) == result[4]
-            Normalizer.normTippURL(test[5][0], test[5][1]) == result[5]
-            Normalizer.normTippURL(test[6][0], test[6][1]) == result[6]
+        where:
+            raw                                             | onlyAuthority     | result
+            "https://google.de/"                            | true              | "https://google.de"
+            "https://google.de/"                            | false             | "https://google.de/"
+            "http://yahoo.de?q=laser"                       | true              | "http://yahoo.de"
+            "http://yahoo.de?q=laser"                       | false             | "http://yahoo.de?q=laser"
+            "https://google.de/this/and/that"               | true              | "https://google.de"
+            "https://google.de/this/and/that"               | false             | "https://google.de/this/and/that"
+            "http://laser.hbz-nrw.de:8080/and/some/more/"   | true              | "http://laser.hbz-nrw.de:8080"
+            "http://laser.hbz-nrw.de:8080/and/some/more/"   | false             | "http://laser.hbz-nrw.de:8080/and/some/more/"
+            "golem.de"                                      | true              | "http://golem.de"
+            "golem.de"                                      | false             | "http://golem.de"
+            ""                                              | true              | ""
+            ""                                              | false             | ""
+            null                                            | true              | null         
+            null                                            | false             | null
     }
     
-    void "normTippURL(ArrayList list, String nominalPlatform)"() {
+    void "normURL(ArrayList list, boolean onlyAuthority)"() {
         
-        given:
-            def test = [
-                    [["https://google.de/?123", "http://yahoo.de?q=laser", ""]                      , "https://google.de"],
-                    [["http://yahoo.de/a/b/c?q=laser", "http://yahoo.de/v/w", "https://google.de"]  , "https://google.de"],
-                    [["http://yahoo.de/a/b/c?q=laser", "", null]                                    , "https://yahoo.de"],
-                    [["http://yahoo.de/a/b/c?q=laser", "", null]                                    , "https://google.de"],
-                    [["http://yahoo.de/a/b/c?q=laser", "http://yahoo.de/v/w", "https://google.de"]  , "https://yahoo.de"]
-                ]
-            def result = [
-                "https://google.de/?123",
-                "https://google.de" ,
-                "http://yahoo.de/a/b/c?q=laser",
-                "",
-                "http://yahoo.de/a/b/c?q=laser|http://yahoo.de/v/w"
-                ]
-                
-         expect:
-             test.eachWithIndex{e, i ->
-                println "${test[i][0]} matches ${test[i][1]} -> ${result[i]}"
-             }
-             Normalizer.normTippURL(test[0][0], test[0][1]) == result[0]
-             Normalizer.normTippURL(test[1][0], test[1][1]) == result[1]
-             Normalizer.normTippURL(test[2][0], test[2][1]) == result[2]
-             Normalizer.normTippURL(test[3][0], test[3][1]) == result[3]
-             Normalizer.normTippURL(test[4][0], test[4][1]) == result[4]
-           
+        when:
+            println "${raw} & ${onlyAuthority} -> ${result}"
+            
+        then:
+            Normalizer.normURL(raw, onlyAuthority) == result
+            
+        where:
+        raw                                                                     | onlyAuthority | result
+      
+            ["http://google.de/", null, "yahoo.de?q=laser"]                     | true          | "http://google.de|null|http://yahoo.de"
+            ["http://google.de/", null, "yahoo.de?q=laser"]                     | false         | "http://google.de/|null|http://yahoo.de?q=laser"
+            ["https://google.de/", "http://google.com/", "ftp://yahoo.de?q=1"]  | true          | "https://google.de|http://google.com|ftp://yahoo.de"
+            ["https://google.de/", "http://google.com/", "ftp://yahoo.de?q=1"]  | false         | "https://google.de/|http://google.com/|ftp://yahoo.de?q=1"
     }
-    
+
     void "parseDate(String str, Object dateType)"() {
         
         when:

@@ -3,7 +3,7 @@ package de.hbznrw.ygor.iet.export
 import groovy.util.logging.Log4j
 import java.time.LocalDate
 import org.springframework.util.StringUtils
-
+import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.bridge.*
@@ -225,16 +225,23 @@ class Normalizer {
     }
         
     /**
-     * Returns an url authority
+     * Returns an url (or only the url authority) including protocol.
+     * Adding http:// if none given
      * 
      * @param str
+     * @param onlyAuthority
      * @return
      */
-    static String normURL(String str) {    
+    static String normURL(String str, boolean onlyAuthority) {    
         if(!str)
             return str
         
-        Normalizer.getURLAuthority(str)
+        if(onlyAuthority){
+            return UrlToolkit.getURLAuthorityWithProtocol(str)
+        }
+        else {
+            return UrlToolkit.getURLWithProtocol(str)
+        }
     }
     
     /**
@@ -245,61 +252,16 @@ class Normalizer {
      * @param list
      * @return
      */
-    static String normURL(ArrayList list) {
+    static String normURL(ArrayList list, boolean onlyAuthority) {
         if(null == list)
             return null
             
         def result = []
         list.each{ e ->
-            result << Normalizer.normURL(e)
+            result << Normalizer.normURL(e, onlyAuthority)
         }
         result.join("|")
     }
-
-    /**
-     * Returns given url if it matches to nominal platform url
-     *
-     * @param str
-     * @param nominalPlatform
-     * @return
-     */
-    static String normTippURL(String str, String nominalPlatform) {
-        if(!str)
-            return str
-            
-        def npTmp  = Normalizer.normURL(nominalPlatform)
-        if(!npTmp)
-            return str
-            
-        def strTmp = Normalizer.normURL(str)
-        if(strTmp && strTmp.indexOf(npTmp) == 0)
-            return str
-        
-        ""
-    }
-    
-    /**
-     * Concatenates list elements with "|" as delimiter.
-     * Eliminates null and empty values.
-     * Returns null if null given.
-     * Returns "" if empty list given
-     *
-     * @param list
-     * @param nominalPlatform
-     * @return
-     */
-    static String normTippURL(ArrayList list, String nominalPlatform) {
-        if(null == list)
-            return null
-            
-        def result = []
-        list.each{ e ->
-            result << Normalizer.normTippURL(e, nominalPlatform)
-        }
-        result.minus(null).minus("").join("|")
-    }
-    
-
     
     static List parseDate(String str, Object dateType) {       
         if(!str)
@@ -475,27 +437,5 @@ class Normalizer {
         str = str.replace('Digitalisierung;', '').replace('Digitalisierung', '')
         
         str
-    }
-    
-    static getURLAuthority(String str){  
-        if(!str)
-            return str
-            
-        try {
-            def tmp = str
-            if(tmp && tmp.indexOf('http://') == -1 && tmp.indexOf('https://') == -1){
-                tmp = 'http://' + tmp
-            }
-            
-            def url = new URL(tmp)
-            if(url) {
-                return url.getAuthority()
-            }
-        } catch(Exception e) {
-            log.error(e.getMessage())
-            log.error(e.getStackTrace())
-        }
-            
-        null
     }
 }
