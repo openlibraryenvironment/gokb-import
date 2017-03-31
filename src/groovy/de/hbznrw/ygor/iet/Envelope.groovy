@@ -39,10 +39,12 @@ class Envelope {
     }
 
 	String toString() {
+        /*
         log.debug("| type:     " + type)
         log.debug("| state:    " + state)
         log.debug("| message:  " + message)
         log.debug("| states:   " + states)
         log.debug("| messages: " + messages)
+        */
 	}
 }
