@@ -14,7 +14,7 @@
 				<g:textField name="sthash" size="64" value="" />
 				<br />
 				<br />
-				<g:actionSubmit action="show" value="Anzeigen" class="btn"/>
+				<g:actionSubmit action="show" value="Anzeigen" class="btn btn-default"/>
 			</div>
 		</g:form>
 	</body>

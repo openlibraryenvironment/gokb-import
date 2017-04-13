@@ -9,7 +9,7 @@
 		<p>Wer oder was ist <em>Ygor</em>?</p>
 		<p>
 			<em>Ygor</em> ist ein kleines Werkzeug zur Anreicherung existierender Daten.
-			Im CSV-Format <em>(Comma-separated values)</em> vorliegende Dateien können durch automatisierte Nutzung externer Webservices
+			Im KBART-Format <em>(Knowledge Base and Related Tools)</em> vorliegende Dateien können durch automatisierte Nutzung externer Webservices
 			um verschiedene Informationen erweitert werden.
 			Dieses Verfahren benötigt geeignete Identifikatoren, z.B. ISSN-Angaben oder ID-Nummern der Zeitschriftendatenbank ZDB. 
 		</p>
