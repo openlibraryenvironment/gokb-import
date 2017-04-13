@@ -13,7 +13,7 @@
 		<br />
 		<span class="text-danger">
 		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-		&nbsp; <em>Ohne Angabe der Plattform können einige Informationen nicht korrekt ermittelt werden.</em>
+		&nbsp; <em>Ohne Angabe der Plattform können einige Informationen (z.B. TIPP-URL & -Plattform) nicht korrekt ermittelt werden.</em>
 		</span>
 	</div>
 </div>

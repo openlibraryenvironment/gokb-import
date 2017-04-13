@@ -44,21 +44,18 @@ class EnrichmentService {
         
         def ph = enrichment.dataContainer.pkg.packageHeader
         
-        if(!pm['ignorePkgData']) {
-            
-            ph.v.name.v = new Pod(pm['pkgTitle'][0])
-            
-            def map = platformService.getMap()
-            def pkgNominal = map.find{it.key == pm['pkgNominal'][0]}
-            if(pkgNominal){
-                ph.v.nominalPlatform.v = pkgNominal.value
-                ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.v)
-                ph.v.nominalProvider.v = pkgNominal.key
-            }
-            
-            ph.v.variantNames << new Pod(pm['pkgVariantName'][0])
-        }
+        ph.v.name.v          = new Pod(pm['pkgTitle'][0])
+        ph.v.variantNames   << new Pod(pm['pkgVariantName'][0])
+        ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup'][0])
         
+        def map = platformService.getMap()
+        def pkgNominal = map.find{it.key == pm['pkgNominal'][0]}
+        if(pkgNominal){
+            ph.v.nominalPlatform.v = pkgNominal.value
+            ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.v)
+            ph.v.nominalProvider.v = pkgNominal.key
+        }
+
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
     }
     

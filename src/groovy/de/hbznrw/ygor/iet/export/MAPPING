@@ -42,7 +42,6 @@ HARDCODED:
 "Yes" 							-	Package.packageHeader.fixed
 "Consortium" 					-	Package.packageHeader.global
 "Checked" 						-	Package.packageHeader.listStatus
-"LAS:eR"						-	Package.packageHeader.curatoryGroups.curatoryGroup
 
 "Electronic"					-	Package.tipps.medium
 "Current"						-	Package.tipps.status

@@ -75,19 +75,22 @@
 				</div><!-- .row -->
 
 				<div class="row">
-					<div class="col-xs-12">
-						Plattform:
+				 
+					<div class="col-xs-6">
+						GOKb Plattform:
 						<br /><br /> 
 						<g:select name="pkgNominal" from="${platformService.getMap().entrySet()}" optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
 						<br /> 
 					</div>
-				</div><!-- .row -->
-				
-				<div class="row">
-					<div class="col-xs-12">
-						<g:checkBox name="ignorePkgData" value="true" checked="false" /> &nbsp; Diese Angaben ignorieren
+					
+					<div class="col-xs-6">
+						GOKb Curatory Group:
+						<br /><br /> 
+						<g:textField name="pkgCuratoryGroup" size="24" value="LAS:eR" />
 						<br />
+						<br /> 
 					</div>
+					
 				</div><!-- .row -->
 				
 				<br />
