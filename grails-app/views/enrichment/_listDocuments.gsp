@@ -119,9 +119,9 @@
 
 						<g:radio name="processIndexType" checked="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB-ID
 						&nbsp;
-						<g:radio name="processIndexType" disabled="true" value="${TitleStruct.PISSN}"/> print_identifier (pISSN)
+						<g:radio name="processIndexType" value="${TitleStruct.PISSN}"/> print_identifier (pISSN)
 						&nbsp;
-						<g:radio name="processIndexType" disabled="true" value="${TitleStruct.EISSN}"/> online_identifier (eISSN)
+						<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/> online_identifier (eISSN)
 					</div>
 				</div><!-- .row -->
 							

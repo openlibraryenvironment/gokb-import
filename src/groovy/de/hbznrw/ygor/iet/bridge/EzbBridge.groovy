@@ -20,13 +20,13 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
         this.master     = master
 		this.options    = options
         this.processor  = master.processor
-        
-		this.connector  = new EzbXmlConnector(this)
 
         if(options.get('typeOfKey') == ZdbBridge.IDENTIFIER){
+            this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_ZDB)
             this.stashIndex = ZdbBridge.IDENTIFIER
         }
         else {
+            this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_IS)
             this.stashIndex = TitleStruct.ISSN
         }
 	}

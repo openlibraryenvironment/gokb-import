@@ -16,14 +16,18 @@ import de.hbznrw.ygor.iet.interfaces.*
 @Log4j
 class EzbXmlConnector extends ConnectorAbstract {
 	
+    static final QUERY_XML_IS  = "jq_type1=IS&jq_term1="
+    static final QUERY_XML_ZDB = "jq_type1=ZD&jq_term1="
+    
 	private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
-	private String queryIdentifier  = 'jq_type1=ZD&jq_term1='
+	private String queryIdentifier
     
     private String formatIdentifier = 'xmloutput=1&xmlv=3'
     private GPathResult response
 	
-	EzbXmlConnector(BridgeInterface bridge) {
+	EzbXmlConnector(BridgeInterface bridge, String queryIdentifier) {
 		super(bridge)
+        this.queryIdentifier = queryIdentifier
 	}
 	
     // ConnectorInterface

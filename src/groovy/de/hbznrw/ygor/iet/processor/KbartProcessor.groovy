@@ -65,8 +65,8 @@ class KbartProcessor extends ProcessorAbstract {
         
         if(0 == stash.get(KbartBridge.IDENTIFIER).size()){
             def nr  = initData(options)
-            def pgt = Math.round(nr * 2)
-            bridge.getMaster().setProgressTotal((int) pgt) // TODO
+            def pgt = Math.round(nr * bridge.master.getOptionsSize())
+            bridge.getMaster().setProgressTotal((int) pgt)
         }
         
         count = 0
@@ -123,7 +123,7 @@ class KbartProcessor extends ProcessorAbstract {
 
         stash.put(KbartBridge.IDENTIFIER, kbartFields)
         
-        return stash.get(ZdbBridge.IDENTIFIER).size()
+        return stash.get(KbartBridge.IDENTIFIER).size()
     }
     
     Title processEntry(DataContainer dc, String uid) {

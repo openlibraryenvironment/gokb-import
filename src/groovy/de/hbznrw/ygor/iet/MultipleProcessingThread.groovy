@@ -108,6 +108,10 @@ class MultipleProcessingThread extends Thread {
         enrichment.setProgress((progressCurrent / progressTotal) * 100)
     }
     
+    int getOptionsSize() {
+        return options.size()    
+    }
+    
     Enrichment getEnrichment() {
         enrichment
     }
