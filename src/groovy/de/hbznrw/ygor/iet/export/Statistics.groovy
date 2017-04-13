@@ -240,12 +240,7 @@ class Statistics {
         
         json.package.tipps.each{ tipp ->
             
-            println tipp
-            
             tipp.value.v.title.v.identifiers.each { ident ->
-                
-                println ident
-                
                 
                 def tmp = tippIdentifiers["${ident.type.v}"]
                 
@@ -457,7 +452,10 @@ class Statistics {
     static addMeta(Object target, String dom, Object obj) {
         
         obj.dom = dom
-        target.value.v._meta.add(obj)
+        if(!target.value.v._meta.stats){
+            target.value.v._meta << ['stats':[]]
+        }
+        target.value.v._meta.stats.add(obj)
     }
     
     /**

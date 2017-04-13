@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.iet.connector
 
+import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
@@ -12,6 +13,7 @@ import de.hbznrw.ygor.iet.interfaces.*
  * @author David Klober
  *
  */
+@Log4j
 class DnbSruOiaDcConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve"
@@ -37,7 +39,10 @@ class DnbSruOiaDcConnector extends ConnectorAbstract {
     @Override
     Envelope poll(String issn) {
         try {
-            String text = new URL(getAPIQuery(issn)).getText()
+            String q = getAPIQuery(issn)
+            
+            log.info("polling(): " + q)
+            String text = new URL(q).getText()
             
             response = new XmlSlurper().parseText(text)
             

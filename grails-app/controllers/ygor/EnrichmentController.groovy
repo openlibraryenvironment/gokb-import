@@ -83,16 +83,11 @@ class EnrichmentController {
     
     def processFile = {
         
-        def pmIndex     = request.parameterMap['processIndex'][0]
+        def pmIndex = false
         def pmIndexType = request.parameterMap['processIndexType'][0]
         def pmOptions   = request.parameterMap['processOption']
         
-        if(!pmIndex || !pmIndex.isInteger()) {
-            flash.info    = null
-            flash.warning = 'Geben Sie einen gültigen Index an.'
-            flash.error   = null
-        }
-        else if(!pmOptions) {
+        if(!pmOptions) {
             flash.info    = null
             flash.warning = 'Wählen Sie mindestens eine Anreicherungsoption.'
             flash.error   = null
@@ -105,7 +100,6 @@ class EnrichmentController {
                 flash.error   = null
 
                 def options = [
-                    'indexOfKey':   pmIndex.toInteger() - 1,
                     'typeOfKey':    pmIndexType,
                     'options':      pmOptions,
                     'ygorVersion':  grailsApplication.config.ygor.version,
@@ -120,7 +114,6 @@ class EnrichmentController {
             model:[
                 enrichments: enrichmentService.getSessionDocs(), 
                 currentView: 'process',
-                pIndex:      pmIndex,
                 pIndexType:  pmIndexType,
                 pOptions:    pmOptions,
                 ]

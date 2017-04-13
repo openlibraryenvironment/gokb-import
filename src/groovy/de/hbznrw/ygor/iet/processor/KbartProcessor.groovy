@@ -2,39 +2,41 @@ package de.hbznrw.ygor.iet.processor
 
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
+
 import de.hbznrw.ygor.iet.Envelope
+import de.hbznrw.ygor.iet.Stash
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
+import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.iet.bridge.ZdbBridge
+import de.hbznrw.ygor.iet.bridge.*
 import groovy.util.logging.Log4j
+
 import java.nio.file.Paths
 
 
 /**
- * Class for reading and processing csv files
+ * Class for reading and processing kbart files
  * 
  * @author David Klober
  *
  */
 
 @Log4j
-class CsvProcessor extends ProcessorAbstract {
+class KbartProcessor extends ProcessorAbstract {
 
-    private stash               = [:]
+    private stash               = new Stash()
     private String inputFile
     
-    private CSVFormat csvFormat = CSVFormat.EXCEL
+    private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader()
     private int total		    = 0
     private int count           = 0
-
-    //
-
-    CsvProcessor(BridgeInterface bridge) {
+    
+    KbartProcessor(BridgeInterface bridge) {
         super(bridge)
     }
-    CsvProcessor() {
+    KbartProcessor() {
     }
 
     void setBridge(BridgeInterface bridge) {
@@ -52,42 +54,86 @@ class CsvProcessor extends ProcessorAbstract {
         if(null != recordSeparator) {
             csvFormat = csvFormat.withRecordSeparator(recordSeparator)
         }
+        
+        csvFormat = csvFormat.withAllowMissingColumnNames(true)
+        csvFormat = csvFormat.withIgnoreHeaderCase(true)
     }
 
     void processFile(HashMap options) throws Exception {
         
         log.info("processFile() -> " + options)
         
-        count = 0
-        
-        if(stash.size() == 0){
-            log.info("filling stash with initial data ..")
-            
-            def issn = [:]
-            this.inputFile = options.get('inputFile')
-    
-            Paths.get(inputFile).withReader { reader ->
-                CSVParser csv = new CSVParser(reader, csvFormat)
-                for (record in csv.iterator()) {
-                    def k = (record.size() <= options.get('indexOfKey')) ? "" : record.get(options.get('indexOfKey')).toString()
-                    issn << ["${k}":null]
-                }
-            }
-            stash.put(de.hbznrw.ygor.iet.export.structure.TitleStruct.ISSN, issn)
-            stash.put(ZdbBridge.IDENTIFIER, [:])
-            
-            def pgt = Math.round(stash.get(de.hbznrw.ygor.iet.export.structure.TitleStruct.ISSN).size() * 2.15)
-            bridge.getMaster().setProgressTotal((int) pgt)  // TODO dynamic calculation
+        if(0 == stash.get(KbartBridge.IDENTIFIER).size()){
+            def nr  = initData(options)
+            def pgt = Math.round(nr * 2)
+            bridge.getMaster().setProgressTotal((int) pgt) // TODO
         }
-
+        
+        count = 0
         bridge.processStash()
         bridge.finish()
+    }
+    
+    private int initData(HashMap options) throws Exception {
+
+        log.info("filling stash with initial data ..")
+        
+        def key
+        def keys        = [:]
+        def kbartFields = [:]
+        this.inputFile = options.get('inputFile')
+        
+        if(ZdbBridge.IDENTIFIER == options.get('typeOfKey')){
+            key = "ZDB-ID"
+        }
+        else if(TitleStruct.EISSN == options.get('typeOfKey')) {
+            key = "online_identifier"
+        }
+        else if(TitleStruct.ISSN == options.get('typeOfKey')) {
+            key = "print_identifier"
+        }
+        
+        Paths.get(inputFile).withReader { reader ->
+            CSVParser csv = new CSVParser(reader, csvFormat)
+
+            for (record in csv.iterator()) {
+                def uid = UUID.randomUUID().toString() // TODO NEW
+                
+                // store keys (zdb or issn or eissn)
+                def r = record.get(key).toString()
+                keys << ["${r}" : uid]
+
+                // store kbart fields
+                def kbfs = [:]
+                bridge.connector.kbartKeys.each{ kbk ->
+                    kbfs << ["${kbk}":record.get(kbk).toString()]
+                }
+                if(kbfs.size() > 0){
+                    kbartFields << ["${uid}":kbfs]
+                }
+            }
+        }
+        
+        if("ZDB-ID" == key){
+            stash.put(ZdbBridge.IDENTIFIER, keys)
+        }
+        else if("print_identifier" == key|| "online_identifier" == key){
+            stash.put(TitleStruct.ISSN, keys)
+        }
+
+        stash.put(KbartBridge.IDENTIFIER, kbartFields)
+        
+        return stash.get(ZdbBridge.IDENTIFIER).size()
     }
     
     Title processEntry(DataContainer dc, String uid) {
         return processEntry(dc, uid, null, null)
     }
     
+    Title processEntry(DataContainer dc, String uid, String queryKey) {
+        return processEntry(dc, uid, queryKey, null)
+    }
+
     Title processEntry(DataContainer dc, String uid, String queryKey, Object record) {
         
         def saveTitle = false
@@ -132,25 +178,27 @@ class CsvProcessor extends ProcessorAbstract {
                 }
 
                 state = env.state
-                log.info("#" + count + " processed " + uid + " -> " + msg + " : " + state)
+                log.info("#" + count + " processed " + uid + " : " + q + " -> " + msg + " : " + state)
             }
             else if(env.type == Envelope.COMPLEX){
                 
-                // used for Publisher
-                env.states.eachWithIndex { ste, i ->
-                    if(Status.API_RESULT_OK == ste) {
-                        msg = env.messages[i]
+                // used for tipp.coverage           (kbart file)
+                // used for title.publisher_history (api)
+                // used for title.history_events    (api)
+                env.messages.eachWithIndex{ item, i ->
+                    if(Status.API_RESULT_OK == env.states[i]) {
+                        msg = item.value
                     }
-                    else if(Status.API_RESULT_MULTIPLE_MATCHES == ste) {
+                    else if(Status.API_RESULT_MULTIPLE_MATCHES == env.states[i]) {
                         if(env.messages[i]){
-                            msg = env.messages[i].join("|")
+                            msg = item.value.join("|")
                         }
                         else {
                             msg = null // todo ??
                         }
                     }
 
-                    log.info("#" + count + " processed " + uid + " -> " + msg + " : " + state)
+                    log.info("#" + count + " processed " + uid + " : " + q + " -> " + msg + " : " + env.states[i])
                 }
             }
             
@@ -160,23 +208,27 @@ class CsvProcessor extends ProcessorAbstract {
         
         if(saveTitle){
             log.debug("> stored as new Title: " + uid)
-            
             dc.titles   << ["${uid}": new Pod(title)]
-            title._meta << ['uid':    uid]
-            title._meta << ['api':    bridge.getConnector().getAPIQuery(queryKey)]
+            title._meta.put('uid', uid)
+            title._meta.put('api', [])
         }
         if(saveTipp){
             log.debug("> stored as new Tipp: " + uid)
-            
+
             dc.pkg.tipps << ["${uid}": new Pod(tipp)]
-            tipp._meta   << ['uid':    uid]
-            tipp._meta   << ['api':    bridge.getConnector().getAPIQuery(queryKey)]
+            tipp._meta.put('uid', uid)
+            tipp._meta.put('api', [])
         }
+        
+        def api = bridge.getConnector().getAPIQuery(queryKey)
+        
+        title._meta.api << api
+        tipp._meta.api << api
         
         title
     }
     
-    HashMap getStash() {
+    Stash getStash() {
         stash
     }
     

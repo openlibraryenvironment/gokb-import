@@ -124,14 +124,18 @@
 					
 			buildDomTitle: function(name, url, count){
 				
-				if(url){
-					return $('<p class="domTitle"><strong>' + count + '. ' + name + ' - '
-								+ '<a href="' + url + '" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>'
-								+ '</strong></p>')
-				}
-				else{
-					return $('<p class="domTitle"><strong>' + count + '. ' + name + '</strong></p>')
-				}
+				var links
+				for(i in url){
+					if("kbart-file" == url[i]){
+						links += ' <span class="glyphicon glyphicon-paste"></span>'
+					}
+					else{
+						links += ' <a href="' + url[i] + '" target="_blank"><span class="glyphicon glyphicon-cloud-download"></span></a>'
+					}
+				}		
+				return $('<p class="domTitle"><strong>' + count + '. ' + name + ' - '
+							+ links
+							+ '</strong></p>')
 			},
 			
 			buildDomTable: function(){
@@ -165,85 +169,80 @@
 			
 			buildBlockTitle: function(elem, count){
 
-				if(elem._meta){
-					var display = false
-					var div = $('<div></div>')
-					
-					var table = statisticsController.buildDomTable()
-					$(div).append(table)
-					
-					$(elem._meta).each( function(ii, ielem){
-						var row = $('<tr></tr>')
-							
-						if(ielem.api){
-							$(div).prepend(statisticsController.buildDomTitle(elem.name, ielem.api, count))
-						}
-						else if(ielem.dom){
-							display = true
-							$(table).append(row)
-							
-							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
-							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td>')
-							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
-							
-							//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
-							//tb +=    '<button>-</button><button>+</button></td>'
-							//$(row).append(tb)
-							
-							$(row).attr('data-code', ielem.m)
-							
-							statisticsController.buildDomState(ielem, row)
-						}
-					})
+				var display = false
+				var div = $('<div></div>')
+				
+				var table = statisticsController.buildDomTable()
+				$(div).append(table)
+				
+				if(elem._meta.api){
+					$(div).prepend(statisticsController.buildDomTitle(elem.name, elem._meta.api, count))
+				}
 
-					if(display){
-						$('#statistics #tab-titles').append(div)
-					}
-					else{
-						$('#statistics #tab-titles').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.name, null, count))
-					}
+				$(elem._meta.stats).each( function(ii, ielem){
+					var row = $('<tr></tr>')
+					
+					display = true
+					$(table).append(row)
+					
+					$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
+					$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td>')
+					$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+					
+					//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
+					//tb +=    '<button>-</button><button>+</button></td>'
+					//$(row).append(tb)
+					
+					$(row).attr('data-code', ielem.m)
+					
+					statisticsController.buildDomState(ielem, row)
+					
+				})
+				
+				if(display){
+					$('#statistics #tab-titles').append(div)
+				}
+				else{
+					$('#statistics #tab-titles').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.name, null, count))
 				}
 			},
 
 			buildBlockTipp: function(elem, count){
 
-				if(elem._meta){
-					var display = false
-					var div = $('<div></div>')
-					
-					var table = statisticsController.buildDomTable()
-					$(div).append(table)
-					
-					$(elem._meta).each( function(ii, ielem){
-						var row = $('<tr></tr>')
-						
-						if(ielem.api){
-							$(div).prepend(statisticsController.buildDomTitle(elem.title.name, ielem.api, count))
-						}
-						else if(ielem.dom){
-							display = true
-							$(table).append(row)
-							
-							$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
-							$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td')
-							$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
-							
-							//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
-							//tb +=    '<button>+</button><button>-</button></td>'
-							//$(row).append(tb)
-								
-							$(row).attr('data-code', ielem.m)
+				var display = false
+				var div = $('<div></div>')
+				
+				var table = statisticsController.buildDomTable()
+				$(div).append(table)
+				
+				if(elem._meta.api){
+					$(div).prepend(statisticsController.buildDomTitle(elem.title.name, elem._meta.api, count))
+				}
+				
+				$(elem._meta.stats).each( function(ii, ielem){
+					var row = $('<tr></tr>')
 
-							statisticsController.buildDomState(ielem, row)
-						}
-					})
+					display = true
+					$(table).append(row)
 					
-					if(display){
-						$('#statistics #tab-package').append(div)
-					}
-					else{
-						$('#statistics #tab-package').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.title.name, null, count))
-					}
+					$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
+					$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td')
+					$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
+					
+					//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
+					//tb +=    '<button>+</button><button>-</button></td>'
+					//$(row).append(tb)
+						
+					$(row).attr('data-code', ielem.m)
+
+					statisticsController.buildDomState(ielem, row)
+				})
+				
+				if(display){
+					$('#statistics #tab-package').append(div)
+				}
+				else{
+					$('#statistics #tab-package').append($('<div></div>')).append(statisticsController.buildDomTitle(elem.title.name, null, count))
 				}
 			},
 

@@ -79,13 +79,13 @@ abstract class ConnectorAbstract implements ConnectorInterface {
             def tmp = item.value.minus(null) // TODO CHECK, or use e.g. Status.EMPTY_SLOT
             switch(tmp.size()) {
                 case 0:
-                    states << item.key + '_' + Status.API_RESULT_NO_MATCH
+                    states << /*item.key + '_' + */ Status.API_RESULT_NO_MATCH
                 break;
                 case 1:
-                    states << item.key + '_' + Status.API_RESULT_OK
+                    states << /*item.key + '_' + */ Status.API_RESULT_OK
                     break;
                 case {it > 1}:
-                    states << item.key + '_' + Status.API_RESULT_MULTIPLE_MATCHES
+                    states << /*item.key + '_' + */ Status.API_RESULT_MULTIPLE_MATCHES
                 break;
             }
         }

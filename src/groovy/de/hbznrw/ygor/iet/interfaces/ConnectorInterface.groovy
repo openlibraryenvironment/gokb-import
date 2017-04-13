@@ -9,17 +9,18 @@ interface ConnectorInterface {
     
     /**
      * 
-     * @param issn
+     * @param identifier
      * @return
      */
-    String getAPIQuery(String issn)
+    String getAPIQuery(String identifier)
     
     /**
+     * Storing polling response
      * 
-     * @param issn
+     * @param identifier
      * @return
      */
-    Envelope poll(String issn)
+    Envelope poll(String identifier)
     
     /**
      * 

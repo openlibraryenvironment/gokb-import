@@ -10,4 +10,5 @@ class Meta {
     String    file
     ArrayList api
     HashMap   stats
+    HashMap   stash
 }

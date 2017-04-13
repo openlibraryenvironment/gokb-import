@@ -17,7 +17,8 @@ class DataContainer {
             ygor:   "TODO",
             date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),
             api:    [],
-            stats:  [:]
+            stats:  [:],
+            stash:  [:]
         )
         pkg      = new Package()
         titles   = [:]

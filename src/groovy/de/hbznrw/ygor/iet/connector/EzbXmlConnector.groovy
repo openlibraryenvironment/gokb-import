@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.iet.connector
 
+import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
@@ -12,6 +13,7 @@ import de.hbznrw.ygor.iet.interfaces.*
  * @author David Klober
  *
  */
+@Log4j
 class EzbXmlConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
@@ -35,7 +37,11 @@ class EzbXmlConnector extends ConnectorAbstract {
 	Envelope poll(String identifier) {
 		
 		try {
-			String text = new URL(getAPIQuery(identifier)).getText()
+            String q = getAPIQuery(identifier)
+            
+            log.info("polling(): " + q)
+			String text = new URL(q).getText()
+            
 			response = new XmlSlurper().parseText(text)
 			
 		} catch(Exception e) {

@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.iet.connector
 
+import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
@@ -10,6 +11,7 @@ import de.hbznrw.ygor.iet.export.*
 /**
  * Controlling API calls using sru.gbv.de
  */
+@Log4j
 class GbvSruPicaConnector extends ConnectorAbstract {
 	
     static final QUERY_PICA_ISS = "query=pica.iss%3D"
@@ -43,7 +45,11 @@ class GbvSruPicaConnector extends ConnectorAbstract {
     @Override
     Envelope poll(String identifier) {
         try {
-            String text = new URL(getAPIQuery(identifier)).getText()
+            String q = getAPIQuery(identifier)
+            
+            log.info("polling(): " + q)
+            String text = new URL(q).getText()
+            
             response = new XmlSlurper().parseText(text)
             
             picaRecords = []
@@ -110,19 +116,13 @@ class GbvSruPicaConnector extends ConnectorAbstract {
                 return getTitle()
                 break;
             case Query.GBV_PUBLISHER:
-                return getPublisherAsFatEnvelope()
+                return getPublisherHistoryAsFatEnvelope()
                 break;
             case Query.GBV_PUBLISHED_FROM:
                 return getFirstResultOnly('011@', 'a')
                 break;
             case Query.GBV_PUBLISHED_TO:
                 return getFirstResultOnly('011@', 'b')
-                break;
-            case Query.GBV_TIPP_URL:
-                return getAllTippURL()
-                break;
-            case Query.GBV_TIPP_COVERAGE:
-                return getTippCoverageAsFatEnvelope()
                 break;
             case Query.GBV_HISTORY_EVENTS:
                 return getHistoryEventAsFatEnvelope()
@@ -176,7 +176,7 @@ class GbvSruPicaConnector extends ConnectorAbstract {
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
-    private Envelope getPublisherAsFatEnvelope() {
+    private Envelope getPublisherHistoryAsFatEnvelope() {
         def result          = []
         def resultStartDate = []
         def resultEndDate   = []
@@ -252,13 +252,15 @@ class GbvSruPicaConnector extends ConnectorAbstract {
         getEnvelopeWithMessage(result)
     }
     
+    /*
     private Envelope getAllTippURL() {
         def result = []
         
         result += getAllPicaValues(currentRecord.recordData.record, '009P', 'a') // TODO
         getEnvelopeWithMessage(result.minus(null).unique())
     }
-
+    */
+    /*
     private Envelope getTippCoverageAsFatEnvelope() { 
         def result              = []     
         def resultCoverageNote  = []
@@ -302,4 +304,5 @@ class GbvSruPicaConnector extends ConnectorAbstract {
         
         getEnvelopeWithMessage(result)
     }
+    */
 }

@@ -1,9 +1,6 @@
 package de.hbznrw.ygor.tools
 
 import groovy.util.logging.Log4j
-
-import org.codehaus.groovy.grails.web.util.WebUtils
-
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 

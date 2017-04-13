@@ -23,8 +23,6 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         Query.GBV_PUBLISHER,
         Query.GBV_PUBLISHED_FROM,
         Query.GBV_PUBLISHED_TO,
-        Query.GBV_TIPP_URL,
-        //ygor 0.13: Query.GBV_TIPP_COVERAGE,
         Query.GBV_HISTORY_EVENTS
         ]
 
@@ -35,7 +33,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         
         if(options.get('typeOfKey') == ZdbBridge.IDENTIFIER){
             this.connector  = new GbvSruPicaConnector(this, GbvSruPicaConnector.QUERY_PICA_ZDB)
-            this.stashIndex = TitleStruct.ISSN
+            this.stashIndex = ZdbBridge.IDENTIFIER
         }
         else {
             this.connector  = new GbvSruPicaConnector(this, GbvSruPicaConnector.QUERY_PICA_ISS)
@@ -65,7 +63,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 
         def stash = processor.getStash()
         
-        stash[this.stashIndex].each{ key, value ->
+        stash.get(stashIndex).each{ key, uid ->
 
             if(!master.isRunning) {
                 log.info('Aborted by user action.')
@@ -77,9 +75,9 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
             
             connector.getPicaRecords().eachWithIndex { pr, i ->
                 
-                def uid   = UUID.randomUUID().toString()
+                //def uid   = UUID.randomUUID().toString()
                 def title = processor.processEntry(master.enrichment.dataContainer, uid, key, pr) 
-                def zdbid
+               /* def zdbid
                 // TODO: fix empty zdbid
                 
                 title.identifiers.each{ ident ->
@@ -88,6 +86,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
                     }
                 }
                 stash[ZdbBridge.IDENTIFIER] << ["${zdbid}":"${uid}"]
+                */
             }
         }
     }

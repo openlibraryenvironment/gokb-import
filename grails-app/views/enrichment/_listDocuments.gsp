@@ -94,41 +94,14 @@
 			</g:if>
 			
 			<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
-				<div class="row">
-					<div class="col-xs-12">
-						Einstiegungspunkt für die Anreicherung:
-						<br /><br />
-						
-						<g:textField name="processIndex" size="18" value="" />
-						
-						&nbsp;
-						<g:radio name="processIndexType" value="${ZdbBridge.IDENTIFIER}"/> ZDB-ID
-						&nbsp;
-						<g:radio name="processIndexType" checked="true" value="${TitleStruct.PISSN}"/> pISSN
-						&nbsp;
-						<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/> eISSN
-					</div>
-				</div><!-- .row -->
-				
-				<script>
-					$(function(){
-						var processIndexDefault = 'Spaltenindex der ..'
-						$('input[name=processIndex]').attr('value', processIndexDefault)
-						$('input[name=processIndex]').click(function(){
-							if($(this).attr('value') == processIndexDefault){
-								$('input[name=processIndex]').attr('value', '')
-							}
-						})
-					})
-				</script>
-				
-				<br />
 
 				<div class="row">
 					<div class="col-xs-12">
-						Über die folgenden Schnittstellen sollen weitere Information hinzugefügt werden:
+						Über die folgenden Schnittstellen sollen die Information hinzugefügt werden:
 						<br /><br />	
 						
+						<g:checkBox name="processOption" required="true" checked="true" value="${KbartBridge.IDENTIFIER}"/> KBART-Datei
+						&nbsp;
 						<g:checkBox name="processOption" required="true" checked="true" value="${GbvBridge.IDENTIFIER}"/> GBV
 						&nbsp;
 						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB
@@ -137,6 +110,21 @@
 					</div>
 				</div><!-- .row -->
 				
+				<br />
+				
+				<div class="row">
+					<div class="col-xs-12">
+						Einstiegungspunkt für die Anreicherung:
+						<br /><br />
+
+						<g:radio name="processIndexType" checked="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB-ID
+						&nbsp;
+						<g:radio name="processIndexType" disabled="true" value="${TitleStruct.PISSN}"/> print_identifier (pISSN)
+						&nbsp;
+						<g:radio name="processIndexType" disabled="true" value="${TitleStruct.EISSN}"/> online_identifier (eISSN)
+					</div>
+				</div><!-- .row -->
+							
 				<br />
 			</g:if>
 			

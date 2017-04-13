@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.iet.connector
 
 import groovy.json.JsonSlurper
+import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.interfaces.*
@@ -12,6 +13,7 @@ import de.hbznrw.ygor.iet.interfaces.*
  * @author David Klober
  *
  */
+@Log4j
 class LobidJldConnector extends ConnectorAbstract {
 	
 	private String requestUrl       = "https://lobid.org/resource?"
@@ -36,7 +38,11 @@ class LobidJldConnector extends ConnectorAbstract {
 	Envelope poll(String issn) {
 		
 		try {
-			String text = new URL(getAPIQuery(issn)).getText(requestProperties: [Accept: requestHeader])
+            String q = getAPIQuery(issn)
+            
+            log.info("polling(): " + q)
+			String text = new URL(q).getText(requestProperties: [Accept: requestHeader])
+
 			response = new JsonSlurper().parseText(text)
 			
 		} catch(Exception e) {

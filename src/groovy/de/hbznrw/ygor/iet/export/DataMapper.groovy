@@ -180,57 +180,63 @@ class DataMapper {
             DataSetter.setString(tipp.title.v.name, env.message)
         }
         
-        else if(query == Query.GBV_TIPP_URL) {
+        else if(query == Query.KBART_TIPP_URL) {
 
+            // TODO
+            // TODO
+            // TODO
+            
             // check if tipp.url is matching packageHeader.nominalPlatform
             def matching = UrlToolkit.sortUrl(env.message, dc.pkg.packageHeader.v.nominalPlatform.v)
             
             DataSetter.setURL(tipp.url, matching)
-            
+
             if(matching.size() == 0 && env.message.size() > 0){
                 tipp.url.org = env.message
                 tipp.url.m   = Status.VALIDATOR_TIPPURL_NOT_MATCHING
             }
         }
 
-        else if(query == Query.GBV_TIPP_COVERAGE) {     
+        else if(query == Query.KBART_TIPP_COVERAGE) {     
             
-            env.message.each{ e ->
-                e.messages['coverageNote'].eachWithIndex{ elem, i ->
-                    
-                    def coverage = PackageStruct.getNewTippCoverage()
-                    
-                    if(e.messages['startDate'][i]){
-                        DataSetter.setDate(coverage.startDate, Normalizer.IS_START_DATE, e.messages['startDate'][i])  
-                    }
-                    if(e.messages['endDate'][i]){
-                        DataSetter.setDate(coverage.endDate,   Normalizer.IS_END_DATE,   e.messages['endDate'][i])
-                    }
-                    if(e.messages['startVolume'][i]){
-                        DataSetter.setCoverageVolume(coverage.startVolume, Normalizer.IS_START_DATE, e.messages['startVolume'][i])
-                    }
-                    if(e.messages['endVolume'][i]){
-                        DataSetter.setCoverageVolume(coverage.endVolume,   Normalizer.IS_END_DATE,   e.messages['endVolume'][i], )
-                    } 
-                    
-                    // TODO
-                    DataSetter.setString(coverage.coverageNote, e.messages['coverageNote'][i])
-                    //coverage.coverageNote.org = e.messages['coverageNote'][i]
-                    //coverage.coverageNote.v   = Normalizer.normString(coverage.coverageNote.org)
-                    //coverage.coverageNote.m   = Normalizer.normString(
-                    //    (e.states.find{it.toString().startsWith('coverageNote_')}).toString().replaceFirst('coverageNote_', '')
-                    //)
-                    
-                    def valid = StructValidator.isValidCoverage(coverage)
-                    def pod = new Pod(coverage, valid)
-                    
-                    if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
-                        tipp.coverage << pod
-                    }
-                    else {
-                        log.debug("! ignore crappy tipp coverage")
-                    }
-                }
+            // TODO
+            // TODO
+            // TODO
+            
+            def coverage = PackageStruct.getNewTippCoverage()
+            
+            if(env.messages['startDate']){
+                DataSetter.setDate(coverage.startDate, Normalizer.IS_START_DATE, env.messages['startDate'].first())  
+            }
+            if(env.messages['endDate']){
+                DataSetter.setDate(coverage.endDate, Normalizer.IS_END_DATE, env.messages['endDate'].first())
+            }
+            if(env.messages['startIssue']){
+                DataSetter.setCoverageVolume(coverage.startIssue, Normalizer.IS_START_DATE, env.messages['startIssue'].first())
+            }
+            if(env.messages['endIssue']){
+                DataSetter.setCoverageVolume(coverage.endIssue, Normalizer.IS_END_DATE, env.messages['endIssue'].first())
+            }
+            if(env.messages['startVolume']){
+                DataSetter.setCoverageVolume(coverage.startVolume, Normalizer.IS_START_DATE, env.messages['startVolume'].first())
+            }
+            if(env.messages['endVolume']){
+                DataSetter.setCoverageVolume(coverage.endVolume, Normalizer.IS_END_DATE, env.messages['endVolume'].first())
+            } 
+                
+            // TODO
+            DataSetter.setString(coverage.coverageNote, env.messages['coverageNote'].first())
+            // TODO
+            DataSetter.setString(coverage.embargo, env.messages['embargo'].first())
+
+            def valid = StructValidator.isValidCoverage(coverage)
+            def pod = new Pod(coverage, valid)
+           
+            if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+                tipp.coverage << pod
+            }
+            else {
+                log.debug("! ignore crappy tipp coverage")
             }
         }
     }

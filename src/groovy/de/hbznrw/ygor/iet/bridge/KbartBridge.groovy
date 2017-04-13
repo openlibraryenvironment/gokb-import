@@ -5,40 +5,33 @@ import de.hbznrw.ygor.iet.connector.*
 import de.hbznrw.ygor.iet.enums.Query
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.iet.export.structure.TitleStruct
 
 @Log4j
-class EzbBridge extends BridgeAbstract implements BridgeInterface {
+class KbartBridge extends BridgeAbstract implements BridgeInterface {
 	
-    static final IDENTIFIER = 'ezb'
+    static final IDENTIFIER = 'kbart'
     
 	Query[] tasks = [
-        Query.EZBID
+        Query.KBART_TIPP_URL,
+        Query.KBART_TIPP_COVERAGE
     ]
 
-	EzbBridge(Thread master, HashMap options) {
+	KbartBridge(Thread master, HashMap options) {
         this.master     = master
 		this.options    = options
-        this.processor  = master.processor
-        
-		this.connector  = new EzbXmlConnector(this)
-
-        if(options.get('typeOfKey') == ZdbBridge.IDENTIFIER){
-            this.stashIndex = ZdbBridge.IDENTIFIER
-        }
-        else {
-            this.stashIndex = TitleStruct.ISSN
-        }
+		this.connector  = new KbartConnector(this)
+		this.processor  = master.processor
+        this.stashIndex = KbartBridge.IDENTIFIER
 	}
 	
 	@Override
 	void go() throws Exception {
 		log.info("Input:  " + options.get('inputFile'))
         
-        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<zdbid>')
+        master.enrichment.dataContainer.info.api << 'KBART-FILE'
         
         processor.setBridge(this)
-        processor.setConfiguration(",", null, null)
+        processor.setConfiguration(",", '"', null)
         processor.processFile(options)
 	}
 	
@@ -59,11 +52,13 @@ class EzbBridge extends BridgeAbstract implements BridgeInterface {
                 log.info('Aborted by user action.')
                 return
             }
-            
             increaseProgress()
+
+            // for kbart file no really need
             connector.poll(key)
             
-            processor.processEntry(master.enrichment.dataContainer, uid, key)
+            // TODO refactor
+            processor.processEntry(master.enrichment.dataContainer, key, 'TODO_REFACTOR_TO_ZdbBridge.IDENTIFIER')
         }
     }
 }

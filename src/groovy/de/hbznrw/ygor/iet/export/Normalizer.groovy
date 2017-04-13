@@ -2,7 +2,6 @@ package de.hbznrw.ygor.iet.export
 
 import groovy.util.logging.Log4j
 import java.time.LocalDate
-import org.springframework.util.StringUtils
 import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.TitleStruct

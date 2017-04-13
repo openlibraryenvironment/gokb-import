@@ -38,13 +38,11 @@ class Envelope {
         this.type     = Envelope.COMPLEX
     }
 
-	String toString() {
-        /*
+	String toString() {      
         log.debug("| type:     " + type)
         log.debug("| state:    " + state)
         log.debug("| message:  " + message)
         log.debug("| states:   " + states)
-        log.debug("| messages: " + messages)
-        */
+        log.debug("| messages: " + messages) 
 	}
 }
