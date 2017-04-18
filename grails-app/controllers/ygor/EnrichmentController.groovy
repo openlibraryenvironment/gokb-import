@@ -48,6 +48,13 @@ class EnrichmentController {
             )
     }
 
+    def config = {
+        render(
+            view:'config',
+            model:[currentView:'config']
+            )
+    }
+    
     def contact = {
         render(
             view:'contact',

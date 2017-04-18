@@ -4,11 +4,11 @@ import de.hbznrw.ygor.iet.enums.*
 
 class PackageHeader {
     
-    Pod breakable        = new Pod("No",  Status.HARDCODED)
-    Pod consistent       = new Pod("Yes", Status.HARDCODED)
-    Pod fixed            = new Pod("Yes", Status.HARDCODED)
-    Pod global           = new Pod("Consortium", Status.HARDCODED)
-    Pod listStatus       = new Pod("Checked",    Status.HARDCODED)
+    Pod breakable        = new Pod(FixedValues.packageHeader_breakable,  Status.HARDCODED)
+    Pod consistent       = new Pod(FixedValues.packageHeader_consistent, Status.HARDCODED)
+    Pod fixed            = new Pod(FixedValues.packageHeader_fixed,      Status.HARDCODED)
+    Pod global           = new Pod(FixedValues.packageHeader_global,     Status.HARDCODED)
+    Pod listStatus       = new Pod(FixedValues.packageHeader_listStatus, Status.HARDCODED)
     Pod listVerifiedDate = new Pod("")
     Pod listVerifier     = new Pod("")
     Pod name             = new Pod("")

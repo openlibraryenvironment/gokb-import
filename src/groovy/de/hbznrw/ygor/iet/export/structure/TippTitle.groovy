@@ -5,7 +5,7 @@ import de.hbznrw.ygor.iet.enums.*
 class TippTitle {
     
     Pod name        = new Pod("")
-    Pod type        = new Pod("Serial", Status.HARDCODED)
+    Pod type        = new Pod(FixedValues.tipp_title_type, Status.HARDCODED)
     
     ArrayList<Identifier> identifiers = []
 }

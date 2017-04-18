@@ -9,8 +9,8 @@ class Tipp {
     Pod accessEnd   = new Pod()
     Pod accessStart = new Pod()
     
-    Pod medium      = new Pod("Electronic", Status.HARDCODED)
-    Pod status      = new Pod("Current",    Status.HARDCODED)  
+    Pod medium      = new Pod(FixedValues.tipp_medium, Status.HARDCODED)
+    Pod status      = new Pod(FixedValues.tipp_status, Status.HARDCODED)  
     Pod url         = new Pod("")
     
     Pod title       = new Pod(PackageStruct.getNewTippTitle())

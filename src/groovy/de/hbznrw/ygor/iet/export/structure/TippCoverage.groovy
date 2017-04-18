@@ -4,7 +4,7 @@ import de.hbznrw.ygor.iet.enums.*
 
 class TippCoverage {
      
-    Pod coverageDepth = new Pod("Fulltext", Status.HARDCODED)
+    Pod coverageDepth = new Pod(FixedValues.tipp_coverage_coverageDepth, Status.HARDCODED)
     Pod coverageNote  = new Pod("")
     Pod embargo       = new Pod("")
     Pod endDate       = new Pod("")

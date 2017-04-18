@@ -18,6 +18,9 @@
 					<a href="${grailsApplication.config.grails.app.context}/statistic/index">Statistik</a>
 				</li>
 				<!--<li><a href="zevport">ZevPort-Export</a></li>-->
+				<li <g:if test="${currentView == 'config'}">class="active"</g:if>>
+					<a href="${grailsApplication.config.grails.app.context}/enrichment/config">Konfiguration</a>
+				</li>
 				<li <g:if test="${currentView == 'howto'}">class="active"</g:if>>
 					<a href="${grailsApplication.config.grails.app.context}/enrichment/howto">Anleitung</a>
 				</li>
