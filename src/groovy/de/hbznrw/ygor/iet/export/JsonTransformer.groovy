@@ -60,10 +60,7 @@ class JsonTransformer {
         JsonTransformer.removeEmpty(json, validator)
         
         if(type.equals(FileType.JSON_DEBUG)){
-            
             Statistics.getStatsAfterCleanUp(json)
-            //json.package = []
-            //json.titles  = []
         }
         else {
             json.meta.stats = []
@@ -105,7 +102,7 @@ class JsonTransformer {
         }
 
         if(json.package.packageHeader.name) {
-            json.package.packageHeader.name =  json.package.packageHeader.name.v.v
+            json.package.packageHeader.name = json.package.packageHeader.name.v.v
         }
         
         json  
@@ -170,17 +167,20 @@ class JsonTransformer {
         
         json.package.tipps.each{ tipp ->
             tipp.each{ attr ->
-                if(attr.value.v instanceof java.lang.String || attr.value.v == null) {
-                    def value = (attr.value.v == null) ? "" : attr.value.v
-
-                    if(attr.key == 'url'){
-                        // use validator
-                        if(useValidator){
-                            if(attr.value.m != Status.VALIDATOR_URL_IS_VALID.toString())
-                                value = ""
+                // ignore _meta
+                if(attr.key != '_meta'){ 
+                    if(attr.value.v instanceof java.lang.String || attr.value.v == null) {
+                        def value = (attr.value.v == null) ? "" : attr.value.v
+    
+                        if(attr.key == 'url'){
+                            // use validator
+                            if(useValidator){
+                                if(attr.value.m != Status.VALIDATOR_URL_IS_VALID.toString())
+                                    value = ""
+                            }
                         }
+                        tipp."${attr.key}" = value
                     }
-                    tipp."${attr.key}" = value
                 }
             }
         }
@@ -289,19 +289,22 @@ class JsonTransformer {
         
         json.titles.each{ title ->
             title.each{ attr ->
-                if(attr.value.v instanceof java.lang.String) {
+                // ignore _meta
+                if(attr.key != '_meta'){ 
+                    if(attr.value.v instanceof java.lang.String) {
                     
-                    if(attr.key == "name") {
-                        def value = attr.value.v
-                        // use validator
-                        if(useValidator)
-                            if(attr.value.m != Status.VALIDATOR_STRING_IS_VALID.toString())
-                                value = ""
-                                
-                        title."${attr.key}" = value
-                    }
-                    else {
-                        title."${attr.key}" = (attr.value.v ? attr.value.v : "")
+                        if(attr.key == "name") {
+                            def value = attr.value.v
+                            // use validator
+                            if(useValidator)
+                                if(attr.value.m != Status.VALIDATOR_STRING_IS_VALID.toString())
+                                    value = ""
+                                    
+                            title."${attr.key}" = value
+                        }
+                        else {
+                            title."${attr.key}" = (attr.value.v ? attr.value.v : "")
+                        }
                     }
                 }
             }

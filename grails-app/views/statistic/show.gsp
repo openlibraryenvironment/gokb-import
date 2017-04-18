@@ -124,7 +124,7 @@
 					
 			buildDomTitle: function(name, url, count){
 				
-				var links
+				var links = ""
 				for(i in url){
 					if("kbart-file" == url[i]){
 						links += ' <span class="glyphicon glyphicon-paste"></span>'
@@ -132,10 +132,12 @@
 					else{
 						links += ' <a href="' + url[i] + '" target="_blank"><span class="glyphicon glyphicon-cloud-download"></span></a>'
 					}
-				}		
-				return $('<p class="domTitle"><strong>' + count + '. ' + name + ' - '
-							+ links
-							+ '</strong></p>')
+				}
+				if(links){
+					links = " - " + links
+				}	
+
+				return $('<p class="domTitle"><strong>' + count + '. ' + name + links + '</strong></p>')
 			},
 			
 			buildDomTable: function(){
@@ -179,7 +181,7 @@
 					$(div).prepend(statisticsController.buildDomTitle(elem.name, elem._meta.api, count))
 				}
 
-				$(elem._meta.stats).each( function(ii, ielem){
+				$(elem._meta.data).each( function(ii, ielem){
 					var row = $('<tr></tr>')
 					
 					display = true
@@ -188,10 +190,6 @@
 					$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
 					$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td>')
 					$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
-					
-					//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
-					//tb +=    '<button>-</button><button>+</button></td>'
-					//$(row).append(tb)
 					
 					$(row).attr('data-code', ielem.m)
 					
@@ -219,7 +217,7 @@
 					$(div).prepend(statisticsController.buildDomTitle(elem.title.name, elem._meta.api, count))
 				}
 				
-				$(elem._meta.stats).each( function(ii, ielem){
+				$(elem._meta.data).each( function(ii, ielem){
 					var row = $('<tr></tr>')
 
 					display = true
@@ -228,11 +226,7 @@
 					$(row).append('<td>' + ielem.m + '</td><td>' + ielem.dom + '</td>')
 					$(row).append('<td>' + statisticsController.buildDomValue(ielem.org) + '</td')
 					$(row).append('<td>' + statisticsController.buildDomValue(ielem.v) + '</td>')
-					
-					//var tb = '<td><input type="text" value="' + statisticsController.buildDomValue(ielem.v) + '">'
-					//tb +=    '<button>+</button><button>-</button></td>'
-					//$(row).append(tb)
-						
+
 					$(row).attr('data-code', ielem.m)
 
 					statisticsController.buildDomState(ielem, row)
