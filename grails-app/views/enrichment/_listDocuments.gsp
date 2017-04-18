@@ -77,7 +77,7 @@
 				<div class="row">
 				 
 					<div class="col-xs-6">
-						GOKb Plattform:
+						Plattform:
 						<br /><br /> 
 						<g:select name="pkgNominal" from="${platformService.getMap().entrySet()}" optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
 						<br /> 
@@ -86,7 +86,9 @@
 					<div class="col-xs-6">
 						GOKb Curatory Group:
 						<br /><br /> 
-						<g:textField name="pkgCuratoryGroup" size="24" value="LAS:eR" />
+						<g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" />
+						&nbsp;
+						<g:textField name="pkgCuratoryGroup2" size="24" value="hbz" />
 						<br />
 						<br /> 
 					</div>

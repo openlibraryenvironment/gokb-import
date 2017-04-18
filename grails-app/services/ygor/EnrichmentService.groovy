@@ -46,7 +46,12 @@ class EnrichmentService {
         
         ph.v.name.v          = new Pod(pm['pkgTitle'][0])
         ph.v.variantNames   << new Pod(pm['pkgVariantName'][0])
-        ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup'][0])
+        if("" != pm['pkgCuratoryGroup1'][0].trim()){
+            ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
+        }
+        if("" != pm['pkgCuratoryGroup2'][0].trim()){
+            ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup2'][0])
+        }
         
         def map = platformService.getMap()
         def pkgNominal = map.find{it.key == pm['pkgNominal'][0]}
