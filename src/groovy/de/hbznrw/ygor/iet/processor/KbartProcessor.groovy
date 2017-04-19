@@ -2,6 +2,7 @@ package de.hbznrw.ygor.iet.processor
 
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.QuoteMode
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.Stash
 import de.hbznrw.ygor.iet.enums.Status
@@ -37,7 +38,7 @@ class KbartProcessor extends ProcessorAbstract {
         super.bridge = bridge
     }
     
-    void setConfiguration(String delimiter, String quote, String recordSeparator) {
+    void setConfiguration(String delimiter, String quote, String quoteMode, String recordSeparator) {
         
         // TODO refactoring
         def resolver = [
@@ -45,17 +46,30 @@ class KbartProcessor extends ProcessorAbstract {
             'semicolon'     : ';',
             'tab'           : '\t',
             'doublequote'   : '"',
-            'singlequote'   : "'"
+            'singlequote'   : "'",
+            'nullquote'     : 'null',
+            'all'           : QuoteMode.ALL,
+            'nonnumeric'    : QuoteMode.NON_NUMERIC,
+            'none'          : QuoteMode.NONE
             ]
         
         delimiter = resolver.get(delimiter)
         quote     = resolver.get(quote)
+        quoteMode = resolver.get(quoteMode)
         
         if(null != delimiter) {
             csvFormat = csvFormat.withDelimiter((char)delimiter)
         }
         if(null != quote) {
-            csvFormat = csvFormat.withQuote((char)quote)
+            if('null' == quote) {
+                csvFormat = csvFormat.withQuote(null)
+            }
+            else {
+                csvFormat = csvFormat.withQuote((char)quote)
+            }
+        }
+        if(null != quoteMode) {
+            csvFormat = csvFormat.withQuoteMode((QuoteMode)quoteMode)
         }
         if(null != recordSeparator) {
             csvFormat = csvFormat.withRecordSeparator(recordSeparator)

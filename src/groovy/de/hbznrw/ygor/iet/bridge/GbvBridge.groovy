@@ -43,7 +43,7 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go() throws Exception {
-        log.info("Input:  " + options.get('inputFile') + " [" + options.get('delimiter') + ", " + options.get('quotes') + "]")
+        log.info("Input:  " + options.get('inputFile'))
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>')
         

@@ -14,14 +14,15 @@ class EnrichmentService {
     def grailsApplication
     PlatformService platformService
     
-    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quotes) {
+    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode) {
         
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
         en.setStatus(Enrichment.ProcessingState.PREPARE)
         
         def tmp = [:]
         tmp << ['delimiter': delimiter]
-        tmp << ['quotes':    quotes]
+        tmp << ['quote':     quote]
+        tmp << ['quoteMode': quoteMode]
         
         def formats = getSessionFormats()
         formats << ["${en.originHash}":tmp]

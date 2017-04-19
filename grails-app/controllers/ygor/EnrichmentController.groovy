@@ -65,7 +65,10 @@ class EnrichmentController {
     def uploadFile = {
 
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
-        def foQuotes    = request.parameterMap['formatQuotes'][0]
+        def foQuote     = null
+        def foQuoteMode = null
+        //def foQuote     = request.parameterMap['formatQuote'][0]
+        //def foQuoteMode = request.parameterMap['formatQuoteMode'][0]
         
         def file = request.getFile('uploadFile')
         if (file.empty) {
@@ -80,7 +83,7 @@ class EnrichmentController {
             )
             return
         }
-        enrichmentService.addFileAndFormat(file, foDelimiter, foQuotes)
+        enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
 
         redirect(action:'process')
     }
@@ -113,7 +116,8 @@ class EnrichmentController {
                     'typeOfKey':    pmIndexType,
                     'options':      pmOptions,
                     'delimiter':    format.get('delimiter'),
-                    'quotes':       format.get('quotes'),
+                    'quote':        format.get('quote'),
+                    'quoteMode':    format.get('quoteMode'),
                     'ygorVersion':  grailsApplication.config.ygor.version,
                     'ygorType':     grailsApplication.config.ygor.type
                     ]

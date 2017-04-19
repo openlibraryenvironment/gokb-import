@@ -26,12 +26,13 @@ class KbartBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go() throws Exception {
-		log.info("Input:  " + options.get('inputFile') + " [" + options.get('delimiter') + ", " + options.get('quotes') + "]")
+		log.info("Input:  " + options.get('inputFile') + " [" 
+            + options.get('delimiter') + ", " + options.get('quote') + ", " + options.get('quoteMode') + "]")
         
         master.enrichment.dataContainer.info.api << 'KBART-FILE'
         
         processor.setBridge(this)
-        processor.setConfiguration(options.get('delimiter'), options.get('quotes'), null)
+        processor.setConfiguration(options.get('delimiter'), options.get('quote'), options.get('quoteMode'), null)
         processor.processFile(options)
 	}
 	

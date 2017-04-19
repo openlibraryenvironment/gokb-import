@@ -52,7 +52,8 @@ class MultipleProcessingThread extends Thread {
                                 inputFile:  enrichment.originPathName,
                                 typeOfKey:  typeOfKey,
                                 delimiter:  refactorThis.get('delimiter'),
-                                quotes:     refactorThis.get('quotes')
+                                quote:      refactorThis.get('quote'),
+                                quoteMode:  refactorThis.get('quoteMode')
                                 )
                             )
                             break

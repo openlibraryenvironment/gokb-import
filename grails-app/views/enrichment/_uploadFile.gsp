@@ -4,9 +4,9 @@
 <g:if test="${enrichments.size() == 0}">
 
 	<g:uploadForm action="uploadFile">
-	<div class="row">
 	
-		<div class="col-xs-6">
+	<div class="row">	
+		<div class="col-xs-12">
 			Datei:
 			<br /><br />
 
@@ -28,8 +28,11 @@
 			    });
 			</script>
 		</div>
+	</div><!-- .row -->
 		
-		<div class="col-xs-6">
+	<div class="row">
+		<div class="col-xs-12">
+			<br />
 			Trennzeichen:
 			<br /><br />
 
@@ -38,18 +41,31 @@
 			<g:radio name="formatDelimiter" value="semicolon"/> Semikolon <code>(;)</code>
 			&nbsp;
 			<g:radio name="formatDelimiter" value="tab"/> Tabulator <code>(\t)</code>
-			
+		
+			<!-- 
 			<br /><br />
 			Zeichenbegrenzer:
 			<br /><br />
 
-			<g:radio name="formatQuotes" checked="true" value="doublequote"/> Anführungszeichen <code>(")</code>
+			<g:radio name="formatQuote" checked="true" value="doublequote"/> Anführungszeichen <code>(")</code>
 			&nbsp;
-			<g:radio name="formatQuotes" value="singlequote"/> Hochkomma <code>(')</code>
+			<g:radio name="formatQuote" value="singlequote"/> Hochkomma <code>(')</code>
+			&nbsp;
+			<g:radio name="formatQuote" value="nullquote"/> ohne Begrenzer
 			
+			<br /><br />
+			Zeichenbegrenzungsmodus:
+			<br /><br />
+
+			<g:radio name="formatQuoteMode" value="all"/> Alle Felder begrenzen
+			&nbsp;
+			<g:radio name="formatQuoteMode" checked="true" value="nonnumeric"/> Alle nichtnumerischen Felder begrenzen
+			&nbsp;
+			<g:radio name="formatQuoteMode" value="none"/> Keine Felder begrenzen
+			-->
 		</div>
-		
 	</div><!-- .row -->
+	
 	</g:uploadForm>
 	
 </g:if>
