@@ -91,8 +91,19 @@
 						<br />
 						<br /> 
 					</div>
-					
 				</div><!-- .row -->
+<!-- 
+				<div class="row">
+					<div class="col-xs-6 col-xs-offset-6">
+						GOKb Source Name:
+						<br /><br /> 
+						<g:textField name="pkgSourceName" size="24" value="LAS:eR" />
+						&nbsp;
+						<g:textField name="pkgSourceUrl" size="24" value="hbz" />
+						<br />
+						<br /> 
+					</div>				
+				</div> .row -->
 				
 				<br />
 			</g:if>

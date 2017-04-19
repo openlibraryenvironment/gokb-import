@@ -6,7 +6,7 @@
 	<g:uploadForm action="uploadFile">
 	
 	<div class="row">	
-		<div class="col-xs-12">
+		<div class="col-xs-6">
 			Datei:
 			<br /><br />
 
@@ -14,6 +14,22 @@
 				<span class="glyphicon glyphicon-file"></span>
 				<span id="uploadFileLabel">Keine Datei ausgewählt</span>
 			</p>
+		</div>	
+		<div class="col-xs-6">
+			Trennzeichen:
+			<br /><br />
+
+			<g:radio name="formatDelimiter" checked="true" value="comma"/> Komma <code>(,)</code>
+			&nbsp;
+			<g:radio name="formatDelimiter" value="semicolon"/> Semikolon <code>(;)</code>
+			&nbsp;
+			<g:radio name="formatDelimiter" value="tab"/> Tabulator <code>(\t)</code>
+		</div>
+	</div><!-- .row -->
+		
+	<div class="row">
+		<div class="col-xs-12">
+			<br />
 			<label class="btn btn-default btn-file">
 				<input type="file" name="uploadFile" style="display: none;"/>Datei auswählen
 			</label>
@@ -27,20 +43,8 @@
 			        	jQuery('#uploadFileLabel').text(label);
 			    });
 			</script>
-		</div>
+		</div>	
 	</div><!-- .row -->
-		
-	<div class="row">
-		<div class="col-xs-12">
-			<br />
-			Trennzeichen:
-			<br /><br />
-
-			<g:radio name="formatDelimiter" checked="true" value="comma"/> Komma <code>(,)</code>
-			&nbsp;
-			<g:radio name="formatDelimiter" value="semicolon"/> Semikolon <code>(;)</code>
-			&nbsp;
-			<g:radio name="formatDelimiter" value="tab"/> Tabulator <code>(\t)</code>
 		
 			<!-- 
 			<br /><br />
@@ -63,8 +67,6 @@
 			&nbsp;
 			<g:radio name="formatQuoteMode" value="none"/> Keine Felder begrenzen
 			-->
-		</div>
-	</div><!-- .row -->
 	
 	</g:uploadForm>
 	
