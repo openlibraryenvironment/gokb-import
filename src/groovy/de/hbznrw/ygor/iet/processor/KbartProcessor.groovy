@@ -83,7 +83,7 @@ class KbartProcessor extends ProcessorAbstract {
         
         log.info("processFile() -> " + options)
         
-        if(0 == stash.get(KbartBridge.IDENTIFIER).size()){
+        if(0 == stash.get(KbartBridge.IDENTIFIER).size() && 0 == stash.get(Stash.IGNORED_KBART_ENTRIES).size()){
             def nr  = initData(options)
             def pgt = Math.round(nr * bridge.master.getApiCallsSize())
             bridge.getMaster().setProgressTotal((int) pgt)
@@ -99,8 +99,9 @@ class KbartProcessor extends ProcessorAbstract {
         log.info("filling stash with initial data ..")
         
         def key
-        def keys        = [:]
-        def kbartFields = [:]
+        def keys           = [:]
+        def kbartFields    = [:]
+        
         this.inputFile = options.get('inputFile')
         
         if(ZdbBridge.IDENTIFIER == options.get('typeOfKey')){
@@ -118,18 +119,25 @@ class KbartProcessor extends ProcessorAbstract {
 
             for (record in csv.iterator()) {
                 def uid = UUID.randomUUID().toString() // TODO NEW
-                
-                // store keys (zdb or issn or eissn)
                 def r = record.get(key).toString()
-                keys << ["${r}" : uid]
-
-                // store kbart fields
-                def kbfs = [:]
-                bridge.connector.kbartKeys.each{ kbk ->
-                    kbfs << ["${kbk}":record.get(kbk).toString()]
+                
+                if(r){
+                    // store keys (zdb or issn or eissn)
+                    keys << ["${r}" : uid]
+                            
+                    // store kbart fields
+                    def kbfs = [:]
+                    bridge.connector.kbartKeys.each{ kbk ->
+                        kbfs << ["${kbk}":record.get(kbk).toString()]
+                    }
+                    if(kbfs.size() > 0){
+                        kbartFields << ["${uid}":kbfs]
+                    }
                 }
-                if(kbfs.size() > 0){
-                    kbartFields << ["${uid}":kbfs]
+                else {
+                    // store invalid csv records
+                    log.info('no enrichment key (' + key + ') found; entry ignored')
+                    stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.toString())
                 }
             }
         }
@@ -140,9 +148,8 @@ class KbartProcessor extends ProcessorAbstract {
         else if("print_identifier" == key|| "online_identifier" == key){
             stash.put(TitleStruct.ISSN, keys)
         }
-
         stash.put(KbartBridge.IDENTIFIER, kbartFields)
-        
+
         return stash.get(KbartBridge.IDENTIFIER).size()
     }
     

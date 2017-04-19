@@ -38,6 +38,8 @@ class Statistics {
         json.meta.stats.general << ["tipps before cleanUp":  json.package.tipps.size()]
         json.meta.stats.general << ["titles before cleanUp": json.titles.size()] 
         
+        json.meta.stats.general << ["ignored kbart entries": json.meta.stash.ignoredKbartEntries.size()]
+        
         json
     }
     
