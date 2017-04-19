@@ -16,8 +16,10 @@ class MultipleProcessingThread extends Thread {
     public isRunning = true
     
 	private enrichment
+	private apiCalls
     private typeOfKey
-	private options
+    
+    private refactorThis // TODO refactor
 
     private int progressTotal   = 0
     private int progressCurrent = 0
@@ -25,8 +27,10 @@ class MultipleProcessingThread extends Thread {
 	MultipleProcessingThread(Enrichment en, HashMap options) {
 		this.enrichment = en
         this.processor = new KbartProcessor()
-        this.typeOfKey  = options.get('typeOfKey')
-		this.options    = options.get('options')
+		this.apiCalls  = options.get('options')
+        this.typeOfKey = options.get('typeOfKey')
+        
+        this.refactorThis = options // TODO refactor
 	}
 	
 	public void run() {
@@ -38,15 +42,17 @@ class MultipleProcessingThread extends Thread {
 		log.info('Starting ..')
         
 		try {  
-            options.each{
-                option ->
-                    switch(option) {
+            apiCalls.each{
+                call ->
+                    switch(call) {
                         case KbartBridge.IDENTIFIER:
                             // writes stash->kbart
                             // writes stash->zdb or stash->issn 
                             bridge = new KbartBridge(this, new HashMap(
                                 inputFile:  enrichment.originPathName,
-                                typeOfKey:  typeOfKey
+                                typeOfKey:  typeOfKey,
+                                delimiter:  refactorThis.get('delimiter'),
+                                quotes:     refactorThis.get('quotes')
                                 )
                             )
                             break
@@ -108,8 +114,8 @@ class MultipleProcessingThread extends Thread {
         enrichment.setProgress((progressCurrent / progressTotal) * 100)
     }
     
-    int getOptionsSize() {
-        return options.size()    
+    int getApiCallsSize() {
+        return apiCalls.size()    
     }
     
     Enrichment getEnrichment() {

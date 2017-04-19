@@ -8,7 +8,7 @@
 	<body>
 		<g:form controller="statistic" action="show">
 			<div class="row">
-				<div class="col-xs-12">
+				<div class="col-xs-10 col-xs-offset-1">
 				Statistikabfrage per Hash:
 				<br /><br />  
 				<g:textField name="sthash" size="64" value="" />

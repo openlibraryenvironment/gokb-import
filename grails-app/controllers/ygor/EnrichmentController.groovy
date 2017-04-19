@@ -17,7 +17,7 @@ class EnrichmentController {
         render(
             view:'process',
             model:[
-                enrichments:     enrichmentService.getSessionDocs(), 
+                enrichments:     enrichmentService.getSessionEnrichments(), 
                 platformService: platformService, 
                 currentView:    'process'
                 ]
@@ -28,7 +28,7 @@ class EnrichmentController {
         render(
             view:'json',
             model:[
-                enrichments: enrichmentService.getSessionDocs(), 
+                enrichments: enrichmentService.getSessionEnrichments(), 
                 currentView: 'json'
                 ]
             )
@@ -63,6 +63,9 @@ class EnrichmentController {
     }
     
     def uploadFile = {
+
+        def foDelimiter = request.parameterMap['formatDelimiter'][0]
+        def foQuotes    = request.parameterMap['formatQuotes'][0]
         
         def file = request.getFile('uploadFile')
         if (file.empty) {
@@ -71,44 +74,46 @@ class EnrichmentController {
             flash.error   = 'Sie müssen eine gültige Datei auswählen.'
             render(view:'process', 
                 model:[
-                    enrichments: enrichmentService.getSessionDocs(),
+                    enrichments: enrichmentService.getSessionEnrichments(),
                     currentView: 'process'
                 ]
             )
             return
         }
-        enrichmentService.addFile(file)
+        enrichmentService.addFileAndFormat(file, foDelimiter, foQuotes)
 
         redirect(action:'process')
     }
 
     def prepareFile = {
         
-        enrichmentService.prepareFile(getEnrichment(), request.parameterMap)
+        enrichmentService.prepareFile(getCurrentEnrichment(), request.parameterMap)
         redirect(action:'process')
     }
     
     def processFile = {
         
-        def pmIndex = false
         def pmIndexType = request.parameterMap['processIndexType'][0]
         def pmOptions   = request.parameterMap['processOption']
-        
+
         if(!pmOptions) {
             flash.info    = null
             flash.warning = 'Wählen Sie mindestens eine Anreicherungsoption.'
             flash.error   = null
         }
         else {
-            def en = getEnrichment()
+            def en = getCurrentEnrichment()
             if(en.status != Enrichment.ProcessingState.WORKING) {
                 flash.info    = 'Bearbeitung gestartet.'
                 flash.warning = null
                 flash.error   = null
 
+                def format = getCurrentFormat()
                 def options = [
                     'typeOfKey':    pmIndexType,
                     'options':      pmOptions,
+                    'delimiter':    format.get('delimiter'),
+                    'quotes':       format.get('quotes'),
                     'ygorVersion':  grailsApplication.config.ygor.version,
                     'ygorType':     grailsApplication.config.ygor.type
                     ]
@@ -119,7 +124,7 @@ class EnrichmentController {
         render(
             view:'process',
             model:[
-                enrichments: enrichmentService.getSessionDocs(), 
+                enrichments: enrichmentService.getSessionEnrichments(), 
                 currentView: 'process',
                 pIndexType:  pmIndexType,
                 pOptions:    pmOptions,
@@ -129,17 +134,17 @@ class EnrichmentController {
     
     def stopProcessingFile = {
         
-        enrichmentService.stopProcessing(getEnrichment())
+        enrichmentService.stopProcessing(getCurrentEnrichment())
         deleteFile()
     }
     
     def deleteFile = {
 
-        enrichmentService.deleteFile(getEnrichment())    
+        enrichmentService.deleteFileAndFormat(getCurrentEnrichment())    
         render(
             view:'process',
             model:[
-                enrichments: enrichmentService.getSessionDocs(), 
+                enrichments: enrichmentService.getSessionEnrichments(), 
                 currentView: 'process'
                 ]
             )
@@ -147,7 +152,7 @@ class EnrichmentController {
     
     def downloadPackageFile = {
 
-        def en = getEnrichment()
+        def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
             render(file:result, fileName:"${en.resultName}.package.json")
@@ -159,7 +164,7 @@ class EnrichmentController {
     
     def downloadTitlesFile = {
         
-        def en = getEnrichment()
+        def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
             render(file:result, fileName:"${en.resultName}.titles.json")
@@ -171,7 +176,7 @@ class EnrichmentController {
     
     def downloadDebugFile = {
         
-        def en = getEnrichment()
+        def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_DEBUG)
             render(file:result, fileName:"${en.resultName}.debug.json")
@@ -183,7 +188,7 @@ class EnrichmentController {
     
     def downloadRawFile = {
         
-        def en = getEnrichment()
+        def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
             render(file:result, fileName:"${en.resultName}.raw.json")
@@ -195,7 +200,7 @@ class EnrichmentController {
     
     def sendPackageFile = {
         
-        def status = enrichmentService.sendFile(enrichment, Enrichment.FileType.JSON_PACKAGE_ONLY)
+        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY)
         
         status.each{ st ->
             if(st.get('info'))
@@ -211,7 +216,7 @@ class EnrichmentController {
     
     def sendTitlesFile = {
         
-        def status = enrichmentService.sendFile(enrichment, Enrichment.FileType.JSON_TITLES_ONLY)
+        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY)
         
         status.each{ st ->
             if(st.get('info'))
@@ -227,14 +232,20 @@ class EnrichmentController {
 
     def ajaxGetStatus = {
         
-        def en = getEnrichment()
+        def en = getCurrentEnrichment()
         render '{"status":"' + en.getStatus() + '", "progress":' + en.getProgress().round() + '}'
     }
 
-    Enrichment getEnrichment() {
+    Enrichment getCurrentEnrichment() {
         
         def hash = (String) request.parameterMap['originHash'][0]
-        enrichmentService.getSessionDocs().get("${hash}")
+        enrichmentService.getSessionEnrichments().get("${hash}")
+    }
+    
+    HashMap getCurrentFormat() {
+        
+        def hash = (String) request.parameterMap['originHash'][0]
+        enrichmentService.getSessionFormats().get("${hash}")
     }
     
     void noValidEnrichment() {

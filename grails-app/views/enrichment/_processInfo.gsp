@@ -17,9 +17,9 @@
 
 	<g:if test="${enrichments.size() == 1}">
 
-		<g:each in="${enrichments}" var="doc">
+		<g:each in="${enrichments}" var="e">
 
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
+			<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
 				<div class="col-xs-12">
 					<h3>Paketdaten festlegen</h3>
 					<g:render template="messages" />
@@ -29,7 +29,7 @@
 				</div>
 			</g:if>
 		
-			<g:if test="${doc.value.status != Enrichment.ProcessingState.FINISHED && doc.value.status != Enrichment.ProcessingState.PREPARE}">
+			<g:if test="${e.value.status != Enrichment.ProcessingState.FINISHED && e.value.status != Enrichment.ProcessingState.PREPARE}">
 				<div class="col-xs-12">
 					<h3>Anreicherung</h3>
 					<g:render template="messages" />
@@ -39,7 +39,7 @@
 				</div>
 			</g:if>
 			
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
+			<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 				<div class="col-xs-12">
 					<h3>Übermittlung an die Knowledgebase</h3>
 					<g:render template="messages" />
@@ -49,7 +49,7 @@
 				</div>
 			</g:if>
 			
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.ERROR}">
+			<g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
 				<div class="col-xs-12">
 					<h3>Programmfehler</h3>
 					<g:render template="messages" />

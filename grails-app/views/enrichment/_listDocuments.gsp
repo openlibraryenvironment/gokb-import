@@ -8,31 +8,30 @@
 	import="de.hbznrw.ygor.iet.bridge.*"
 %>
 
-	<g:each in="${enrichments}" var="doc">
-
+	<g:each in="${enrichments}" var="e">
 		<g:form controller="enrichment" action="process">
-			<g:hiddenField name="originHash" value="${doc.key}" />
+			<g:hiddenField name="originHash" value="${e.key}" />
 			
 			<div class="row">
 				<div class="col-xs-12">
 					
 					<span class="glyphicon glyphicon-file" aria-hidden="true"></span>
-					<span title="${doc.value.originHash}">${doc.value.originName}</span>
+					<span title="${e.value.originHash}">${e.value.originName}</span>
 				
 					<span><em>
-						<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
+						<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
 							&rarr; Vorbereitung
 						</g:if>
-						<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
+						<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 							&rarr; Nicht bearbeitet
 						</g:if>
-						<g:if test="${doc.value.status == Enrichment.ProcessingState.WORKING}">
+						<g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
 							&rarr; In Bearbeitung ..
 						</g:if>
-						<g:if test="${doc.value.status == Enrichment.ProcessingState.ERROR}">
+						<g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
 							&rarr; Fehler / Die Datei konnte nicht verarbeitet werden
 						</g:if>
-						<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
+						<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 							&rarr; Bearbeitung abgeschlossen
 						</g:if>
 					</span></em>
@@ -43,8 +42,8 @@
 			
 			<div class="row">
 				<div class="col-xs-12">
-					<div id="progress-${doc.key}"class="progress">
-						<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
+					<div id="progress-${e.key}"class="progress">
+						<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 							<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%;">100%</div>
 						</g:if>
 						<g:else>
@@ -53,8 +52,8 @@
 					</div>
 				</div>
 			</div><!-- .row -->	
-			
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
+		
+			<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
 				<div class="row">
 				
 					<div class="col-xs-6">
@@ -98,20 +97,20 @@
 				<br />
 			</g:if>
 			
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
+			<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 
 				<div class="row">
 					<div class="col-xs-12">
 						Über die folgenden Schnittstellen sollen die Information hinzugefügt werden:
 						<br /><br />	
 						
-						<g:checkBox name="processOption" required="true" checked="true" value="${KbartBridge.IDENTIFIER}"/> KBART-Datei
+						<g:checkBox name="processOption" required="true" checked="true" value="${KbartBridge.IDENTIFIER}"/> KBART <code>Datei</code>
 						&nbsp;
-						<g:checkBox name="processOption" required="true" checked="true" value="${GbvBridge.IDENTIFIER}"/> GBV
+						<g:checkBox name="processOption" required="true" checked="true" value="${GbvBridge.IDENTIFIER}"/> GBV <code>API</code>
 						&nbsp;
-						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB
+						<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/> EZB <code>API</code>
 						&nbsp;
-						<g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB
+						<g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB <code>API</code>
 					</div>
 				</div><!-- .row -->
 				
@@ -122,11 +121,11 @@
 						Einstiegungspunkt für die Anreicherung:
 						<br /><br />
 
-						<g:radio name="processIndexType" checked="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB-ID
+						<g:radio name="processIndexType" checked="true" value="${ZdbBridge.IDENTIFIER}"/> ZDB-ID <code>(ZDB-ID)</code>
 						&nbsp;
-						<g:radio name="processIndexType" value="${TitleStruct.PISSN}"/> print_identifier (pISSN)
+						<g:radio name="processIndexType" value="${TitleStruct.PISSN}"/> pISSN <code>(print_identifier)</code> 
 						&nbsp;
-						<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/> online_identifier (eISSN)
+						<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/> eISSN <code>(online_identifier)</code>
 					</div>
 				</div><!-- .row -->
 							
@@ -136,23 +135,24 @@
 			<div class="row">
 			
 				<div class="col-xs-12">
-					<g:if test="${doc.value.status == Enrichment.ProcessingState.UNTOUCHED}">
+					<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 		    			<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-default"/>
 					</g:if>
-					<g:if test="${doc.value.status == Enrichment.ProcessingState.PREPARE}">
+					<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
+						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 						<g:actionSubmit action="prepareFile" value="Weiter" class="btn btn-default"/>
 		    		</g:if>
-					<g:if test="${doc.value.status == Enrichment.ProcessingState.WORKING}">
+					<g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
 						<g:actionSubmit action="stopProcessingFile" value="Bearbeitung abbrechen" class="btn btn-danger"/>
 					</g:if>
-					<g:if test="${doc.value.status == Enrichment.ProcessingState.ERROR}">
+					<g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 					</g:if>
-					<g:if test="${doc.value.status == Enrichment.ProcessingState.FINISHED}">
+					<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
 						
-						<g:link controller="statistic" action="show" params="[sthash:doc?.value?.resultHash]" target="_blank" class="btn btn-warning">Statistik anzeigen</g:link>
+						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-warning">Statistik anzeigen</g:link>
 						
 						<g:actionSubmit action="downloadPackageFile" value="Package speichern" class="btn btn-success"/>
 		    			<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
@@ -191,14 +191,14 @@
 				})
 			</script>
 
-			<g:if test="${doc.value.status == Enrichment.ProcessingState.WORKING}">
+			<g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
 				<script>
 					$(function(){
-						var ygorDocumentStatus${doc.key} = function(){
+						var ygorDocumentStatus${e.key} = function(){
 							jQuery.ajax({
 								type:       'GET',
 								url:         '${grailsApplication.config.grails.app.context}/enrichment/ajaxGetStatus',
-								data:        'originHash=${doc.key}',
+								data:        'originHash=${e.key}',
 								success:function(data, textStatus){
 									
 									data = jQuery.parseJSON(data)
@@ -206,9 +206,9 @@
 									var status = data.status;
 									var progress = data.progress;
 									
-									jQuery('#progress-${doc.key} > .progress-bar').attr('aria-valuenow', progress);
-									jQuery('#progress-${doc.key} > .progress-bar').attr('style', 'width:' + progress + '%');
-									jQuery('#progress-${doc.key} > .progress-bar').text(progress + '%');
+									jQuery('#progress-${e.key} > .progress-bar').attr('aria-valuenow', progress);
+									jQuery('#progress-${e.key} > .progress-bar').attr('style', 'width:' + progress + '%');
+									jQuery('#progress-${e.key} > .progress-bar').text(progress + '%');
 	
 									if(status == 'FINISHED') {
 										window.location = '${grailsApplication.config.grails.app.context}/enrichment/process';
@@ -219,12 +219,12 @@
 									
 								},
 								error:function(XMLHttpRequest, textStatus, errorThrown){
-									clearInterval(ygorDocumentStatus${doc.key});
+									clearInterval(ygorDocumentStatus${e.key});
 								}
 							});
 						}
 	
-						var ygorInterval${doc.key} = setInterval(ygorDocumentStatus${doc.key}, 1500);
+						var ygorInterval${e.key} = setInterval(ygorDocumentStatus${e.key}, 1500);
 					})
 				</script>
 			</g:if>

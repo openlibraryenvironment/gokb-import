@@ -6,9 +6,11 @@
 		<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 		&nbsp; Wählen Sie Quellen für die anzureichernden Informationen.
 		<br />
+		
 		<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 		&nbsp; Bestimmen Sie den Einstiegspunkt für die Anreicherung.
 		<br />
+			
 		<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
 		&nbsp; Starten Sie die Bearbeitung.
 	</div>

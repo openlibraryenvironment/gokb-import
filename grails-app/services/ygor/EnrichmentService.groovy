@@ -14,32 +14,40 @@ class EnrichmentService {
     def grailsApplication
     PlatformService platformService
     
-    void addFile(CommonsMultipartFile file) {
+    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quotes) {
         
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
         en.setStatus(Enrichment.ProcessingState.PREPARE)
         
-        def enrichments = getSessionDocs()
-        enrichments << ["${en.originHash}":en]
-
+        def tmp = [:]
+        tmp << ['delimiter': delimiter]
+        tmp << ['quotes':    quotes]
+        
+        def formats = getSessionFormats()
+        formats << ["${en.originHash}":tmp]
+        
+        def enrichments = getSessionEnrichments()
+        enrichments << ["${en.originHash}": en]
+        
         file.transferTo(new File(en.originPathName))
     }
-
+    
     File getFile(Enrichment enrichment, Enrichment.FileType type) {
         
         enrichment.getFile(type)
     }
     
-    void deleteFile(Enrichment enrichment) {
-
+    void deleteFileAndFormat(Enrichment enrichment) {
+        
         if(enrichment) {
             def origin = enrichment.getFile(Enrichment.FileType.ORIGIN)
             if(origin)
                 origin.delete()
-            getSessionDocs().remove("${enrichment.originHash}")
+            getSessionEnrichments()?.remove("${enrichment.originHash}")
+            getSessionFormats()?.remove("${enrichment.originHash}")
         }
     }
-
+    
     void prepareFile(Enrichment enrichment, Map pm){
         
         def ph = enrichment.dataContainer.pkg.packageHeader
@@ -117,12 +125,20 @@ class EnrichmentService {
         }
     }
     
-    def getSessionDocs(){
+    def getSessionEnrichments(){
         HttpSession session = SessionToolkit.getSession()
         if(!session.enrichments){
             session.enrichments = [:]
         }
         session.enrichments
+    }
+    
+    def getSessionFormats(){
+        HttpSession session = SessionToolkit.getSession()
+        if(!session.formats){
+            session.formats = [:]
+        }
+        session.formats
     }
     
     /**

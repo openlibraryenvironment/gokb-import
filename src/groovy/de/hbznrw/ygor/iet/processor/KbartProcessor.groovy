@@ -2,7 +2,6 @@ package de.hbznrw.ygor.iet.processor
 
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
-
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.Stash
 import de.hbznrw.ygor.iet.enums.Status
@@ -12,15 +11,10 @@ import de.hbznrw.ygor.iet.export.structure.TitleStruct
 import de.hbznrw.ygor.iet.interfaces.*
 import de.hbznrw.ygor.iet.bridge.*
 import groovy.util.logging.Log4j
-
 import java.nio.file.Paths
-
 
 /**
  * Class for reading and processing kbart files
- * 
- * @author David Klober
- *
  */
 
 @Log4j
@@ -45,6 +39,18 @@ class KbartProcessor extends ProcessorAbstract {
     
     void setConfiguration(String delimiter, String quote, String recordSeparator) {
         
+        // TODO refactoring
+        def resolver = [
+            'comma'         : ',',
+            'semicolon'     : ';',
+            'tab'           : '\t',
+            'doublequote'   : '"',
+            'singlequote'   : "'"
+            ]
+        
+        delimiter = resolver.get(delimiter)
+        quote     = resolver.get(quote)
+        
         if(null != delimiter) {
             csvFormat = csvFormat.withDelimiter((char)delimiter)
         }
@@ -65,7 +71,7 @@ class KbartProcessor extends ProcessorAbstract {
         
         if(0 == stash.get(KbartBridge.IDENTIFIER).size()){
             def nr  = initData(options)
-            def pgt = Math.round(nr * bridge.master.getOptionsSize())
+            def pgt = Math.round(nr * bridge.master.getApiCallsSize())
             bridge.getMaster().setProgressTotal((int) pgt)
         }
         

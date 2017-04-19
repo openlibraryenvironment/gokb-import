@@ -27,12 +27,11 @@ class ZdbBridge extends BridgeAbstract implements BridgeInterface {
 	
 	@Override
 	void go() throws Exception {
-		log.info("Input:  " + options.get('inputFile'))
+		log.info("Input:  " + options.get('inputFile') + " [" + options.get('delimiter') + ", " + options.get('quotes') + "]")
         
         master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
         
         processor.setBridge(this)
-        processor.setConfiguration(",", null, null)
         processor.processFile(options)
 	}
 	

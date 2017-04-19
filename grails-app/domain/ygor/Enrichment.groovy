@@ -51,8 +51,6 @@ class Enrichment {
 	}
 	
 	def process(HashMap options) {    
-        //options.dump()
-        
 		resultName 	   = FileToolkit.getDateTimePrefixedFileName(originName)
 		resultHash 	   = FileToolkit.getMD5Hash(originName + Math.random())
 		resultPathName = sessionFolder.getPath() + File.separator + resultHash
