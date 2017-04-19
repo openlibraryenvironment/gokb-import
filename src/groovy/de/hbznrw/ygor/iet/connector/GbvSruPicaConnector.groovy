@@ -54,8 +54,8 @@ class GbvSruPicaConnector extends ConnectorAbstract {
             
             picaRecords = []
             response.records.record.each { r ->
-                def test = r.recordData.record.datafield.findAll{it.'@tag' == '016H'}.subfield.findAll{it.'@code' == '0'}
-                if("Elektronische Ressource".equals(test?.text()))
+                //def test = r.recordData.record.datafield.findAll{it.'@tag' == '016H'}.subfield.findAll{it.'@code' == '0'}
+                //if("Elektronische Ressource".equals(test?.text()))
                     picaRecords << r
             }
             
