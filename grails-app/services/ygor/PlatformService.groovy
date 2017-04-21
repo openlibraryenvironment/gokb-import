@@ -22,7 +22,8 @@ class PlatformService {
             Connection con = pgDriver.connect(grailsApplication.config.gokbDB.dbUri, prop)
             
             ResultSet resultSet = con.createStatement().executeQuery(
-                "select kbc.kbc_name, pf.plat_primary_url from platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id order by kbc_name "
+                //"select kbc.kbc_name, pf.plat_primary_url from platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id order by kbc_name"
+                "select kbc.kbc_name, pf.plat_primary_url from ((platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id) inner join refdata_value rdv on kbc.kbc_status_rv_fk = rdv.rdv_id) where rdv.rdv_value != 'Retired' order by kbc_name" 
                 )
                 
             while(resultSet.next()) {
