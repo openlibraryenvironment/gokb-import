@@ -1,10 +1,19 @@
 
-EzbConnector:
+== KbartConnector ==
 
-								-	Title.identifiers.value (type: ezb) / Package.tipps.title.identifier.value (type: ezb)
+date_first_issue_online			- 	Package.tipps.coverage
+date_last_issue_online			- 	Package.tipps.coverage
+num_first_vol_online			- 	Package.tipps.coverage
+num_last_vol_online				- 	Package.tipps.coverage
+num_first_issue_online			- 	Package.tipps.coverage
+num_last_issue_online			- 	Package.tipps.coverage		
+embargo_info					- 	Package.tipps.coverage
+coverage_depth					-	Package.tipps.coverage
+notes							- 	Package.tipps.coverage
 
+title_url						- 	Package.tipps.url / Package.tipps.platform
 
-SruPicaConnector:
+== SruPicaConnector ==
 
 first 025@a or first 021Aa		- 	Title.name / Package.tipps.title.name
 first 006Z0						-	Title.identifiers.value (type: zdb) / Package.tipps.title.identifier.value (type: zdb)
@@ -17,12 +26,11 @@ first 011@b						-	Title.publishedTo
 all 033An						-	Title.publisher_history.name
 	with 033Ah					-	Title.publisher_history.startDate / Title.publisher_history.endDate 
 
-all 009Pa
-
-009Px							-	Package.tipps.coverage.(endDate,endVolume,startDate,startVolume)
-009Pz							-	Package.tipps.coverage.note
-
 039E 							- 	Title.tipps.history_events
+	039Ec						- 	Title.tipps.history_events
+	039Ea or 039Et				- 	Title.tipps.history_events
+	039EC						- 	Title.tipps.history_events
+	039E6						- 	Title.tipps.history_events
 
 TO CHECK:
 	
@@ -33,9 +41,12 @@ TO CHECK:
 	033B  - alt.Publisher
 	021Ah - Author
 	029Aa - Corp
+
+== EzbConnector ==
+
+								-	Title.identifiers.value (type: ezb) / Package.tipps.title.identifier.value (type: ezb)	
 	
-	
-HARDCODED:
+== HARDCODED ==
 
 "No" 							-	Package.packageHeader.breakable
 "Yes" 							-	Package.packageHeader.consistent

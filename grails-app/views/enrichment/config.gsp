@@ -3,107 +3,150 @@
 
 <div class="row">
 
-	<div class="col-xs-10 col-xs-offset-1">
+	<div id="config-view" class="col-xs-10 col-xs-offset-1">
 		
-		<h3>Datenflüsse</h3>
+		<h3>API</h3>
 		
 		<table class="table table-striped table-hover">			
 			<thead>
 				<th>API</th>
 				<th>Title</th>
 				<th>TIPP</th>
+				<th>Feld</th>
 			</thead>
 			<tbody>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.name</td>
+					<td></td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.nominalProvider</td>
+					<td></td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.nominalPlatform</td>
+					<td></td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.variantNames</td>
+					<td></td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.curatoryGroups</td>
+					<td></td>
 				</tr>
 							
 				<tr>
 					<td>KBART <em>, Datei</em></td>
 					<td></td>
 					<td><strong>tipps.coverage</strong></td>
+					<td>
+						<ul>
+							<li>date_first_issue_online</li>
+							<li>date_last_issue_online</li>
+							<li>num_first_vol_online</li>
+							<li>num_last_vol_online</li>
+							<li>num_first_issue_online</li>
+							<li>num_last_issue_online</li>
+							<li>title_url</li>
+							<li>embargo_info</li>
+							<li>coverage_depth</li>
+							<li>notes</li>
+						</ul>
+					</td>
 				</tr>
 				<tr>
 					<td>KBART <em>, Datei</em></td>
 					<td></td>
 					<td>tipps.url <strong data-toggle="tooltip" data-placement="top" title="Falls tipps.url gegen packageHeader.nominalPlatform matcht">[?]</strong></td>
+					<td>title_url</td>
 				</tr>
 				<tr>
 					<td>KBART <em>, Datei</em></td>
 					<td></td>
 					<td>tipps.platform <strong data-toggle="tooltip" data-placement="bottom" title="URI-Authority von tipps.url, falls diese gegen packageHeader.nominalPlatform matcht">[?]</strong></td>
+					<td>title_url</td>
 				</tr>
 				
 				<tr>
 					<td>ZDB / GBV</td>
 					<td>title.name</td>
 					<td>tipps.title.name</td>
+					<td>025@:a, alt. 021A:a</td>
 				</tr>
 				
 				<tr>
 					<td>ZDB / GBV</td>
 					<td>title.identifiers.zdb</td>
 					<td>tipps.title.identifiers.zdb</td>
+					<td>006Z:0</td>
 				</tr>
 				<tr>
 					<td>ZDB / GBV</td>
 					<td>title.identifiers.eissn</td>
 					<td>tipps.title.identifiers.eissn</td>
+					<td>005A:0</td>
 				</tr>
 				<tr>
 					<td>ZDB / GBV</td>
 					<td>title.identifiers.issn</td>
 					<td></td>
+					<td>005P:0</td>
 				</tr>
 				
 				<tr>
 					<td>ZDB / GBV</td>
 					<td>title.publishedFrom</td>
 					<td></td>
+					<td>011@:a</td>
 				</tr>
 				<tr>
 					<td>ZDB / GBV</td>
 					<td>title.publishedTo</td>
 					<td></td>
+					<td>011@:b</td>
 				</tr>
 				<tr>
 					<td>ZDB / GBV</td>
 					<td><strong>title.publisher_history</strong></td>
 					<td></td>
+					<td>
+						<ul>
+							<li>033A:n</li>
+							<li>033A:h</li>
+						</ul>
+					</td>
 				</tr>
-				
+				039E
 				<tr>
 					<td>ZDB / GBV</td>
 					<td><strong>title.history_events</strong></td>
 					<td></td>
+					<td>
+						<ul>
+							<li>039E:c</li>
+							<li>039E:a, alt 039E:t</li>
+							<li>039E:C</li>
+							<li>039E:6</li>
+						</ul>
+					</td>
 				</tr>
 				
 				<tr>
 					<td>EZB</td>
 					<td>title.identifiers.ezb</td>
 					<td></td>
+					<td>journal[@jourid]</td>
 				</tr>
 			</tbody>
 		</table>
@@ -114,7 +157,7 @@
 		
 		<table class="table table-striped table-hover">	
 			<thead>
-				<th></th>
+				<th>API</th>
 				<th>Title</th>
 				<th>TIPP</th>
 				<th>Wert</th>
