@@ -43,8 +43,8 @@ class PlatformService {
     // --- fallback / GOKb(phaeton.hbz-nrw.de) 2017.01.20 ---
     
     Map getPackageHeaderNominalPlatformPreset() {
-    
-        log.info("getting platform map by fallback")
+
+        log.warn("fallback: using static platform map")
         
         return [
             "ACM Digital Library" : "http://dl.acm.org/",
