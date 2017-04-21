@@ -78,8 +78,18 @@
 					<div class="col-xs-6">
 						Plattform:
 						<br /><br /> 
-						<g:select name="pkgNominal" from="${platformService.getMap().entrySet()}" optionKey="key" optionValue="key" noSelection="['':'']"  class="form-control"/>
-						<br /> 
+						<g:select name="pkgNominal" class="form-control" noSelection="['':'']"
+							from="${platformService.getMap().entrySet()}" 
+							optionValue="key"
+							optionKey="${{ es -> "${es.key}\" data-url=\"${es.value}" }}" 
+							data-toggle="tooltip" data-placement="right" 
+							title="Bei ausgegrauten Elementen fehlt die erforderliche Hinterlegung eines Plattform-URL" />
+						<br />
+						<script>
+							$(function(){
+							  $('select[name="pkgNominal"] option[data-url="null"]').addClass('warning')
+							})
+						</script>
 					</div>
 					
 					<div class="col-xs-6">

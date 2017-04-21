@@ -35,6 +35,10 @@ h3 {
 select#pkgNominal {
 	width: 405px;
 }
+select#pkgNominal .warning {
+	font-style: italic;
+	color: #bbb;
+}
 select#processIndex {
 	width: 405px;
 	display: inline-block;
