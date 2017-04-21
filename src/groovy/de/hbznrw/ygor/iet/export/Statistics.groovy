@@ -30,7 +30,7 @@ class Statistics {
         
         json.meta.stats.titles      << ['identifiers':[:]]
         json.meta.stats.titles      << ['publisher_history':[:]]
-        json.meta.stats.titles      << ['history_events':[:]]
+        json.meta.stats.titles      << ['historyEvents':[:]]
 
         Statistics.processTipps(json) 
         Statistics.processTitles(json)
@@ -357,29 +357,29 @@ class Statistics {
 
         // TODO invalid history events
         
-        // title.history_events
-        // title.history_events
+        // title.historyEvents
+        // title.historyEvents
         
-        List<Integer> historyEvents = Statistics.getStorage()
+        List<Integer> theHistoryEvents = Statistics.getStorage()
         
         json.titles.each{ title ->
-            title.value.v.history_events.each { he ->
+            title.value.v.historyEvents.each { he ->
         
                 if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())){
-                    historyEvents[Statistics.COUNT_1]++
+                    theHistoryEvents[Statistics.COUNT_1]++
                 }
                 else if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
-                    historyEvents[Statistics.COUNT_2]++
+                    theHistoryEvents[Statistics.COUNT_2]++
                 }
                 else if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF.toString())){
-                    historyEvents[Statistics.COUNT_3]++
+                    theHistoryEvents[Statistics.COUNT_3]++
                 }
                 
             }
         }
-        json.meta.stats.titles.history_events << ["~ ARE VALID":              historyEvents[Statistics.COUNT_1]]
-        json.meta.stats.titles.history_events << ["~ are invalid":            historyEvents[Statistics.COUNT_2]]
-        json.meta.stats.titles.history_events << ["~ are in undefined state": historyEvents[Statistics.COUNT_3]]
+        json.meta.stats.titles.historyEvents << ["~ ARE VALID":              theHistoryEvents[Statistics.COUNT_1]]
+        json.meta.stats.titles.historyEvents << ["~ are invalid":            theHistoryEvents[Statistics.COUNT_2]]
+        json.meta.stats.titles.historyEvents << ["~ are in undefined state": theHistoryEvents[Statistics.COUNT_3]]
 
         // title.publisher_history.dates
         // title.publisher_history.dates

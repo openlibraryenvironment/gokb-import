@@ -211,7 +211,7 @@ class KbartProcessor extends ProcessorAbstract {
                 
                 // used for tipp.coverage           (kbart file)
                 // used for title.publisher_history (api)
-                // used for title.history_events    (api)
+                // used for title.historyEvents     (api)
                 env.messages.eachWithIndex{ item, i ->
                     if(Status.API_RESULT_OK == env.states[i]) {
                         msg = item.value

@@ -142,7 +142,7 @@ class DataMapper {
                 }
             }
             
-            title.history_events << new Pod(histEvent)
+            title.historyEvents << new Pod(histEvent)
         }
     }
     
@@ -259,9 +259,9 @@ class DataMapper {
         log.info("mapping history events for title: " + title.name.v)
 
         // todo: handle multiple history events
-        def historyEvents = []
+        def theHistoryEvents = []
         
-        title.history_events.each{ he ->
+        title.historyEvents.each{ he ->
             
             def hex = TitleStruct.getNewHistoryEventGeneric()
             hex.title.v = title.name.v
@@ -336,14 +336,14 @@ class DataMapper {
             he.m = valid
 
             if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
-                historyEvents << he
+                theHistoryEvents << he
             } 
             else {
                 log.debug("! ignore crappy title history event")
             }
         }
         
-        title.history_events = historyEvents
+        title.historyEvents = theHistoryEvents
     }
     
     /**

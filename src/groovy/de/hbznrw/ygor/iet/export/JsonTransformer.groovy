@@ -388,7 +388,7 @@ class JsonTransformer {
         log.debug("parseHistoryEvents()")
         
         json.titles.each{ title ->
-            title.history_events.eachWithIndex { he, i ->
+            title.historyEvents.eachWithIndex { he, i ->
 
                 he.v.date = he.v.date.v
                 
@@ -462,8 +462,8 @@ class JsonTransformer {
             
             // TODO refactoring: use Status.VALIDATOR_HISTORYEVENT_IS_VALID
             
-            def historyEvents = []
-            title.history_events.each{ he ->
+            def theHistoryEvents = []
+            title.historyEvents.each{ he ->
 
                 // only valid entries
                 if(useValidator){
@@ -471,13 +471,13 @@ class JsonTransformer {
                     // TODO remove if struct validator is implemented
                     // workaround
                     if(he.m != Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())
-                        historyEvents << he.v
+                        theHistoryEvents << he.v
                 }
                 else {
-                    historyEvents << he.v
+                    theHistoryEvents << he.v
                 }
             }
-            title.history_events = historyEvents
+            title.historyEvents = theHistoryEvents
         }
         json
     }

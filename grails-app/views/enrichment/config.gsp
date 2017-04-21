@@ -130,7 +130,7 @@
 				039E
 				<tr>
 					<td>ZDB / GBV</td>
-					<td><strong>title.history_events</strong></td>
+					<td><strong>title.historyEvents</strong></td>
 					<td></td>
 					<td>
 						<ul>

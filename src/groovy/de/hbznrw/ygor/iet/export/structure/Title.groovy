@@ -16,7 +16,7 @@ class Title {
     
     ArrayList<Identifier> identifiers                  = []
     ArrayList<TitlePublisherHistory> publisher_history = []
-    ArrayList<TitleHistoryEvent> history_events        = []
+    ArrayList<TitleHistoryEvent> historyEvents         = []
     
     Pod shortcode        = new Pod("")
     Pod status           = new Pod(FixedValues.title_status, Status.HARDCODED)

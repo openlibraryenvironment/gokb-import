@@ -26,11 +26,11 @@ first 011@b						-	Title.publishedTo
 all 033An						-	Title.publisher_history.name
 	with 033Ah					-	Title.publisher_history.startDate / Title.publisher_history.endDate 
 
-039E 							- 	Title.tipps.history_events
-	039Ec						- 	Title.tipps.history_events
-	039Ea or 039Et				- 	Title.tipps.history_events
-	039EC						- 	Title.tipps.history_events
-	039E6						- 	Title.tipps.history_events
+039E 							- 	Title.tipps.historyEvents
+	039Ec						- 	Title.tipps.historyEvents
+	039Ea or 039Et				- 	Title.tipps.historyEvents
+	039EC						- 	Title.tipps.historyEvents
+	039E6						- 	Title.tipps.historyEvents
 
 TO CHECK:
 	
