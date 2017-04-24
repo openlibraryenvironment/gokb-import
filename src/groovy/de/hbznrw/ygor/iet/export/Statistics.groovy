@@ -72,7 +72,7 @@ class Statistics {
             }
             else if(url?.m.equals(Status.VALIDATOR_TIPPURL_NOT_MATCHING.toString())) {
                 tippUrls[Statistics.COUNT_5]++
-                tippUrls[Statistics.LIST_5] << "${url.org}"
+                tippUrls[Statistics.LIST_5] << "${Normalizer.normString(url.org)}"
                 
                     Statistics.addMetaData(tipp, 'tipp.url', url)
             }
@@ -98,7 +98,7 @@ class Statistics {
             
             tipp.value.v.title.v.identifiers.each { ident ->
                 
-                def tmp = tippIdentifiers["${ident.type.v}"]
+                def tmp   = tippIdentifiers["${ident.type.v}"]
                 
                 if(tmp) {
                     if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
@@ -108,23 +108,23 @@ class Statistics {
                         tmp[Statistics.COUNT_2]++
                         tmp[Statistics.LIST_2] << "${ident.value.org}"
                         
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
+                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
                     }
                     else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC.toString())) {
                         tmp[Statistics.COUNT_3]++
                         tmp[Statistics.LIST_3] << "${ident.value.org}"
                             
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
+                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
                     }
                     else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_MISSING.toString())) {
                         tmp[Statistics.COUNT_4]++
                         
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
+                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
                     }
                     else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
                         tmp[Statistics.COUNT_5]++
                         
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
+                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
                     }
                 }
             }

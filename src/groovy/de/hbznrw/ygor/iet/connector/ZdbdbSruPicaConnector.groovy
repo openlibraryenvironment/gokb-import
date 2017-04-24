@@ -188,8 +188,8 @@ class ZdbdbSruPicaConnector extends ConnectorAbstract {
             def h = df.subfield.find{it.'@code' == 'h'}.text()
             
             resultName      << (n ? n : null)
-            resultStartDate << (h ? h : null)
-            resultEndDate   << (h ? h : null)
+            resultStartDate << (h ? h : '')
+            resultEndDate   << (h ? h : '')
             resultStatus    << null
         }
         log.debug("getPicaValues(033An) = " + resultName)
