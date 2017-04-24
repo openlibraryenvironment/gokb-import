@@ -32,11 +32,11 @@ class GbvBridge extends BridgeAbstract implements BridgeInterface {
         this.processor = master.processor
         
         if(options.get('typeOfKey') == ZdbBridge.IDENTIFIER){
-            this.connector  = new GbvSruPicaConnector(this, GbvSruPicaConnector.QUERY_PICA_ZDB)
+            this.connector  = new ZdbdbSruPicaConnector(this, ZdbdbSruPicaConnector.QUERY_PICA_ZDB)
             this.stashIndex = ZdbBridge.IDENTIFIER
         }
         else {
-            this.connector  = new GbvSruPicaConnector(this, GbvSruPicaConnector.QUERY_PICA_ISS)
+            this.connector  = new ZdbdbSruPicaConnector(this, ZdbdbSruPicaConnector.QUERY_PICA_ISS)
             this.stashIndex = TitleStruct.ISSN
         }
 	}

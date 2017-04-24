@@ -9,9 +9,6 @@ import de.hbznrw.ygor.iet.bridge.*
 
 /**
  * Controlling API calls to a kbart file
- * 
- * @author David Klober
- *
  */
 @Log4j
 class KbartConnector extends ConnectorAbstract {

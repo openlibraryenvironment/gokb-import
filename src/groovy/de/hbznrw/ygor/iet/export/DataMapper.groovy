@@ -124,10 +124,14 @@ class DataMapper {
                     def hEvent = TitleStruct.getNewHistoryEventGeneric()
                     DataSetter.setString(hEvent.title, e.messages['title'][i])
                     
-                    if("Vorg.".equals(e.messages['type'][i])){
+                    // GVK: if("Vorg.".equals(e.messages['type'][i])){
+                    // ZDB: 
+                    if("f".equals(e.messages['type'][i])){
                         histEvent.from << hEvent
                     }
-                    else if("Forts.".equals(e.messages['type'][i])){
+                    // GVK: else if("Forts.".equals(e.messages['type'][i])){
+                    // ZDB:
+                    else if("s".equals(e.messages['type'][i])){
                         histEvent.to << hEvent
                     }
 
@@ -139,7 +143,11 @@ class DataMapper {
                     DataSetter.setIdentifier(ident.value, ident.type.v, e.messages['identifierValue'][i])                 
                     
                     hEvent.identifiers << ident
+                    
+                    
                 }
+                // TODO check and refactor
+                DataSetter.setDate(histEvent.date, Normalizer.IS_START_DATE, e.messages['date'])                
             }
             
             title.historyEvents << new Pod(histEvent)
