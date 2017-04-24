@@ -1,11 +1,12 @@
 <meta name="layout" content="enrichment">
 
 <div class="row">
-	<div class="col-xs-12">
-		<br />
-		<br />
-	</div>
 	<div class="col-xs-10 col-xs-offset-1">
+		<g:render template="../logo" />
+	</div>
+	
+	<div class="col-xs-10 col-xs-offset-1">
+		<br />
 		<p>Bei Problemen oder Fragen kontaktieren Sie bitte ...</p>
 		<br />
 		<address>

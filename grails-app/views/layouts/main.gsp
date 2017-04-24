@@ -19,7 +19,7 @@
 		
 		<div class="container">			
     		<div class="content">
-		
+						
       			<g:layoutBody/>
 							
 			</div>

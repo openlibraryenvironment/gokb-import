@@ -6,11 +6,13 @@
 	</head>
 	<body>
 		<div class="row">
-			<div class="col-xs-12">
-				<br />
-				<br />
-			</div>
 			<div class="col-xs-10 col-xs-offset-1">
+				<g:render template="logo" />
+			</div>
+			
+			<div class="col-xs-10 col-xs-offset-1">
+				<br />
+				
 				<div class="alert alert-danger" role="alert">
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 					<br />

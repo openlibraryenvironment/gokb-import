@@ -84,6 +84,12 @@
 		</div>
 	</div>
 	
+	<div class="col-xs-12" id="statistics-substats">
+		<p class="text-right">
+			<strong>Ignorierte KBART-Einträge:</strong> <span class="ignored-kbart-entries"></span>
+		</p>
+	</div>
+	
 	<div class="col-xs-12">
 		<div id="statistics">
 			<ul class="nav nav-tabs">
@@ -245,6 +251,8 @@
 				$('#statistics-meta .meta-file').text(json.meta.file)
 				$('#statistics-meta .meta-date').text(json.meta.date)
 				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
+				
+				$('#statistics-substats .ignored-kbart-entries').text(json.meta.stats.general["ignored kbart entries"])
 				
 				var debug = JSON.stringify(json.meta.stats, null, '\t', false)
 				$('#statistics #tab-debug pre').text(debug)

@@ -23,9 +23,32 @@ h3 {
 .navbar-inverse .navbar-nav > li > a {
 	color: #fff;
 }
+
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+	color: #555;
+	background-color: #eee;
+	border-color: #ccc;
+}
+
+.how-to-list > .list-group-item {
+	border: 1px solid #fff;	
+}
+
+.content-list > .list-group-item {
+	border-style: none;	
+}
+
+.form-control > .radio, .form-control > .checkbox {
+	margin: 0;
+}
 .content {
-	padding: 40px 15px;
+	padding: 100px 15px 40px;
 	margin-bottom: 40px;
+}
+
+.input-group-addon:first-child {
+	width: 150px;
+	text-align: left;
 }
 
 #ygor-messages {
@@ -59,6 +82,11 @@ select#processIndex {
 	color: #ccc;
 }
 
+#statistics-substats .text-right {
+	margin: 0;
+	padding-right: 15px;
+}
+
 #statistics table thead tr th:nth-of-type(1) {
 	width: 30%;
 }
@@ -80,7 +108,9 @@ select#processIndex {
 #statistics .domTitle + .table {
 	margin-top: -7px;
 }
-
+#statistics .ignored-kbart-entries {
+	color: red;	
+}
 #config-view table thead tr th:nth-of-type(1) {
 	width: 15%;
 }

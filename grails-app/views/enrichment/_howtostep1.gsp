@@ -1,17 +1,14 @@
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">Schritt 1 von 4</h3>
-	</div>
-	<div class="panel-body">
-		<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+<ul class="list-group how-to-list">
+	<li class="list-group-item">
+		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
 		&nbsp; Wählen Sie eine KBART-Datei* zur Bearbeitung. <sup>* ggfs. um ZDB-ID, etc. erweitert</sup>
-		<br />
-		
-		<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+	</li>
+	<li class="list-group-item">
+		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
 		&nbsp; Spezifizieren Sie das Dateiformat.
-		<br />
-		
-		<span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+	</li>
+	<li class="list-group-item">
+		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
 		&nbsp; Laden Sie die Datei auf den Server.
-	</div>
-</div>
+	</li>
+</ul>
