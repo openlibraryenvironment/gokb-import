@@ -1,23 +1,23 @@
-package de.hbznrw.ygor.iet.connector
+package de.hbznrw.ygor.connectors
 
 import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.interfaces.*
+import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.iet.export.*
 
 
 /**
- * Controlling API calls using sru.gbv.de/gvk
+ * Controlling API calls using sru.gbv.de/zdbdb
  */
 @Log4j
-class GbvSruPicaConnector extends ConnectorAbstract {
+class ZdbdbSruPicaConnector extends AbstractConnector {
 	
     static final QUERY_PICA_ISS = "query=pica.iss%3D"
-    static final QUERY_PICA_ZDB = "query=pica.zdb%3D"
+    static final QUERY_PICA_ZDB = "query=pica.yyy%3D"
     
-	private String requestUrl       = "http://sru.gbv.de/gvk?version=1.2&operation=searchRetrieve&maximumRecords=10"
+	private String requestUrl       = "http://sru.gbv.de/zdbdb?version=1.2&operation=searchRetrieve&maximumRecords=10"
 	private String queryIdentifier
     private String queryOnlyJournals = "%20and%20(pica.mak=Obvz%20or%20pica.mak=Obv)"
     private String queryOrder       = "sortKeys=year,,1"
@@ -28,7 +28,7 @@ class GbvSruPicaConnector extends ConnectorAbstract {
     private picaRecords   = []
     private currentRecord = null
     
-	GbvSruPicaConnector(BridgeInterface bridge, String queryIdentifier) {
+	ZdbdbSruPicaConnector(BridgeInterface bridge, String queryIdentifier) {
 		super(bridge)
         this.queryIdentifier = queryIdentifier
 	}
@@ -37,7 +37,7 @@ class GbvSruPicaConnector extends ConnectorAbstract {
     
     @Override
     String getAPIQuery(String identifier) {
-        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals + "&" + queryOrder
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier /*+ queryOnlyJournals*/ + "&" + queryOrder
     }
     
     // TODO fix return value
@@ -188,8 +188,8 @@ class GbvSruPicaConnector extends ConnectorAbstract {
             def h = df.subfield.find{it.'@code' == 'h'}.text()
             
             resultName      << (n ? n : null)
-            resultStartDate << (h ? h : null)
-            resultEndDate   << (h ? h : null)
+            resultStartDate << (h ? h : '')
+            resultEndDate   << (h ? h : '')
             resultStatus    << null
         }
         log.debug("getPicaValues(033An) = " + resultName)
@@ -209,44 +209,42 @@ class GbvSruPicaConnector extends ConnectorAbstract {
     
     private Envelope getHistoryEventAsFatEnvelope() {
         
-        // TODO:
         def result                = []
         def resultType            = []
         def resultTitle           = []
         def resultIdentifierValue = []
         def resultIdentifierType  = []
-        
-        currentRecord.recordData.record.datafield.findAll{it.'@tag' == '039E'}.each { df ->
-            def c  = df.subfield.find{it.'@code' == 'c'}.text()
-            def a  = df.subfield.find{it.'@code' == 'a'}.text()
-            def t  = df.subfield.find{it.'@code' == 't'}.text()
-            def C  = df.subfield.find{it.'@code' == 'C'}.text()
-            def f6 = df.subfield.find{it.'@code' == '6'}.text()
+        def resultDate            = []
 
-            resultType            << (c ? c : null)
-            
-            // resultTitle        << (a ? a : (t ? t : null))
-            if(a) {
-                resultTitle       << a
-            } else {
-                resultTitle       << (t ? t : null)
-            }
-            resultIdentifierType  << (C ? C : null)
-            resultIdentifierValue << (f6 ? f6 : null)
+        currentRecord.recordData.record.datafield.findAll{it.'@tag' == '039E'}.each { df ->
+
+            def b  = df.subfield.find{it.'@code' == 'b'}.text() // s=später, f=früher
+            def Y  = df.subfield.find{it.'@code' == 'Y'}.text() // default (Y/D)
+            def D  = df.subfield.find{it.'@code' == 'D'}.text() // falls in der ZDB ein übergeordneter Titel existiert (Y/D)
+            def H  = df.subfield.find{it.'@code' == 'H'}.text()
+            def C  = df.subfield.find{it.'@code' == 'C'}.text() // ID-Typ
+            def f0 = df.subfield.find{it.'@code' == '0'}.text()
+
+            resultType            <<  (b ? b : null)
+            resultTitle           <<  (D ? D : (Y ? Y : null))
+            resultIdentifierType  <<  (C ? C : 'zdb') // default
+            resultIdentifierValue <<  (f0 ? f0 : null)
+            resultDate            <<  (H ? H : null)
         }
         
-        log.debug("getPicaValues(039Ec) = " + resultType)
-        log.debug("getPicaValues(039E(a|t)) = " + resultTitle)
-        log.debug("getPicaValues(039EC) = " + resultIdentifierType)
-        log.debug("getPicaValues(039E6) = " + resultIdentifierValue)
-        
-        // TODO refactor this
+        // zdbdb
+        log.debug("getPicaValues(039Eb) = "     + resultType)
+        log.debug("getPicaValues(039E(D|Y)) = " + resultTitle)
+        log.debug("getPicaValues(039EC) = "     + resultIdentifierType)
+        log.debug("getPicaValues(039E0) = "     + resultIdentifierValue)
+        log.debug("getPicaValues(039EH) = "     + resultDate)    
         
         result << getEnvelopeWithComplexMessage([
             'type':            resultType,
             'title':           resultTitle,
             'identifierType':  resultIdentifierType,
-            'identifierValue': resultIdentifierValue
+            'identifierValue': resultIdentifierValue,
+            'date':            resultDate
         ])
        
         getEnvelopeWithMessage(result)

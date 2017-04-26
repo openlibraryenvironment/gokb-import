@@ -1,13 +1,14 @@
-package de.hbznrw.ygor.iet.bridge
+package de.hbznrw.ygor.bridges
 
 import groovy.util.logging.Log4j
-import de.hbznrw.ygor.iet.connector.*
+import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.iet.enums.Query
 import de.hbznrw.ygor.iet.formatadapter.*
-import de.hbznrw.ygor.iet.interfaces.*
+import de.hbznrw.ygor.interfaces.*
 
+@Deprecated
 @Log4j
-class HbzBridge extends BridgeAbstract implements BridgeInterface {
+class HbzBridge extends AbstractBridge implements BridgeInterface {
 	
     static final IDENTIFIER = 'hbz'
     

@@ -1,4 +1,4 @@
-package de.hbznrw.ygor.iet.interfaces
+package de.hbznrw.ygor.interfaces
 
 interface BridgeInterface {
     

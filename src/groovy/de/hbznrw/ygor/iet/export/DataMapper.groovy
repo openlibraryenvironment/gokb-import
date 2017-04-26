@@ -3,7 +3,7 @@ package de.hbznrw.ygor.iet.export
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.*
-import de.hbznrw.ygor.iet.bridge.*
+import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.tools.*

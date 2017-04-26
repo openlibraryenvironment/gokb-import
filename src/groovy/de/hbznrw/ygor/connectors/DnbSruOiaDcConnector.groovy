@@ -1,20 +1,18 @@
-package de.hbznrw.ygor.iet.connector
+package de.hbznrw.ygor.connectors
 
 import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.interfaces.*
+import de.hbznrw.ygor.interfaces.*
 
 
 /**
  * Controlling API calls using services.dnb.de/sru
- * 
- * @author David Klober
- *
  */
+@Deprecated
 @Log4j
-class DnbSruOiaDcConnector extends ConnectorAbstract {
+class DnbSruOiaDcConnector extends AbstractConnector {
 	
 	private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve"
 	private String queryIdentifier  = 'query=iss='

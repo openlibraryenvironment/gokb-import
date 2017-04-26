@@ -1,17 +1,17 @@
-package de.hbznrw.ygor.iet.connector
+package de.hbznrw.ygor.connectors
 
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.iet.bridge.*
+import de.hbznrw.ygor.interfaces.*
+import de.hbznrw.ygor.bridges.*
 
 
 /**
  * Controlling API calls to a kbart file
  */
 @Log4j
-class KbartConnector extends ConnectorAbstract {
+class KbartConnector extends AbstractConnector {
 	
 	private String requestUrl       = 'kbart-file'
     private HashMap response

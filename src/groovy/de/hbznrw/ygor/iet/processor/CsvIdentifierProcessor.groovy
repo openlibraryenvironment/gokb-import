@@ -7,7 +7,7 @@ import de.hbznrw.ygor.iet.Stash
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
-import de.hbznrw.ygor.iet.interfaces.*
+import de.hbznrw.ygor.interfaces.*
 import groovy.util.logging.Log4j
 import java.nio.file.Paths
 
@@ -20,7 +20,7 @@ import java.nio.file.Paths
  */
 
 @Log4j
-class CsvIdentifierProcessor extends ProcessorAbstract {
+class CsvIdentifierProcessor extends AbstractProcessor {
 
     private stash               = new Stash()
     private String inputFile

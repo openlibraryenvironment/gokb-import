@@ -4,7 +4,7 @@ import de.hbznrw.ygor.iet.enums.*
 import de.hbznrw.ygor.iet.export.structure.TippCoverage
 import de.hbznrw.ygor.iet.export.structure.TitleHistoryEvent
 import de.hbznrw.ygor.iet.export.structure.TitlePublisherHistory
-import de.hbznrw.ygor.iet.bridge.*
+import de.hbznrw.ygor.bridges.*
 
 class StructValidator {
     

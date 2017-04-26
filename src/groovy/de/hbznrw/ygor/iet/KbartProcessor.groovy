@@ -1,17 +1,16 @@
-package de.hbznrw.ygor.iet.processor
+package de.hbznrw.ygor.iet
 
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.QuoteMode
-import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.Stash
+
 import de.hbznrw.ygor.iet.enums.Status
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.export.structure.*
-import de.hbznrw.ygor.iet.export.structure.TitleStruct
-import de.hbznrw.ygor.iet.interfaces.*
-import de.hbznrw.ygor.iet.bridge.*
+import de.hbznrw.ygor.interfaces.*
+import de.hbznrw.ygor.bridges.*
 import groovy.util.logging.Log4j
+
 import java.nio.file.Paths
 
 /**
@@ -19,7 +18,7 @@ import java.nio.file.Paths
  */
 
 @Log4j
-class KbartProcessor extends ProcessorAbstract {
+class KbartProcessor extends AbstractProcessor {
 
     private stash               = new Stash()
     private String inputFile

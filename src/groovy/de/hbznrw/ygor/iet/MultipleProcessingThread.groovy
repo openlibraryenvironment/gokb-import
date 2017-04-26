@@ -1,8 +1,8 @@
 package de.hbznrw.ygor.iet;
 
-import de.hbznrw.ygor.iet.bridge.*
-import de.hbznrw.ygor.iet.interfaces.BridgeInterface
-import de.hbznrw.ygor.iet.interfaces.ProcessorInterface
+import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.interfaces.BridgeInterface
+import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.iet.processor.*
 import groovy.util.logging.Log4j
 import ygor.Enrichment

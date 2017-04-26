@@ -1,4 +1,4 @@
-package de.hbznrw.ygor.iet.interfaces
+package de.hbznrw.ygor.interfaces
 
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.Envelope
@@ -14,7 +14,7 @@ import de.hbznrw.ygor.iet.enums.Status
  */
 
 @Log4j
-abstract class ConnectorAbstract implements ConnectorInterface {
+abstract class AbstractConnector implements ConnectorInterface {
 
 	protected String requestUrl       = "set-in-extending-class"
 	protected String requestHeader
@@ -26,7 +26,7 @@ abstract class ConnectorAbstract implements ConnectorInterface {
 	
 	//
 	
-	ConnectorAbstract(BridgeInterface bridge) {
+	AbstractConnector(BridgeInterface bridge) {
 		this.bridge = bridge
 	}
 	

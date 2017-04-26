@@ -1,6 +1,6 @@
 package de.hbznrw.ygor.iet
 
-import de.hbznrw.ygor.iet.bridge.*
+import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.iet.export.structure.*
 import groovy.util.logging.Log4j
 

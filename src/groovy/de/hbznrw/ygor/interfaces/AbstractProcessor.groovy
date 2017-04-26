@@ -1,4 +1,4 @@
-package de.hbznrw.ygor.iet.interfaces
+package de.hbznrw.ygor.interfaces
 
 import groovy.util.logging.Log4j
 
@@ -10,16 +10,16 @@ import groovy.util.logging.Log4j
  */
 
 @Log4j
-abstract class ProcessorAbstract implements ProcessorInterface {
+abstract class AbstractProcessor implements ProcessorInterface {
 
 	protected BridgeInterface bridge
 	
 	//
 
-	ProcessorAbstract(BridgeInterface bridge) {
+	AbstractProcessor(BridgeInterface bridge) {
 		this.bridge = bridge
 	}
-    ProcessorAbstract()
+    AbstractProcessor()
     {   
     }
 }

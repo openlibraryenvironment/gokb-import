@@ -1,10 +1,10 @@
-package de.hbznrw.ygor.iet.interfaces
+package de.hbznrw.ygor.interfaces
 
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.enums.Query
 
 @Log4j
-abstract class BridgeAbstract implements BridgeInterface {
+abstract class AbstractBridge implements BridgeInterface {
 
     protected Thread master 
 	protected ConnectorInterface connector

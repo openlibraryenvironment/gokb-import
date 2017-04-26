@@ -1,20 +1,17 @@
-package de.hbznrw.ygor.iet.connector
+package de.hbznrw.ygor.connectors
 
 import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.interfaces.*
+import de.hbznrw.ygor.interfaces.*
 
 
 /**
  * Controlling API calls using http://ezb.uni-regensburg.de
- * 
- * @author David Klober
- *
  */
 @Log4j
-class EzbXmlConnector extends ConnectorAbstract {
+class EzbXmlConnector extends AbstractConnector {
 	
     static final QUERY_XML_IS  = "jq_type1=IS&jq_term1="
     static final QUERY_XML_ZDB = "jq_type1=ZD&jq_term1="

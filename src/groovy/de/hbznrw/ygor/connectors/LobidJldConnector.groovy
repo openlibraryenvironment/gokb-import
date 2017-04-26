@@ -1,20 +1,18 @@
-package de.hbznrw.ygor.iet.connector
+package de.hbznrw.ygor.connectors
 
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.iet.Envelope
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.interfaces.*
+import de.hbznrw.ygor.interfaces.*
 
 
 /**
  * Controlling API calls using lobid.org
- * 
- * @author David Klober
- *
  */
+@Deprecated
 @Log4j
-class LobidJldConnector extends ConnectorAbstract {
+class LobidJldConnector extends AbstractConnector {
 	
 	private String requestUrl       = "https://lobid.org/resource?"
 	private String requestHeader    = "application/json, application/ld+json"
