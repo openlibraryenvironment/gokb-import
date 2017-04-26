@@ -15,21 +15,6 @@ public enum Status {
      *  
      */
     
-	UNKNOWN_REQUEST    ("UNKNOWN_REQUEST"),
-	
-	STATUS_OK          ("STATUS_OK"),
-	STATUS_ERROR       ("STATUS_ERROR"),
-	STATUS_NO_RESPONSE ("STATUS_NO_RESPONSE"),   
-	
-	
-    // api responses
-	//
-    
-    API_RESULT_OK               ("API_RESULT_OK"),
-    API_RESULT_NO_MATCH         ("API_RESULT_NO_MATCH"),
-    API_RESULT_MULTIPLE_MATCHES ("API_RESULT_MULTIPLE_MATCHES"),
-	
-    
     // use for the non processed
     //
     

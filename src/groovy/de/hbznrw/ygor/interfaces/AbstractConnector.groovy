@@ -38,11 +38,11 @@ abstract class AbstractConnector implements ConnectorInterface {
     }
     
     Envelope query(Query query) {
-        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+        getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
     
     Envelope query(Object record, Query query) {  
-        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+        getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
     
     Envelope getEnvelope(Query query) {
@@ -54,14 +54,14 @@ abstract class AbstractConnector implements ConnectorInterface {
     }
     
     Envelope getEnvelopeWithMessage(ArrayList message) {
-        def state = Status.API_RESULT_OK
+        def state = AbstractEnvelope.RESULT_OK
         
         switch(message.size()) {
             case 0:
-                state = Status.API_RESULT_NO_MATCH
+                state = AbstractEnvelope.RESULT_NO_MATCH
             break;
             case {it > 1}:
-                state = Status.API_RESULT_MULTIPLE_MATCHES
+                state = AbstractEnvelope.RESULT_MULTIPLE_MATCHES
             break;
         }
         new Envelope(state, message)
@@ -79,20 +79,20 @@ abstract class AbstractConnector implements ConnectorInterface {
             def tmp = item.value.minus(null) // TODO CHECK, or use e.g. Status.EMPTY_SLOT
             switch(tmp.size()) {
                 case 0:
-                    states << /*item.key + '_' + */ Status.API_RESULT_NO_MATCH
+                    states << /*item.key + '_' + */ AbstractEnvelope.RESULT_NO_MATCH
                 break;
                 case 1:
-                    states << /*item.key + '_' + */ Status.API_RESULT_OK
+                    states << /*item.key + '_' + */ AbstractEnvelope.RESULT_OK
                     break;
                 case {it > 1}:
-                    states << /*item.key + '_' + */ Status.API_RESULT_MULTIPLE_MATCHES
+                    states << /*item.key + '_' + */ AbstractEnvelope.RESULT_MULTIPLE_MATCHES
                 break;
             }
         }
         new Envelope(states, messages)
     }
     
-    Envelope getEnvelopeWithStatus(Status state) {
+    Envelope getEnvelopeWithStatus(Object state) {
         new Envelope(state, [])
     }
 }

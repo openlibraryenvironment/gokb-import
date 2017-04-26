@@ -91,7 +91,7 @@ class MultipleProcessingThread extends Thread {
            								
 		} catch(Exception e) {
 			enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
-			
+
 			log.error(e.getMessage())
 			log.error(e.getStackTrace())
 			

@@ -62,7 +62,7 @@ class KbartConnector extends AbstractConnector {
                 }
             }
 		} catch(Exception e) {
-			return getEnvelopeWithStatus(Status.STATUS_ERROR)
+			return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
 		}
 	}
          
@@ -71,7 +71,7 @@ class KbartConnector extends AbstractConnector {
         try {
             getEnvelope(query)
         } catch(Exception e) {
-            return getEnvelopeWithStatus(Status.STATUS_ERROR)
+            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
         }
     }
     
@@ -79,7 +79,7 @@ class KbartConnector extends AbstractConnector {
     @Override
     Envelope getEnvelope(Query query) {
         if(response == null)
-            return getEnvelopeWithStatus(Status.STATUS_NO_RESPONSE)
+            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_NO_RESPONSE)
 
         switch(query){
             case Query.KBART_TIPP_URL:
@@ -90,7 +90,7 @@ class KbartConnector extends AbstractConnector {
                 break
         }
 
-        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+        getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
     
     private Envelope getTippUrl() {

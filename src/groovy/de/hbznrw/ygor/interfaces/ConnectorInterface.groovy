@@ -54,7 +54,7 @@ interface ConnectorInterface {
      * @param status
      * @return Envelope with given status and message
      */
-    Envelope getEnvelopeWithStatus(Status state)
+    Envelope getEnvelopeWithStatus(Object state)
     
     /**
      * @param result

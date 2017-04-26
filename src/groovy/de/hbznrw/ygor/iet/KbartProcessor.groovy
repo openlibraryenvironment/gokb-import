@@ -184,7 +184,7 @@ class KbartProcessor extends AbstractProcessor {
 
         bridge.tasks.each{ q ->
             def msg = ""
-            def state = Status.UNKNOWN_REQUEST
+            def state = AbstractEnvelope.STATUS_UNKNOWN_REQUEST
             
             Envelope env
             if(record){
@@ -196,10 +196,10 @@ class KbartProcessor extends AbstractProcessor {
             
             if(env.type == Envelope.SIMPLE){
                 
-                if(Status.API_RESULT_OK == env.state){
+                if(AbstractEnvelope.RESULT_OK == env.state){
                     msg = env.message[0]
                 }
-                else if(Status.API_RESULT_MULTIPLE_MATCHES == env.state){
+                else if(AbstractEnvelope.RESULT_MULTIPLE_MATCHES == env.state){
                     msg = env.message.join(", ")
                 }
 
@@ -212,10 +212,10 @@ class KbartProcessor extends AbstractProcessor {
                 // used for title.publisher_history (api)
                 // used for title.historyEvents     (api)
                 env.messages.eachWithIndex{ item, i ->
-                    if(Status.API_RESULT_OK == env.states[i]) {
+                    if(AbstractEnvelope.RESULT_OK == env.states[i]) {
                         msg = item.value
                     }
-                    else if(Status.API_RESULT_MULTIPLE_MATCHES == env.states[i]) {
+                    else if(AbstractEnvelope.RESULT_MULTIPLE_MATCHES == env.states[i]) {
                         if(env.messages[i]){
                             msg = item.value.join("|")
                         }

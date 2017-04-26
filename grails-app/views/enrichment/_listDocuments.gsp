@@ -5,7 +5,7 @@
 	import="ygor.PlatformService"
 	import="de.hbznrw.ygor.iet.export.structure.TitleStruct"
 	import="de.hbznrw.ygor.iet.export.structure.PackageStruct"
-	import="de.hbznrw.ygor.iet.bridge.*"
+	import="de.hbznrw.ygor.bridges.*"
 %>
 
 	<g:each in="${enrichments}" var="e">

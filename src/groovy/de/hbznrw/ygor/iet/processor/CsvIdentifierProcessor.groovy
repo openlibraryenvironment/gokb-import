@@ -18,7 +18,7 @@ import java.nio.file.Paths
  * @author David Klober
  *
  */
-
+@Deprecated
 @Log4j
 class CsvIdentifierProcessor extends AbstractProcessor {
 
@@ -116,7 +116,7 @@ class CsvIdentifierProcessor extends AbstractProcessor {
 
         bridge.tasks.each{ q ->
             def msg = ""
-            def state = Status.UNKNOWN_REQUEST
+            def state = AbstractEnvelope.STATUS_UNKNOWN_REQUEST
             
             Envelope env
             if(record){
@@ -128,10 +128,10 @@ class CsvIdentifierProcessor extends AbstractProcessor {
             
             if(env.type == Envelope.SIMPLE){
                 
-                if(Status.API_RESULT_OK == env.state){
+                if(AbstractEnvelope.RESULT_OK == env.state){
                     msg = env.message[0]
                 }
-                else if(Status.API_RESULT_MULTIPLE_MATCHES == env.state){
+                else if(AbstractEnvelope.RESULT_MULTIPLE_MATCHES == env.state){
                     msg = env.message.join(", ")
                 }
 
@@ -142,10 +142,10 @@ class CsvIdentifierProcessor extends AbstractProcessor {
                 
                 // used for Publisher
                 env.states.eachWithIndex { ste, i ->
-                    if(Status.API_RESULT_OK == ste) {
+                    if(AbstractEnvelope.RESULT_OK == ste) {
                         msg = env.messages[i]
                     }
-                    else if(Status.API_RESULT_MULTIPLE_MATCHES == ste) {
+                    else if(AbstractEnvelope.RESULT_MULTIPLE_MATCHES == ste) {
                         if(env.messages[i]){
                             msg = env.messages[i].join("|")
                         }

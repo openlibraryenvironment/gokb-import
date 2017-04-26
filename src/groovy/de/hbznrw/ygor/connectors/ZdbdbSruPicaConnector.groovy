@@ -60,10 +60,10 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             }
             
         } catch(Exception e) {
-            return getEnvelopeWithStatus(Status.STATUS_ERROR)
+            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
         }
         
-        getEnvelopeWithStatus(Status.STATUS_OK)
+        getEnvelopeWithStatus(AbstractEnvelope.STATUS_OK)
     }
     
 	@Override
@@ -71,7 +71,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
 		try {
             getEnvelope(record, query)
 		} catch(Exception e) {
-			return getEnvelopeWithStatus(Status.STATUS_ERROR)
+			return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
 		}
 	}
             
@@ -93,11 +93,11 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
     Envelope getEnvelope(Object record, Query query) {
         
         if(response == null)
-            return getEnvelopeWithStatus(Status.STATUS_NO_RESPONSE)
+            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_NO_RESPONSE)
         
         currentRecord = record   
         if(currentRecord == null)
-            return getEnvelopeWithStatus(Status.STATUS_ERROR)
+            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
             
         switch(query){
             case Query.ZDBID:
@@ -129,7 +129,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
                 break;
         }
         
-        getEnvelopeWithStatus(Status.UNKNOWN_REQUEST)
+        getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
     
     Object getPicaRecords() {

@@ -17,7 +17,7 @@ class Envelope {
     static final COMPLEX = 'complex'
     
     String    type
-	Status    state
+	Object    state
 	ArrayList message   = []
 	
     ArrayList states    = []
@@ -26,14 +26,14 @@ class Envelope {
     Envelope(){
     }
     
-    Envelope(Status state, ArrayList message) {
-        this.state   = state                    // Status.CONST
+    Envelope(Object state, ArrayList message) {
+        this.state   = state                    // String
         this.message = message                  // String | [] | [Envelope,Envelope,Envelope]
         this.type    = Envelope.SIMPLE
     }
     
     Envelope(List states, HashMap messages) {
-        this.states   = states                  // [Status.CONST1, Status.CONST2, Status.CONST3]
+        this.states   = states                  // [String1, String2, String3]
         this.messages = messages                // [a1:[b11, null, b13, b14], a2:[null, null, b23, b24], a3:[b31, b32, b33, null]]
         this.type     = Envelope.COMPLEX
     }
