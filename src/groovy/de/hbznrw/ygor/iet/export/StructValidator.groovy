@@ -65,6 +65,9 @@ class StructValidator {
         if(historyEvent.from.size() == 0 && historyEvent.to.size() == 0 && historyEvent.date.m == Status.UNDEFINED){
             return Status.STRUCTVALIDATOR_REMOVE_FLAG
         }
+        if(historyEvent.from.size() == 0 && historyEvent.to.size() == 0 && historyEvent.date.m == Status.VALIDATOR_DATE_IS_MISSING){
+            return Status.STRUCTVALIDATOR_REMOVE_FLAG
+        }
         
         /*
         if(historyEvent.date.m == Status.VALIDATOR_DATE_IS_VALID && historyEvent.from.size() > 0 && historyEvent.to.size() > 0){

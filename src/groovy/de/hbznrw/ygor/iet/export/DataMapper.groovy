@@ -150,6 +150,17 @@ class DataMapper {
                 DataSetter.setDate(histEvent.date, Normalizer.IS_START_DATE, e.messages['date'])                
             }
             
+            // TODO check if valid
+            /*
+            def valid = StructValidator.isValidHistoryEvent(histEvent)
+            def pod = new Pod(histEvent, valid)
+            
+            if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+                title.historyEvents << pod
+            }
+            else {
+                log.debug("! ignore crappy title history event")
+            }*/
             title.historyEvents << new Pod(histEvent)
         }
     }
