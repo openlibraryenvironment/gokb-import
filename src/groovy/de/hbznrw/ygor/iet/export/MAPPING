@@ -9,7 +9,7 @@ num_first_issue_online			- 	Package.tipps.coverage
 num_last_issue_online			- 	Package.tipps.coverage		
 embargo_info					- 	Package.tipps.coverage
 coverage_depth					-	Package.tipps.coverage
-notes							- 	Package.tipps.coverage
+coverage_notes					- 	Package.tipps.coverage
 
 title_url						- 	Package.tipps.url / Package.tipps.platform
 

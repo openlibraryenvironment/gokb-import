@@ -26,7 +26,7 @@ class KbartConnector extends AbstractConnector {
         'title_url',
         'embargo_info',
         'coverage_depth',
-        'notes',
+        'coverage_notes',
         /*
         'publication_title',
         'ZDB-ID',
@@ -108,7 +108,7 @@ class KbartConnector extends AbstractConnector {
             'endIssue':     ([] << getValue('num_last_issue_online')),
             'startVolume':  ([] << getValue('num_first_vol_online')),
             'endVolume':    ([] << getValue('num_last_vol_online')),
-            'coverageNote': ([] << getValue('notes')),
+            'coverageNote': ([] << getValue('coverage_notes')),
             'embargo':      ([] << getValue('embargo_info'))
         ])
     }

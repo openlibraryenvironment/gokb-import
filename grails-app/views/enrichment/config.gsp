@@ -61,7 +61,7 @@
 							<li>title_url</li>
 							<li>embargo_info</li>
 							<li>coverage_depth</li>
-							<li>notes</li>
+							<li>coverage_notes</li>
 						</ul>
 					</td>
 				</tr>
