@@ -3,10 +3,14 @@ package de.hbznrw.ygor.tools
 import groovy.util.logging.Log4j
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
+import com.google.common.net.InternetDomainName
 
 @Log4j
 class UrlToolkit {
 
+    static final HARD_CHECK                 = 'HARD_CHECK'
+    static final ONLY_HIGHEST_LEVEL_DOMAIN  = 'ONLY_HIGHEST_LEVEL_DOMAIN'
+    
     static def getURL(String str){
         UrlToolkit.buildUrl(str)
     }
@@ -53,18 +57,23 @@ class UrlToolkit {
         url
     }
     
-    static sortUrl(String url, String nominal){
+    static sortOutUrl(String url, String nominal, Object checkConditions){
     
         def u = UrlToolkit.getURLWithProtocol(url)
         def n = UrlToolkit.getURLWithProtocol(nominal)
         
+        if(checkConditions == UrlToolkit.ONLY_HIGHEST_LEVEL_DOMAIN){
+            u = InternetDomainName.from(u.getAuthority()).topPrivateDomain().name
+            n = InternetDomainName.from(n.getAuthority()).topPrivateDomain().name
+        }
+ 
         if(u && n && u.toString().indexOf(n.toString()) == 0){
             return url
         }
         null
     }
     
-    static sortUrl(ArrayList urls, String nominal){
+    static sortOutUrl(ArrayList urls, String nominal, Object checkConditions){
         
         def result = []
         def n = UrlToolkit.getURLWithProtocol(nominal)
@@ -72,7 +81,7 @@ class UrlToolkit {
         urls.each{ e ->
             def u = UrlToolkit.getURLWithProtocol(e)
             
-            result << UrlToolkit.sortUrl(e, nominal)
+            result << UrlToolkit.sortOutUrl(e, nominal, checkConditions)
         }
         result.minus(null).minus("").join("|")
     }

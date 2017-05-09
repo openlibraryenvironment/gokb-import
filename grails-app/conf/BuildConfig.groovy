@@ -55,6 +55,8 @@ grails.project.dependency.resolution = {
         runtime 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
         runtime 'org.apache.httpcomponents:httpclient:4.3.5'
         runtime 'org.apache.httpcomponents:httpmime:4.3.5'
+        
+        compile 'com.google.guava:guava:21.0'
     }
 
     plugins {

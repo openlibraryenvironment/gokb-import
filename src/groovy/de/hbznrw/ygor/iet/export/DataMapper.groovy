@@ -200,13 +200,12 @@ class DataMapper {
         }
         
         else if(query == Query.KBART_TIPP_URL) {
-
-            // TODO
-            // TODO
-            // TODO
             
             // check if tipp.url is matching packageHeader.nominalPlatform
-            def matching = UrlToolkit.sortUrl(env.message, dc.pkg.packageHeader.v.nominalPlatform.v)
+            def matching = UrlToolkit.sortOutUrl(
+                env.message, 
+                dc.pkg.packageHeader.v.nominalPlatform.v, 
+                UrlToolkit.ONLY_HIGHEST_LEVEL_DOMAIN)
             
             DataSetter.setURL(tipp.url, matching)
 
@@ -371,8 +370,7 @@ class DataMapper {
      * - platform.primaryUrl
      * - platform.name
      * 
-     * platform.primaryUrl is taken from packageHeader.nominalPlatform, if tipp.url is valid
-     * platform.name is taken from platform.primaryUrl
+     * platform.primaryUrl is taken from packageHeader.nominalPlatform
      * 
      * @param tipp
      * @param dc
@@ -383,12 +381,12 @@ class DataMapper {
         
         def platform = PackageStruct.getNewTippPlatform()
 
-        if(tipp.url.m == Status.VALIDATOR_URL_IS_VALID){
+        //if(tipp.url.m == Status.VALIDATOR_URL_IS_VALID){
             DataSetter.setURL(platform.primaryUrl, dc.pkg.packageHeader.v.nominalPlatform.v)
-        }
-        else {
-            DataSetter.setURL(platform.primaryUrl, '')
-        }
+        //}
+        //else {
+        //    DataSetter.setURL(platform.primaryUrl, '')
+        //}
         
         DataSetter.setString(platform.name, platform.primaryUrl.v)
         
