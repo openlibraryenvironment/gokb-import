@@ -4,7 +4,7 @@ import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
 import de.hbznrw.ygor.iet.enums.*
-import de.hbznrw.ygor.iet.bridge.*
+import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.iet.export.structure.*
 
 /**
