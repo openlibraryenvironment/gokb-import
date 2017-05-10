@@ -19,9 +19,15 @@ class Enrichment {
         JSON_OO_RAW
         }
     
-	static enum ProcessingState {UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR}
+	static enum ProcessingState {
+        UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR
+        }
+    
 	ProcessingState status
-    float progress = 0.0
+    
+	// frontend api stuff    
+    String apiMessage
+    float  apiProgress = 0.0
     
 	String originName
 	String originHash
@@ -64,13 +70,21 @@ class Enrichment {
 	}
 	
     def setProgress(float progress) {
-        this.progress = progress
+        this.apiProgress = progress
     }
     
     float getProgress() {
-        progress
+        apiProgress
+    }
+
+    def setMessage(String message) {
+        this.apiMessage = message
     }
     
+    String getMessage() {
+        apiMessage
+    }
+        
     def setStatusByCallback(ProcessingState status) {
         setStatus(status)
     }

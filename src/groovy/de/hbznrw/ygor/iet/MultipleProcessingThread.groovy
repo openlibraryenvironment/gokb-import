@@ -6,6 +6,7 @@ import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.iet.processor.*
 import groovy.util.logging.Log4j
 import ygor.Enrichment
+import com.google.common.base.Throwables
 
 @Log4j
 class MultipleProcessingThread extends Thread {
@@ -93,9 +94,10 @@ class MultipleProcessingThread extends Thread {
 			enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
 
 			log.error(e.getMessage())
-			log.error(e.getStackTrace())
-			
 			log.info('Aborted.')
+
+			def stacktrace = Throwables.getStackTraceAsString(e).substring(0, 500)
+            enrichment.setMessage(stacktrace)
 			return
 		}
 		log.info('Done.')

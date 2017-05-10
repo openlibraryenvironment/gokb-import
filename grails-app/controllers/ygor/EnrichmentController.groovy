@@ -237,7 +237,7 @@ class EnrichmentController {
     def ajaxGetStatus = {
         
         def en = getCurrentEnrichment()
-        render '{"status":"' + en.getStatus() + '", "progress":' + en.getProgress().round() + '}'
+        render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
     }
 
     Enrichment getCurrentEnrichment() {
