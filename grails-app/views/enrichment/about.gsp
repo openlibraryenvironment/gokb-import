@@ -35,6 +35,12 @@
 		
 		<dl>
 			<br />
+			<dt>0.22</dt>
+			<br />
+			
+			<dd>- Stacktrace-Anzeige bei Fehlern</em></dd>
+
+			<br />
 			<dt>0.21</dt>
 			<br />
 			
