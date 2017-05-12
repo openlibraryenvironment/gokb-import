@@ -9,6 +9,10 @@
 		<g:form controller="statistic" action="show">
 			<div class="row">
 				<div class="col-xs-10 col-xs-offset-1">
+					<g:render template="../logo" />
+				</div>
+	
+				<div class="col-xs-10 col-xs-offset-1">
 				<br />  
 				Statistikabfrage per Hash:
 				<br /><br />  

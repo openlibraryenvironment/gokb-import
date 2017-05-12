@@ -13,15 +13,46 @@
 			<div class="col-xs-10 col-xs-offset-1">
 				<br />
 				
-				<div class="alert alert-danger" role="alert">
+				<h3>
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					Bei dieser Installation handelt es sich um Software in der Entwicklungsphase.
+					Verwendung auf eigene Verantwortung.
+				</h3>
+			</div>
+			
+			<div class="col-xs-10 col-xs-offset-1">
+				<br />
+				<p class="lead">Versionshistorie</p>
+				
+				<dl>
 					<br />
+					<dt>0.23</dt>
 					<br />
-					<p>
-						Bei dieser Installation handelt es sich um Software in der Entwicklungsphase. <br />
-						Verwendung auf eigene Verantwortung.
-					</p>
-				</div>
+					
+					<dd>- Kleinere Fehlerkorrekturen und Verbesserungen</em></dd>
+					
+					<br />
+					<dt>0.22</dt>
+					<br />
+					
+					<dd>- Stacktrace-Anzeige bei Fehlern</em></dd>
+		
+					<br />
+					<dt>0.21</dt>
+					<br />
+					
+					<dd>- KBART-Mapping über korrekte Feld <em>coverage_notes</em></dd>
+					<dd>- TIPP-Plattform wird <em>immer</em> vom PackageHeader übernommen</dd>
+					<dd>- Subdomains in TIPP-Url werden beim Matching berücksichtigt</dd> 
+					<dd>- Defekte Tests repariert</dd>
+					<dd>- Versionshistorie</dd>
+					
+					<br />
+					<dt>0.20</dt>
+					<br />
+		
+				</dl>
+	
 			</div>
 		</div>
 	</body>

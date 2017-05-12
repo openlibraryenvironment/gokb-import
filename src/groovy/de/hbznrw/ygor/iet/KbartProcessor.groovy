@@ -10,8 +10,8 @@ import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.bridges.*
 import groovy.util.logging.Log4j
-
 import java.nio.file.Paths
+
 
 /**
  * Class for reading and processing kbart files
@@ -23,7 +23,7 @@ class KbartProcessor extends AbstractProcessor {
     private stash               = new Stash()
     private String inputFile
     
-    private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader()
+    private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines()
     private int total		    = 0
     private int count           = 0
     
@@ -68,6 +68,7 @@ class KbartProcessor extends AbstractProcessor {
             }
         }
         if(null != quoteMode) {
+            csvFormat = csvFormat.withEscape((char)'^')
             csvFormat = csvFormat.withQuoteMode((QuoteMode)quoteMode)
         }
         if(null != recordSeparator) {
@@ -117,26 +118,31 @@ class KbartProcessor extends AbstractProcessor {
             CSVParser csv = new CSVParser(reader, csvFormat)
 
             for (record in csv.iterator()) {
-                def uid = UUID.randomUUID().toString() // TODO NEW
-                def r = record.get(key).toString()
-                
-                if(r){
-                    // store keys (zdb or issn or eissn)
-                    keys << ["${r}" : uid]
-                            
-                    // store kbart fields
-                    def kbfs = [:]
-                    bridge.connector.kbartKeys.each{ kbk ->
-                        kbfs << ["${kbk}":record.get(kbk).toString()]
-                    }
-                    if(kbfs.size() > 0){
-                        kbartFields << ["${uid}":kbfs]
-                    }
+                if(record.size() < csv.getHeaderMap().size()){
+                    log.info('crappy record ignored: size < kex[index]')
                 }
                 else {
-                    // store invalid csv records
-                    log.info('no enrichment key (' + key + ') found; entry ignored')
-                    stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.toString())
+                    def uid = UUID.randomUUID().toString() // TODO NEW
+                    def r = record.get(key).toString()
+                    
+                    if(r){
+                        // store keys (zdb or issn or eissn)
+                        keys << ["${r}" : uid]
+                                
+                        // store kbart fields
+                        def kbfs = [:]
+                        bridge.connector.kbartKeys.each{ kbk ->
+                            kbfs << ["${kbk}":record.get(kbk).toString()]
+                        }
+                        if(kbfs.size() > 0){
+                            kbartFields << ["${uid}":kbfs]
+                        }
+                    }
+                    else {
+                        // store invalid csv records
+                        log.info('no enrichment key (' + key + ') found; entry ignored')
+                        stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.toString())
+                    }
                 }
             }
         }

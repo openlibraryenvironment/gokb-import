@@ -21,9 +21,10 @@ class UrlToolkit {
         if(url) {
             return url
         }
-        else {
+        else if(str) {
             return UrlToolkit.buildUrl('http://' + str)
         }
+        null
     }
     
     static def getURLAuthority(String str){
@@ -62,7 +63,7 @@ class UrlToolkit {
         def u = UrlToolkit.getURLWithProtocol(url)
         def n = UrlToolkit.getURLWithProtocol(nominal)
         
-        if(checkConditions == UrlToolkit.ONLY_HIGHEST_LEVEL_DOMAIN){
+        if(checkConditions == UrlToolkit.ONLY_HIGHEST_LEVEL_DOMAIN && u && n){
             u = InternetDomainName.from(u.getAuthority()).topPrivateDomain().name
             n = InternetDomainName.from(n.getAuthority()).topPrivateDomain().name
         }

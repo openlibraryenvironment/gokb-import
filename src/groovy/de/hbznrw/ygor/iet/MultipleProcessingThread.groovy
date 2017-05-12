@@ -96,7 +96,7 @@ class MultipleProcessingThread extends Thread {
 			log.error(e.getMessage())
 			log.info('Aborted.')
 
-			def stacktrace = Throwables.getStackTraceAsString(e).substring(0, 500).replaceAll("\\p{C}", " ");
+			def stacktrace = Throwables.getStackTraceAsString(e).substring(0, 600).replaceAll("\\p{C}", " ");
             enrichment.setMessage(stacktrace)
 			return
 		}

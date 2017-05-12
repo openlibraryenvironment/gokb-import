@@ -45,6 +45,35 @@
 							</div>
 						</span>
 					</div>
+					
+					<!-- 
+					<br />
+					
+					<div class="input-group">
+						<span class="input-group-addon">Zeichenbegrenzer:</span>
+						<span class="form-control">
+							<div class="radio">
+								<label>
+									<g:radio name="formatQuoteMode" checked="true" value="none" />
+									Ohne
+								</label>
+							
+								&nbsp;
+							
+								<label>
+									<g:radio name="formatQuoteMode" value="nonnumeric" />
+									Nur alphanumerische Felder begrenzen
+								</label>
+							
+								&nbsp;
+							
+								<label>
+									<g:radio name="formatQuoteMode" value="all" />
+									Alle Felder begrenzen
+								</label>
+							</div>
+						</span>
+					</div> -->
 
 				</li>
 			</ul>
@@ -72,28 +101,4 @@
 			
 		</div>
 	</div><!-- .row -->
-		
-			<!-- 
-			<br /><br />
-			Zeichenbegrenzer:
-			<br /><br />
-
-			<g:radio name="formatQuote" checked="true" value="doublequote"/> Anführungszeichen <code>(")</code>
-			&nbsp;
-			<g:radio name="formatQuote" value="singlequote"/> Hochkomma <code>(')</code>
-			&nbsp;
-			<g:radio name="formatQuote" value="nullquote"/> ohne Begrenzer
-			
-			<br /><br />
-			Zeichenbegrenzungsmodus:
-			<br /><br />
-
-			<g:radio name="formatQuoteMode" value="all"/> Alle Felder begrenzen
-			&nbsp;
-			<g:radio name="formatQuoteMode" checked="true" value="nonnumeric"/> Alle nichtnumerischen Felder begrenzen
-			&nbsp;
-			<g:radio name="formatQuoteMode" value="none"/> Keine Felder begrenzen
-			-->
-	
-	
 </g:if>

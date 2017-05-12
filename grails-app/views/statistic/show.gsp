@@ -86,7 +86,9 @@
 	
 	<div class="col-xs-12" id="statistics-substats">
 		<p class="text-right">
-			<strong>Ignorierte KBART-Einträge:</strong> <span class="ignored-kbart-entries"></span>
+			<span class="ignored-kbart-entries">
+				Ignorierte KBART-Einträge: <span></span>
+			</span>
 		</p>
 	</div>
 	
@@ -252,7 +254,13 @@
 				$('#statistics-meta .meta-date').text(json.meta.date)
 				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
 				
-				$('#statistics-substats .ignored-kbart-entries').text(json.meta.stats.general["ignored kbart entries"])
+				$('#statistics-substats .ignored-kbart-entries > span').text(json.meta.stats.general["ignored kbart entries"])
+				
+				if(json.meta.stats.general["ignored kbart entries"] > 0){
+					$('#statistics-substats .ignored-kbart-entries').addClass('bg-danger')
+				} else {
+					$('#statistics-substats .ignored-kbart-entries').addClass('bg-success')
+				}
 				
 				var debug = JSON.stringify(json.meta.stats, null, '\t', false)
 				$('#statistics #tab-debug pre').text(debug)
@@ -282,7 +290,7 @@
 
 				statisticsController.appendEventHandler()	
 			},
-
+			
 			appendEventHandler: function(){
 	
 				$('#statistics-filter button').click(function(){

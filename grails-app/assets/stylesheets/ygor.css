@@ -7,6 +7,10 @@ h3 {
 	font-weight: bold;
 	margin-bottom: 15px;
 }
+.lead {
+	color: #004678;
+	border-bottom: 1px dashed #ccc;
+}
 .navbar-inverse {
 	color: #fff;
 	background-color: #004678;
@@ -84,9 +88,15 @@ select#processIndex {
 
 #statistics-substats .text-right {
 	margin: 0;
-	padding-right: 15px;
+	padding-right: 5px;
 }
-
+#statistics-substats .ignored-kbart-entries {
+	padding: 3px 10px;
+	border-radius: 3px;
+}
+#statistics-substats .ignored-kbart-entries span {
+	font-weight: bold;
+}
 #statistics table thead tr th:nth-of-type(1) {
 	width: 30%;
 }

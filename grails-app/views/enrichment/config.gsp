@@ -3,9 +3,13 @@
 
 <div class="row">
 
+	<div class="col-xs-10 col-xs-offset-1">
+		<g:render template="../logo" />
+	</div>
+				
 	<div id="config-view" class="col-xs-10 col-xs-offset-1">
-		
-		<h3>API</h3>
+		<br />
+		<p class="lead">API-Auswertungen</p>
 		
 		<table class="table table-striped table-hover">			
 			<thead>
@@ -152,7 +156,7 @@
 		
 		<br />
 		
-		<h3>Hart kodierte Werte</h3>
+		<p class="lead">Hart kodierte Werte</p>
 		
 		<table class="table table-striped table-hover">	
 			<thead>
