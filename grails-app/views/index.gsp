@@ -29,6 +29,9 @@
 					<dt>0.24</dt>
 					<br />
 
+                    <dd>- KBART-Mapping: Fehlerbehebung</dd>
+                    <dd>- KBART-Mapping: Feld <em>cover_depth</em> hinzugefügt</dd>
+                    <dd>- KBART-Mapping: Feld <em>notes</em> umbenannt</dd>
 					<dd>- Quellcodeüberarbeitung</dd>
 
 					<br />
@@ -47,7 +50,7 @@
 					<dt>0.21</dt>
 					<br />
 					
-					<dd>- KBART-Mapping: Feld <em>coverage_notes</em></dd>
+					<dd>- KBART-Mapping: Feld <em>coverage_notes</em> umbenannt</dd>
 					<dd>- TIPP-Plattform wird <em>immer</em> vom PackageHeader übernommen</dd>
 					<dd>- Subdomains in TIPP-Url werden beim Matching berücksichtigt</dd> 
 					<dd>- Defekte Tests repariert</dd>

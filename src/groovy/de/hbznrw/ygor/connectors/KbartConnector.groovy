@@ -15,8 +15,8 @@ class KbartConnector extends AbstractConnector {
 	
 	private String requestUrl       = 'kbart-file'
     private HashMap response
-	
-    public kbartKeys = [      
+
+    public kbartKeys = [
         'date_first_issue_online',
         'date_last_issue_online',
         'num_first_vol_online',
@@ -26,7 +26,7 @@ class KbartConnector extends AbstractConnector {
         'title_url',
         'embargo_info',
         'coverage_depth',
-        'coverage_notes',
+        'notes',
         /*
         'publication_title',
         'ZDB-ID',
@@ -34,7 +34,7 @@ class KbartConnector extends AbstractConnector {
         'online_identifier'
         */
     ]
-    
+
 	KbartConnector(BridgeInterface bridge) {
 		super(bridge)
 	}
@@ -74,7 +74,6 @@ class KbartConnector extends AbstractConnector {
             return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
         }
     }
-    
 
     @Override
     Envelope getEnvelope(Query query) {
@@ -102,14 +101,15 @@ class KbartConnector extends AbstractConnector {
     
     private Envelope getTippCoverageAsFatEnvelope() {
         getEnvelopeWithComplexMessage([
-            'startDate':    ([] << getValue('date_first_issue_online')),
-            'endDate':      ([] << getValue('date_last_issue_online')),
-            'startIssue':   ([] << getValue('num_first_issue_online')),
-            'endIssue':     ([] << getValue('num_last_issue_online')),
-            'startVolume':  ([] << getValue('num_first_vol_online')),
-            'endVolume':    ([] << getValue('num_last_vol_online')),
-            'coverageNote': ([] << getValue('coverage_notes')),
-            'embargo':      ([] << getValue('embargo_info'))
+            'startDate':        ([] << getValue('date_first_issue_online')),
+            'endDate':          ([] << getValue('date_last_issue_online')),
+            'startIssue':       ([] << getValue('num_first_issue_online')),
+            'endIssue':         ([] << getValue('num_last_issue_online')),
+            'startVolume':      ([] << getValue('num_first_vol_online')),
+            'endVolume':        ([] << getValue('num_last_vol_online')),
+            'coverageNote':     ([] << getValue('notes')),
+            'coverageDepth':    ([] << getValue('coverage_depth')),
+            'embargo':          ([] << getValue('embargo_info'))
         ])
     }
     

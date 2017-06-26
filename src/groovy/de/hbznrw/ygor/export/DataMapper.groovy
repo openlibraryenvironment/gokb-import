@@ -220,12 +220,7 @@ class DataMapper {
             }
         }
 
-        else if(query == Query.KBART_TIPP_COVERAGE) {     
-            
-            // TODO
-            // TODO
-            // TODO
-            
+        else if(query == Query.KBART_TIPP_COVERAGE) {
             def coverage = PackageStruct.getNewTippCoverage()
             
             if(env.messages['startDate']){
@@ -235,22 +230,21 @@ class DataMapper {
                 DataSetter.setDate(coverage.endDate, Normalizer.IS_END_DATE, env.messages['endDate'].first())
             }
             if(env.messages['startIssue']){
-                DataSetter.setCoverageVolume(coverage.startIssue, Normalizer.IS_START_DATE, env.messages['startIssue'].first())
+                DataSetter.setInteger(coverage.startIssue, env.messages['startIssue'].first())
             }
             if(env.messages['endIssue']){
-                DataSetter.setCoverageVolume(coverage.endIssue, Normalizer.IS_END_DATE, env.messages['endIssue'].first())
+                DataSetter.setInteger(coverage.endIssue, env.messages['endIssue'].first())
             }
             if(env.messages['startVolume']){
-                DataSetter.setCoverageVolume(coverage.startVolume, Normalizer.IS_START_DATE, env.messages['startVolume'].first())
+                DataSetter.setInteger(coverage.startVolume, env.messages['startVolume'].first())
             }
             if(env.messages['endVolume']){
-                DataSetter.setCoverageVolume(coverage.endVolume, Normalizer.IS_END_DATE, env.messages['endVolume'].first())
+                DataSetter.setInteger(coverage.endVolume, env.messages['endVolume'].first())
             } 
-                
-            // TODO
-            DataSetter.setString(coverage.coverageNote, env.messages['coverageNote'].first())
-            // TODO
-            DataSetter.setString(coverage.embargo, env.messages['embargo'].first())
+
+            DataSetter.setString(coverage.coverageDepth, env.messages['coverageDepth'].first())
+            DataSetter.setString(coverage.coverageNote,  env.messages['coverageNote'].first())
+            DataSetter.setString(coverage.embargo,       env.messages['embargo'].first())
 
             def valid = StructValidator.isValidCoverage(coverage)
             def pod = new Pod(coverage, valid)

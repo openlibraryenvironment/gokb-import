@@ -52,7 +52,22 @@ class DataSetter {
             obj.m = normMeta
         }
     }
-    
+
+    static def setInteger(Object obj, Object orgValue){
+        obj.org       = orgValue
+        def normValue = Normalizer.normInteger (orgValue)
+        def normMeta  = Validator.isValidNumber(normValue)
+
+        if(Status.VALIDATOR_NUMBER_IS_VALID == normMeta){
+            obj.v = normValue
+            obj.m = normMeta
+        }
+        else {
+            obj.v = ''
+            obj.m = normMeta
+        }
+    }
+
     static def setString(Object obj, Object orgValue){
         obj.org       = orgValue
         def normValue = Normalizer.normString  (orgValue)

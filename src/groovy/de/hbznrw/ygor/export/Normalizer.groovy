@@ -96,7 +96,39 @@ class Normalizer {
         }
         result.join("|")
     }
-        
+
+    /**
+     *
+     * @param str
+     * @return
+     */
+    static String normInteger(String str) {
+        if(!str)
+            return str
+
+        str = Normalizer.normString(str)
+        str = str.replaceAll(/[\/-]+/,"")
+
+        str.toInteger()
+    }
+
+    /**
+     *
+     * @param list
+     * @param type
+     * @return
+     */
+    static String normInteger(ArrayList list, Object type) {
+        if(null == list)
+            return null
+
+        def result = []
+        list.each{ e ->
+            result << Normalizer.normInteger(e.toString(), type)
+        }
+        result.join("|")
+    }
+
     /**
      * Returns null if null given
      * 
