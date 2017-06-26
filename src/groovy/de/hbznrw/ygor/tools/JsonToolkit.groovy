@@ -2,7 +2,7 @@ package de.hbznrw.ygor.tools;
 
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
-import de.hbznrw.ygor.iet.export.DataContainer
+import de.hbznrw.ygor.export.DataContainer
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 

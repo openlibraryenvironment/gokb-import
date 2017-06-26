@@ -1,7 +1,7 @@
 package de.hbznrw.ygor.interfaces
 
 import groovy.util.logging.Log4j
-import de.hbznrw.ygor.iet.enums.Query
+import de.hbznrw.ygor.enums.Query
 
 @Log4j
 abstract class AbstractBridge implements BridgeInterface {

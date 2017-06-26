@@ -3,8 +3,8 @@
 <%@ page 
 	import="ygor.Enrichment" 
 	import="ygor.PlatformService"
-	import="de.hbznrw.ygor.iet.export.structure.TitleStruct"
-	import="de.hbznrw.ygor.iet.export.structure.PackageStruct"
+	import="de.hbznrw.ygor.export.structure.TitleStruct"
+	import="de.hbznrw.ygor.export.structure.PackageStruct"
 	import="de.hbznrw.ygor.bridges.*"
 %>
 

@@ -3,8 +3,7 @@ package ygor
 import de.hbznrw.ygor.tools.*
 import groovy.util.logging.Log4j
 import ygor.Enrichment.FileType
-import groovy.json.*
-import de.hbznrw.ygor.iet.export.JsonTransformer
+import de.hbznrw.ygor.export.JsonTransformer
 
 @Log4j
 class StatisticController {

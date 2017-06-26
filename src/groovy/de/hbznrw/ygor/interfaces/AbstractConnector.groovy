@@ -1,9 +1,9 @@
 package de.hbznrw.ygor.interfaces
 
 import groovy.util.logging.Log4j
-import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.enums.Query
-import de.hbznrw.ygor.iet.enums.Status
+import de.hbznrw.ygor.processing.Envelope
+import de.hbznrw.ygor.enums.Query
+import de.hbznrw.ygor.enums.Status
 
 /**
  * Abstract class for defining API endpoints
@@ -73,7 +73,7 @@ abstract class AbstractConnector implements ConnectorInterface {
             states = [Status.UNDEFINED]
         
         // missing values filled with null
-        // see: de.hbznrw.ygor.iet.Envelope
+        // see: de.hbznrw.ygor.processing.Envelope
             
         for(item in messages) {
             def tmp = item.value.minus(null) // TODO CHECK, or use e.g. Status.EMPTY_SLOT

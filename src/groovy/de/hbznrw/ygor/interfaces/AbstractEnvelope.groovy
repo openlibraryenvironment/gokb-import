@@ -1,8 +1,4 @@
 package de.hbznrw.ygor.interfaces
-
-import groovy.util.logging.Log4j
-import de.hbznrw.ygor.iet.enums.Status
-
 /**
  * Class for wrapping API call results
  */

@@ -26,22 +26,28 @@
 				
 				<dl>
 					<br />
+					<dt>0.24</dt>
+					<br />
+
+					<dd>- Quellcodeüberarbeitung</dd>
+
+					<br />
 					<dt>0.23</dt>
 					<br />
 					
-					<dd>- Kleinere Fehlerkorrekturen und Verbesserungen</em></dd>
+					<dd>- Kleinere Fehlerkorrekturen und Verbesserungen</dd>
 					
 					<br />
 					<dt>0.22</dt>
 					<br />
 					
-					<dd>- Stacktrace-Anzeige bei Fehlern</em></dd>
+					<dd>- Stacktrace-Anzeige bei Fehlern</dd>
 		
 					<br />
 					<dt>0.21</dt>
 					<br />
 					
-					<dd>- KBART-Mapping über korrekte Feld <em>coverage_notes</em></dd>
+					<dd>- KBART-Mapping: Feld <em>coverage_notes</em></dd>
 					<dd>- TIPP-Plattform wird <em>immer</em> vom PackageHeader übernommen</dd>
 					<dd>- Subdomains in TIPP-Url werden beim Matching berücksichtigt</dd> 
 					<dd>- Defekte Tests repariert</dd>

@@ -1,13 +1,13 @@
 package de.hbznrw.ygor.bridges
 
+import de.hbznrw.ygor.export.DataMapper
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
-import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.iet.export.*
 import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.interfaces.*
-import de.hbznrw.ygor.tools.*
-import de.hbznrw.ygor.iet.export.structure.TitleStruct
+import de.hbznrw.ygor.export.structure.TitleStruct
 
 @Log4j
 class GbvBridge extends AbstractBridge implements BridgeInterface {

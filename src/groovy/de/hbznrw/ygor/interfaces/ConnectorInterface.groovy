@@ -1,9 +1,7 @@
 package de.hbznrw.ygor.interfaces
 
-import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.enums.Query
-import de.hbznrw.ygor.iet.enums.Status
-
+import de.hbznrw.ygor.processing.Envelope
+import de.hbznrw.ygor.enums.Query
 
 interface ConnectorInterface {
     

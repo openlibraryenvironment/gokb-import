@@ -1,8 +1,8 @@
 package ygor
 
-import de.hbznrw.ygor.iet.MultipleProcessingThread
-import de.hbznrw.ygor.iet.export.DataContainer
-import de.hbznrw.ygor.iet.export.JsonTransformer
+import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.export.DataContainer
+import de.hbznrw.ygor.export.JsonTransformer
 import de.hbznrw.ygor.tools.*
 
 class Enrichment {

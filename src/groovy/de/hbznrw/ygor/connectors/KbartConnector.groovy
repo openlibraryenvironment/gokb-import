@@ -1,8 +1,8 @@
 package de.hbznrw.ygor.connectors
 
 import groovy.util.logging.Log4j
-import de.hbznrw.ygor.iet.Envelope
-import de.hbznrw.ygor.iet.enums.*
+import de.hbznrw.ygor.processing.Envelope
+import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.bridges.*
 
