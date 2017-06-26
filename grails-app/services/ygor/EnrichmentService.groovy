@@ -2,8 +2,6 @@ package ygor
 
 import de.hbznrw.ygor.export.Validator
 import de.hbznrw.ygor.export.structure.Pod
-import de.hbznrw.ygor.iet.export.*
-import de.hbznrw.ygor.iet.export.structure.*
 import groovyx.net.http.HTTPBuilder
 import javax.servlet.http.HttpSession
 import groovyx.net.http.*

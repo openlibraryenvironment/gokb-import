@@ -9,8 +9,6 @@ import de.hbznrw.ygor.export.structure.TitleStruct
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.QuoteMode
-import de.hbznrw.ygor.iet.export.*
-import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.bridges.*
 import groovy.util.logging.Log4j

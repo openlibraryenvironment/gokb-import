@@ -2,7 +2,6 @@ package de.hbznrw.ygor.processing
 
 import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.export.structure.TitleStruct
-import de.hbznrw.ygor.iet.export.structure.*
 import groovy.util.logging.Log4j
 
 @Log4j

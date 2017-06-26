@@ -3,7 +3,6 @@ package de.hbznrw.ygor.bridges
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.Query
-import de.hbznrw.ygor.iet.formatadapter.*
 import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.export.structure.TitleStruct
 

@@ -7,7 +7,6 @@ import de.hbznrw.ygor.export.structure.Title
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.processing.Envelope
 import de.hbznrw.ygor.enums.*
-import de.hbznrw.ygor.iet.export.structure.*
 import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j

@@ -2,7 +2,6 @@ package de.hbznrw.ygor.export
 
 import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
-import de.hbznrw.ygor.iet.export.structure.*
 
 class DataContainer {
 

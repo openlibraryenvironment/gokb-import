@@ -1,7 +1,5 @@
 package ygor
 
-import de.hbznrw.ygor.iet.export.*
-
 class EnrichmentController {
 
     static scope = "session"
