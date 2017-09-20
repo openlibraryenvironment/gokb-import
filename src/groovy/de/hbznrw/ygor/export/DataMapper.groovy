@@ -388,8 +388,9 @@ class DataMapper {
         
         DataSetter.setStringAsTitle(platform.name, platform.primaryUrl.v)
         
-        platform.name.v = platform.name.v.replace(": ", ":") // hotfix: string normalizer behavior
-       
+        platform.name.v = platform.name.v.replace(": ", ":")        // hotfix: string normalizer behavior
+        platform.name.v = platform.name.v.replaceFirst("/*\$", "")  // remove trailing slashes
+
         tipp.platform = new Pod(platform)
     }
     
