@@ -386,7 +386,7 @@ class DataMapper {
         //    DataSetter.setURL(platform.primaryUrl, '')
         //}
         
-        DataSetter.setString(platform.name, platform.primaryUrl.v)
+        DataSetter.setStringAsTitle(platform.name, platform.primaryUrl.v)
         
         platform.name.v = platform.name.v.replace(": ", ":") // hotfix: string normalizer behavior
        
