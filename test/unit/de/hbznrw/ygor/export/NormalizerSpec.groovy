@@ -53,7 +53,25 @@ class NormalizerSpec extends Specification {
             "Remo     ving Multi  ple  Spa    ces"  | "Remo ving Multi ple Spa ces"
             "Reformatting - a : x  ,y :z"           | "Reformatting - a: x, y: z"               
     }
-    
+
+    void "normStringTitle(String str)"() {
+
+        when:
+        println "${raw} -> ${result}"
+
+        then:
+        Normalizer.normStringTitle(raw) == result
+
+        where:
+        raw                                     | result
+        null                                    | null
+        "Remain@remain"                         | "Remain@remain"
+        "Remain @ remain"                       | "Remain @ remain"
+        "Remain@ remain"                        | "Remain@ remain"
+        "Trim @trim"                            | "Trim trim"
+
+    }
+
     void "normString(ArrayList list)"() {
         
         when:

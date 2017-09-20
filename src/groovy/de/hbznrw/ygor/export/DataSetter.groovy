@@ -83,6 +83,22 @@ class DataSetter {
         }
     }
 
+    static def setStringAsTitle(Object obj, Object orgValue){
+        obj.org       = orgValue
+        def normValue = Normalizer.normString  (orgValue)
+        normValue = Normalizer.normStringTitle  (normValue)
+        def normMeta  = Validator.isValidString(normValue)
+
+        if(Status.VALIDATOR_STRING_IS_VALID == normMeta){
+            obj.v = normValue
+            obj.m = normMeta
+        }
+        else {
+            obj.v = ''
+            obj.m = normMeta
+        }
+    }
+
     static def setURL(Object obj, Object orgValue){
         obj.org       = orgValue
         def normValue = Normalizer.normURL  (orgValue, false)

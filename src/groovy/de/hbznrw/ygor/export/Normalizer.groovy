@@ -28,9 +28,24 @@ class Normalizer {
         
         str = str.trim().replaceAll(/\s+/," ").replaceAll(/\s*:\s*/,": ").replaceAll(/\s*,\s*/,", ")
     }
-    
+
     /**
-     * Contatenates list elements with "|" as delimiter.
+     * Removes special chars. So far: removes "@" occuring after " " and in front of word character.
+     * Returns null if null given.
+     * Returns "" if empty string given
+     *
+     * @param str
+     * @return
+     */
+    static String normStringTitle(String str) {
+        if(!str)
+            return str
+
+        str = str.replaceAll(" @(\\w)", ' $1')
+    }
+
+    /**
+     * Concatenates list elements with "|" as delimiter.
      * Returns null if null given. 
      * Returns "" if empty list given
      *
