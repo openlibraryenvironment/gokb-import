@@ -26,6 +26,14 @@
 				
 				<dl>
 					<br />
+					<dt>0.25</dt>
+					<br />
+
+					<dd>- Korrektur: SRU-Anfragen liefern multiple Treffer</dd>
+					<dd>- KBART-Mapping: Normierung der Platform-URL</dd>
+					<dd>- KBART-Mapping: <em>@</em>-Zeichen in Titeln entfernen</dd>
+
+					<br />
 					<dt>0.24</dt>
 					<br />
 

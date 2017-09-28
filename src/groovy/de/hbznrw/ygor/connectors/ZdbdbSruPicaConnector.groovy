@@ -17,7 +17,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
     
 	private String requestUrl       = "http://sru.gbv.de/zdbdb?version=1.2&operation=searchRetrieve&maximumRecords=10"
 	private String queryIdentifier
-    private String queryOnlyJournals = "%20and%20(pica.mak=Obvz%20or%20pica.mak=Obv)"
+    private String queryOnlyJournals = "%20and%20pica.mat=O*"
     private String queryOrder       = "sortKeys=year,,1"
     
     private String formatIdentifier = 'picaxml'
@@ -35,7 +35,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
     
     @Override
     String getAPIQuery(String identifier) {
-        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier /*+ queryOnlyJournals*/ + "&" + queryOrder
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals + "&" + queryOrder
     }
     
     // TODO fix return value
