@@ -5,7 +5,7 @@ class EnrichmentController {
     static scope = "session"
 
     EnrichmentService enrichmentService
-    PlatformService   platformService
+    GokbService gokbService
 
     def index = { 
         redirect(action:'process')   
@@ -16,7 +16,7 @@ class EnrichmentController {
             view:'process',
             model:[
                 enrichments:     enrichmentService.getSessionEnrichments(), 
-                platformService: platformService, 
+                gokbService:     gokbService,
                 currentView:    'process'
                 ]
             )

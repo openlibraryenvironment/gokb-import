@@ -12,7 +12,7 @@ import de.hbznrw.ygor.tools.*
 class EnrichmentService {
     
     def grailsApplication
-    PlatformService platformService
+    GokbService gokbService
     
     void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode) {
         
@@ -62,12 +62,18 @@ class EnrichmentService {
             ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup2'][0])
         }
         
-        def map = platformService.getMap()
-        def pkgNominal = map.find{it.key == pm['pkgNominal'][0]}
-        if(pkgNominal){
-            ph.v.nominalPlatform.v = pkgNominal.value
+        def platformMap = gokbService.getPlatformMap()
+        def pkgNomPlatform = platformMap.find{it.key == pm['pkgNominalPlatform'][0]}
+        if(pkgNomPlatform){
+            ph.v.nominalPlatform.v = pkgNomPlatform.value
             ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.v)
-            ph.v.nominalProvider.v = pkgNominal.key
+        }
+
+        def providerMap = gokbService.getProviderMap()
+        def pkgNomProvider = providerMap.find{it.key == pm['pkgNominalProvider'][0]}
+        if(pkgNomProvider){
+            ph.v.nominalProvider.v = pkgNomProvider.value
+            ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
         }
 
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)

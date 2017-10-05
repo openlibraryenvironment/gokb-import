@@ -2,15 +2,15 @@ package ygor
 
 import java.sql.*
 
-class PlatformService {
+class GokbService {
     
     def grailsApplication
     
-    Map getMap() {
+    Map getPlatformMap() {
         
         log.info("getting platform map from gokb ..")
         
-        def platformMap = [:]
+        def map = [:]
         
         try {
             Driver pgDriver = new org.postgresql.Driver()
@@ -23,23 +23,54 @@ class PlatformService {
             
             ResultSet resultSet = con.createStatement().executeQuery(
                 //"select kbc.kbc_name, pf.plat_primary_url from platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id order by kbc_name"
-                "select kbc.kbc_name, pf.plat_primary_url from ((platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id) inner join refdata_value rdv on kbc.kbc_status_rv_fk = rdv.rdv_id) where rdv.rdv_value != 'Retired' order by kbc_name" 
+                "select kbc.kbc_name, pf.plat_primary_url from ((platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id) inner join refdata_value rdv on kbc.kbc_status_rv_fk = rdv.rdv_id) where rdv.rdv_value = 'Current' order by kbc_name"
                 )
                 
             while(resultSet.next()) {
-                platformMap.put(resultSet.getString('kbc_name'), resultSet.getString('plat_primary_url'))
+                map.put(resultSet.getString('kbc_name'), resultSet.getString('plat_primary_url'))
             }
             
         } catch (Exception e) {
             log.error(e.getMessage())
         }
         
-        if(platformMap.size() == 0)
-            platformMap = getPackageHeaderNominalPlatformPreset()
+        if(map.size() == 0)
+            map = getPackageHeaderNominalPlatformPreset()
         
-        platformMap
+        map
     }
-    
+
+    Map getProviderMap() {
+
+        log.info("getting provider map from gokb ..")
+
+        def map = [:]
+
+        try {
+            Driver pgDriver = new org.postgresql.Driver()
+
+            Properties prop = new Properties()
+            prop.put("user",     grailsApplication.config.gokbDB.user)
+            prop.put("password", grailsApplication.config.gokbDB.pwd)
+
+            Connection con = pgDriver.connect(grailsApplication.config.gokbDB.dbUri, prop)
+
+            ResultSet resultSet = con.createStatement().executeQuery(
+                    //"select kbc.kbc_name from kbcomponent where kbc_id in (select org_roles_id from refdata_value rdv inner join org_refdata_value ordv on rdv.rdv_id = ordv.refdata_value_id where rdv.rdv_value = 'Content Provider')"
+                    "select kbc.kbc_name, kbc.kbc_name from kbcomponent kbc join refdata_value rv on kbc.kbc_status_rv_fk = rv.rdv_id where rv.rdv_value = 'Current' and kbc.kbc_id in (select org_roles_id from refdata_value rdv inner join org_refdata_value ordv on rdv.rdv_id = ordv.refdata_value_id where rdv.rdv_value in ('Content Provider','Publisher'))"
+            )
+
+            while(resultSet.next()) {
+                map.put(resultSet.getString('kbc_name'), resultSet.getString('kbc_name'))
+            }
+
+        } catch (Exception e) {
+            log.error(e.getMessage())
+        }
+
+        map
+    }
+
     // --- fallback / GOKb(phaeton.hbz-nrw.de) 2017.01.20 ---
     
     Map getPackageHeaderNominalPlatformPreset() {

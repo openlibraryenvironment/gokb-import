@@ -23,19 +23,19 @@
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.name</td>
-					<td></td>
+					<td>Titel</td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.nominalProvider</td>
-					<td></td>
+					<td>GOKb Provider</td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.nominalPlatform</td>
-					<td></td>
+					<td>GOKb Plattform</td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, Formular</em></td>
@@ -47,7 +47,7 @@
 					<td>Ygor <em>, Formular</em></td>
 					<td></td>
 					<td>packageHeader.curatoryGroups</td>
-					<td></td>
+					<td>GOKb Curatory Group</td>
 				</tr>
 							
 				<tr>
@@ -72,13 +72,13 @@
 				<tr>
 					<td>KBART <em>, Datei</em></td>
 					<td></td>
-					<td>tipps.url <strong data-toggle="tooltip" data-placement="top" title="Falls tipps.url gegen packageHeader.nominalPlatform matcht">[?]</strong></td>
+					<td>tipps.url</td>
 					<td>title_url</td>
 				</tr>
 				<tr>
 					<td>KBART <em>, Datei</em></td>
 					<td></td>
-					<td>tipps.platform <strong data-toggle="tooltip" data-placement="bottom" title="URI-Authority von tipps.url, falls diese gegen packageHeader.nominalPlatform matcht">[?]</strong></td>
+					<td>tipps.platform</td>
 					<td>title_url</td>
 				</tr>
 				

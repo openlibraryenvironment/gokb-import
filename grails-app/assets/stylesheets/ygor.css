@@ -59,10 +59,12 @@ h3 {
 	min-height: 1px;
 }
 
-select#pkgNominal {
+select#pkgNominalPlatform,
+select#pkgNominalProvider {
 	width: 405px;
 }
-select#pkgNominal .warning {
+select#pkgNominalPlatform .warning,
+select#pkgNominalProvider .warning {
 	font-style: italic;
 	color: #bbb;
 }

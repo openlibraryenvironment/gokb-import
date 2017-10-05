@@ -2,7 +2,7 @@
 
 <%@ page 
 	import="ygor.Enrichment" 
-	import="ygor.PlatformService"
+	import="ygor.GokbService"
 	import="de.hbznrw.ygor.export.structure.TitleStruct"
 	import="de.hbznrw.ygor.export.structure.PackageStruct"
 	import="de.hbznrw.ygor.bridges.*"
@@ -76,9 +76,9 @@
 								<br />
 			
 								<div class="input-group">
-									<span class="input-group-addon">Plattform:</span>
-									<g:select name="pkgNominal" class="form-control" noSelection="['':'']"
-										from="${platformService.getMap().entrySet()}" 
+									<span class="input-group-addon"><em>GOKb</em> Plattform:</span>
+									<g:select name="pkgNominalPlatform" class="form-control" noSelection="['':'']"
+										from="${gokbService.getPlatformMap().entrySet()}"
 										optionValue="key"
 										optionKey="${{ es -> "${es.key}\" data-url=\"${es.value}" }}" 
 										data-toggle="tooltip" data-placement="right" 
@@ -87,14 +87,25 @@
 								</div>
 								<script>
 									$(function(){
-										$('select[name="pkgNominal"] option[data-url="null"]').addClass('warning')
+										$('select[name="pkgNominalPlatform"] option[data-url="null"]').addClass('warning')
 									})
 								</script>
 			
-								<br /> 
-							
+								<br />
+
 								<div class="input-group">
-									<span class="input-group-addon">GOKb Curatory Group:</span>
+									<span class="input-group-addon"><em>GOKb</em> Provider:</span>
+									<g:select name="pkgNominalProvider" class="form-control" noSelection="['':'']"
+											  from="${gokbService.getProviderMap().entrySet()}"
+											  optionValue="value"
+											  optionKey="key"
+											  class="form-control" />
+								</div>
+
+								<br />
+
+								<div class="input-group">
+									<span class="input-group-addon"><em>GOKb</em> Curatory Group:</span>
 									<g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" class="form-control" />
 								</div>
 								
