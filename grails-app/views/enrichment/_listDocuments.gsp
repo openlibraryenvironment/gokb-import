@@ -70,7 +70,7 @@
 							
 								<div class="input-group">
 									<span class="input-group-addon">ZDB-Paketsigel:</span>
-									<g:textField name="pkgVariantName" size="24" value="ZDB-0815" class="form-control" />
+									<g:textField name="pkgVariantName" size="24" class="form-control" />
 								</div>
 								
 								<br />

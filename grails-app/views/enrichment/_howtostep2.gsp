@@ -5,7 +5,7 @@
 	</li>
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-		&nbsp; Benennen Sie Ihre Organisation als sekundäre <strong>Curatoy Group</strong>.	
+		&nbsp; Benennen Sie Ihre Organisation als sekundäre <strong>Curatory Group</strong>.
 	</li>
 	<li class="list-group-item">
 		<span class="text-danger">
