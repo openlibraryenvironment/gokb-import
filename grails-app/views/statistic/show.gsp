@@ -99,11 +99,11 @@
                 </span>
                 <br />
                 <span class="tipps-delta">
-                    Fehlerhafte <strong>Package-Tipps</strong> nach der Anreicherung: <span></span>
+                    Fehlerhafte <strong>Package-Tipps</strong> nach der Anreicherung: <span></span> <em>(werden entfernt)</em>
                 </span>
                 <br />
                 <span class="titles-delta">
-                    Fehlerhafte <strong>Titles</strong> nach der Anreicherung: <span></span>
+                    Fehlerhafte <strong>Titles</strong> nach der Anreicherung: <span></span> <em>(werden entfernt)</em>
                 </span>
 			</div>
 		</div>

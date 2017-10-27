@@ -44,7 +44,40 @@ class Statistics {
     }
     
     static Object processTipps(Object json){
-    
+
+        List<Integer> tippTitleName = Statistics.getStorage()
+
+        json.package.tipps.each{ tipp ->
+            def name = tipp.value.v.title.v.name
+
+            if(name?.m.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
+                tippTitleName[Statistics.COUNT_1]++
+            }
+            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
+                tippTitleName[Statistics.COUNT_2]++
+                tippTitleName[Statistics.LIST_2] << "${name.org}"
+
+                Statistics.addMetaData(tipp, 'tipp.title.name', name)
+            }
+            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
+                tippTitleName[Statistics.COUNT_3]++
+                tippTitleName[Statistics.LIST_3] << "${name.org}"
+
+                Statistics.addMetaData(tipp, 'tipp.title.name', name)
+            }
+            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
+                tippTitleName[Statistics.COUNT_4]++
+
+                Statistics.addMetaData(tipp, 'tipp.title.name', name)
+            }
+        }
+
+        Statistics.format("NAME IS VALID",      tippTitleName, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.tipps.title)
+        Statistics.format("name is not atomic", tippTitleName, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.tipps.title)
+        Statistics.format("name is not valid",  tippTitleName, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps.title)
+        Statistics.format("name is missing",    tippTitleName, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.tipps.title)
+
+
         List<Integer> tippUrls = Statistics.getStorage()
         
         json.package.tipps.each{ tipp ->
@@ -431,17 +464,18 @@ class Statistics {
     static Object getStatsAfterCleanUp(Object json){
         
         // general
+        // see JsonTransformer.removeEmpty(Object json, boolean useValidator)
 
         def nonEmptyTipps = 0
         def nonEmptyTitles = 0
 
         json.package.tipps.each{ tipp ->
-            if(tipp.title.name != "") {
+            if(! (tipp.title.identifiers.size() == 0 || tipp.title.name == "")) {
                 nonEmptyTipps++
             }
         }
         json.titles.each{ title ->
-            if(title.name != "") {
+            if(! (title.identifiers.size() == 0 || title.name == "")) {
                 nonEmptyTitles++
             }
         }

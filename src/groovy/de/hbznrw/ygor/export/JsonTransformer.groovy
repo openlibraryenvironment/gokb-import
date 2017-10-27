@@ -490,7 +490,10 @@ class JsonTransformer {
             
             def tipps = []
             json.package.tipps.each{ tipp ->
-                if(tipp.title.identifiers.size() > 0) {
+                if(tipp.title.identifiers.size() == 0 || tipp.title.name == "") {
+                    log.info("removeEmpty(): tipp removed from json")
+                }
+                else {
                     tipps << tipp
                 }
             }
@@ -502,7 +505,10 @@ class JsonTransformer {
             
             def titles = []
             json.titles.each{ title ->
-                if(title.identifiers.size() > 0) {
+                if(title.identifiers.size() == 0 || title.name == "") {
+                    log.info("removeEmpty(): title removed from json")
+                }
+                else {
                     titles << title
                 }
             }
