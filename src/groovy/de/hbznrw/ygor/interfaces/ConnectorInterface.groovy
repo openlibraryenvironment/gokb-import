@@ -18,7 +18,7 @@ interface ConnectorInterface {
      * @param identifier
      * @return
      */
-    Envelope poll(String identifier)
+    def poll(String identifier)
     
     /**
      * 

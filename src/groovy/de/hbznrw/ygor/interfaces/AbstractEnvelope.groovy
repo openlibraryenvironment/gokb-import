@@ -16,7 +16,8 @@ abstract class AbstractEnvelope {
     static final STATUS_OK              = "STATUS_OK"
     static final STATUS_ERROR           = "STATUS_ERROR"
     static final STATUS_NO_RESPONSE     = "STATUS_NO_RESPONSE"
-    
+    static final STATUS_UNDEFINED       = "STATUS_UNDEFINED"
+
     // response state
     
     static final RESULT_OK                  = "RESULT_OK"

@@ -33,7 +33,7 @@ class LobidJldConnector extends AbstractConnector {
     }
     
 	@Override
-	Envelope poll(String issn) {
+	def poll(String issn) {
 		
 		try {
             String q = getAPIQuery(issn)
@@ -44,8 +44,9 @@ class LobidJldConnector extends AbstractConnector {
 			response = new JsonSlurper().parseText(text)
 			
 		} catch(Exception e) {
-			return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
+            log.equals(e)
 		}
+        // TODO fix return value
 	}
     
     @Override

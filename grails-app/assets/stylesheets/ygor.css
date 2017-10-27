@@ -88,15 +88,8 @@ select#processIndex {
 	color: #ccc;
 }
 
-#statistics-substats .text-right {
-	margin: 0;
-	padding-right: 5px;
-}
-#statistics-substats .ignored-kbart-entries {
-	padding: 3px 10px;
-	border-radius: 3px;
-}
-#statistics-substats .ignored-kbart-entries span {
+#statistics-substats span > span {
+	padding: 0px 5px;
 	font-weight: bold;
 }
 #statistics table thead tr th:nth-of-type(1) {

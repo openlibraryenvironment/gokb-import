@@ -102,7 +102,8 @@ class MultipleProcessingThread extends Thread {
 		log.info('Done.')
 		
         enrichment.dataContainer.info.stash = processor.stash.values
-        
+        enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
+
         enrichment.saveResult()
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}

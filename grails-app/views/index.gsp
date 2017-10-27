@@ -25,6 +25,11 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.27</dt><br />
+
+					<dd>- Korrektur: SRU-Anfragen liefern keine Treffer</dd>
+					<dd>- Verbesserte Statistik</dd>
+
 					<br /><dt>0.26</dt><br />
 
 					<dd>- Auswahl für <em>nominalProvider</em> hinzugefügt</dd>

@@ -37,11 +37,9 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
     String getAPIQuery(String identifier) {
         return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals + "&" + queryOrder
     }
-    
-    // TODO fix return value
-    
+
     @Override
-    Envelope poll(String identifier) {
+    def poll(String identifier) {
         try {
             String q = getAPIQuery(identifier)
             
@@ -58,10 +56,15 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             }
             
         } catch(Exception e) {
-            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
+            log.equals(e)
         }
-        
-        getEnvelopeWithStatus(AbstractEnvelope.STATUS_OK)
+
+        if (picaRecords.size() == 0) {
+            return AbstractEnvelope.STATUS_NO_RESPONSE
+        }
+        else if (picaRecords.size() == 1) {
+            return AbstractEnvelope.STATUS_OK
+        }
     }
     
 	@Override

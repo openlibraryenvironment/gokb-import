@@ -35,7 +35,7 @@ class EzbXmlConnector extends AbstractConnector {
     }
     
 	@Override
-	Envelope poll(String identifier) {
+	def poll(String identifier) {
 		
 		try {
             String q = getAPIQuery(identifier)
@@ -46,8 +46,9 @@ class EzbXmlConnector extends AbstractConnector {
 			response = new XmlSlurper().parseText(text)
 			
 		} catch(Exception e) {
-			return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
+            log.equals(e)
 		}
+        // TODO fix return value
 	}
          
     @Override

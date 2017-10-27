@@ -33,7 +33,7 @@ abstract class AbstractConnector implements ConnectorInterface {
     String getAPIQuery(String identifier) {
         log.info(" -- getAPIQuery(String identifier) not implemented --")
     }
-    Envelope poll(String identifier) {
+    def poll(String identifier) {
         log.info(" -- poll(String identifier) not implemented --")
     }
     

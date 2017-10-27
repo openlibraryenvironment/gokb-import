@@ -31,11 +31,9 @@ class DnbSruOiaDcConnector extends AbstractConnector {
     String getAPIQuery(String issn) {
         return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + issn
     }
-    
-    // TODO fix return value
-    
+
     @Override
-    Envelope poll(String issn) {
+    def poll(String issn) {
         try {
             String q = getAPIQuery(issn)
             
@@ -45,8 +43,9 @@ class DnbSruOiaDcConnector extends AbstractConnector {
             response = new XmlSlurper().parseText(text)
             
         } catch(Exception e) {
-            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
+            log.equals(e)
         }
+        // TODO fix return value
     }
     
 	@Override

@@ -68,22 +68,16 @@ class GbvBridge extends AbstractBridge implements BridgeInterface {
             }
 
             increaseProgress()
-            connector.poll(key)
-            
+            def pollStatus = connector.poll(key)
+
+            // fallback for empty api response
+            if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {
+                log.info("AbstractEnvelope.STATUS_NO_RESPONSE @ " + key)
+                processor.processEntry(master.enrichment.dataContainer, uid, key, null)
+            }
+
             connector.getPicaRecords().eachWithIndex { pr, i ->
-                
-                //def uid   = UUID.randomUUID().toString()
-                def title = processor.processEntry(master.enrichment.dataContainer, uid, key, pr) 
-               /* def zdbid
-                // TODO: fix empty zdbid
-                
-                title.identifiers.each{ ident ->
-                    if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID && ident.type.v == ZdbBridge.IDENTIFIER){
-                        zdbid = ident.value.v
-                    }
-                }
-                stash[ZdbBridge.IDENTIFIER] << ["${zdbid}":"${uid}"]
-                */
+                processor.processEntry(master.enrichment.dataContainer, uid, key, pr)
             }
         }
     }

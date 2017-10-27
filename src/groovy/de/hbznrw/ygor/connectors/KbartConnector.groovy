@@ -47,7 +47,7 @@ class KbartConnector extends AbstractConnector {
     }
     
 	@Override
-	Envelope poll(String identifier) {
+	def poll(String identifier) {
 		
         log.info("polling(): " + identifier)
         
@@ -62,8 +62,9 @@ class KbartConnector extends AbstractConnector {
                 }
             }
 		} catch(Exception e) {
-			return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
+            log.equals(e)
 		}
+        // TODO fix return value
 	}
          
     @Override

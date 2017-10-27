@@ -35,9 +35,10 @@ class Statistics {
         Statistics.processTitles(json)
         
         json.meta.stats.general << ["tipps before cleanUp":  json.package.tipps.size()]
-        json.meta.stats.general << ["titles before cleanUp": json.titles.size()] 
-        
-        json.meta.stats.general << ["ignored kbart entries": json.meta.stash.ignoredKbartEntries.size()]
+        json.meta.stats.general << ["titles before cleanUp": json.titles.size()]
+
+        json.meta.stats.general << ["processed kbart entries": json.meta.stash.processedKbartEntries]
+        json.meta.stats.general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries.size()]
         
         json
     }
@@ -430,9 +431,23 @@ class Statistics {
     static Object getStatsAfterCleanUp(Object json){
         
         // general
-        
-        json.meta.stats.general << ["tipps after cleanup":  json.package.tipps.size()]
-        json.meta.stats.general << ["titles after cleanup": json.titles.size()]
+
+        def nonEmptyTipps = 0
+        def nonEmptyTitles = 0
+
+        json.package.tipps.each{ tipp ->
+            if(tipp.title.name != "") {
+                nonEmptyTipps++
+            }
+        }
+        json.titles.each{ title ->
+            if(title.name != "") {
+                nonEmptyTitles++
+            }
+        }
+
+        json.meta.stats.general << ["tipps after cleanUp":  nonEmptyTipps]
+        json.meta.stats.general << ["titles after cleanUp": nonEmptyTitles]
         
         json
     }

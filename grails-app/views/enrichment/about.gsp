@@ -26,7 +26,7 @@
 			<em>Version <g:meta name="app.version"/></em> <br />
 			<em>basierend auf Grails <g:meta name="app.grails.version"/></em>
 		</p>
-		
+
 	</div>
 
 </div>

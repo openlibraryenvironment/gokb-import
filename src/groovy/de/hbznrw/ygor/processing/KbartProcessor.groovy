@@ -124,9 +124,10 @@ class KbartProcessor extends AbstractProcessor {
                     log.info('crappy record ignored: size < kex[index]')
                 }
                 else {
+                    countUp()
                     def uid = UUID.randomUUID().toString() // TODO NEW
                     def r = record.get(key).toString()
-                    
+
                     if(r){
                         // store keys (zdb or issn or eissn)
                         keys << ["${r}" : uid]
@@ -269,4 +270,8 @@ class KbartProcessor extends AbstractProcessor {
     void countUp() {
         count++
     }
+    int getCount() {
+        count
+    }
+
 }

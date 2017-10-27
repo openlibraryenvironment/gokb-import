@@ -85,11 +85,28 @@
 	</div>
 	
 	<div class="col-xs-12" id="statistics-substats">
-		<p class="text-right">
-			<span class="ignored-kbart-entries">
-				Ignorierte KBART-Einträge: <span></span>
-			</span>
-		</p>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Status</h3>
+			</div>
+			<div class="panel-body">
+                <span class="ignored-kbart-entries">
+                    Ignorierte KBART-Einträge durch fehlende Identifier: <span></span>
+                </span>
+                <br />
+                <span class="processed-kbart-entries">
+                    Bearbeitete KBART-Einträge: <span></span>
+                </span>
+                <br />
+                <span class="tipps-delta">
+                    Fehlerhafte <strong>Package-Tipps</strong> nach der Anreicherung: <span></span>
+                </span>
+                <br />
+                <span class="titles-delta">
+                    Fehlerhafte <strong>Titles</strong> nach der Anreicherung: <span></span>
+                </span>
+			</div>
+		</div>
 	</div>
 	
 	<div class="col-xs-12">
@@ -253,13 +270,30 @@
 				$('#statistics-meta .meta-file').text(json.meta.file)
 				$('#statistics-meta .meta-date').text(json.meta.date)
 				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
-				
-				$('#statistics-substats .ignored-kbart-entries > span').text(json.meta.stats.general["ignored kbart entries"])
-				
-				if(json.meta.stats.general["ignored kbart entries"] > 0){
-					$('#statistics-substats .ignored-kbart-entries').addClass('bg-danger')
+
+
+                var processedEntries = parseInt(json.meta.stats.general["processed kbart entries"])
+                $('#statistics-substats .processed-kbart-entries > span').text(processedEntries)
+
+                var ignoredEntries = parseInt(json.meta.stats.general["ignored kbart entries"])
+                if(ignoredEntries > 0){
+                    $('#statistics-substats .ignored-kbart-entries > span').text(ignoredEntries).addClass('bg-danger')
+                } else {
+                    $('#statistics-substats .ignored-kbart-entries > span').text(ignoredEntries).addClass('bg-success')
+                }
+
+                var deltaTipps  = parseInt(json.meta.stats.general["tipps before cleanUp"]) - parseInt(json.meta.stats.general["tipps after cleanUp"])
+                if(deltaTipps > 0){
+                    $('#statistics-substats .tipps-delta > span').text(deltaTipps).addClass('bg-danger')
+                } else {
+                    $('#statistics-substats .tipps-delta > span').text(deltaTipps).addClass('bg-success')
+                }
+
+                var deltaTitles = parseInt(json.meta.stats.general["titles before cleanUp"]) - parseInt(json.meta.stats.general["titles after cleanUp"])
+				if(deltaTitles > 0){
+                    $('#statistics-substats .titles-delta > span').text(deltaTitles).addClass('bg-danger')
 				} else {
-					$('#statistics-substats .ignored-kbart-entries').addClass('bg-success')
+                    $('#statistics-substats .titles-delta > span').text(deltaTitles).addClass('bg-success')
 				}
 				
 				var debug = JSON.stringify(json.meta.stats, null, '\t', false)
