@@ -6,6 +6,7 @@
 	import="de.hbznrw.ygor.export.structure.TitleStruct"
 	import="de.hbznrw.ygor.export.structure.PackageStruct"
 	import="de.hbznrw.ygor.bridges.*"
+	import="de.hbznrw.ygor.connectors.KbartConnector"
 %>
 
 	<g:each in="${enrichments}" var="e">
@@ -175,17 +176,17 @@
 									<span class="form-control">
 										<div class="radio">
 											<label>
-												<g:radio name="processIndexType" checked="true" value="${ZdbBridge.IDENTIFIER}"/>
+												<g:radio name="processIndexType" checked="true" value="${KbartConnector.KBART_HEADER_ZDB_ID}"/>
 												ZDB-ID <code>(ZDB-ID)</code>
 											</label>
 											&nbsp;
 											<label>
-												<g:radio name="processIndexType" value="${TitleStruct.PISSN}"/>
+												<g:radio name="processIndexType" value="${KbartConnector.KBART_HEADER_PRINT_IDENTIFIER}"/>
 												pISSN <code>(print_identifier)</code> 
 											</label>
 											&nbsp;
 											<label>
-												<g:radio name="processIndexType" value="${TitleStruct.EISSN}"/>
+												<g:radio name="processIndexType" value="${KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER}"/>
 												eISSN <code>(online_identifier)</code>
 											</label>
 										</div>

@@ -20,13 +20,17 @@ class EzbBridge extends AbstractBridge implements BridgeInterface {
 		this.options    = options
         this.processor  = master.processor
 
-        if(options.get('typeOfKey') == ZdbBridge.IDENTIFIER){
+        if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ZDB_ID){
             this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_ZDB)
-            this.stashIndex = ZdbBridge.IDENTIFIER
+            this.stashIndex = KbartConnector.KBART_HEADER_ZDB_ID
         }
-        else {
+        else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER){
             this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_IS)
-            this.stashIndex = TitleStruct.ISSN
+            this.stashIndex = KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER
+        }
+        else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_PRINT_IDENTIFIER){
+            this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_IS)
+            this.stashIndex = KbartConnector.KBART_HEADER_PRINT_IDENTIFIER
         }
 	}
 	
@@ -51,7 +55,7 @@ class EzbBridge extends AbstractBridge implements BridgeInterface {
         
         def stash = processor.getStash()
         
-        stash.get(this.stashIndex).each{ key, uid ->
+        stash.get(this.stashIndex).each{ uid, key ->
             
             if(!master.isRunning) {
                 log.info('Aborted by user action.')

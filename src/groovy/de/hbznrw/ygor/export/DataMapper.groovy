@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.export
 
+import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.structure.PackageStruct
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.export.structure.Tipp
@@ -284,26 +285,28 @@ class DataMapper {
             hex.title.m = title.name.m
 
             title.identifiers.each{ ident ->
-                if([ZdbBridge.IDENTIFIER, TitleStruct.EISSN].contains(ident.type.v))
+                if ([ZdbBridge.IDENTIFIER, TitleStruct.EISSN].contains(ident.type.v)) {
                     hex.identifiers << ident
+                }
             }
             
             // set identifiers
             // set missing eissn
             // set missing title
             // set date
-            if(he.v.from.size() > 0){
+            if (he.v.from.size() > 0){
                 he.v.to << hex
                 he.v.from.each { from ->
                     def identifiers = []
-                    from.identifiers.each{ ident ->
+                    from.identifiers.each { ident ->
                         identifiers << ident
-                        if(ident.type.v == ZdbBridge.IDENTIFIER){
-                            def target = stash[ZdbBridge.IDENTIFIER].get("${ident.value.v}")
-                            target = dc.titles.get("${target}")
-    
-                            if(target){
-                                target.v.identifiers.each{ targetIdent ->
+                        if (ident.type.v == ZdbBridge.IDENTIFIER) {
+                            def target = stash.getKeyByValue(KbartConnector.KBART_HEADER_ZDB_ID, "${ident.value.v}")
+                            if (target) {
+                                target = dc.titles.get("${target}")
+                            }
+                            if (target) {
+                                target.v.identifiers.each { targetIdent ->
                                     if(targetIdent.type.v == TitleStruct.EISSN){
                                         identifiers << targetIdent
                                     }
@@ -323,19 +326,20 @@ class DataMapper {
             // set identifiers
             // set missing eissn
             // set date
-            else if(he.v.to.size() > 0){
+            else if (he.v.to.size() > 0) {
                 he.v.from << hex
                 he.v.to.each { to ->
                     def identifiers = []
-                    to.identifiers.each{ ident ->
+                    to.identifiers.each { ident ->
                         identifiers << ident
-                        if(ident.type.v == ZdbBridge.IDENTIFIER){
-                            def target = stash[ZdbBridge.IDENTIFIER].get("${ident.value.v}")
-                            target = dc.titles.get("${target}")
-    
-                            if(target){
-                                target.v.identifiers.each{ targetIdent ->
-                                    if(targetIdent.type.v == TitleStruct.EISSN){
+                        if (ident.type.v == ZdbBridge.IDENTIFIER) {
+                            def target = stash.getKeyByValue(KbartConnector.KBART_HEADER_ZDB_ID, "${ident.value.v}")
+                            if (target) {
+                                target = dc.titles.get("${target}")
+                            }
+                            if (target) {
+                                target.v.identifiers.each { targetIdent ->
+                                    if (targetIdent.type.v == TitleStruct.EISSN) {
                                         identifiers << targetIdent
                                     }
                                 }
@@ -351,7 +355,7 @@ class DataMapper {
             def valid = StructValidator.isValidHistoryEvent(he.v)
             he.m = valid
 
-            if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+            if (Status.STRUCTVALIDATOR_REMOVE_FLAG != valid) {
                 theHistoryEvents << he
             } 
             else {

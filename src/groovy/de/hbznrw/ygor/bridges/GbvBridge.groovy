@@ -29,13 +29,17 @@ class GbvBridge extends AbstractBridge implements BridgeInterface {
         this.options   = options
         this.processor = master.processor
         
-        if(options.get('typeOfKey') == ZdbBridge.IDENTIFIER){
+        if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ZDB_ID){
             this.connector  = new ZdbdbSruPicaConnector(this, ZdbdbSruPicaConnector.QUERY_PICA_ZDB)
-            this.stashIndex = ZdbBridge.IDENTIFIER
+            this.stashIndex = KbartConnector.KBART_HEADER_ZDB_ID
         }
-        else {
+        else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER){
             this.connector  = new ZdbdbSruPicaConnector(this, ZdbdbSruPicaConnector.QUERY_PICA_ISS)
-            this.stashIndex = TitleStruct.ISSN
+            this.stashIndex = KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER
+        }
+        else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_PRINT_IDENTIFIER){
+            this.connector  = new ZdbdbSruPicaConnector(this, ZdbdbSruPicaConnector.QUERY_PICA_ISS)
+            this.stashIndex = KbartConnector.KBART_HEADER_PRINT_IDENTIFIER
         }
 	}
 	
@@ -60,7 +64,7 @@ class GbvBridge extends AbstractBridge implements BridgeInterface {
 
         def stash = processor.getStash()
         
-        stash.get(stashIndex).each{ key, uid ->
+        stash.get(stashIndex).each{ uid, key ->
 
             if(!master.isRunning) {
                 log.info('Aborted by user action.')

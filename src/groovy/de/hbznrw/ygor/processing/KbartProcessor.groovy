@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.processing
 
+import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.export.structure.PackageStruct
@@ -22,10 +23,11 @@ import java.nio.file.Paths
 @Log4j
 class KbartProcessor extends AbstractProcessor {
 
-    private stash               = new Stash()
-    private String inputFile
-    
     private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines()
+    private String inputFile
+
+    private stash = new Stash()
+
     private int total		    = 0
     private int count           = 0
     
@@ -95,27 +97,25 @@ class KbartProcessor extends AbstractProcessor {
         bridge.processStash()
         bridge.finish()
     }
-    
+
     private int initData(HashMap options) throws Exception {
 
         log.info("filling stash with initial data ..")
-        
-        def key
+
+        def keyType
         def keys           = [:]
         def kbartFields    = [:]
-        
+
         this.inputFile = options.get('inputFile')
-        
-        if(ZdbBridge.IDENTIFIER == options.get('typeOfKey')){
-            key = "ZDB-ID"
+
+        if(options.get('typeOfKey').toString() in [
+                KbartConnector.KBART_HEADER_ZDB_ID,
+                KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
+                KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
+        ) {
+            keyType = options.get('typeOfKey')
         }
-        else if(TitleStruct.EISSN == options.get('typeOfKey')) {
-            key = "online_identifier"
-        }
-        else if(TitleStruct.ISSN == options.get('typeOfKey')) {
-            key = "print_identifier"
-        }
-        
+
         Paths.get(inputFile).withReader { reader ->
             CSVParser csv = new CSVParser(reader, csvFormat)
 
@@ -124,14 +124,15 @@ class KbartProcessor extends AbstractProcessor {
                     log.info('crappy record ignored: size < kex[index]')
                 }
                 else {
+                    def identifier = record.get(keyType)?.toString()?.trim()
                     countUp()
-                    def uid = UUID.randomUUID().toString() // TODO NEW
-                    def r = record.get(key).toString()
 
-                    if(r){
-                        // store keys (zdb or issn or eissn)
-                        keys << ["${r}" : uid]
-                                
+                    if(identifier){
+                        def uid = UUID.randomUUID().toString() // TODO NEW
+
+                        // store enrichment keys (zdb or issn or eissn)
+                        keys << ["${uid}":"${identifier}"]
+
                         // store kbart fields
                         def kbfs = [:]
                         bridge.connector.kbartKeys.each{ kbk ->
@@ -143,19 +144,14 @@ class KbartProcessor extends AbstractProcessor {
                     }
                     else {
                         // store invalid csv records
-                        log.info('no enrichment key (' + key + ') found; entry ignored')
+                        log.info('no enrichment key (' + keyType + ') found; entry ignored')
                         stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.toString())
                     }
                 }
             }
         }
-        
-        if("ZDB-ID" == key){
-            stash.put(ZdbBridge.IDENTIFIER, keys)
-        }
-        else if("print_identifier" == key|| "online_identifier" == key){
-            stash.put(TitleStruct.ISSN, keys)
-        }
+
+        stash.put(keyType, keys)
         stash.put(KbartBridge.IDENTIFIER, kbartFields)
 
         return stash.get(KbartBridge.IDENTIFIER).size()

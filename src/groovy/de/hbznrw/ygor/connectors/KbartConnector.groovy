@@ -12,7 +12,11 @@ import de.hbznrw.ygor.bridges.*
  */
 @Log4j
 class KbartConnector extends AbstractConnector {
-	
+
+    static final KBART_HEADER_ZDB_ID            = "ZDB-ID"
+    static final KBART_HEADER_ONLINE_IDENTIFIER = "online_identifier"
+    static final KBART_HEADER_PRINT_IDENTIFIER  = "print_identifier"
+
 	private String requestUrl       = 'kbart-file'
     private HashMap response
 

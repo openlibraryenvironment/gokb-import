@@ -27,7 +27,7 @@
 				<dl>
 					<br /><dt>0.27</dt><br />
 
-					<dd>- Korrektur: SRU-Anfragen liefern keine Treffer</dd>
+					<dd>- Korrektur: Verarbeitung von SRU-Anfragen ohne Treffer</dd>
 					<dd>- Verbesserte Statistik</dd>
 
 					<br /><dt>0.26</dt><br />
