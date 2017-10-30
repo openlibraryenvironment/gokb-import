@@ -145,7 +145,7 @@ class KbartProcessor extends AbstractProcessor {
                     else {
                         // store invalid csv records
                         log.info('no enrichment key (' + keyType + ') found; entry ignored')
-                        stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.toString())
+                        stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.get('publication_title').toString())
                     }
                 }
             }

@@ -27,7 +27,8 @@
 				<dl>
 					<br /><dt>0.27</dt><br />
 
-					<dd>- Korrektur: Verarbeitung von SRU-Anfragen ohne Treffer</dd>
+					<dd>- Korrektur: Verarbeitung von SRU-Anfragen ohne konkreten Treffer</dd>
+					<dd>- Korrektur: JSON-Struktur für History Events</dd>
 					<dd>- Verbesserte Statistik</dd>
 
 					<br /><dt>0.26</dt><br />

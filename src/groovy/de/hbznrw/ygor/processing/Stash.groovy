@@ -7,9 +7,8 @@ import groovy.util.logging.Log4j
 
 @Log4j
 class Stash {
-    
-    static final PROCESSED_KBART_ENTRIES = 'processedKbartEntries'
-    static final IGNORED_KBART_ENTRIES   = 'ignoredKbartEntries'
+
+    static final IGNORED_KBART_ENTRIES = 'ignoredKbartEntries'
 
     HashMap values
 
@@ -24,8 +23,7 @@ class Stash {
         // file enrichment
         values[KbartBridge.IDENTIFIER]      = [:]
 
-        // meta
-        values[Stash.PROCESSED_KBART_ENTRIES] = 0
+        // must
         values[Stash.IGNORED_KBART_ENTRIES]   = []
     }
     

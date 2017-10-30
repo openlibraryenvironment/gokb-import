@@ -7,7 +7,7 @@ import de.hbznrw.ygor.interfaces.*
 
 @Log4j
 class KbartBridge extends AbstractBridge implements BridgeInterface {
-	
+
     static final IDENTIFIER = 'kbart'
     
 	Query[] tasks = [

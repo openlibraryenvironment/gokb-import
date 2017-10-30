@@ -34,12 +34,13 @@ class Statistics {
         Statistics.processTipps(json) 
         Statistics.processTitles(json)
         
-        json.meta.stats.general << ["tipps before cleanUp":  json.package.tipps.size()]
-        json.meta.stats.general << ["titles before cleanUp": json.titles.size()]
+        json.meta.stats.general << ["tipps before cleanUp":    json.package.tipps.size()]
+        json.meta.stats.general << ["titles before cleanUp":   json.titles.size()]
 
         json.meta.stats.general << ["processed kbart entries": json.meta.stash.processedKbartEntries]
-        json.meta.stats.general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries.size()]
-        
+        json.meta.stats.general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries]
+        json.meta.stats.general << ["duplicate key entries":   json.meta.stash.duplicateKeyEntries]
+
         json
     }
     
