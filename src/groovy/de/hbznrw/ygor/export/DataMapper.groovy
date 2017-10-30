@@ -121,12 +121,13 @@ class DataMapper {
         }
 
         else if(query == Query.GBV_HISTORY_EVENTS) {
-            def histEvent =  TitleStruct.getNewHistoryEvent()
+            //def histEvent =  TitleStruct.getNewHistoryEvent()
 
             env.message.each{ e ->
                 e.messages['title'].eachWithIndex{ elem, i ->
-                    
+                    def histEvent =  TitleStruct.getNewHistoryEvent()
                     def hEvent = TitleStruct.getNewHistoryEventGeneric()
+
                     DataSetter.setString(hEvent.title, e.messages['title'][i])
                     
                     // GVK: if("Vorg.".equals(e.messages['type'][i])){
@@ -148,25 +149,12 @@ class DataMapper {
                     DataSetter.setIdentifier(ident.value, ident.type.v, e.messages['identifierValue'][i])                 
                     
                     hEvent.identifiers << ident
-                    
-                    
+
+                    DataSetter.setDate(histEvent.date, Normalizer.IS_START_DATE, e.messages['date'])
+
+                    title.historyEvents << new Pod(histEvent)
                 }
-                // TODO check and refactor
-                DataSetter.setDate(histEvent.date, Normalizer.IS_START_DATE, e.messages['date'])                
             }
-            
-            // TODO check if valid
-            /*
-            def valid = StructValidator.isValidHistoryEvent(histEvent)
-            def pod = new Pod(histEvent, valid)
-            
-            if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
-                title.historyEvents << pod
-            }
-            else {
-                log.debug("! ignore crappy title history event")
-            }*/
-            title.historyEvents << new Pod(histEvent)
         }
     }
     
