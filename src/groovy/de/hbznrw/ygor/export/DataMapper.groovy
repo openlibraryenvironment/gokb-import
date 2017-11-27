@@ -193,13 +193,8 @@ class DataMapper {
         }
         
         else if(query == Query.KBART_TIPP_URL) {
-            
-            // check if tipp.url is matching packageHeader.nominalPlatform
-            def matching = UrlToolkit.sortOutUrl(
-                env.message, 
-                dc.pkg.packageHeader.v.nominalPlatform.v, 
-                UrlToolkit.ONLY_HIGHEST_LEVEL_DOMAIN)
-            
+
+            def matching = UrlToolkit.sortOutBadSyntaxUrl(env.message)
             DataSetter.setURL(tipp.url, matching)
 
             if(matching.size() == 0 && env.message.size() > 0){
