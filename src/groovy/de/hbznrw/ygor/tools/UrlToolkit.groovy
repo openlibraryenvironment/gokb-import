@@ -1,9 +1,6 @@
 package de.hbznrw.ygor.tools
 
 import groovy.util.logging.Log4j
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpSession
-import com.google.common.net.InternetDomainName
 
 @Log4j
 class UrlToolkit {
@@ -58,31 +55,16 @@ class UrlToolkit {
         url
     }
     
-    static sortOutUrl(String url, String nominal, Object checkConditions){
-    
+    static sortOutBadSyntaxUrl(String url){
         def u = UrlToolkit.getURLWithProtocol(url)
-        def n = UrlToolkit.getURLWithProtocol(nominal)
-        
-        if(checkConditions == UrlToolkit.ONLY_HIGHEST_LEVEL_DOMAIN && u && n){
-            u = InternetDomainName.from(u.getAuthority()).topPrivateDomain().name
-            n = InternetDomainName.from(n.getAuthority()).topPrivateDomain().name
-        }
- 
-        if(u && n && u.toString().indexOf(n.toString()) == 0){
-            return url
-        }
+        if (u) return url
         null
     }
     
-    static sortOutUrl(ArrayList urls, String nominal, Object checkConditions){
-        
+    static sortOutBadSyntaxUrl(ArrayList urls){
         def result = []
-        def n = UrlToolkit.getURLWithProtocol(nominal)
-
         urls.each{ e ->
-            def u = UrlToolkit.getURLWithProtocol(e)
-            
-            result << UrlToolkit.sortOutUrl(e, nominal, checkConditions)
+            result << UrlToolkit.sortOutBadSyntaxUrl(e)
         }
         result.minus(null).minus("").join("|")
     }
