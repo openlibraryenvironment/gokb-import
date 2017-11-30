@@ -84,7 +84,6 @@
 				<div class="col-xs-8">	
 					<blockquote>
 						<p>${e.value.getMessage()}</p>
-						<footer>stacktrace</footer>
 					</blockquote>
 				</div>
 				

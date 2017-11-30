@@ -89,16 +89,23 @@ class MultipleProcessingThread extends Thread {
                     }
             }
            								
-		} catch(Exception e) {
+		}
+        catch(YgorProcessingException e) {
 			enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
-
+            enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length()+2))
 			log.error(e.getMessage())
+            log.error(e.printStackTrace())
 			log.info('Aborted.')
-
-			def stacktrace = Throwables.getStackTraceAsString(e).substring(0, 800).replaceAll("\\p{C}", " ")
-            enrichment.setMessage(stacktrace + " ..")
 			return
 		}
+        catch(Exception e) {
+            enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
+            log.error(e.getMessage())
+            log.info('Aborted.')
+            def stacktrace = Throwables.getStackTraceAsString(e).substring(0, 800).replaceAll("\\p{C}", " ")
+            enrichment.setMessage(stacktrace + " ..")
+            return
+        }
 		log.info('Done.')
 		
         enrichment.dataContainer.info.stash = processor.stash.values
