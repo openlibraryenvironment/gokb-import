@@ -25,6 +25,14 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.29</dt><br />
+
+					<dd>- Nutzerfreundlichere Fehlermeldung bei irregulären CSV-Headern.</dd>
+
+					<br /><dt>0.28</dt><br />
+
+					<dd>- Korrektur: TIPP-Url muss nicht Plattform-URL matchen</dd>
+
 					<br /><dt>0.27</dt><br />
 
 					<dd>- Korrektur: Verarbeitung von SRU-Anfragen ohne konkreten Treffer</dd>

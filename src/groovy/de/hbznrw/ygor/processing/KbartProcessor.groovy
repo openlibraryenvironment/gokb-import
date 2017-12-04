@@ -1,21 +1,21 @@
 package de.hbznrw.ygor.processing
 
+import de.hbznrw.ygor.bridges.KbartBridge
 import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.export.structure.PackageStruct
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.export.structure.Title
-import de.hbznrw.ygor.export.structure.TitleStruct
-import org.apache.commons.csv.CSVParser
-import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.QuoteMode
-import de.hbznrw.ygor.interfaces.*
-import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.interfaces.AbstractEnvelope
+import de.hbznrw.ygor.interfaces.AbstractProcessor
+import de.hbznrw.ygor.interfaces.BridgeInterface
 import groovy.util.logging.Log4j
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.QuoteMode
+
 import java.nio.file.Paths
-
-
 /**
  * Class for reading and processing kbart files
  */
@@ -118,31 +118,30 @@ class KbartProcessor extends AbstractProcessor {
 
         Paths.get(inputFile).withReader { reader ->
             CSVParser csv = new CSVParser(reader, csvFormat)
+            checkHeader(csv, bridge.connector.kbartKeys)
 
             for (record in csv.iterator()) {
-                if(record.size() < csv.getHeaderMap().size()){
+                if (record.size() < csv.getHeaderMap().size()) {
                     log.info('crappy record ignored: size < kex[index]')
-                }
-                else {
+                } else {
                     def identifier = record.get(keyType)?.toString()?.trim()
                     countUp()
 
-                    if(identifier){
+                    if (identifier) {
                         def uid = UUID.randomUUID().toString() // TODO NEW
 
                         // store enrichment keys (zdb or issn or eissn)
-                        keys << ["${uid}":"${identifier}"]
+                        keys << ["${uid}": "${identifier}"]
 
                         // store kbart fields
                         def kbfs = [:]
-                        bridge.connector.kbartKeys.each{ kbk ->
-                            kbfs << ["${kbk}":record.get(kbk).toString()]
+                        bridge.connector.kbartKeys.each { kbk ->
+                            kbfs << ["${kbk}": record.get(kbk).toString()]
                         }
-                        if(kbfs.size() > 0){
-                            kbartFields << ["${uid}":kbfs]
+                        if (kbfs.size() > 0) {
+                            kbartFields << ["${uid}": kbfs]
                         }
-                    }
-                    else {
+                    } else {
                         // store invalid csv records
                         log.info('no enrichment key (' + keyType + ') found; entry ignored')
                         stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.get('publication_title').toString())
@@ -150,11 +149,24 @@ class KbartProcessor extends AbstractProcessor {
                 }
             }
         }
-
         stash.put(keyType, keys)
         stash.put(KbartBridge.IDENTIFIER, kbartFields)
-
         return stash.get(KbartBridge.IDENTIFIER).size()
+    }
+
+    void checkHeader(CSVParser csv, def kbartKeys){
+        def missingKeys = []
+        if (! csv || ! csv.headerMap){
+            throw new YgorProcessingException("Fehlender Dateiinhalt im CSV-File.")
+        }
+        kbartKeys.each{ kbk ->
+            if (csv.headerMap.get(kbk) == null){
+                missingKeys << kbk.toString()
+            }
+        }
+        if (missingKeys.size() > 0){
+            throw new YgorProcessingException("Fehlende Spalten im CSV-Header: " + missingKeys.toString())
+        }
     }
     
     Title processEntry(DataContainer dc, String uid) {
