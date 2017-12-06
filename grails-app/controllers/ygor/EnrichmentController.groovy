@@ -201,9 +201,8 @@ class EnrichmentController {
     }
     
     def sendPackageFile = {
-        
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY)
-        
+        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
+                params.gokbUsername, params.gokbPassword)
         status.each{ st ->
             if(st.get('info'))
                 flash.info = st.get('info')
@@ -212,14 +211,13 @@ class EnrichmentController {
             if(st.get('error'))
                 flash.error = st.get('error')
         }
-
         process()
     }
-    
+
+
     def sendTitlesFile = {
-        
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY)
-        
+        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY,
+                params.gokbUsername, params.gokbPassword)
         status.each{ st ->
             if(st.get('info'))
                 flash.info = st.get('info')
@@ -228,9 +226,9 @@ class EnrichmentController {
             if(st.get('error'))
                 flash.error = st.get('error')
         }
-
         process()
     }
+
 
     def ajaxGetStatus = {
         
@@ -238,8 +236,9 @@ class EnrichmentController {
         render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
     }
 
+
     Enrichment getCurrentEnrichment() {
-        
+
         def hash = (String) request.parameterMap['originHash'][0]
         enrichmentService.getSessionEnrichments().get("${hash}")
     }

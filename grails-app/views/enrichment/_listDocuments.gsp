@@ -83,8 +83,7 @@
 										optionValue="key"
 										optionKey="${{ es -> "${es.key}\" data-url=\"${es.value}" }}" 
 										data-toggle="tooltip" data-placement="right" 
-										title="Bei ausgegrauten Elementen fehlt die erforderliche Hinterlegung eines Plattform-URL" 
-										class="form-control" />
+										title="Bei ausgegrauten Elementen fehlt die erforderliche Hinterlegung eines Plattform-URL"/>
 								</div>
 								<script>
 									$(function(){
@@ -99,8 +98,7 @@
 									<g:select name="pkgNominalProvider" class="form-control" noSelection="['':'']"
 											  from="${gokbService.getProviderMap().entrySet()}"
 											  optionValue="value"
-											  optionKey="key"
-											  class="form-control" />
+											  optionKey="key" />
 								</div>
 
 								<br />
@@ -224,10 +222,49 @@
 	    				<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
 						
 		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-							<g:actionSubmit action="sendPackageFile" value="Package zur GOKb senden" class="btn btn-success"
-		    					data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrPackageUri}" />
-		    				<g:actionSubmit action="sendTitlesFile" value="Titles zur GOKb senden" class="btn btn-success"
-		    					data-toggle="tooltip" data-placement="top" title="${grailsApplication.config.gokbApi.xrTitleUri}" />
+							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
+									data-target="#credentialsModal">Package zur GOKb senden</button>
+							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="titles"
+									data-target="#credentialsModal">Titles zur GOKb senden</button>
+							<div class="modal fade" id="credentialsModal" role="dialog">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h4 class="modal-title">Bitte geben Sie Ihre GOKb Credentials ein</h4>
+										</div>
+										<div class="modal-body">
+											<g:form>
+												<div class="input-group">
+													<span class="input-group-addon">Benutzername</span>
+													<g:textField name="gokbUsername" size="24" class="form-control" />
+												</div>
+												<div class="input-group">
+													<span class="input-group-addon">Passwort</span>
+													<g:textField name="gokbPassword" size="24" class="form-control" />
+												</div>
+												<div align="right">
+													<button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+													<g:actionSubmit action="" value="Senden" class="btn btn-success"
+																	name="cred-modal-btn-send" data-toggle="tooltip"
+																	data-placement="top" title="JavaScript erforderlich" />
+												</div>
+											</g:form>
+										</div>
+									</div>
+								</div>
+							</div>
+							<script>
+                                $('#credentialsModal').on('show.bs.modal', function (event) {
+                                    var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
+                                    if (uri.localeCompare('package') == 0){
+                                        $(this).find('.modal-body .cred-modal-btn-send').attr('action', 'sendPackageFile');
+									}
+									else if (uri.localeCompare('titles') == 0){
+                                        $(this).find('.modal-body .cred-modal-btn-send').attr('action', 'sendTitlesFile');
+                                    }
+                                })
+							</script>
 	    				</g:if>
 	    				<g:else>
 							<g:actionSubmit action="sendPackageFile" value="Package zur GOKb senden" class="btn btn-success disabled"
@@ -236,14 +273,11 @@
 		    					data-toggle="tooltip" data-placement="top" title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}" disabled="disabled"/>
 	    				</g:else>
 	    				
-
 		    			<g:if test="${grailsApplication.config.ygor.enableDebugDownload}">
-		    			
 		    				</li>
 			    			<li class="list-group-item">
 			    				<g:actionSubmit action="downloadDebugFile" value="Debug-Datei speichern" class="btn"/>
 			    				<g:actionSubmit action="downloadRawFile" value="Datenstruktur speichern" class="btn"/>
-
 		    			</g:if>
 
 		    		</g:if>
