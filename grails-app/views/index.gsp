@@ -29,6 +29,7 @@
 
 					<dd>- Eingabe von Credentials beim Senden von prozessierten Daten zur GOKb.</dd>
 					<dd>- Zeige Plattform-URL in Plattform-Auswahlliste.</dd>
+					<dd>- Setze Plattformnamen (statt -URL) im Exportfeld "nominalPlatform".</dd>
 
 					<br /><dt>0.29</dt><br />
 
