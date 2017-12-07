@@ -65,7 +65,14 @@ class EnrichmentService {
         def platformMap = gokbService.getPlatformMap()
         def pkgNomPlatform = platformMap.find{it.key == pm['pkgNominalPlatform'][0]}
         if(pkgNomPlatform){
-            ph.v.nominalPlatform.v = pkgNomPlatform.value
+            int index = pkgNomPlatform.key.lastIndexOf(" - ")
+            def value
+            if (index > 0) {
+                value = pkgNomPlatform.key.substring(0, index)
+            } else{
+                value = pkgNomPlatform.key
+            }
+            ph.v.nominalPlatform.v = value
             ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.v)
         }
 
