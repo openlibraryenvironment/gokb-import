@@ -25,6 +25,11 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.30</dt><br />
+
+					<dd>- Eingabe von Credentials beim Senden von prozessierten Daten zur GOKb.</dd>
+					<dd>- Zeige Plattform-URL in Plattform-Auswahlliste.</dd>
+
 					<br /><dt>0.29</dt><br />
 
 					<dd>- Nutzerfreundlichere Fehlermeldung bei irregulären CSV-Headern.</dd>
