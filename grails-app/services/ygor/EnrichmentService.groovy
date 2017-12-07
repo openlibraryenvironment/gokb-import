@@ -84,7 +84,7 @@ class EnrichmentService {
         enrichment.thread.isRunning = false
     }
     
-    List sendFile(Enrichment enrichment, Object fileType) {
+    List sendFile(Enrichment enrichment, Object fileType, def user, def pwd) {
         
         def result = []
         def json
@@ -92,23 +92,24 @@ class EnrichmentService {
         if(fileType == Enrichment.FileType.JSON_PACKAGE_ONLY){
             json = enrichment.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
             
-            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri)
+            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
         }
         else if(fileType == Enrichment.FileType.JSON_TITLES_ONLY){
             json = enrichment.getFile(Enrichment.FileType.JSON_TITLES_ONLY)
             
-            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrTitleUri)
+            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrTitleUri, user, pwd)
         }
 
         result
     }
-    
-    private Map exportFileToGOKb(Enrichment enrichment, Object json, String url){
+
+
+    private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
         
         log.info("exportFile: " + enrichment.resultHash + " -> " + url)
 
         def http = new HTTPBuilder(url)
-        http.auth.basic grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd
+        http.auth.basic user, pwd
         
         http.request(Method.POST, ContentType.JSON) { req ->
             headers.'User-Agent' = 'ygor'
