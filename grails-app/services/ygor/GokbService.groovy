@@ -27,8 +27,14 @@ class GokbService {
                 )
                 
             while(resultSet.next()) {
-                map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
-                        resultSet.getString('plat_primary_url'))
+                if (resultSet.getString('kbc_name') && resultSet.getString('plat_primary_url')) {
+                    map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
+                            resultSet.getString('plat_primary_url'))
+                }
+                else {
+                    map.put(resultSet.getString('kbc_name'),
+                            resultSet.getString('plat_primary_url'))
+                }
             }
             
         } catch (Exception e) {
