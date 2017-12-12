@@ -117,6 +117,9 @@ class KbartProcessor extends AbstractProcessor {
         }
 
         Paths.get(inputFile).withReader { reader ->
+            // Skip BOM
+            reader.mark(1)
+            if (reader.read() != 0xFEFF) reader.reset()
             CSVParser csv = new CSVParser(reader, csvFormat)
             checkHeader(csv, bridge.connector.kbartKeys)
 
@@ -168,7 +171,8 @@ class KbartProcessor extends AbstractProcessor {
             throw new YgorProcessingException("Fehlende Spalten im CSV-Header: " + missingKeys.toString())
         }
     }
-    
+
+
     Title processEntry(DataContainer dc, String uid) {
         return processEntry(dc, uid, null, null)
     }
