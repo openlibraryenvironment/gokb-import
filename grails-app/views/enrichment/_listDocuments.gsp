@@ -258,10 +258,10 @@
                                 $('#credentialsModal').on('show.bs.modal', function (event) {
                                     var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
                                     if (uri.localeCompare('package') == 0){
-                                        $(this).find('.modal-body .cred-modal-btn-send').attr('action', 'sendPackageFile');
+                                        $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
 									}
 									else if (uri.localeCompare('titles') == 0){
-                                        $(this).find('.modal-body .cred-modal-btn-send').attr('action', 'sendTitlesFile');
+                                        $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
                                     }
                                 })
 							</script>
