@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.32</dt><br />
+
+					<dd>- Korrektur: repariere Credentials "Senden" Button</dd>
+
 					<br /><dt>0.31</dt><br />
 
 					<dd>- Verbesserung: ignoriere BOM in Windows-generierten Eingabedateien</dd>
