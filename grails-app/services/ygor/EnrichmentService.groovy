@@ -61,20 +61,8 @@ class EnrichmentService {
         if("" != pm['pkgCuratoryGroup2'][0].trim()){
             ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup2'][0])
         }
-        
-        def platformMap = gokbService.getPlatformMap()
-        def pkgNomPlatform = platformMap.find{it.key == pm['pkgNominalPlatform'][0]}
-        if(pkgNomPlatform){
-            int index = pkgNomPlatform.key.lastIndexOf(" - ")
-            def value
-            if (index > 0) {
-                value = pkgNomPlatform.key.substring(0, index)
-            } else{
-                value = pkgNomPlatform.key
-            }
-            ph.v.nominalPlatform.v = value
-            ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.v)
-        }
+
+        setPlatformMap(pm, ph)
 
         def providerMap = gokbService.getProviderMap()
         def pkgNomProvider = providerMap.find{it.key == pm['pkgNominalProvider'][0]}
@@ -85,7 +73,37 @@ class EnrichmentService {
 
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
     }
-    
+
+    private void setPlatformMap(Map pm, ph) {
+        def platformMap = gokbService.getPlatformMap()
+        def pkgNomPlatform = platformMap.find { it.key == pm['pkgNominalPlatform'][0] }
+        if (pkgNomPlatform) {
+            ph.v.nominalPlatform.org = pkgNomPlatform.key
+            int index = pkgNomPlatform.key.lastIndexOf(" - ")
+            if (index >= 0) {
+                def valuePart = pkgNomPlatform.key.substring(0, index)
+                def urlPart = pkgNomPlatform.key.substring(index + 3)
+                ph.v.nominalPlatform.name = valuePart
+                setUrlIfValid(urlPart, ph)
+            } else {
+                def value = pkgNomPlatform.key
+                ph.v.nominalPlatform.name = value
+                setUrlIfValid(value, ph)
+            }
+            ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
+        }
+    }
+
+    private void setUrlIfValid(value, ph) {
+        try {
+            URL url = new URL(value)
+            ph.v.nominalPlatform.url = value
+        }
+        catch (MalformedURLException e) {
+            ph.v.nominalPlatform.url = ""
+        }
+    }
+
     void stopProcessing(Enrichment enrichment) {
 
         enrichment.thread.isRunning = false
