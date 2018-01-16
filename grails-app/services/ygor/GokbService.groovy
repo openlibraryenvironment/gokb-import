@@ -25,15 +25,16 @@ class GokbService {
                 //"select kbc.kbc_name, pf.plat_primary_url from platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id order by kbc_name"
                 "select kbc.kbc_name, pf.plat_primary_url from ((platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id) inner join refdata_value rdv on kbc.kbc_status_rv_fk = rdv.rdv_id) where rdv.rdv_value = 'Current' order by kbc_name"
                 )
-                
+
             while(resultSet.next()) {
-                if (resultSet.getString('kbc_name') && resultSet.getString('plat_primary_url')) {
-                    map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
-                            resultSet.getString('plat_primary_url'))
-                }
-                else {
-                    map.put(resultSet.getString('kbc_name'),
-                            resultSet.getString('plat_primary_url'))
+                if (resultSet.getString('kbc_name')) {
+                    if (resultSet.getString('plat_primary_url')) {
+                        map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
+                                resultSet.getString('plat_primary_url'))
+                    }
+                    else {
+                        map.put(resultSet.getString('kbc_name'), null)
+                    }
                 }
             }
             
