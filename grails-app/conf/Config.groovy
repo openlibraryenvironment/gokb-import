@@ -99,10 +99,12 @@ environments {
             enableDebugDownload = true
         }
         gokbApi {
-            xrTitleUri   = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
-            xrPackageUri = 'http://localhost:8080/gokb/integration/crossReferencePackage'
-            user         = ''
-            pwd          = ''
+            xrTitleUri       = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
+            xrPackageUri     = 'http://localhost:8080/gokb/integration/crossReferencePackage'
+            xrSuggestUriStub = 'http://localhost:8080/gokb/api/suggest'
+            xrFindUriStub    = 'http://localhost:8080/gokb/api/find'
+            user             = ''
+            pwd              = ''
         }
         gokbDB {
             dbUri = 'jdbc:postgresql://localhost:5432/gokb'
@@ -118,12 +120,14 @@ environments {
             uploadLocation      = '/tmp/ygor/prod'
             enableGokbUpload    = false
             enableDebugDownload = false
-        }      
+        }
         gokbApi {
-            xrTitleUri   = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
-            xrPackageUri = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
-            user         = ''
-            pwd          = ''
+            xrTitleUri       = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
+            xrPackageUri     = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
+            xrSuggestUriStub = 'http://phaeton.hbz-nrw.de/gokb/api/suggest'
+            xrFindUriStub    = 'http://phaeton.hbz-nrw.de/gokb/api/find'
+            user             = ''
+            pwd              = ''
         }
         gokbDB {
             dbUri = 'jdbc:postgresql://phaeton.hbz-nrw.de:5432/gokb'
@@ -141,9 +145,9 @@ log4j.main = {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
 
-	debug  'ygor',
+    debug  'ygor',
            'de.hbznrw.ygor'
-	
+
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
