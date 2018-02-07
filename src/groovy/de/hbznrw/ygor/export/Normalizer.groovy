@@ -1,11 +1,13 @@
 package de.hbznrw.ygor.export
 
-import groovy.util.logging.Log4j
-import java.time.LocalDate
-import de.hbznrw.ygor.tools.*
+import de.hbznrw.ygor.bridges.EzbBridge
+import de.hbznrw.ygor.bridges.ZdbBridge
+import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
 import de.hbznrw.ygor.export.structure.TitleStruct
-import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.tools.UrlToolkit
+import groovy.util.logging.Log4j
 
+import java.time.LocalDate
 // Trying to normalize values, but may return crap
 
 @Log4j
@@ -288,7 +290,31 @@ class Normalizer {
             return UrlToolkit.getURLWithProtocol(str)
         }
     }
-    
+
+
+    /**
+     * Returns an url (or only the url authority) including protocol.
+     * Adding http:// if none given
+     *
+     * @param phnp
+     * @param onlyAuthority
+     * @return
+     */
+    static String normURL(PackageHeaderNominalPlatform phnp, boolean onlyAuthority) {
+        if(!phnp?.url)
+            return phnp
+
+        if(onlyAuthority){
+            return UrlToolkit.getURLAuthorityWithProtocol(phnp.url)
+        }
+        else {
+            return UrlToolkit.getURLWithProtocol(phnp.url)
+        }
+    }
+
+
+
+
     /**
      * Concatenates list elements with "|" as delimiter.
      * Returns null if null given.

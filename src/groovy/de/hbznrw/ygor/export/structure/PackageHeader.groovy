@@ -12,13 +12,13 @@ class PackageHeader {
     Pod listVerifiedDate = new Pod("")
     Pod listVerifier     = new Pod("")
     Pod name             = new Pod("")
-    Pod nominalPlatform  = new Pod("")
     Pod nominalProvider  = new Pod("")
     Pod paymentType      = new Pod("")
     Pod scope            = new Pod("")
     Pod userListVerifier = new Pod("")
     
     Pod source = new Pod(PackageStruct.getNewPackageHeaderSource())
+    PackageHeaderNominalPlatform nominalPlatform = PackageStruct.getNewPackageHeaderNominalPlatform()
     
     def additionalProperties = [] // TODO
     ArrayList curatoryGroups = []

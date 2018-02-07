@@ -21,6 +21,10 @@ class PackageStruct {
     static PackageHeaderSource getNewPackageHeaderSource() {
         return new PackageHeaderSource()
     }
+
+    static PackageHeaderNominalPlatform getNewPackageHeaderNominalPlatform() {
+        return new PackageHeaderNominalPlatform()
+    }
     
     // Tipps
     
