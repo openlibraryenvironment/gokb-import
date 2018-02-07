@@ -81,7 +81,7 @@
 									<g:select
 										name="pkgNominalPlatform"
 										class="js-example-basic-single"
-										from="${gokbService.getPlatformMap().entrySet()}"
+										from="${gokbService.getPlatformMap().keySet()}"
 										value="$params.pkgNominalPlatform"/>
 								</div>
 
@@ -92,13 +92,15 @@
 									<g:select
 											name="pkgNominalProvider"
 											class="js-example-basic-single"
-											from="${gokbService.getProviderMap().entrySet()}"
+											from="${gokbService.getProviderMap().keySet()}"
 											value="$params.pkgNominalProvider"/>
 								</div>
 
 								<script>
                                     $(document).ready(function() {
-                                        $('.js-example-basic-single').select2();
+                                        $('.js-example-basic-single').prepend('<option selected=""></option>').select2({
+                                            allowClear: true
+                                        });
                                     });
 								</script>
 
