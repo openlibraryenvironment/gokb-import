@@ -25,13 +25,17 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.33</dt><br />
+
+					<dd>- Verwende GOKb-Elasticsearch-Index zur Befüllung </dd>
+
 					<br /><dt>0.32</dt><br />
 
 					<dd>- Korrektur: repariere Credentials "Senden" Button</dd>
 
 					<br /><dt>0.31</dt><br />
 
-					<dd>- Verbesserung: ignoriere BOM in Windows-generierten Eingabedateien</dd>
+					<dd>- Ignoriere BOM in Windows-generierten Eingabedateien</dd>
 
 					<br /><dt>0.30</dt><br />
 
