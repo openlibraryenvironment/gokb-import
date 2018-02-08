@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.34</dt><br />
+
+					<dd>- Verarbeite access_start_date und access_end_date </dd>
+
 					<br /><dt>0.33</dt><br />
 
 					<dd>- Verwende GOKb-Elasticsearch-Index zur Befüllung </dd>
