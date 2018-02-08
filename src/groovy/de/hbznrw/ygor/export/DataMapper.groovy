@@ -66,7 +66,7 @@ class DataMapper {
         else if(query == Query.GBV_PUBLISHED_TO) {
             DataSetter.setDate(title.publishedTo, Normalizer.IS_END_DATE, env.message)
         }
-        
+
         else if(query == Query.GBV_PUBLISHER) {
             def virtPubHistory = null
             def virtEndDate    = null
@@ -201,6 +201,17 @@ class DataMapper {
                 tipp.url.org = env.message
                 tipp.url.m   = Status.VALIDATOR_TIPPURL_NOT_MATCHING
             }
+        }
+
+        else if(query == Query.KBART_TIPP_ACCESS) {
+
+            if(env.messages['accessStart']){
+                DataSetter.setDate(tipp.accessStart, Normalizer.IS_START_DATE, env.messages['accessStart'].first())
+            }
+            if(env.messages['accessEnd']){
+                DataSetter.setDate(tipp.accessEnd, Normalizer.IS_END_DATE, env.messages['accessEnd'].first())
+            }
+
         }
 
         else if(query == Query.KBART_TIPP_COVERAGE) {
@@ -380,7 +391,7 @@ class DataMapper {
 
         tipp.platform = new Pod(platform)
     }
-    
+
     /**
      * Adding:
      * 

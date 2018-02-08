@@ -21,6 +21,8 @@ class KbartConnector extends AbstractConnector {
     private HashMap response
 
     public kbartKeys = [
+        'access_start_date',
+        'access_end_date',
         'date_first_issue_online',
         'date_last_issue_online',
         'num_first_vol_online',
@@ -30,7 +32,7 @@ class KbartConnector extends AbstractConnector {
         'title_url',
         'embargo_info',
         'coverage_depth',
-        'notes',
+        'notes'
         /*
         'publication_title',
         'ZDB-ID',
@@ -92,8 +94,10 @@ class KbartConnector extends AbstractConnector {
             case Query.KBART_TIPP_COVERAGE:
                 return getTippCoverageAsFatEnvelope()
                 break
+            case Query.KBART_TIPP_ACCESS:
+                return getTippAccessDatesAsFatEnvelope()
+                break
         }
-
         getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
     
@@ -103,7 +107,14 @@ class KbartConnector extends AbstractConnector {
         
         getEnvelopeWithMessage(result)
     }
-    
+
+    private Envelope getTippAccessDatesAsFatEnvelope() {
+        getEnvelopeWithComplexMessage([
+            'accessStart':      ([] << getValue('access_start_date')),
+            'accessEnd':        ([] << getValue('access_end_date'))
+        ])
+    }
+
     private Envelope getTippCoverageAsFatEnvelope() {
         getEnvelopeWithComplexMessage([
             'startDate':        ([] << getValue('date_first_issue_online')),
