@@ -378,7 +378,7 @@ class DataMapper {
         def platform = PackageStruct.getNewTippPlatform()
 
         //if(tipp.url.m == Status.VALIDATOR_URL_IS_VALID){
-            DataSetter.setURL(platform.primaryUrl, dc.pkg.packageHeader.v.nominalPlatform.v)
+            DataSetter.setURL(platform.primaryUrl, dc.pkg.packageHeader.v.nominalPlatform.url)
         //}
         //else {
         //    DataSetter.setURL(platform.primaryUrl, '')

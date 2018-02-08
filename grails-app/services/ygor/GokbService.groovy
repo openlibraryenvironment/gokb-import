@@ -1,6 +1,11 @@
 package ygor
 
-import java.sql.*
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.Method
+
+import java.sql.Connection
+import java.sql.Driver
+import java.sql.ResultSet
 
 class GokbService {
     
@@ -25,27 +30,97 @@ class GokbService {
                 //"select kbc.kbc_name, pf.plat_primary_url from platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id order by kbc_name"
                 "select kbc.kbc_name, pf.plat_primary_url from ((platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id) inner join refdata_value rdv on kbc.kbc_status_rv_fk = rdv.rdv_id) where rdv.rdv_value = 'Current' order by kbc_name"
                 )
-                
+
+            def json = geElasticsearchFindings(grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd,
+                                               null, "Org", null, 10000) // 10000 is maximum value allowed by now
+
+            def records = []
+            if (json?.info?.records) {
+                records.addAll(json.info.records)
+            }
+            if (json?.warning?.records) {
+                records.addAll(json.warning.records)
+            }
+
+            // TODO:
+            // - add URL to records returned by GOKb query API
+            // - then fill map with [<name> - <uri> : <uri>] (as done with resultSet up to now)
+            // - remove resultSet and associated query
+            // - "copy" changes to provider query
+
             while(resultSet.next()) {
-                if (resultSet.getString('kbc_name') && resultSet.getString('plat_primary_url')) {
-                    map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
-                            resultSet.getString('plat_primary_url'))
-                }
-                else {
-                    map.put(resultSet.getString('kbc_name'),
-                            resultSet.getString('plat_primary_url'))
+                if (resultSet.getString('kbc_name')) {
+                    if (resultSet.getString('plat_primary_url')) {
+                        map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
+                                resultSet.getString('plat_primary_url'))
+                    }
+                    else {
+                        map.put(resultSet.getString('kbc_name'), null)
+                    }
                 }
             }
-            
         } catch (Exception e) {
             log.error(e.getMessage())
         }
         
         if(map.size() == 0)
             map = getPackageHeaderNominalPlatformPreset()
-        
         map
     }
+
+
+    Map geElasticsearchSuggests(final String user, final String pwd, final String type, final String role) {
+        String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), null, type, role, null)
+        queryElasticsearch(url, user, pwd)
+    }
+
+    Map geElasticsearchFindings(final String user, final String pwd, final String query, final String type,
+                                final String role, final Integer max) {
+        String url = buildUri(grailsApplication.config.gokbApi.xrFindUriStub.toString(), query, type, role, max)
+        queryElasticsearch(url, user, pwd)
+    }
+
+    Map queryElasticsearch(String url, String user, String pwd){
+        log.info("querying: " + url)
+        def http = new HTTPBuilder(url)
+        http.auth.basic user, pwd
+        http.request(Method.GET) { req ->
+            headers.'User-Agent' = 'ygor'
+            response.success = { resp, html ->
+                log.info("server response: ${resp.statusLine}")
+                log.debug("server:          ${resp.headers.'Server'}")
+                log.debug("content length:  ${resp.headers.'Content-Length'}")
+                if(resp.status < 400){
+                    return ['warning':html]
+                }
+                else {
+                    return ['info':html]
+                }
+            }
+            response.failure = { resp ->
+                log.error("server response: ${resp.statusLine}")
+                return ['error':resp.statusLine]
+            }
+        }
+    }
+
+    private String buildUri(final String stub, final String query, final String type, final String role, final Integer max) {
+        String url = stub + "?"
+        if (query) {
+            url += "q=" + query + "&"
+        }
+        if (type){
+            url += "componentType=" + type + "&"
+        }
+        if (role){
+            url += "role=" + role + "&"
+        }
+        if (max){
+            url += "max=" + max + "&"
+        }
+        url.substring(0, url.length() - 1)
+    }
+
 
     Map getProviderMap() {
 

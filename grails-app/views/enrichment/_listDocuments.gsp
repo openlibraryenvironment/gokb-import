@@ -22,7 +22,7 @@
 						<li class="list-group-item">
 				
 							<div class="input-group">
-								<span class="input-group-addon">Datei:</span>
+								<span class="input-group-addon">Datei</span>
 								<span class="form-control" title="${e.value.originHash}">
 									${e.value.originName}
 				
@@ -63,55 +63,56 @@
 							<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
 														
 								<div class="input-group">
-									<span class="input-group-addon">Titel:</span>
+									<span class="input-group-addon">Titel</span>
 									<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" class="form-control" />
 								</div>
 								
 								<br />
 							
 								<div class="input-group">
-									<span class="input-group-addon">ZDB-Paketsigel:</span>
+									<span class="input-group-addon">ZDB-Paketsigel</span>
 									<g:textField name="pkgVariantName" size="24" class="form-control" />
 								</div>
 								
 								<br />
-			
+
 								<div class="input-group">
-									<span class="input-group-addon"><em>GOKb</em> Plattform:</span>
-									<g:select name="pkgNominalPlatform" class="form-control" noSelection="['':'']"
-										from="${gokbService.getPlatformMap().entrySet()}"
-										optionValue="key"
-										optionKey="${{ es -> "${es.key}\" data-url=\"${es.value}" }}" 
-										data-toggle="tooltip" data-placement="right" 
-										title="Bei ausgegrauten Elementen fehlt die erforderliche Hinterlegung eines Plattform-URL"/>
+									<span class="input-group-addon"><em>GOKb</em> Plattform</span>
+									<g:select
+										name="pkgNominalPlatform"
+										class="js-example-basic-single"
+										from="${gokbService.getPlatformMap().keySet()}"
+										value="$params.pkgNominalPlatform"/>
 								</div>
+
+								<br />
+
+								<div class="input-group">
+									<span class="input-group-addon"><em>GOKb</em> Provider</span>
+									<g:select
+											name="pkgNominalProvider"
+											class="js-example-basic-single"
+											from="${gokbService.getProviderMap().keySet()}"
+											value="$params.pkgNominalProvider"/>
+								</div>
+
 								<script>
-									$(function(){
-										$('select[name="pkgNominalPlatform"] option[data-url="null"]').addClass('warning')
-									})
+                                    $(document).ready(function() {
+                                        $('.js-example-basic-single').prepend('<option selected=""></option>').select2({
+                                            allowClear: true
+                                        });
+                                    });
 								</script>
-			
-								<br />
-
-								<div class="input-group">
-									<span class="input-group-addon"><em>GOKb</em> Provider:</span>
-									<g:select name="pkgNominalProvider" class="form-control" noSelection="['':'']"
-											  from="${gokbService.getProviderMap().entrySet()}"
-											  optionValue="value"
-											  optionKey="key" />
-								</div>
 
 								<br />
 
 								<div class="input-group">
-									<span class="input-group-addon"><em>GOKb</em> Curatory Group:</span>
+									<span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>
 									<g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" class="form-control" />
 								</div>
 								
-								<br /> 
-									
 								<div class="input-group">
-									<span class="input-group-addon">GOKb Curatory Group:</span>
+									<span class="input-group-addon"><em>GOKb</em> Curatory Group 2</span>
 									<g:textField name="pkgCuratoryGroup2" size="24" value="hbz" class="form-control" />
 								</div>
 								
@@ -137,7 +138,7 @@
 								<br /><br />	
 								
 								<div class="input-group">
-									<span class="input-group-addon">Quellen:</span>
+									<span class="input-group-addon">Quellen</span>
 									<span class="form-control">
 										<div class="checkbox">
 											<label>
@@ -170,7 +171,7 @@
 								<br /><br />
 		
 								<div class="input-group">
-									<span class="input-group-addon">Schlüssel:</span>
+									<span class="input-group-addon">Schlüssel</span>
 									<span class="form-control">
 										<div class="radio">
 											<label>
