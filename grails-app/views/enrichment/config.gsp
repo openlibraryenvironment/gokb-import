@@ -72,6 +72,17 @@
 				<tr>
 					<td>KBART <em>, Datei</em></td>
 					<td></td>
+					<td>tipps.access</td>
+					<td>
+						<ul>
+							<li>access_start_date</li>
+							<li>access_end_date</li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td>KBART <em>, Datei</em></td>
+					<td></td>
 					<td>tipps.url</td>
 					<td>title_url</td>
 				</tr>

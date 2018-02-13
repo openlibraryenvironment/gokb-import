@@ -18,6 +18,7 @@ public enum Query {
     
     KBART_TIPP_URL      ("KBART_TIPP_URL"), 
     KBART_TIPP_COVERAGE ("KBART_TIPP_COVERAGE"),
+    KBART_TIPP_ACCESS   ("KBART_TIPP_ACCESS"),
     
 	ZDB_TITLE     ("ZDB_TITLE"),     // old
 	ZDB_PUBLISHER ("ZDB_PUBLISHER")  // old

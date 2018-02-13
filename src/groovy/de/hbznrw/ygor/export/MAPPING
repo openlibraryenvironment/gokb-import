@@ -1,12 +1,14 @@
 
 == KbartConnector ==
 
+access_start_date   			- 	Package.tipps.coverage
+access_end_date     			- 	Package.tipps.coverage
 date_first_issue_online			- 	Package.tipps.coverage
 date_last_issue_online			- 	Package.tipps.coverage
 num_first_vol_online			- 	Package.tipps.coverage
 num_last_vol_online				- 	Package.tipps.coverage
 num_first_issue_online			- 	Package.tipps.coverage
-num_last_issue_online			- 	Package.tipps.coverage		
+num_last_issue_online			- 	Package.tipps.coverage
 embargo_info					- 	Package.tipps.coverage
 coverage_depth					-	Package.tipps.coverage
 notes		        			- 	Package.tipps.coverage
