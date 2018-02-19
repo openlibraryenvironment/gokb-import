@@ -259,7 +259,7 @@
                                 $('#credentialsModal').on('show.bs.modal', function (event) {
                                     var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
                                     if (uri.localeCompare('package') == 0){
-                                        $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
+                                        $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendPackageFile');
 									}
 									else if (uri.localeCompare('titles') == 0){
                                         $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
