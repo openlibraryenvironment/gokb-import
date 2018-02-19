@@ -21,8 +21,6 @@ class KbartConnector extends AbstractConnector {
     private HashMap response
 
     public kbartKeys = [
-        'access_start_date',
-        'access_end_date',
         'date_first_issue_online',
         'date_last_issue_online',
         'num_first_vol_online',
@@ -39,6 +37,11 @@ class KbartConnector extends AbstractConnector {
         'print_identifier',
         'online_identifier'
         */
+    ]
+
+    public optionalKbartKeys = [
+            'access_start_date',
+            'access_end_date'
     ]
 
 	KbartConnector(BridgeInterface bridge) {

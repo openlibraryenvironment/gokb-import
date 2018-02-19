@@ -141,6 +141,9 @@ class KbartProcessor extends AbstractProcessor {
                         bridge.connector.kbartKeys.each { kbk ->
                             kbfs << ["${kbk}": record.get(kbk).toString()]
                         }
+                        bridge.connector.optionalKbartKeys.each { kbk ->
+                            kbfs << ["${kbk}": record.get(kbk).toString()]
+                        }
                         if (kbfs.size() > 0) {
                             kbartFields << ["${uid}": kbfs]
                         }
