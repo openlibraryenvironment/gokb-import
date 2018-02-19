@@ -25,6 +25,12 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.35</dt><br />
+
+					<dd>- Mache access_start_date und access_end_date optional</dd>
+					<dd>- Korrektur: verstecke GOKb-Passwort bei der Eingabe</dd>
+					<dd>- Korrektur: repariere Senden von Paketen an die GOKb</dd>
+
 					<br /><dt>0.34</dt><br />
 
 					<dd>- Verarbeite access_start_date und access_end_date </dd>
