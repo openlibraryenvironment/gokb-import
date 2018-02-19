@@ -242,7 +242,7 @@
 												</div>
 												<div class="input-group">
 													<span class="input-group-addon">Passwort</span>
-													<g:textField name="gokbPassword" size="24" class="form-control" />
+													<g:passwordField name="gokbPassword" size="24" class="form-control"/>
 												</div>
 												<div align="right">
 													<button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
