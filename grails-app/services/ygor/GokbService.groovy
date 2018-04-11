@@ -41,7 +41,7 @@ class GokbService {
             if (json?.info?.records) {
 
                 json.info.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none")])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
@@ -50,7 +50,7 @@ class GokbService {
                 log.debug("Records: ${json.warning.records}")
 
                 json.warning.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none")])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
@@ -168,7 +168,7 @@ class GokbService {
             if (json?.info?.records) {
 
                 json.info.records.each { r ->
-                  result.records.add([id: r.id , text: r.name])
+                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }
@@ -177,7 +177,7 @@ class GokbService {
                 log.debug("Records: ${json.warning.records}")
 
                 json.warning.records.each { r ->
-                  result.records.add([id: r.name , text: r.name])
+                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }

@@ -92,6 +92,8 @@ class EnrichmentService {
         setUrlIfValid(pkgNomPlatform.primaryUrl, ph)
         ph.v.nominalPlatform.name = pkgNomPlatform.name
         ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
+      }else{
+        log.error("package platform not set!")
       }
     }
 

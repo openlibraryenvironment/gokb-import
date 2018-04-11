@@ -170,7 +170,8 @@ log4j.main = {
               'grails.app.domain',
               'grails.app.domains',
               'ygor.export.DataMapper',
-              'ygor.export.JsonTransformer'
+              'ygor.export.JsonTransformer',
+              'ygor.connectors.ZdbdbSruPicaConnector'
       }
     }
 }
