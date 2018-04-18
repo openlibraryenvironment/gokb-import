@@ -360,7 +360,6 @@ class JsonTransformer {
                 }
                 title.publisher_history[i] = publisher_history
             }
-            log.debug("PH ${title.publisher_history}")
         }
         
         json.titles.each{ title ->
@@ -378,7 +377,6 @@ class JsonTransformer {
 //                         }
 
                         if(attr.key.toString() == "name" && attr.value.toString() != "") {
-                            log.debug("VALID: ${ph}")
                             publisher_history << ph
                             return true
                         }
