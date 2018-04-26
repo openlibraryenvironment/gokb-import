@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.36</dt><br />
+
+					<dd>- Korrektur: formatiere Coverage-Felder als String</dd>
+
 					<br /><dt>0.35</dt><br />
 
 					<dd>- Mache access_start_date und access_end_date optional</dd>
