@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.37</dt><br />
+
+					<dd>- Erhöhe Session-Dauer (auf 16 Stunden)</dd>
+
 					<br /><dt>0.36</dt><br />
 
 					<dd>- Korrektur: formatiere Coverage-Felder als String</dd>
