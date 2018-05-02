@@ -169,6 +169,17 @@ class GbvSruPicaConnector extends AbstractConnector {
         if(result.minus(null).isEmpty()) {
             result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
         }
+
+        def noAt = []
+        result.each { r ->
+          def correctedField = null
+          if (r) {
+            correctedField = r.minus('@')
+          }
+          noAt << correctedField
+        }
+        result = noAt
+
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
@@ -223,9 +234,9 @@ class GbvSruPicaConnector extends AbstractConnector {
             
             // resultTitle        << (a ? a : (t ? t : null))
             if(a) {
-                resultTitle       << a
+                resultTitle       << a.minus('@')
             } else {
-                resultTitle       << (t ? t : null)
+                resultTitle       << (t ? t.minus('@') : null)
             }
             resultIdentifierType  << (C ? C : null)
             resultIdentifierValue << (f6 ? f6 : null)

@@ -174,6 +174,19 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
         if(result.minus(null).isEmpty()) {
             result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
         }
+
+        def noAt = []
+        result.each { r ->
+          def correctedField = null
+          if (r) {
+            correctedField = r.minus('@')
+          }
+          noAt << correctedField
+        }
+        result = noAt
+
+        log.debug("Got title ${result}")
+
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     
@@ -227,7 +240,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             def f0 = df.subfield.find{it.'@code' == '0'}.text()
 
             resultType            <<  (b ? b : null)
-            resultTitle           <<  (D ? D : (Y ? Y : null))
+            resultTitle           <<  (D ? D.minus('@') : (Y ? Y.minus('@') : null))
             resultIdentifierType  <<  (C ? C : 'zdb') // default
             resultIdentifierValue <<  (f0 ? f0 : null)
             resultDate            <<  (H ? H : null)
@@ -242,7 +255,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
         
         result << getEnvelopeWithComplexMessage([
             'type':            resultType,
-            'title':           resultTitle,
+            'name':            resultTitle,
             'identifierType':  resultIdentifierType,
             'identifierValue': resultIdentifierValue,
             'date':            resultDate
