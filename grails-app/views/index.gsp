@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.39</dt><br />
+
+					<dd>- Korrektur: Verarbeitung von access_date-Feldern</dd>
+
 					<br /><dt>0.38</dt><br />
 
 					<dd>- Entferne "@" aus Pica-Titelfeldern</dd>
