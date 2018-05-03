@@ -25,6 +25,11 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.38</dt><br />
+
+					<dd>- Entferne "@" aus Pica-Titelfeldern</dd>
+					<dd>- Korrigiere History Events mit leerem Titel</dd>
+
 					<br /><dt>0.37</dt><br />
 
 					<dd>- Erhöhe Session-Dauer (auf 16 Stunden)</dd>
