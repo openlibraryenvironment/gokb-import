@@ -7,14 +7,6 @@ import de.hbznrw.ygor.export.structure.TitlePublisherHistory
 
 class StructValidator {
     
-    /**
-     * 
-     * @param startDate
-     * @param endDate
-     * @param startVolume
-     * @param endVolume
-     * @return
-     */
     static isValidCoverage(TippCoverage coverage){
         // startDate
         // endDate
