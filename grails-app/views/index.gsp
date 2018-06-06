@@ -25,6 +25,23 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.39</dt><br />
+
+					<dd>- Korrektur: Verarbeitung von access_date-Feldern</dd>
+
+					<br /><dt>0.38</dt><br />
+
+					<dd>- Entferne "@" aus Pica-Titelfeldern</dd>
+					<dd>- Korrigiere History Events mit leerem Titel</dd>
+
+					<br /><dt>0.37</dt><br />
+
+					<dd>- Erhöhe Session-Dauer (auf 16 Stunden)</dd>
+
+					<br /><dt>0.36</dt><br />
+
+					<dd>- Korrektur: formatiere Coverage-Felder als String</dd>
+
 					<br /><dt>0.35</dt><br />
 
 					<dd>- Mache access_start_date und access_end_date optional</dd>

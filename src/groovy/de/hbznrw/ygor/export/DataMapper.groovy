@@ -224,16 +224,16 @@ class DataMapper {
                 DataSetter.setDate(coverage.endDate, Normalizer.IS_END_DATE, env.messages['endDate'].first())
             }
             if(env.messages['startIssue']){
-                DataSetter.setInteger(coverage.startIssue, env.messages['startIssue'].first())
+                DataSetter.setString(coverage.startIssue, env.messages['startIssue'].first())
             }
             if(env.messages['endIssue']){
-                DataSetter.setInteger(coverage.endIssue, env.messages['endIssue'].first())
+                DataSetter.setString(coverage.endIssue, env.messages['endIssue'].first())
             }
             if(env.messages['startVolume']){
-                DataSetter.setInteger(coverage.startVolume, env.messages['startVolume'].first())
+                DataSetter.setString(coverage.startVolume, env.messages['startVolume'].first())
             }
             if(env.messages['endVolume']){
-                DataSetter.setInteger(coverage.endVolume, env.messages['endVolume'].first())
+                DataSetter.setString(coverage.endVolume, env.messages['endVolume'].first())
             } 
 
             DataSetter.setString(coverage.coverageDepth, env.messages['coverageDepth'].first())

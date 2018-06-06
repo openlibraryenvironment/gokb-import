@@ -175,3 +175,12 @@ log4j.main = {
       }
     }
 }
+
+
+// added for https://github.com/hbz/laser-ygor/issues/53
+//       according to https://stackoverflow.com/a/18494029/4420271 Timeout is set to 16 hours.
+//       This workaround solution is preferred to others for being versionable most easily.
+grails.war.resources = { stagingDir, args ->
+    def webXML = new java.io.File("${stagingDir}/WEB-INF/web.xml")
+    webXML.text = webXML.text.replaceFirst("<session-timeout>30</session-timeout>", "<session-timeout>960</session-timeout>")
+}

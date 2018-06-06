@@ -143,7 +143,7 @@ class JsonTransformer {
         
         def source = [:]
         json.package.packageHeader.source.eachWithIndex{ src, i ->
-            if(src.value.v instanceof java.lang.String) {
+            if(src.value.v instanceof java.lang.String && src.value.v.trim().size() > 0) {
                 source << ["${src.key}" : src.value.v]
             }
         }
