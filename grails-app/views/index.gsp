@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 				
 				<dl>
+					<br /><dt>0.40</dt><br />
+
+					<dd>- Hole Plattform und Provider aus Elasticsearch Index</dd>
+
 					<br /><dt>0.39</dt><br />
 
 					<dd>- Korrektur: Verarbeitung von access_date-Feldern</dd>
