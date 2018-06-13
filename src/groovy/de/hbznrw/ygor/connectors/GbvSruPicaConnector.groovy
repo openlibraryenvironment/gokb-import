@@ -57,7 +57,7 @@ class GbvSruPicaConnector extends AbstractConnector {
             }
             
         } catch(Exception e) {
-            log.equals(e)
+            log.error(e)
         }
         // TODO fix return value
     }

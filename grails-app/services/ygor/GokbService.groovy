@@ -31,7 +31,7 @@ class GokbService {
                 "select kbc.kbc_name, pf.plat_primary_url from ((platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id) inner join refdata_value rdv on kbc.kbc_status_rv_fk = rdv.rdv_id) where rdv.rdv_value = 'Current' order by kbc_name"
                 )
 
-            def json = geElasticsearchFindings(grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd,
+            def json = getElasticsearchFindings(grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd,
                                                null, "Org", null, 10000) // 10000 is maximum value allowed by now
 
             def records = []
@@ -69,13 +69,13 @@ class GokbService {
     }
 
 
-    Map geElasticsearchSuggests(final String user, final String pwd, final String type, final String role) {
+    Map getElasticsearchSuggests(final String user, final String pwd, final String type, final String role) {
         String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), null, type, role, null)
         queryElasticsearch(url, user, pwd)
     }
 
-    Map geElasticsearchFindings(final String user, final String pwd, final String query, final String type,
-                                final String role, final Integer max) {
+    Map getElasticsearchFindings(final String user, final String pwd, final String query, final String type,
+                                 final String role, final Integer max) {
         String url = buildUri(grailsApplication.config.gokbApi.xrFindUriStub.toString(), query, type, role, max)
         queryElasticsearch(url, user, pwd)
     }
@@ -130,7 +130,6 @@ class GokbService {
 
         try {
             Driver pgDriver = new org.postgresql.Driver()
-
             Properties prop = new Properties()
             prop.put("user",     grailsApplication.config.gokbDB.user)
             prop.put("password", grailsApplication.config.gokbDB.pwd)

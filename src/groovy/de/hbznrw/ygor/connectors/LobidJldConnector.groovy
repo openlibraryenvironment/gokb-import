@@ -44,7 +44,7 @@ class LobidJldConnector extends AbstractConnector {
 			response = new JsonSlurper().parseText(text)
 			
 		} catch(Exception e) {
-            log.equals(e)
+            log.error(e)
 		}
         // TODO fix return value
 	}
