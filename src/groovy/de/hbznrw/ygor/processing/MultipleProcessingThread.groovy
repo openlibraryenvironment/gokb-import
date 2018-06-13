@@ -72,7 +72,6 @@ class MultipleProcessingThread extends Thread {
                                 )
                             )
                             break
-                            /*
                         case ZdbBridge.IDENTIFIER:
                             bridge = new ZdbBridge(this, new HashMap(
                                 inputFile:  enrichment.originPathName,
@@ -80,7 +79,6 @@ class MultipleProcessingThread extends Thread {
                                 )
                             )
                             break
-                            */
                     }
                   
                     if(bridge) {

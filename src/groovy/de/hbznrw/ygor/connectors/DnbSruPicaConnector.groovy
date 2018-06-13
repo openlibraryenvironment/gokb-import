@@ -7,54 +7,50 @@ import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.interfaces.*
 
 /**
- * Controlling API calls using sru.gbv.de/zdbdb
+ * Controlling API calls using services.dnb.de/sru/zdb
  */
 @Log4j
-class ZdbdbSruPicaConnector extends AbstractConnector {
-	
+class DnbSruPicaConnector extends AbstractConnector {
+
     static final QUERY_PICA_ISS = "query=dnb.iss%3D"
     static final QUERY_PICA_ZDB = "query=pica.yyy%3D"
-    
-	private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
-	private String queryIdentifier
+
+    private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
+    private String queryIdentifier
     private String queryOnlyJournals = "%20and%20dnb.mat=serials"
-    private String queryOrder       = "sortKeys=year,,1"
 
     private String formatIdentifier = 'PicaPlus-xml'
     private GPathResult response
-    
+
     private picaRecords   = []
     private currentRecord = null
-    
-	ZdbdbSruPicaConnector(BridgeInterface bridge, String queryIdentifier) {
-		super(bridge)
+
+    DnbSruPicaConnector(BridgeInterface bridge, String queryIdentifier) {
+        super(bridge)
         this.queryIdentifier = queryIdentifier
-	}
-        
+    }
+
     // ConnectorInterface
-    
+
     @Override
     String getAPIQuery(String identifier) {
-        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals + "&" + queryOrder
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals
     }
 
     @Override
     def poll(String identifier) {
         try {
             String q = getAPIQuery(identifier)
-            
+
             log.info("polling(): " + q)
             String text = new URL(q).getText()
-            
+
             response = new XmlSlurper().parseText(text)
-            
+
             picaRecords = []
-            response.records.record.each { r ->
-                //def test = r.recordData.record.datafield.findAll{it.'@tag' == '016H'}.subfield.findAll{it.'@code' == '0'}
-                //if("Elektronische Ressource".equals(test?.text()))
-                    picaRecords << r
-            }
-            
+            def records = response.children().find {it.name() == "records"}.childNodes()
+            while (records.hasNext()) picaRecords << records.next()
+
         } catch(Exception e) {
             log.error(e)
         }
@@ -66,16 +62,16 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             return AbstractEnvelope.STATUS_OK
         }
     }
-    
-	@Override
-	Envelope query(Object record, Query query) {
-		try {
+
+    @Override
+    Envelope query(Object record, Query query) {
+        try {
             getEnvelope(record, query)
-		} catch(Exception e) {
-			return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
-		}
-	}
-            
+        } catch(Exception e) {
+            return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
+        }
+    }
+
     // FormatAdapterInterface
 
     // <zs:searchRetrieveResponse>
@@ -89,84 +85,95 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
     //             <subfield code="C">ZDB</subfield>
     //             <subfield code="6">24063605</subfield>
     //           </datafield>
-       
+
     @Override
     Envelope getEnvelope(Object record, Query query) {
-        
+
         if(response == null)
             return getEnvelopeWithStatus(AbstractEnvelope.STATUS_NO_RESPONSE)
-        
-        currentRecord = record   
+
+        currentRecord = record
         if(currentRecord == null)
             return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
-            
+
         switch(query){
             case Query.ZDBID:
                 return getFirstResultOnly('006Z', '0')
                 break;
-            case Query.GBV_GVKPPN:
+            case Query.ZDB_GVKPPN:
                 return getFirstResultOnly('003@', '0')
                 break;
-            case Query.GBV_EISSN:
+            case Query.ZDB_EISSN:
                 return getFirstResultOnly('005A', '0')
                 break;
-            case Query.GBV_PISSN:
+            case Query.ZDB_PISSN:
                 return getFirstResultOnly('005P', '0')
                 break;
-            case Query.GBV_TITLE:
+            case Query.ZDB_TITLE:
                 return getTitle()
                 break;
-            case Query.GBV_PUBLISHER:
+            case Query.ZDB_PUBLISHER:
                 return getPublisherHistoryAsFatEnvelope()
                 break;
-            case Query.GBV_PUBLISHED_FROM:
+            case Query.ZDB_PUBLISHED_FROM:
                 return getFirstResultOnly('011@', 'a')
                 break;
-            case Query.GBV_PUBLISHED_TO:
+            case Query.ZDB_PUBLISHED_TO:
                 return getFirstResultOnly('011@', 'b')
                 break;
-            case Query.GBV_HISTORY_EVENTS:
+            case Query.ZDB_HISTORY_EVENTS:
                 return getHistoryEventAsFatEnvelope()
                 break;
         }
-        
+
         getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
-    
+
     Object getPicaRecords() {
         picaRecords
     }
-    
+
     private Envelope getFirstResultOnly(String tag, String code) {
         def result = []
-        
-        result << getFirstPicaValue(currentRecord.recordData.record, tag, code)
+
+        result << getFirstPicaValue(currentRecord.children()[2].children()[0], tag, code)
         getEnvelopeWithMessage(result.minus(null).unique())
     }
-    
+
     private String getFirstPicaValue(Object record, String tag, String code) {
-        def df = record.datafield.find{it.'@tag' == tag}
-        def sf = df.subfield.find{it.'@code' == code}
+        def df = getChildById(record.children()[0].children(), tag)
+        def sf = getChildById(df.children(), code)
 
         log.debug("getPicaValue(" +  tag + "" + code + ") = " + sf)
         return sf ? sf.text() : null
-    }  
-    
+    }
+
+    private def getChildById(List nodes, String subId){
+        Iterator<String> it = nodes.listIterator()
+        while (it.hasNext()){
+            def child = it.next()
+            if (child.attributes.'id' == subId){
+                return child
+            }
+        }
+        return null
+    }
+
     private ArrayList getAllPicaValues(Object record, String tag, String code) {
         def result = []
         def sf = record.datafield.findAll{it.'@tag' == tag}.subfield.findAll{it.'@code' == code}
-        
+
         sf.each { f ->
-            result << f.text()      
+            result << f.text()
         }
-        
+
         log.debug("getPicaValues(" +  tag + "" + code + ") = " + result)
         result
     }
-    
+
     private Envelope getTitle() {
         def result = []
-        
+
         // correction
         result << getFirstPicaValue(currentRecord.recordData.record, '025@', 'a')
 
@@ -175,32 +182,23 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
         }
 
-        def noAt = []
-        result.each { r ->
-          def correctedField = null
-          if (r) {
-            correctedField = r.minus('@')
-          }
-          noAt << correctedField
-        }
-        result = noAt
-
+        result = result.minus('@')
         log.debug("Got title ${result}")
 
         getEnvelopeWithMessage(result.minus(null).unique())
     }
-    
+
     private Envelope getPublisherHistoryAsFatEnvelope() {
         def result          = []
         def resultStartDate = []
         def resultEndDate   = []
         def resultName      = []
         def resultStatus    = []
-        
+
         currentRecord.recordData.record.datafield.findAll{it.'@tag' == '033A'}.each { df ->
             def n = df.subfield.find{it.'@code' == 'n'}.text() // TODO or use p here ?
             def h = df.subfield.find{it.'@code' == 'h'}.text()
-            
+
             resultName      << (n ? n : null)
             resultStartDate << (h ? h : '')
             resultEndDate   << (h ? h : '')
@@ -208,21 +206,21 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
         }
         log.debug("getPicaValues(033An) = " + resultName)
         log.debug("getPicaValues(033Ah) = " + resultStartDate)
-        
+
         // TODO refactor this
-        
+
         result << getEnvelopeWithComplexMessage([
-            'name':      resultName,
-            'startDate': resultStartDate,
-            'endDate':   resultEndDate,
-            'status':    resultStatus
+                'name':      resultName,
+                'startDate': resultStartDate,
+                'endDate':   resultEndDate,
+                'status':    resultStatus
         ])
-       
+
         getEnvelopeWithMessage(result)
-    } 
-    
+    }
+
     private Envelope getHistoryEventAsFatEnvelope() {
-        
+
         def result                = []
         def resultType            = []
         def resultTitle           = []
@@ -245,22 +243,23 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             resultIdentifierValue <<  (f0 ? f0 : null)
             resultDate            <<  (H ? H : null)
         }
-        
+
         // zdbdb
         log.debug("getPicaValues(039Eb) = "     + resultType)
         log.debug("getPicaValues(039E(D|Y)) = " + resultTitle)
         log.debug("getPicaValues(039EC) = "     + resultIdentifierType)
         log.debug("getPicaValues(039E0) = "     + resultIdentifierValue)
-        log.debug("getPicaValues(039EH) = "     + resultDate)    
-        
+        log.debug("getPicaValues(039EH) = "     + resultDate)
+
         result << getEnvelopeWithComplexMessage([
-            'type':            resultType,
-            'name':            resultTitle,
-            'identifierType':  resultIdentifierType,
-            'identifierValue': resultIdentifierValue,
-            'date':            resultDate
+                'type':            resultType,
+                'title':           resultTitle.minus('@'),
+                'name':            resultTitle,
+                'identifierType':  resultIdentifierType,
+                'identifierValue': resultIdentifierValue,
+                'date':            resultDate
         ])
-       
+
         getEnvelopeWithMessage(result)
     }
 }

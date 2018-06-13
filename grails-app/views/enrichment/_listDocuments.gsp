@@ -147,7 +147,7 @@
 											</label>
 											&nbsp;
 											<label>
-												<g:checkBox name="processOption" required="true" checked="true" value="${GbvBridge.IDENTIFIER}"/>
+												<g:checkBox name="processOption" required="true" checked="true" value="${ZdbBridge.IDENTIFIER}"/>
 												ZDB <em>@GBV</em> <code>API</code>
 											</label>
 											&nbsp;

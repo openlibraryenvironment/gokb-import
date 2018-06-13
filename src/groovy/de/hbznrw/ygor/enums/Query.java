@@ -21,8 +21,18 @@ public enum Query {
     KBART_TIPP_ACCESS   ("KBART_TIPP_ACCESS"),
     
 	ZDB_TITLE     ("ZDB_TITLE"),     // old
-	ZDB_PUBLISHER ("ZDB_PUBLISHER")  // old
-	;
+	ZDB_PUBLISHER ("ZDB_PUBLISHER"),  // old
+
+	ZDB_EISSN     ("ZDB_EISSN"),
+	ZDB_PISSN     ("ZDB_PISSN"),
+
+	ZDB_GVKPPN          ("ZDB_GVKPPN"),
+	ZDB_PUBLISHED_FROM  ("ZDB_PUBLISHED_FROM"),
+	ZDB_PUBLISHED_TO    ("ZDB_PUBLISHED_TO"),
+	ZDB_HISTORY_EVENTS  ("ZDB_HISTORY_EVENTS"),
+
+
+			;
 	
 	private String value;
 	
