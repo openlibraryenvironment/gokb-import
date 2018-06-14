@@ -58,13 +58,6 @@ class MultipleProcessingThread extends Thread {
                             )
                             break
 
-                        case GbvBridge.IDENTIFIER:
-                            bridge = new GbvBridge(this, new HashMap(
-                                inputFile:  enrichment.originPathName,
-                                typeOfKey:  typeOfKey
-                                )
-                            )
-                            break 
                         case EzbBridge.IDENTIFIER:
                             bridge = new EzbBridge(this, new HashMap(
                                 inputFile:  enrichment.originPathName, 

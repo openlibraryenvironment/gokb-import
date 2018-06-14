@@ -34,18 +34,18 @@ class DataMapper {
     
     static void mapEnvelopeToTitle(Title title, Query query, Envelope env) {
 
-        if(query in [Query.ZDBID, Query.EZBID, Query.GBV_EISSN, Query.GBV_PISSN, Query.GBV_GVKPPN]) {
+        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
                 ident.type.v = ZdbBridge.IDENTIFIER
             else if(Query.EZBID == query)
                 ident.type.v = EzbBridge.IDENTIFIER
-            else if(Query.GBV_EISSN == query)
+            else if(Query.ZDB_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
-            else if(Query.GBV_PISSN == query)
+            else if(Query.ZDB_PISSN == query)
                 ident.type.v = TitleStruct.PISSN
-            else if(Query.GBV_GVKPPN == query)
+            else if(Query.ZDB_GVKPPN == query)
                 ident.type.v = "gvk_ppn"
                 
             ident.type.m    = Status.IGNORE
@@ -55,19 +55,19 @@ class DataMapper {
             title.identifiers << ident // no pod
         }
         
-        else if(query == Query.GBV_TITLE) {
+        else if(query == Query.ZDB_TITLE) {
             DataSetter.setString(title.name, env.message)
         }
 
-        else if(query == Query.GBV_PUBLISHED_FROM) {
+        else if(query == Query.ZDB_PUBLISHED_FROM) {
             DataSetter.setDate(title.publishedFrom, Normalizer.IS_START_DATE, env.message)
         }
         
-        else if(query == Query.GBV_PUBLISHED_TO) {
+        else if(query == Query.ZDB_PUBLISHED_TO) {
             DataSetter.setDate(title.publishedTo, Normalizer.IS_END_DATE, env.message)
         }
 
-        else if(query == Query.GBV_PUBLISHER) {
+        else if(query == Query.ZDB_PUBLISHER) {
             def virtPubHistory = null
             def virtEndDate    = null
             
@@ -120,7 +120,7 @@ class DataMapper {
             }
         }
 
-        else if(query == Query.GBV_HISTORY_EVENTS) {
+        else if(query == Query.ZDB_HISTORY_EVENTS) {
             //def histEvent =  TitleStruct.getNewHistoryEvent()
 
             env.message.each{ e ->
@@ -173,12 +173,12 @@ class DataMapper {
      */
     static void mapEnvelopeToTipp(Tipp tipp, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.GBV_EISSN]) {
+        if(query in [Query.ZDBID, Query.ZDB_EISSN]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
                 ident.type.v = ZdbBridge.IDENTIFIER
-            else if(Query.GBV_EISSN == query)
+            else if(Query.ZDB_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
 
             ident.type.m    = Status.IGNORE
@@ -188,7 +188,7 @@ class DataMapper {
             tipp.title.v.identifiers << ident // no pod
         }
         
-        else if(query == Query.GBV_TITLE) {
+        else if(query == Query.ZDB_TITLE) {
             DataSetter.setString(tipp.title.v.name, env.message)
         }
         

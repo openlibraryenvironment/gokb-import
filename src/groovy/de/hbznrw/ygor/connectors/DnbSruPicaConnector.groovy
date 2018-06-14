@@ -5,6 +5,7 @@ import groovy.util.slurpersupport.GPathResult
 import de.hbznrw.ygor.processing.Envelope
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.interfaces.*
+import groovy.util.slurpersupport.Node
 
 /**
  * Controlling API calls using services.dnb.de/sru/zdb
@@ -68,6 +69,7 @@ class DnbSruPicaConnector extends AbstractConnector {
         try {
             getEnvelope(record, query)
         } catch(Exception e) {
+            log.debug(getClass().getName() + ".query(): Could not get Envelope for " + query + " from " + record + ".")
             return getEnvelopeWithStatus(AbstractEnvelope.STATUS_ERROR)
         }
     }
@@ -141,14 +143,16 @@ class DnbSruPicaConnector extends AbstractConnector {
     }
 
     private String getFirstPicaValue(Object record, String tag, String code) {
-        def df = getChildById(record.children()[0].children(), tag)
-        def sf = getChildById(df.children(), code)
-
-        log.debug("getPicaValue(" +  tag + "" + code + ") = " + sf)
+        def df = getFirstChildById(record.children()[0].children(), tag)
+        def sf
+        if (df) {
+            sf = getFirstChildById(df.children(), code)
+            log.debug("getPicaValue(" +  tag + "" + code + ") = " + sf)
+        }
         return sf ? sf.text() : null
     }
 
-    private def getChildById(List nodes, String subId){
+    private def getFirstChildById(List nodes, String subId){
         Iterator<String> it = nodes.listIterator()
         while (it.hasNext()){
             def child = it.next()
@@ -159,27 +163,46 @@ class DnbSruPicaConnector extends AbstractConnector {
         return null
     }
 
-    private ArrayList getAllPicaValues(Object record, String tag, String code) {
-        def result = []
-        def sf = record.datafield.findAll{it.'@tag' == tag}.subfield.findAll{it.'@code' == code}
-
-        sf.each { f ->
-            result << f.text()
+    private String[] getAllPicaValues(Object record, String tag, String code) {
+        String[] result = []
+        def df = getAllChildrenById(record.children()[0].children(), tag)
+        def sf
+        if (df.size() > 0) {
+            sf = getAllChildrenById(df.children(), code)
+            if (sf.size() > 0) {
+                log.debug("getPicaValue(" + tag + "" + code + ") = " + sf)
+                result.addAll(sf)
+            }
         }
+        return result
+    }
 
-        log.debug("getPicaValues(" +  tag + "" + code + ") = " + result)
-        result
+    private def getAllChildrenById(List nodes, String subId){
+        def result = []
+        Iterator<String> it = nodes.listIterator()
+        while (it.hasNext()){
+            def child = it.next()
+            if (child instanceof Node) {
+                if (child.attributes?.'id' == subId) {
+                    result << child
+                }
+                if (child.children() != null) {
+                    result.addAll(getAllChildrenById(child.children(), subId))
+                }
+            }
+        }
+        return result
     }
 
     private Envelope getTitle() {
         def result = []
 
         // correction
-        result << getFirstPicaValue(currentRecord.recordData.record, '025@', 'a')
+        result << getFirstPicaValue(currentRecord.children()[2].children()[0], '025@', 'a')
 
         // or .. main title
         if(result.minus(null).isEmpty()) {
-            result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
+            result << getFirstPicaValue(currentRecord.children()[2].children()[0],'021A', 'a')
         }
 
         result = result.minus('@')
@@ -195,13 +218,14 @@ class DnbSruPicaConnector extends AbstractConnector {
         def resultName      = []
         def resultStatus    = []
 
-        currentRecord.recordData.record.datafield.findAll{it.'@tag' == '033A'}.each { df ->
-            def n = df.subfield.find{it.'@code' == 'n'}.text() // TODO or use p here ?
-            def h = df.subfield.find{it.'@code' == 'h'}.text()
+        def record = currentRecord.children()[2].children()[0]
+        getAllChildrenById(record.children(), '033A').each { df ->
+            def n = getFirstChildById(df.children(), "n") // TODO or use p here ?
+            def h = getFirstChildById(df.children(), "h")
 
-            resultName      << (n ? n : null)
-            resultStartDate << (h ? h : '')
-            resultEndDate   << (h ? h : '')
+            resultName      << (n ? n.text() : null)
+            resultStartDate << (h ? h.text() : '')
+            resultEndDate   << (h ? h.text() : '')
             resultStatus    << null
         }
         log.debug("getPicaValues(033An) = " + resultName)
@@ -228,20 +252,21 @@ class DnbSruPicaConnector extends AbstractConnector {
         def resultIdentifierType  = []
         def resultDate            = []
 
-        currentRecord.recordData.record.datafield.findAll{it.'@tag' == '039E'}.each { df ->
+        def record = currentRecord.children()[2].children()[0]
+        getAllChildrenById(record.children(), '039E').each { df ->
 
-            def b  = df.subfield.find{it.'@code' == 'b'}.text() // s=später, f=früher
-            def Y  = df.subfield.find{it.'@code' == 'Y'}.text() // default (Y/D)
-            def D  = df.subfield.find{it.'@code' == 'D'}.text() // falls in der ZDB ein übergeordneter Titel existiert (Y/D)
-            def H  = df.subfield.find{it.'@code' == 'H'}.text()
-            def C  = df.subfield.find{it.'@code' == 'C'}.text() // ID-Typ
-            def f0 = df.subfield.find{it.'@code' == '0'}.text()
+            def b = getFirstChildById(df.children(), "b") // s=später, f=früher
+            def Y = getFirstChildById(df.children(), "Y") // default (Y/D)
+            def D = getFirstChildById(df.children(), "D") // falls in der ZDB ein übergeordneter Titel existiert (Y/D)
+            def H = getFirstChildById(df.children(), "H")
+            def C = getFirstChildById(df.children(), "C") // ID-Typ
+            def f0 = getFirstChildById(df.children(), "0")
 
-            resultType            <<  (b ? b : null)
-            resultTitle           <<  (D ? D.minus('@') : (Y ? Y.minus('@') : null))
-            resultIdentifierType  <<  (C ? C : 'zdb') // default
-            resultIdentifierValue <<  (f0 ? f0 : null)
-            resultDate            <<  (H ? H : null)
+            resultType            <<  (b ? b.text() : null)
+            resultTitle           <<  (D ? D.text().minus('@') : (Y ? Y.text().minus('@') : null))
+            resultIdentifierType  <<  (C ? C.text() : 'zdb') // default
+            resultIdentifierValue <<  (f0 ? f0.text() : null)
+            resultDate            <<  (H ? H.text() : null)
         }
 
         // zdbdb
