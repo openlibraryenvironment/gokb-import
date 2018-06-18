@@ -78,33 +78,61 @@
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Plattform</span>
-									<g:select
-										name="pkgNominalPlatform"
-										class="js-example-basic-single"
-										from="${gokbService.getPlatformMap().keySet()}"
-										value="$params.pkgNominalPlatform"/>
+									<select name="pkgNominalPlatform" id="pkgNominalPlatform"></select>
 								</div>
 
 								<br />
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Provider</span>
-									<g:select
-											name="pkgNominalProvider"
-											class="js-example-basic-single"
-											from="${gokbService.getProviderMap().keySet()}"
-											value="$params.pkgNominalProvider"/>
+									<select name="pkgNominalProvider" id="pkgNominalProvider"></select>
 								</div>
 
-								<script>
-                                    $(document).ready(function() {
-                                        $('.js-example-basic-single').prepend('<option selected=""></option>').select2({
-                                            allowClear: true
-                                        });
-                                    });
-								</script>
-
 								<br />
+
+								<script>
+                                                                  $(document).ready(function() {
+                                                                    $('#pkgNominalPlatform').select2({
+                                                                      allowClear: true,
+                                                                      placeholder: 'Bitte Plattform wählen..',
+                                                                      debug: true,
+                                                                      ajax: {
+                                                                        url: '/ygor/enrichment/suggestPlatform',
+                                                                        data: function (params) {
+                                                                          var query = {
+                                                                            q: params.term
+                                                                          }
+                                                                          return query;
+                                                                        },
+                                                                        processResults: function (data) {
+                                                                          return {
+                                                                            results: data.items
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    });
+
+                                                                    $('#pkgNominalProvider').select2({
+                                                                      allowClear: true,
+                                                                      placeholder: 'Bitte Anbieter wählen..',
+                                                                      debug: true,
+                                                                      ajax: {
+                                                                        url: '/ygor/enrichment/suggestProvider',
+                                                                        data: function (params) {
+                                                                          var query = {
+                                                                            q: params.term
+                                                                          }
+                                                                          return query;
+                                                                        },
+                                                                        processResults: function (data) {
+                                                                          return {
+                                                                            results: data.items
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    });
+                                                                  });
+								</script>
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>

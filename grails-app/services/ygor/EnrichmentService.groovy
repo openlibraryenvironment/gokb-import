@@ -64,10 +64,9 @@ class EnrichmentService {
 
         setPlatformMap(pm, ph)
 
-        def providerMap = gokbService.getProviderMap()
-        def pkgNomProvider = providerMap.find{it.key == pm['pkgNominalProvider'][0]}
+        def pkgNomProvider = pm['pkgNominalProvider'][0]
         if(pkgNomProvider){
-            ph.v.nominalProvider.v = pkgNomProvider.value
+            ph.v.nominalProvider.v = pkgNomProvider
             ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
         }
 
@@ -75,23 +74,27 @@ class EnrichmentService {
     }
 
     private void setPlatformMap(Map pm, ph) {
-        def platformMap = gokbService.getPlatformMap()
-        def pkgNomPlatform = platformMap.find { it.key == pm['pkgNominalPlatform'][0] }
-        if (pkgNomPlatform) {
-            ph.v.nominalPlatform.org = pkgNomPlatform.key
-            int index = pkgNomPlatform.key.lastIndexOf(" - ")
-            if (index >= 0) {
-                def valuePart = pkgNomPlatform.key.substring(0, index)
-                def urlPart = pkgNomPlatform.key.substring(index + 3)
-                ph.v.nominalPlatform.name = valuePart
-                setUrlIfValid(urlPart, ph)
-            } else {
-                def value = pkgNomPlatform.key
-                ph.v.nominalPlatform.name = value
-                setUrlIfValid(value, ph)
-            }
-            ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
+      def platforms = gokbService.getPlatformMap(pm['pkgNominalPlatform'][0]).records
+      def pkgNomPlatform = null
+
+      platforms.each {
+        if (it.name == pm['pkgNominalPlatform'][0] && it.status == "Current") {
+          if(pkgNomPlatform) {
+            log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
+          }else{
+            pkgNomPlatform = it
+          }
         }
+      }
+
+      if (pkgNomPlatform) {
+        ph.v.nominalPlatform.org = pkgNomPlatform.name
+        setUrlIfValid(pkgNomPlatform.primaryUrl, ph)
+        ph.v.nominalPlatform.name = pkgNomPlatform.name
+        ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
+      }else{
+        log.error("package platform not set!")
+      }
     }
 
     private void setUrlIfValid(value, ph) {
