@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.41</dt><br />
+
+					<dd>- Hole ZDB-Daten von services.dnb.de</dd>
+
 					<br /><dt>0.40</dt><br />
 
 					<dd>- Hole Plattform und Provider aus Elasticsearch Index</dd>
