@@ -2,14 +2,14 @@
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
 
-// grails.config.locations = [ "classpath:${appName}-config.properties",
-//                             "classpath:${appName}-config.groovy",
-//                             "file:${userHome}/.grails/${appName}-config.properties",
-//                             "file:${userHome}/.grails/${appName}-config.groovy"]
+grails.config.locations = [ "classpath:${appName}-config.properties",
+                            "classpath:${appName}-config.groovy",
+                            "file:${userHome}/.grails/${appName}-config.properties",
+                            "file:${userHome}/.grails/${appName}-config.groovy"]
 
-// if (System.properties["${appName}.config.location"]) {
-//    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
-// }
+if (System.properties["${appName}.config.location"]) {
+   grails.config.locations << "file:" + System.properties["${appName}.config.location"]
+}
 
 // http://localhost:8080/
 grails.app.context = "/ygor"
@@ -159,6 +159,21 @@ log4j.main = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+
+    environments {
+      development {
+        debug 'ygor.GokbService',
+              'ygor.EnrichmentService',
+              'grails.app.controllers',
+              'grails.app.service',
+              'grails.app.services',
+              'grails.app.domain',
+              'grails.app.domains',
+              'ygor.export.DataMapper',
+              'ygor.export.JsonTransformer',
+              'ygor.connectors.ZdbdbSruPicaConnector'
+      }
+    }
 }
 
 

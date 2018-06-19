@@ -11,35 +11,33 @@ class GokbService {
     
     def grailsApplication
     
-    Map getPlatformMap() {
+    Map getPlatformMap(def qterm = null) {
         
         log.info("getting platform map from gokb ..")
         
-        def map = [:]
+        def result = [:]
         
         try {
-            Driver pgDriver = new org.postgresql.Driver()
-            
-            Properties prop = new Properties()
-            prop.put("user",     grailsApplication.config.gokbDB.user)
-            prop.put("password", grailsApplication.config.gokbDB.pwd)
-            
-            Connection con = pgDriver.connect(grailsApplication.config.gokbDB.dbUri, prop)
-            
-            ResultSet resultSet = con.createStatement().executeQuery(
-                //"select kbc.kbc_name, pf.plat_primary_url from platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id order by kbc_name"
-                "select kbc.kbc_name, pf.plat_primary_url from ((platform pf inner join kbcomponent kbc on pf.kbc_id = kbc.kbc_id) inner join refdata_value rdv on kbc.kbc_status_rv_fk = rdv.rdv_id) where rdv.rdv_value = 'Current' order by kbc_name"
-                )
+            String esQuery = qterm ? URLEncoder.encode(qterm) : ""
 
-            def json = geElasticsearchFindings(grailsApplication.config.gokbApi.user, grailsApplication.config.gokbApi.pwd,
-                                               null, "Org", null, 10000) // 10000 is maximum value allowed by now
+            def json = geElasticsearchSuggests(esQuery, "Platform", null) // 10000 is maximum value allowed by now
 
-            def records = []
+            result.records = []
+            result.map = [:]
+
             if (json?.info?.records) {
-                records.addAll(json.info.records)
+
+                json.info.records.each { r ->
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), status: r.status, oid: r.id, name: r.name])
+                  result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
+                }
             }
             if (json?.warning?.records) {
-                records.addAll(json.warning.records)
+
+                json.warning.records.each { r ->
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), status: r.status, oid: r.id, name: r.name])
+                  result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
+                }
             }
 
             // TODO:
@@ -48,42 +46,42 @@ class GokbService {
             // - remove resultSet and associated query
             // - "copy" changes to provider query
 
-            while(resultSet.next()) {
-                if (resultSet.getString('kbc_name')) {
-                    if (resultSet.getString('plat_primary_url')) {
-                        map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
-                                resultSet.getString('plat_primary_url'))
-                    }
-                    else {
-                        map.put(resultSet.getString('kbc_name'), null)
-                    }
-                }
-            }
+//             while(resultSet.next()) {
+//                 if (resultSet.getString('kbc_name')) {
+//                     if (resultSet.getString('plat_primary_url')) {
+//                         map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
+//                                 resultSet.getString('plat_primary_url'))
+//                     }
+//                     else {
+//                         map.put(resultSet.getString('kbc_name'), null)
+//                     }
+//                 }
+//             }
         } catch (Exception e) {
             log.error(e.getMessage())
         }
         
-        if(map.size() == 0)
-            map = getPackageHeaderNominalPlatformPreset()
-        map
+        if(result.map?.size() == 0)
+            result.map = getPackageHeaderNominalPlatformPreset()
+        result
     }
 
 
-    Map geElasticsearchSuggests(final String user, final String pwd, final String type, final String role) {
-        String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), null, type, role, null)
-        queryElasticsearch(url, user, pwd)
+    Map geElasticsearchSuggests(final String query, final String type, final String role) {
+        String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), query, type, role, null)
+        queryElasticsearch(url)
     }
 
-    Map geElasticsearchFindings(final String user, final String pwd, final String query, final String type,
+    Map geElasticsearchFindings(final String query, final String type,
                                 final String role, final Integer max) {
         String url = buildUri(grailsApplication.config.gokbApi.xrFindUriStub.toString(), query, type, role, max)
-        queryElasticsearch(url, user, pwd)
+        queryElasticsearch(url)
     }
 
-    Map queryElasticsearch(String url, String user, String pwd){
+    Map queryElasticsearch(String url){
         log.info("querying: " + url)
         def http = new HTTPBuilder(url)
-        http.auth.basic user, pwd
+//         http.auth.basic user, pwd
         http.request(Method.GET) { req ->
             headers.'User-Agent' = 'ygor'
             response.success = { resp, html ->
@@ -122,38 +120,42 @@ class GokbService {
     }
 
 
-    Map getProviderMap() {
+    Map getProviderMap(def qterm = null) {
 
         log.info("getting provider map from gokb ..")
 
-        def map = [:]
+        def result = [:]
 
         try {
-            Driver pgDriver = new org.postgresql.Driver()
+            String esQuery = qterm ? URLEncoder.encode(qterm) : ""
+            def json = geElasticsearchSuggests(esQuery, "Org", null) // 10000 is maximum value allowed by now
 
-            Properties prop = new Properties()
-            prop.put("user",     grailsApplication.config.gokbDB.user)
-            prop.put("password", grailsApplication.config.gokbDB.pwd)
+            result.records = []
+            result.map = [:]
 
-            Connection con = pgDriver.connect(grailsApplication.config.gokbDB.dbUri, prop)
+            if (json?.info?.records) {
 
-            ResultSet resultSet = con.createStatement().executeQuery(
-                    //"select kbc.kbc_name from kbcomponent where kbc_id in (select org_roles_id from refdata_value rdv inner join org_refdata_value ordv on rdv.rdv_id = ordv.refdata_value_id where rdv.rdv_value = 'Content Provider')"
-                    "select kbc.kbc_name, kbc.kbc_name from kbcomponent kbc join refdata_value rv on kbc.kbc_status_rv_fk = rv.rdv_id where rv.rdv_value = 'Current' and kbc.kbc_id in (select org_roles_id from refdata_value rdv inner join org_refdata_value ordv on rdv.rdv_id = ordv.refdata_value_id where rdv.rdv_value in ('Content Provider','Publisher'))"
-            )
+                json.info.records.each { r ->
+                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
+                  result.map.put(r.name, r.name)
+                }
+            }
+            if (json?.warning?.records) {
 
-            while(resultSet.next()) {
-                map.put(resultSet.getString('kbc_name'), resultSet.getString('kbc_name'))
+                json.warning.records.each { r ->
+                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
+                  result.map.put(r.name, r.name)
+                }
             }
 
         } catch (Exception e) {
             log.error(e.getMessage())
         }
 
-        map
+        result
     }
 
-    // --- fallback / GOKb(phaeton.hbz-nrw.de) 2017.01.20 ---
+    // --- fallback
     
     Map getPackageHeaderNominalPlatformPreset() {
 

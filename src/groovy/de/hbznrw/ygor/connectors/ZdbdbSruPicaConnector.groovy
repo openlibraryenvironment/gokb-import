@@ -12,15 +12,15 @@ import de.hbznrw.ygor.interfaces.*
 @Log4j
 class ZdbdbSruPicaConnector extends AbstractConnector {
 	
-    static final QUERY_PICA_ISS = "query=pica.iss%3D"
+    static final QUERY_PICA_ISS = "query=dnb.iss%3D"
     static final QUERY_PICA_ZDB = "query=pica.yyy%3D"
     
-	private String requestUrl       = "http://sru.gbv.de/zdbdb?version=1.2&operation=searchRetrieve&maximumRecords=10"
+	private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
 	private String queryIdentifier
-    private String queryOnlyJournals = "%20and%20pica.mat=O*"
+    private String queryOnlyJournals = "%20and%20dnb.mat=serials"
     private String queryOrder       = "sortKeys=year,,1"
-    
-    private String formatIdentifier = 'picaxml'
+
+    private String formatIdentifier = 'PicaPlus-xml'
     private GPathResult response
     
     private picaRecords   = []
@@ -56,7 +56,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             }
             
         } catch(Exception e) {
-            log.equals(e)
+            log.error(e)
         }
 
         if (picaRecords.size() == 0) {
@@ -175,16 +175,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
         }
 
-        def noAt = []
-        result.each { r ->
-          def correctedField = null
-          if (r) {
-            correctedField = r.minus('@')
-          }
-          noAt << correctedField
-        }
-        result = noAt
-
+        result = result.minus('@')
         log.debug("Got title ${result}")
 
         getEnvelopeWithMessage(result.minus(null).unique())
@@ -255,6 +246,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
         
         result << getEnvelopeWithComplexMessage([
             'type':            resultType,
+            'title':           resultTitle.minus('@'),
             'name':            resultTitle,
             'identifierType':  resultIdentifierType,
             'identifierValue': resultIdentifierValue,

@@ -1,4 +1,5 @@
 package ygor
+import grails.converters.JSON
 
 class EnrichmentController {
 
@@ -256,5 +257,25 @@ class EnrichmentController {
         flash.error   = null
         
         redirect(action:'process')
+    }
+
+    // get Platform suggestions for typeahead
+    def suggestPlatform = {
+      log.debug("Getting platform suggestions..")
+      def result = [:]
+      def platforms = gokbService.getPlatformMap(params.q)
+      result.items = platforms.records
+
+      render result as JSON
+    }
+
+    // get Org suggestions for typeahead
+    def suggestProvider = {
+      log.debug("Getting provider suggestions..")
+      def result = [:]
+      def providers = gokbService.getProviderMap(params.q)
+      result.items = providers.records
+
+      render result as JSON
     }
 }

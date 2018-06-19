@@ -13,10 +13,7 @@ import de.hbznrw.ygor.interfaces.*
 @Log4j
 class GbvSruPicaConnector extends AbstractConnector {
 	
-    static final QUERY_PICA_ISS = "query=pica.iss%3D"
-    static final QUERY_PICA_ZDB = "query=pica.zdb%3D"
-    
-	private String requestUrl       = "http://sru.gbv.de/gvk?version=1.2&operation=searchRetrieve&maximumRecords=10"
+    private String requestUrl       = "http://sru.gbv.de/gvk?version=1.2&operation=searchRetrieve&maximumRecords=10"
 	private String queryIdentifier
     private String queryOnlyJournals = "%20and%20(pica.mak=Obvz%20or%20pica.mak=Obv)"
     private String queryOrder       = "sortKeys=year,,1"
@@ -57,7 +54,7 @@ class GbvSruPicaConnector extends AbstractConnector {
             }
             
         } catch(Exception e) {
-            log.equals(e)
+            log.error(e)
         }
         // TODO fix return value
     }
@@ -170,16 +167,7 @@ class GbvSruPicaConnector extends AbstractConnector {
             result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
         }
 
-        def noAt = []
-        result.each { r ->
-          def correctedField = null
-          if (r) {
-            correctedField = r.minus('@')
-          }
-          noAt << correctedField
-        }
-        result = noAt
-
+        result.minus('@')
         getEnvelopeWithMessage(result.minus(null).unique())
     }
     

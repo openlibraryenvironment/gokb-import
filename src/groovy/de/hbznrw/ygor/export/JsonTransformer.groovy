@@ -365,16 +365,21 @@ class JsonTransformer {
         json.titles.each{ title ->
             def publisher_history = []
             title.publisher_history.each{ ph ->
-                
+
                 // only valid entries
                 // TODO remove if struct validator is implemented
                 // workaround
                 if(useValidator && ph.m != Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID.toString()){
                     ph.any { attr ->
-                        if(["startDate", "endDate"].contains(attr.key.toString()) && attr.value.toString() != ""){
+//                         if(["startDate", "endDate"].contains(attr.key.toString()) && attr.value.toString() != ""){
+//                             publisher_history << ph
+//                             return true
+//                         }
+
+                        if(attr.key.toString() == "name" && attr.value.toString() != "") {
                             publisher_history << ph
                             return true
-                        } 
+                        }
                     }
                     title.publisher_history = publisher_history
                 }

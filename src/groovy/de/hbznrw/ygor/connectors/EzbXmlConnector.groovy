@@ -46,7 +46,7 @@ class EzbXmlConnector extends AbstractConnector {
 			response = new XmlSlurper().parseText(text)
 			
 		} catch(Exception e) {
-            log.equals(e)
+            log.error(e)
 		}
         // TODO fix return value
 	}
