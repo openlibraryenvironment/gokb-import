@@ -175,7 +175,17 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
             result << getFirstPicaValue(currentRecord.recordData.record,'021A', 'a')
         }
 
-        result = result.minus('@')
+        def noAt = []
+
+        result.each { r ->
+          def correctedField = null
+          if (r) {
+            correctedField = r.minus('@')
+          }
+          noAt << correctedField
+        }
+
+        result = noAt
         log.debug("Got title ${result}")
 
         getEnvelopeWithMessage(result.minus(null).unique())
@@ -246,8 +256,7 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
         
         result << getEnvelopeWithComplexMessage([
             'type':            resultType,
-            'title':           resultTitle.minus('@'),
-            'name':            resultTitle,
+            'name':            resultTitle.minus('@'),
             'identifierType':  resultIdentifierType,
             'identifierValue': resultIdentifierValue,
             'date':            resultDate

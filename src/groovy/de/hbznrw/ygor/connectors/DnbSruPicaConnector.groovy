@@ -18,7 +18,7 @@ class DnbSruPicaConnector extends AbstractConnector {
 
     private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
     private String queryIdentifier
-    private String queryOnlyJournals = "%20and%20dnb.mat=serials"
+    private String queryOnlyJournals = "%20and%20dnb.mat=online"
 
     private String formatIdentifier = 'PicaPlus-xml'
     private GPathResult response
@@ -205,7 +205,17 @@ class DnbSruPicaConnector extends AbstractConnector {
             result << getFirstPicaValue(currentRecord.children()[2].children()[0],'021A', 'a')
         }
 
-        result = result.minus('@')
+        def noAt = []
+
+        result.each { r ->
+          def correctedField = null
+          if (r) {
+            correctedField = r.minus('@')
+          }
+          noAt << correctedField
+        }
+
+        result = noAt
         log.debug("Got title ${result}")
 
         getEnvelopeWithMessage(result.minus(null).unique())
@@ -278,8 +288,7 @@ class DnbSruPicaConnector extends AbstractConnector {
 
         result << getEnvelopeWithComplexMessage([
                 'type':            resultType,
-                'title':           resultTitle.minus('@'),
-                'name':            resultTitle,
+                'name':            resultTitle.minus('@'),
                 'identifierType':  resultIdentifierType,
                 'identifierValue': resultIdentifierValue,
                 'date':            resultDate
