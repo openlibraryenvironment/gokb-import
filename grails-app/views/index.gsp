@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.42</dt><br />
+
+					<dd>- Korrektur: Verarbeitung von Coverage num_-Feldern</dd>
+
 					<br /><dt>0.41</dt><br />
 
 					<dd>- Hole ZDB-Daten von services.dnb.de</dd>
