@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.43</dt><br />
+
+					<dd>- Korrektur: Entferne "@" aus Titelfeldern bei allen verwendeten Konnektoren</dd>
+
 					<br /><dt>0.42</dt><br />
 
 					<dd>- Korrektur: Verarbeitung von Coverage num_-Feldern</dd>
