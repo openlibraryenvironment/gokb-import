@@ -238,7 +238,7 @@ class JsonTransformer {
                             else if(['startVolume', 'endVolume'].contains(attr.key)){
                                 // use validator
                                 if(useValidator){
-                                    if(attr.value.m != Status.VALIDATOR_NUMBER_IS_VALID.toString())
+                                    if(attr.value.m != Status.VALIDATOR_STRING_IS_VALID.toString())
                                         value = ""
                                 }
                             }
