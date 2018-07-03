@@ -51,12 +51,12 @@ class KbartConnector extends AbstractConnector {
     // ConnectorInterface
     
     @Override
-    String getAPIQuery(String identifier) {
+    String getAPIQuery(String identifier, String queryIdentifier) {
         return requestUrl
     }
     
 	@Override
-	def poll(String identifier) {
+	def poll(String identifier, String queryIdentifier) {
 		
         log.info("polling(): " + identifier)
         

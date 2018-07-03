@@ -28,26 +28,14 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 		this.master    = master
 		this.options   = options
 		this.processor = master.processor
-
-		if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ZDB_ID){
-			this.connector  = new DnbSruPicaConnector(this, DnbSruPicaConnector.QUERY_PICA_ZDB)
-			this.stashIndex = KbartConnector.KBART_HEADER_ZDB_ID
-		}
-		else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER){
-			this.connector  = new DnbSruPicaConnector(this, DnbSruPicaConnector.QUERY_PICA_ISS)
-			this.stashIndex = KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER
-		}
-		else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_PRINT_IDENTIFIER){
-			this.connector  = new DnbSruPicaConnector(this, DnbSruPicaConnector.QUERY_PICA_ISS)
-			this.stashIndex = KbartConnector.KBART_HEADER_PRINT_IDENTIFIER
-		}
+		this.connector  = new DnbSruPicaConnector(this)
 	}
 
 	@Override
 	void go() throws Exception {
 		log.info("Input:  " + options.get('inputFile'))
 
-		master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>')
+		master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>', null)
 
 		processor.setBridge(this)
 		processor.processFile(options)
@@ -73,7 +61,7 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 			}
 
 			increaseProgress()
-			def pollStatus = connector.poll(key)
+			def pollStatus = connector.poll(key, stash.getKeyType(uid))
 
 			// fallback for empty api response
 			if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {

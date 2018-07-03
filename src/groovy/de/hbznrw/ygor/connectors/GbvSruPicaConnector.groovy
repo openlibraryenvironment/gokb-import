@@ -32,14 +32,14 @@ class GbvSruPicaConnector extends AbstractConnector {
     // ConnectorInterface
     
     @Override
-    String getAPIQuery(String identifier) {
+    String getAPIQuery(String identifier, String queryIdentifier) {
         return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals + "&" + queryOrder
     }
 
     @Override
-    def poll(String identifier) {
+    def poll(String identifier, String queryIdentifier) {
         try {
-            String q = getAPIQuery(identifier)
+            String q = getAPIQuery(identifier, queryIdentifier)
             
             log.info("polling(): " + q)
             String text = new URL(q).getText()

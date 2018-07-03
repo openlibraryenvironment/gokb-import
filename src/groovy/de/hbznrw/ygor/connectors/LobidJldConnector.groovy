@@ -28,15 +28,15 @@ class LobidJldConnector extends AbstractConnector {
     // ConnectorInterface
 	
     @Override
-    String getAPIQuery(String issn) {
+    String getAPIQuery(String issn, String queryIdentifier) {
         return requestUrl + queryIdentifier + issn
     }
     
 	@Override
-	def poll(String issn) {
+	def poll(String issn, String queryIdentifier) {
 		
 		try {
-            String q = getAPIQuery(issn)
+            String q = getAPIQuery(issn, queryIdentifier)
             
             log.info("polling(): " + q)
 			String text = new URL(q).getText(requestProperties: [Accept: requestHeader])

@@ -17,28 +17,26 @@ class EzbXmlConnector extends AbstractConnector {
     static final QUERY_XML_ZDB = "jq_type1=ZD&jq_term1="
     
 	private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
-	private String queryIdentifier
     
     private String formatIdentifier = 'xmloutput=1&xmlv=3'
     private GPathResult response
-	
-	EzbXmlConnector(BridgeInterface bridge, String queryIdentifier) {
+
+
+	EzbXmlConnector(BridgeInterface bridge) {
 		super(bridge)
-        this.queryIdentifier = queryIdentifier
 	}
 	
-    // ConnectorInterface
-    
+
     @Override
-    String getAPIQuery(String identifier) {
+    String getAPIQuery(String identifier, String queryIdentifier) {
         return requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + identifier
     }
     
 	@Override
-	def poll(String identifier) {
+	def poll(String identifier, String queryIdentifier) {
 		
 		try {
-            String q = getAPIQuery(identifier)
+            String q = getAPIQuery(identifier, queryIdentifier)
             
             log.info("polling(): " + q)
 			String text = new URL(q).getText()

@@ -17,7 +17,6 @@ class DnbSruPicaConnector extends AbstractConnector {
     static final QUERY_PICA_ZDB = "query=pica.yyy%3D"
 
     private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
-    private String queryIdentifier
     private String queryOnlyJournals = "%20and%20dnb.mat=online"
 
     private String formatIdentifier = 'PicaPlus-xml'
@@ -26,22 +25,20 @@ class DnbSruPicaConnector extends AbstractConnector {
     private picaRecords   = []
     private currentRecord = null
 
-    DnbSruPicaConnector(BridgeInterface bridge, String queryIdentifier) {
+    DnbSruPicaConnector(BridgeInterface bridge) {
         super(bridge)
-        this.queryIdentifier = queryIdentifier
     }
 
-    // ConnectorInterface
 
     @Override
-    String getAPIQuery(String identifier) {
+    String getAPIQuery(String identifier, String queryIdentifier) {
         return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals
     }
 
     @Override
-    def poll(String identifier) {
+    def poll(String identifier, String queryIdentifier) {
         try {
-            String q = getAPIQuery(identifier)
+            String q = getAPIQuery(identifier, queryIdentifier)
 
             log.info("polling(): " + q)
             String text = new URL(q).getText()

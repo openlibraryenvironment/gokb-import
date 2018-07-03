@@ -30,11 +30,11 @@ abstract class AbstractConnector implements ConnectorInterface {
 		this.bridge = bridge
 	}
 	
-    String getAPIQuery(String identifier) {
-        log.info(" -- getAPIQuery(String identifier) not implemented --")
+    String getAPIQuery(String identifier, String queryIdentifier) {
+        log.info(" -- getAPIQuery(String identifier, String queryIdentifier) not implemented --")
     }
-    def poll(String identifier) {
-        log.info(" -- poll(String identifier) not implemented --")
+    def poll(String identifier, String queryIdentifier) {
+        log.info(" -- poll(String identifier, String queryIdentifier) not implemented --")
     }
     
     Envelope query(Query query) {

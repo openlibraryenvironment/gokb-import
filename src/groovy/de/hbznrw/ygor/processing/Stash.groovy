@@ -11,6 +11,7 @@ class Stash {
     static final IGNORED_KBART_ENTRIES = 'ignoredKbartEntries'
 
     HashMap values
+    HashMap typePerKey = [:]
 
     Stash(){  
         values = [:]
@@ -28,16 +29,18 @@ class Stash {
     }
     
     def put(Object key, Object value){
-        values[key] << value
+        if (value?.size() > 0) {
+            values[key] << value
+        }
     }
     
     def get(String key){
         values[key]
     }
 
-    def getKeyByValue(String key, String value){
+    def getKeyByValue(String type, String value){
         def result = []
-        def map = values[key]
+        def map = values[type]
 
         map?.keySet().each { k ->
             if (map.get(k) == value) {
@@ -45,9 +48,17 @@ class Stash {
             }
         }
         if (result.size() > 1) {
-            println "WARNING: getKeyByValue(" + key + ", " + value + ") ->> multiple matches"
+            println "WARNING: getKeyByValue(" + type + ", " + value + ") ->> multiple matches"
         }
 
         result.size() == 1 ? result.get(0) : null
+    }
+
+    def putKeyType(String key, String type){
+        typePerKey.put(key, type)
+    }
+
+    def getKeyType(String key){
+        typePerKey.get(key)
     }
 }
