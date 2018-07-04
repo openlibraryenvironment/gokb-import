@@ -13,8 +13,7 @@ import groovy.util.slurpersupport.Node
 @Log4j
 class DnbSruPicaConnector extends AbstractConnector {
 
-    static final QUERY_PICA_ISS = "query=dnb.iss%3D"
-    static final QUERY_PICA_ZDB = "query=pica.yyy%3D"
+    static Map queryIDs = [:]
 
     private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
     private String queryOnlyJournals = "%20and%20dnb.mat=online"
@@ -27,6 +26,9 @@ class DnbSruPicaConnector extends AbstractConnector {
 
     DnbSruPicaConnector(BridgeInterface bridge) {
         super(bridge)
+        queryIDs.put(KbartConnector.KBART_HEADER_ZDB_ID, "query=pica.yyy%3D")
+        queryIDs.put(KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER, "query=dnb.iss%3D")
+        queryIDs.put(KbartConnector.KBART_HEADER_PRINT_IDENTIFIER, "query=dnb.iss%3D")
     }
 
 
@@ -38,7 +40,7 @@ class DnbSruPicaConnector extends AbstractConnector {
     @Override
     def poll(String identifier, String queryIdentifier) {
         try {
-            String q = getAPIQuery(identifier, queryIdentifier)
+            String q = getAPIQuery(identifier, queryIDs.get(queryIdentifier))
 
             log.info("polling(): " + q)
             String text = new URL(q).getText()

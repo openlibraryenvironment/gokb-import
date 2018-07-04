@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.bridges
 
 import de.hbznrw.ygor.export.DataMapper
+import de.hbznrw.ygor.processing.MultipleProcessingThread
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.*
@@ -53,24 +54,26 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 		def stash = processor.getStash()
 		log.info("stash: " + stash)
 
-		stash.get(stashIndex).each{ uid, key ->
+		MultipleProcessingThread.KEY_ORDER.each { keyType ->
+			stash.get(keyType).each { uid, key ->
 
-			if(!master.isRunning) {
-				log.info('Aborted by user action.')
-				return
-			}
+				if (!master.isRunning) {
+					log.info('Aborted by user action.')
+					return
+				}
 
-			increaseProgress()
-			def pollStatus = connector.poll(key, stash.getKeyType(uid))
+				increaseProgress()
+				def pollStatus = connector.poll(key, stash.getKeyType(uid))
 
-			// fallback for empty api response
-			if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {
-				log.info("AbstractEnvelope.STATUS_NO_RESPONSE @ " + key)
-				processor.processEntry(master.enrichment.dataContainer, uid, key, null)
-			}
+				// fallback for empty api response
+				if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {
+					log.info("AbstractEnvelope.STATUS_NO_RESPONSE @ " + key)
+					processor.processEntry(master.enrichment.dataContainer, uid, key, null)
+				}
 
-			connector.getPicaRecords().eachWithIndex { pr, i ->
-				processor.processEntry(master.enrichment.dataContainer, uid, key, pr)
+				connector.getPicaRecords().eachWithIndex { pr, i ->
+					processor.processEntry(master.enrichment.dataContainer, uid, key, pr)
+				}
 			}
 		}
 	}

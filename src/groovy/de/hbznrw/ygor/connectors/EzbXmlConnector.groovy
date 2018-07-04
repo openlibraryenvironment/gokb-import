@@ -12,11 +12,10 @@ import de.hbznrw.ygor.interfaces.*
  */
 @Log4j
 class EzbXmlConnector extends AbstractConnector {
-	
-    static final QUERY_XML_IS  = "jq_type1=IS&jq_term1="
-    static final QUERY_XML_ZDB = "jq_type1=ZD&jq_term1="
-    
-	private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
+
+    static Map queryIDs = [:]
+
+    private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
     
     private String formatIdentifier = 'xmloutput=1&xmlv=3'
     private GPathResult response
@@ -24,6 +23,9 @@ class EzbXmlConnector extends AbstractConnector {
 
 	EzbXmlConnector(BridgeInterface bridge) {
 		super(bridge)
+        queryIDs.put(KbartConnector.KBART_HEADER_ZDB_ID, "jq_type1=ZD&jq_term1=")
+        queryIDs.put(KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER, "jq_type1=IS&jq_term1=")
+        queryIDs.put(KbartConnector.KBART_HEADER_PRINT_IDENTIFIER, "jq_type1=IS&jq_term1=")
 	}
 	
 
@@ -36,7 +38,7 @@ class EzbXmlConnector extends AbstractConnector {
 	def poll(String identifier, String queryIdentifier) {
 		
 		try {
-            String q = getAPIQuery(identifier, queryIdentifier)
+            String q = getAPIQuery(identifier, queryIDs.get(queryIdentifier))
             
             log.info("polling(): " + q)
 			String text = new URL(q).getText()
