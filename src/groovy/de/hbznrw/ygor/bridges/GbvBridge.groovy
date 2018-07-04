@@ -8,6 +8,7 @@ import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.export.structure.TitleStruct
 
 @Log4j
+@Deprecated // replaced by ZdbBridge
 class GbvBridge extends AbstractBridge implements BridgeInterface {
 
     static final IDENTIFIER = 'gbv'
