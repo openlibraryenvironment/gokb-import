@@ -34,13 +34,13 @@ class DnbSruPicaConnector extends AbstractConnector {
 
     @Override
     String getAPIQuery(String identifier, String queryIdentifier) {
-        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIDs.get(queryIdentifier) + identifier + queryOnlyJournals
     }
 
     @Override
     def poll(String identifier, String queryIdentifier) {
         try {
-            String q = getAPIQuery(identifier, queryIDs.get(queryIdentifier))
+            String q = getAPIQuery(identifier, queryIdentifier)
 
             log.info("polling(): " + q)
             String text = new URL(q).getText()

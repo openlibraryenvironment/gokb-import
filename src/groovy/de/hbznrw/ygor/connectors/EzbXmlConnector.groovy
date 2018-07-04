@@ -31,14 +31,14 @@ class EzbXmlConnector extends AbstractConnector {
 
     @Override
     String getAPIQuery(String identifier, String queryIdentifier) {
-        return requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + identifier
+        return requestUrl + "&" + formatIdentifier + "&" + queryIDs.get(queryIdentifier) + identifier
     }
     
 	@Override
 	def poll(String identifier, String queryIdentifier) {
 		
 		try {
-            String q = getAPIQuery(identifier, queryIDs.get(queryIdentifier))
+            String q = getAPIQuery(identifier, queryIdentifier)
             
             log.info("polling(): " + q)
 			String text = new URL(q).getText()
