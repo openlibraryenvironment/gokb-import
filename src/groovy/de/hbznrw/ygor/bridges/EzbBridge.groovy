@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.bridges
 
+import de.hbznrw.ygor.processing.MultipleProcessingThread
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.Query
@@ -42,18 +43,20 @@ class EzbBridge extends AbstractBridge implements BridgeInterface {
         log.info("processStash()")
         
         def stash = processor.getStash()
-        
-        stash.get(this.stashIndex).each{ uid, key ->
-            
-            if(!master.isRunning) {
-                log.info('Aborted by user action.')
-                return
+
+        MultipleProcessingThread.KEY_ORDER.each { keyType ->
+            stash.get(keyType).each { uid, key ->
+
+                if (!master.isRunning) {
+                    log.info('Aborted by user action.')
+                    return
+                }
+
+                increaseProgress()
+                connector.poll(key, stash.getKeyType(uid))
+
+                processor.processEntry(master.enrichment.dataContainer, uid, key)
             }
-            
-            increaseProgress()
-            connector.poll(key, stash.getKeyType(uid))
-            
-            processor.processEntry(master.enrichment.dataContainer, uid, key)
         }
     }
 }
