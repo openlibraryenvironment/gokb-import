@@ -26,7 +26,7 @@ class DnbSruPicaConnector extends AbstractConnector {
 
     DnbSruPicaConnector(BridgeInterface bridge) {
         super(bridge)
-        queryIDs.put(KbartConnector.KBART_HEADER_ZDB_ID, "query=pica.yyy%3D")
+        queryIDs.put(KbartConnector.KBART_HEADER_ZDB_ID, "query=dnb.zdbid%3D")
         queryIDs.put(KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER, "query=dnb.iss%3D")
         queryIDs.put(KbartConnector.KBART_HEADER_PRINT_IDENTIFIER, "query=dnb.iss%3D")
     }
