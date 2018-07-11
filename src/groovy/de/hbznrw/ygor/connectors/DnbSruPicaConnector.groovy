@@ -16,7 +16,7 @@ class DnbSruPicaConnector extends AbstractConnector {
     static Map queryIDs = [:]
 
     private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
-    private String queryOnlyJournals = "%20and%20dnb.mat=online"
+    private String queryOnlyJournals = "%20and%20dnb.frm=O"
 
     private String formatIdentifier = 'PicaPlus-xml'
     private GPathResult response
