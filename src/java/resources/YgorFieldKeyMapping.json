@@ -1,0 +1,218 @@
+[
+  {
+    "ygor" : "accessEndDate",
+    "kbart" : "access_end_date",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "accessStartDate",
+    "kbart" : "access_start_date",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "accessType",
+    "kbart" : "access_type",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "coverageDepth",
+    "kbart" : "coverage_depth",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "dateFirstIssueOnline",
+    "kbart" : "date_first_issue_online",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "dateLastIssueOnline",
+    "kbart" : "date_last_issue_online",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "dateMonographPublishedOnline",
+    "kbart" : "date_monograph_published_online",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "dateMonographPublishedPrint",
+    "kbart" : "date_monograph_published_print",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "embargoInfo",
+    "kbart" : "embargo_info",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "firstAuthor",
+    "kbart" : "first_author",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "firstEditor",
+    "kbart" : "first_editor",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "listpriceEur",
+    "kbart" : "listprice_eur",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "listpriceGbp",
+    "kbart" : "listprice_gbp",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "listpriceUsd",
+    "kbart" : "listprice_usd",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "monographEdition",
+    "kbart" : "monograph_edition",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "monographVolume",
+    "kbart" : "monograph_volume",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "notes",
+    "kbart" : "notes",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "numFirstIssueOnline",
+    "kbart" : "num_first_issue_online",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "numFirstVolOnline",
+    "kbart" : "num_first_vol_online",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "numLastIssueOnline",
+    "kbart" : "num_last_issue_online",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "numLastVolOnline",
+    "kbart" : "num_last_vol_online",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "oaApcEur",
+    "kbart" : "oa_apc_eur",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "oaApcGbp",
+    "kbart" : "oa_apc_gbp",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "oaApcUsd",
+    "kbart" : "oa_apc_usd",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "oaGold",
+    "kbart" : "oa_gold",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "oaHybrid",
+    "kbart" : "oa_hybrid",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "onlineIdentifier",
+    "kbart" : "online_identifier",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "parentPublicationTitleId",
+    "kbart" : "parent_publication_title_id",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "precedingPublicationTitleId",
+    "kbart" : "preceding_publication_title_id",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "printIdentifier",
+    "kbart" : "print_identifier",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "publicationTitle",
+    "kbart" : "publication_title",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "publicationType",
+    "kbart" : "publication_type",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "publisherName",
+    "kbart" : "publisher_name",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "titleId",
+    "kbart" : "title_id",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "titleUrl",
+    "kbart" : "title_url",
+    "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "zdbId",
+    "kbart" : "zdb_id",
+    "zdb" : "",
+    "ezb" : ""
+  }
+]
