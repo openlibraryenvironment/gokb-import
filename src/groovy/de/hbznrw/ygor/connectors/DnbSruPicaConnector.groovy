@@ -14,7 +14,7 @@ import groovy.util.slurpersupport.Node
 class DnbSruPicaConnector extends AbstractConnector {
 
     static final QUERY_PICA_ISS = "query=dnb.iss%3D"
-    static final QUERY_PICA_ZDB = "query=pica.yyy%3D"
+    static final QUERY_PICA_ZDB = "query=dnb.zdbid%3D"
 
     private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
     private String queryIdentifier
