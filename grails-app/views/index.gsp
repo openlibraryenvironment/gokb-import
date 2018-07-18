@@ -25,6 +25,18 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.44</dt><br />
+
+					<dd>- Ersetze Setzen eines exklusiven primären Identifiers durch fixe Priorisierung: 1. ZDB-ID, 2. eISSN, 3. pISSN</dd>
+
+					<br /><dt>0.43</dt><br />
+
+					<dd>- Korrektur: Entferne "@" aus Titelfeldern bei allen verwendeten Konnektoren</dd>
+
+					<br /><dt>0.42</dt><br />
+
+					<dd>- Korrektur: Verarbeitung von Coverage num_-Feldern</dd>
+
 					<br /><dt>0.41</dt><br />
 
 					<dd>- Hole ZDB-Daten von services.dnb.de</dd>

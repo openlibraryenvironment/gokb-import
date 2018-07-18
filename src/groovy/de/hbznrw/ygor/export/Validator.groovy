@@ -3,6 +3,7 @@ package de.hbznrw.ygor.export
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
+import org.apache.commons.lang.StringUtils
 
 import java.sql.Timestamp
 
@@ -23,7 +24,9 @@ class Validator {
             return Status.VALIDATOR_STRING_IS_MISSING
         }
         else if(str.length() < 2){
-            return Status.VALIDATOR_STRING_IS_INVALID
+            if (!StringUtils.isNumeric(str)){
+                return Status.VALIDATOR_STRING_IS_INVALID
+            }
         }
         else if(str.contains("|")){
             return Status.VALIDATOR_STRING_IS_NOT_ATOMIC

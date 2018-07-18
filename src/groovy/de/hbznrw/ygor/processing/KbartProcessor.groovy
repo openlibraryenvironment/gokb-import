@@ -1,7 +1,6 @@
 package de.hbznrw.ygor.processing
 
 import de.hbznrw.ygor.bridges.KbartBridge
-import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.export.structure.PackageStruct
@@ -30,10 +29,13 @@ class KbartProcessor extends AbstractProcessor {
 
     private int total		    = 0
     private int count           = 0
+
+    private Map keysPerKeyType = [:]
     
     KbartProcessor(BridgeInterface bridge) {
         super(bridge)
     }
+
     KbartProcessor() {
     }
 
@@ -99,68 +101,79 @@ class KbartProcessor extends AbstractProcessor {
     }
 
     private int initData(HashMap options) throws Exception {
-
         log.info("filling stash with initial data ..")
-
-        def keyType
-        def keys           = [:]
+        for (key in MultipleProcessingThread.KEY_ORDER) {
+            keysPerKeyType.put(key, [:])
+        }
         def kbartFields    = [:]
-
         this.inputFile = options.get('inputFile')
 
-        if(options.get('typeOfKey').toString() in [
-                KbartConnector.KBART_HEADER_ZDB_ID,
-                KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
-                KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
-        ) {
-            keyType = options.get('typeOfKey')
-        }
-
         Paths.get(inputFile).withReader { reader ->
-            // Skip BOM
-            reader.mark(1)
-            if (reader.read() != 0xFEFF) reader.reset()
-            CSVParser csv = new CSVParser(reader, csvFormat)
+            CSVParser csv = getCSVParserFromReader(reader)
             checkHeader(csv, bridge.connector.kbartKeys)
 
             for (record in csv.iterator()) {
-                if (record.size() < csv.getHeaderMap().size()) {
-                    log.info('crappy record ignored: size < kex[index]')
-                } else {
-                    def identifier = record.get(keyType)?.toString()?.trim()
+                if (record.size() != csv.getHeaderMap().size()) {
+                    log.info('crappy record ignored: size != kex[index]')
+                }
+                else {
                     countUp()
+                    def identifier
 
-                    if (identifier) {
-                        def uid = UUID.randomUUID().toString() // TODO NEW
+                    for (key in MultipleProcessingThread.KEY_ORDER) {
+                        identifier = record.get(key)?.toString()?.trim()
+                        if (identifier) {
+                            def uid = UUID.randomUUID().toString()
+                            // store enrichment keys (zdb or issn or eissn)
+                            addKey(key, ["${uid}": "${identifier}"])
 
-                        // store enrichment keys (zdb or issn or eissn)
-                        keys << ["${uid}": "${identifier}"]
-
-                        // store kbart fields
-                        def kbfs = [:]
-                        bridge.connector.kbartKeys.each { kbk ->
-                            kbfs << ["${kbk}": record.get(kbk).toString()]
-                        }
-                        bridge.connector.optionalKbartKeys.each { kbk ->
-                            if (record.isMapped(kbk)) {
+                            // store kbart fields
+                            def kbfs = [:]
+                            bridge.connector.kbartKeys.each { kbk ->
                                 kbfs << ["${kbk}": record.get(kbk).toString()]
                             }
+                            bridge.connector.optionalKbartKeys.each { kbk ->
+                                if (record.isMapped(kbk)) {
+                                    kbfs << ["${kbk}": record.get(kbk).toString()]
+                                }
+                            }
+                            if (kbfs.size() > 0) {
+                                kbartFields << ["${uid}": kbfs]
+                            }
+                            stash.putKeyType(uid, key)
+                            break
                         }
-                        if (kbfs.size() > 0) {
-                            kbartFields << ["${uid}": kbfs]
-                        }
-                    } else {
-                        // store invalid csv records
-                        log.info('no enrichment key (' + keyType + ') found; entry ignored')
+                    }
+                    if (!identifier) {
+                        // store invalid csv record
+                        log.info('Entry "' + "${record.get('publication_title')}" + '" ignored due to missing identifier.')
                         stash.get(Stash.IGNORED_KBART_ENTRIES).add(record.get('publication_title').toString())
                     }
                 }
             }
+            stash.put(KbartBridge.IDENTIFIER, kbartFields)
+            for (key in MultipleProcessingThread.KEY_ORDER) {
+                stash.put(key, keysPerKeyType.get(key))
+            }
         }
-        stash.put(keyType, keys)
-        stash.put(KbartBridge.IDENTIFIER, kbartFields)
         return stash.get(KbartBridge.IDENTIFIER).size()
     }
+
+    private CSVParser getCSVParserFromReader(Reader reader) {
+        // Skip BOM
+        reader.mark(1)
+        if (reader.read() != 0xFEFF) reader.reset()
+        new CSVParser(reader, csvFormat)
+    }
+
+
+    private void addKey(String keyType, def value){
+        def existing = keysPerKeyType.get(keyType)
+        existing << value
+        keysPerKeyType.put(keyType, existing)
+    }
+
+
 
     void checkHeader(CSVParser csv, def kbartKeys){
         def missingKeys = []
@@ -178,18 +191,15 @@ class KbartProcessor extends AbstractProcessor {
     }
 
 
-    Title processEntry(DataContainer dc, String uid) {
-        return processEntry(dc, uid, null, null)
-    }
-    
     Title processEntry(DataContainer dc, String uid, String queryKey) {
         return processEntry(dc, uid, queryKey, null)
     }
 
+
     Title processEntry(DataContainer dc, String uid, String queryKey, Object record) {
         
         def saveTitle = false
-        def title     = DataMapper.getExistingTitleByPrimaryIdentifier(dc, uid)
+        def title     = DataMapper.getExistingTitleByUid(dc, uid)
         if(title) {
             log.debug("> modifying existing Title: " + uid)
         }
@@ -199,7 +209,7 @@ class KbartProcessor extends AbstractProcessor {
         }
         
         def saveTipp = false
-        def tipp     = DataMapper.getExistingTippByPrimaryIdentifier(dc, uid)
+        def tipp     = DataMapper.getExistingTippByUid(dc, uid)
         if(tipp) {
             log.debug("> modifying existing Tipp: " + uid)
         }
@@ -272,7 +282,7 @@ class KbartProcessor extends AbstractProcessor {
             tipp._meta.put('api', [])
         }
         
-        def api = bridge.getConnector().getAPIQuery(queryKey)
+        def api = bridge.getConnector().getAPIQuery(queryKey, stash.getKeyType(uid))
         
         title._meta.api << api
         tipp._meta.api << api

@@ -460,14 +460,14 @@ class DataMapper {
         orgMap
     }
     
-    static Title getExistingTitleByPrimaryIdentifier(DataContainer dc, String key) {
+    static Title getExistingTitleByUid(DataContainer dc, String key) {
         if(dc.titles.containsKey("${key}"))
             return dc.titles.get("${key}").v
 
         null
     }
     
-    static Tipp getExistingTippByPrimaryIdentifier(DataContainer dc, String key) {
+    static Tipp getExistingTippByUid(DataContainer dc, String key) {
         if(dc.pkg.tipps.containsKey("${key}"))
             return dc.pkg.tipps.get("${key}").v
 

@@ -13,12 +13,10 @@ import groovy.util.slurpersupport.Node
 @Log4j
 class DnbSruPicaConnector extends AbstractConnector {
 
-    static final QUERY_PICA_ISS = "query=dnb.iss%3D"
-    static final QUERY_PICA_ZDB = "query=dnb.zdbid%3D"
+    static Map queryIDs = [:]
 
     private String requestUrl       = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
-    private String queryIdentifier
-    private String queryOnlyJournals = "%20and%20dnb.mat=online"
+    private String queryOnlyJournals = "%20and%20dnb.frm=O"
 
     private String formatIdentifier = 'PicaPlus-xml'
     private GPathResult response
@@ -26,22 +24,23 @@ class DnbSruPicaConnector extends AbstractConnector {
     private picaRecords   = []
     private currentRecord = null
 
-    DnbSruPicaConnector(BridgeInterface bridge, String queryIdentifier) {
+    DnbSruPicaConnector(BridgeInterface bridge) {
         super(bridge)
-        this.queryIdentifier = queryIdentifier
+        queryIDs.put(KbartConnector.KBART_HEADER_ZDB_ID, "query=dnb.zdbid%3D")
+        queryIDs.put(KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER, "query=dnb.iss%3D")
+        queryIDs.put(KbartConnector.KBART_HEADER_PRINT_IDENTIFIER, "query=dnb.iss%3D")
     }
 
-    // ConnectorInterface
 
     @Override
-    String getAPIQuery(String identifier) {
-        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals
+    String getAPIQuery(String identifier, String queryIdentifier) {
+        return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIDs.get(queryIdentifier) + identifier + queryOnlyJournals
     }
 
     @Override
-    def poll(String identifier) {
+    def poll(String identifier, String queryIdentifier) {
         try {
-            String q = getAPIQuery(identifier)
+            String q = getAPIQuery(identifier, queryIdentifier)
 
             log.info("polling(): " + q)
             String text = new URL(q).getText()

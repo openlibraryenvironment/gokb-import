@@ -10,7 +10,7 @@ interface ConnectorInterface {
      * @param identifier
      * @return
      */
-    String getAPIQuery(String identifier)
+    String getAPIQuery(String identifier, String queryIdentifier)
     
     /**
      * Storing polling response
@@ -18,7 +18,7 @@ interface ConnectorInterface {
      * @param identifier
      * @return
      */
-    def poll(String identifier)
+    def poll(String identifier, String queryIdentifier)
     
     /**
      * 

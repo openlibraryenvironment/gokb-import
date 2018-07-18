@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.processing;
 
 import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.interfaces.BridgeInterface
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import groovy.util.logging.Log4j
@@ -10,15 +11,16 @@ import com.google.common.base.Throwables
 @Log4j
 class MultipleProcessingThread extends Thread {
 
-    public  ProcessorInterface processor
-    private BridgeInterface bridge
-    
+    static final KEY_ORDER = [KbartConnector.KBART_HEADER_ZDB_ID,
+                              KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
+                              KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
+
+    public ProcessorInterface processor
     public isRunning = true
-    
-	private enrichment
+
+    private BridgeInterface bridge
+    private enrichment
 	private apiCalls
-    private typeOfKey
-    
     private refactorThis // TODO refactor
 
     private int progressTotal   = 0
@@ -28,8 +30,6 @@ class MultipleProcessingThread extends Thread {
 		this.enrichment = en
         this.processor = new KbartProcessor()
 		this.apiCalls  = options.get('options')
-        this.typeOfKey = options.get('typeOfKey')
-        
         this.refactorThis = options // TODO refactor
 	}
 	
@@ -38,52 +38,38 @@ class MultipleProcessingThread extends Thread {
 			System.exit(0)
 		
 		enrichment.setStatus(Enrichment.ProcessingState.WORKING)
-		
 		log.info('Starting ..')
         
 		try {  
-            apiCalls.each{
-                call ->
-                    switch(call) {
-                        case KbartBridge.IDENTIFIER:
-                            // writes stash->kbart
-                            // writes stash->zdb or stash->issn 
-                            bridge = new KbartBridge(this, new HashMap(
+            apiCalls.each{ call ->
+                switch(call) {
+                    case KbartBridge.IDENTIFIER:
+                        // writes stash->kbart
+                        // writes stash->zdb or stash->issn
+                        bridge = new KbartBridge(this, new HashMap(
                                 inputFile:  enrichment.originPathName,
-                                typeOfKey:  typeOfKey,
                                 delimiter:  refactorThis.get('delimiter'),
                                 quote:      refactorThis.get('quote'),
                                 quoteMode:  refactorThis.get('quoteMode')
-                                )
                             )
-                            break
-
-                        case EzbBridge.IDENTIFIER:
-                            bridge = new EzbBridge(this, new HashMap(
-                                inputFile:  enrichment.originPathName, 
-                                typeOfKey:  typeOfKey
-                                )
-                            )
-                            break
-                        case ZdbBridge.IDENTIFIER:
-                            bridge = new ZdbBridge(this, new HashMap(
-                                inputFile:  enrichment.originPathName,
-                                typeOfKey:  typeOfKey
-                                )
-                            )
-                            break
-                    }
-                  
-                    if(bridge) {
-                        bridge.go()
-                        bridge = null
-                    }
+                        )
+                        break
+                    case EzbBridge.IDENTIFIER:
+                        bridge = new EzbBridge(this, new HashMap(inputFile:  enrichment.originPathName))
+                        break
+                    case ZdbBridge.IDENTIFIER:
+                        bridge = new ZdbBridge(this, new HashMap(inputFile:  enrichment.originPathName))
+                        break
+                }
+                if(bridge) {
+                    bridge.go()
+                    bridge = null
+                }
             }
-           								
 		}
         catch(YgorProcessingException e) {
 			enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
-            enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length()+2))
+            enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length() + 2))
 			log.error(e.getMessage())
             log.error(e.printStackTrace())
 			log.info('Aborted.')
@@ -102,13 +88,7 @@ class MultipleProcessingThread extends Thread {
         enrichment.dataContainer.info.stash = processor.stash.values
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
 
-        def duplicateKeys = []
-        enrichment.dataContainer.info.stash."${typeOfKey}".each { k, v ->
-            if (! processor.stash.getKeyByValue("${typeOfKey}", v)) {
-                duplicateKeys << v
-            }
-        }
-        enrichment.dataContainer.info.stash.duplicateKeyEntries = duplicateKeys.unique()
+        // TODO: re-get duplicate keys
 
         enrichment.saveResult()
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
