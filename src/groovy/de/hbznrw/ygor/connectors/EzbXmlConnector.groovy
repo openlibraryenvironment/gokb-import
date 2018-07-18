@@ -12,33 +12,33 @@ import de.hbznrw.ygor.interfaces.*
  */
 @Log4j
 class EzbXmlConnector extends AbstractConnector {
-	
-    static final QUERY_XML_IS  = "jq_type1=IS&jq_term1="
-    static final QUERY_XML_ZDB = "jq_type1=ZD&jq_term1="
-    
-	private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
-	private String queryIdentifier
+
+    static Map queryIDs = [:]
+
+    private String requestUrl       = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
     
     private String formatIdentifier = 'xmloutput=1&xmlv=3'
     private GPathResult response
-	
-	EzbXmlConnector(BridgeInterface bridge, String queryIdentifier) {
+
+
+	EzbXmlConnector(BridgeInterface bridge) {
 		super(bridge)
-        this.queryIdentifier = queryIdentifier
+        queryIDs.put(KbartConnector.KBART_HEADER_ZDB_ID, "jq_type1=ZD&jq_term1=")
+        queryIDs.put(KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER, "jq_type1=IS&jq_term1=")
+        queryIDs.put(KbartConnector.KBART_HEADER_PRINT_IDENTIFIER, "jq_type1=IS&jq_term1=")
 	}
 	
-    // ConnectorInterface
-    
+
     @Override
-    String getAPIQuery(String identifier) {
-        return requestUrl + "&" + formatIdentifier + "&" + queryIdentifier + identifier
+    String getAPIQuery(String identifier, String queryIdentifier) {
+        return requestUrl + "&" + formatIdentifier + "&" + queryIDs.get(queryIdentifier) + identifier
     }
     
 	@Override
-	def poll(String identifier) {
+	def poll(String identifier, String queryIdentifier) {
 		
 		try {
-            String q = getAPIQuery(identifier)
+            String q = getAPIQuery(identifier, queryIdentifier)
             
             log.info("polling(): " + q)
 			String text = new URL(q).getText()

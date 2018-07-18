@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.bridges
 
 import de.hbznrw.ygor.export.DataMapper
+import de.hbznrw.ygor.processing.MultipleProcessingThread
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.*
@@ -28,26 +29,14 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 		this.master    = master
 		this.options   = options
 		this.processor = master.processor
-
-		if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ZDB_ID){
-			this.connector  = new DnbSruPicaConnector(this, DnbSruPicaConnector.QUERY_PICA_ZDB)
-			this.stashIndex = KbartConnector.KBART_HEADER_ZDB_ID
-		}
-		else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER){
-			this.connector  = new DnbSruPicaConnector(this, DnbSruPicaConnector.QUERY_PICA_ISS)
-			this.stashIndex = KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER
-		}
-		else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_PRINT_IDENTIFIER){
-			this.connector  = new DnbSruPicaConnector(this, DnbSruPicaConnector.QUERY_PICA_ISS)
-			this.stashIndex = KbartConnector.KBART_HEADER_PRINT_IDENTIFIER
-		}
+		this.connector  = new DnbSruPicaConnector(this)
 	}
 
 	@Override
 	void go() throws Exception {
 		log.info("Input:  " + options.get('inputFile'))
 
-		master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>')
+		master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>', null)
 
 		processor.setBridge(this)
 		processor.processFile(options)
@@ -65,24 +54,26 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 		def stash = processor.getStash()
 		log.info("stash: " + stash)
 
-		stash.get(stashIndex).each{ uid, key ->
+		MultipleProcessingThread.KEY_ORDER.each { keyType ->
+			stash.get(keyType).each { uid, key ->
 
-			if(!master.isRunning) {
-				log.info('Aborted by user action.')
-				return
-			}
+				if (!master.isRunning) {
+					log.info('Aborted by user action.')
+					return
+				}
 
-			increaseProgress()
-			def pollStatus = connector.poll(key)
+				increaseProgress()
+				def pollStatus = connector.poll(key, stash.getKeyType(uid))
 
-			// fallback for empty api response
-			if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {
-				log.info("AbstractEnvelope.STATUS_NO_RESPONSE @ " + key)
-				processor.processEntry(master.enrichment.dataContainer, uid, key, null)
-			}
+				// fallback for empty api response
+				if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {
+					log.info("AbstractEnvelope.STATUS_NO_RESPONSE @ " + key)
+					processor.processEntry(master.enrichment.dataContainer, uid, key, null)
+				}
 
-			connector.getPicaRecords().eachWithIndex { pr, i ->
-				processor.processEntry(master.enrichment.dataContainer, uid, key, pr)
+				connector.getPicaRecords().eachWithIndex { pr, i ->
+					processor.processEntry(master.enrichment.dataContainer, uid, key, pr)
+				}
 			}
 		}
 	}

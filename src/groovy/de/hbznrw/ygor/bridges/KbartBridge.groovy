@@ -47,7 +47,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
         
         def stash = processor.getStash()
         
-        stash.get(this.stashIndex).each{ key, uid ->
+        stash.get(this.stashIndex).each{ uid, fields ->
             
             if(!master.isRunning) {
                 log.info('Aborted by user action.')
@@ -56,10 +56,10 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
             increaseProgress()
 
             // for kbart file no really need
-            connector.poll(key)
+            connector.poll(uid, stash.getKeyType(uid))
             
             // TODO refactor
-            processor.processEntry(master.enrichment.dataContainer, key, 'TODO_REFACTOR_TO_ZdbBridge.IDENTIFIER')
+            processor.processEntry(master.enrichment.dataContainer, uid, 'TODO_REFACTOR_TO_ZdbBridge.IDENTIFIER')
         }
     }
 }

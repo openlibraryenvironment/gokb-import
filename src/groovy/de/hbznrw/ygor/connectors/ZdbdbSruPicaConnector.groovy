@@ -10,6 +10,7 @@ import de.hbznrw.ygor.interfaces.*
  * Controlling API calls using sru.gbv.de/zdbdb
  */
 @Log4j
+@Deprecated // replaced by DnbSruPicaConnector
 class ZdbdbSruPicaConnector extends AbstractConnector {
 	
     static final QUERY_PICA_ISS = "query=dnb.iss%3D"
@@ -34,14 +35,14 @@ class ZdbdbSruPicaConnector extends AbstractConnector {
     // ConnectorInterface
     
     @Override
-    String getAPIQuery(String identifier) {
+    String getAPIQuery(String identifier, String queryIdentifier) {
         return requestUrl + "&recordSchema=" + formatIdentifier + "&" + queryIdentifier + identifier + queryOnlyJournals + "&" + queryOrder
     }
 
     @Override
-    def poll(String identifier) {
+    def poll(String identifier, String queryIdentifier) {
         try {
-            String q = getAPIQuery(identifier)
+            String q = getAPIQuery(identifier, queryIdentifier)
             
             log.info("polling(): " + q)
             String text = new URL(q).getText()

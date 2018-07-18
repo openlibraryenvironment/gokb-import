@@ -62,7 +62,6 @@ class EnrichmentController {
     }
     
     def uploadFile = {
-
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
         def foQuote     = null
         def foQuoteMode = null
@@ -83,21 +82,16 @@ class EnrichmentController {
             return
         }
         enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
-
         redirect(action:'process')
     }
 
     def prepareFile = {
-        
         enrichmentService.prepareFile(getCurrentEnrichment(), request.parameterMap)
         redirect(action:'process')
     }
     
     def processFile = {
-        
-        def pmIndexType = request.parameterMap['processIndexType'][0]
         def pmOptions   = request.parameterMap['processOption']
-
         if(!pmOptions) {
             flash.info    = null
             flash.warning = 'Wählen Sie mindestens eine Anreicherungsoption.'
@@ -112,15 +106,13 @@ class EnrichmentController {
 
                 def format = getCurrentFormat()
                 def options = [
-                    'typeOfKey':    pmIndexType,
                     'options':      pmOptions,
                     'delimiter':    format.get('delimiter'),
                     'quote':        format.get('quote'),
                     'quoteMode':    format.get('quoteMode'),
                     'ygorVersion':  grailsApplication.config.ygor.version,
                     'ygorType':     grailsApplication.config.ygor.type
-                    ]
-                    
+                ]
                 en.process(options)
             }
         }
@@ -129,32 +121,28 @@ class EnrichmentController {
             model:[
                 enrichments: enrichmentService.getSessionEnrichments(), 
                 currentView: 'process',
-                pIndexType:  pmIndexType,
                 pOptions:    pmOptions,
-                ]
-            )
+            ]
+        )
     }
     
     def stopProcessingFile = {
-        
         enrichmentService.stopProcessing(getCurrentEnrichment())
         deleteFile()
     }
     
     def deleteFile = {
-
         enrichmentService.deleteFileAndFormat(getCurrentEnrichment())    
         render(
             view:'process',
             model:[
                 enrichments: enrichmentService.getSessionEnrichments(), 
                 currentView: 'process'
-                ]
-            )
+            ]
+        )
     }
     
     def downloadPackageFile = {
-
         def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
@@ -166,7 +154,6 @@ class EnrichmentController {
     }
     
     def downloadTitlesFile = {
-        
         def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
@@ -178,7 +165,6 @@ class EnrichmentController {
     }
     
     def downloadDebugFile = {
-        
         def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_DEBUG)
@@ -190,7 +176,6 @@ class EnrichmentController {
     }
     
     def downloadRawFile = {
-        
         def en = getCurrentEnrichment()
         if(en){
             def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
@@ -232,7 +217,6 @@ class EnrichmentController {
 
 
     def ajaxGetStatus = {
-        
         def en = getCurrentEnrichment()
         render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
     }

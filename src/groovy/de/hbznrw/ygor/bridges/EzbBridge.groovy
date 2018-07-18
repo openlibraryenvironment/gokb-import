@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.bridges
 
+import de.hbznrw.ygor.processing.MultipleProcessingThread
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.Query
@@ -19,26 +20,14 @@ class EzbBridge extends AbstractBridge implements BridgeInterface {
         this.master     = master
 		this.options    = options
         this.processor  = master.processor
-
-        if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ZDB_ID){
-            this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_ZDB)
-            this.stashIndex = KbartConnector.KBART_HEADER_ZDB_ID
-        }
-        else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER){
-            this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_IS)
-            this.stashIndex = KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER
-        }
-        else if(options.get('typeOfKey') == KbartConnector.KBART_HEADER_PRINT_IDENTIFIER){
-            this.connector  = new EzbXmlConnector(this, EzbXmlConnector.QUERY_XML_IS)
-            this.stashIndex = KbartConnector.KBART_HEADER_PRINT_IDENTIFIER
-        }
+        this.connector  = new EzbXmlConnector(this)
 	}
-	
+
 	@Override
 	void go() throws Exception {
 		log.info("Input:  " + options.get('inputFile'))
         
-        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<zdbid>')
+        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<zdbid>', null)
         
         processor.setBridge(this)
         processor.processFile(options)
@@ -54,18 +43,20 @@ class EzbBridge extends AbstractBridge implements BridgeInterface {
         log.info("processStash()")
         
         def stash = processor.getStash()
-        
-        stash.get(this.stashIndex).each{ uid, key ->
-            
-            if(!master.isRunning) {
-                log.info('Aborted by user action.')
-                return
+
+        MultipleProcessingThread.KEY_ORDER.each { keyType ->
+            stash.get(keyType).each { uid, key ->
+
+                if (!master.isRunning) {
+                    log.info('Aborted by user action.')
+                    return
+                }
+
+                increaseProgress()
+                connector.poll(key, stash.getKeyType(uid))
+
+                processor.processEntry(master.enrichment.dataContainer, uid, key)
             }
-            
-            increaseProgress()
-            connector.poll(key)
-            
-            processor.processEntry(master.enrichment.dataContainer, uid, key)
         }
     }
 }

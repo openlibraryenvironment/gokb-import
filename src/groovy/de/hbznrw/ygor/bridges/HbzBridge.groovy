@@ -27,7 +27,7 @@ class HbzBridge extends AbstractBridge implements BridgeInterface {
 	void go() throws Exception {
         log.info("Input:  " + options.get('inputFile'))
         
-        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>')
+        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<issn>', null)
         
         processor.setBridge(this)
         processor.processFile(options)

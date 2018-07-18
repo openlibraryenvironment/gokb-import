@@ -8,6 +8,7 @@ import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.export.structure.TitleStruct
 
 @Log4j
+@Deprecated // replaced by ZdbBridge
 class GbvBridge extends AbstractBridge implements BridgeInterface {
 
     static final IDENTIFIER = 'gbv'
@@ -47,7 +48,7 @@ class GbvBridge extends AbstractBridge implements BridgeInterface {
 	void go() throws Exception {
         log.info("Input:  " + options.get('inputFile'))
         
-        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>')
+        master.enrichment.dataContainer.info.api << connector.getAPIQuery('<identifier>', null)
         
         processor.setBridge(this)
         processor.processFile(options)
@@ -72,7 +73,7 @@ class GbvBridge extends AbstractBridge implements BridgeInterface {
             }
 
             increaseProgress()
-            def pollStatus = connector.poll(key)
+            def pollStatus = connector.poll(key, stash.getKeyType(uid))
 
             // fallback for empty api response
             if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {
