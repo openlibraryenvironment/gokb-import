@@ -74,21 +74,26 @@ class EnrichmentService {
     }
 
     private void setPlatformMap(Map pm, ph) {
-      def platforms = gokbService.getPlatformMap(pm['pkgNominalPlatform'][0]).records
+
+      log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
+
+      def platforms = gokbService.getPlatformMap(pm['pkgNominalPlatform'][0], false).records
       def pkgNomPlatform = null
+
+      log.debug("Got platforms: ${platforms}")
 
       platforms.each {
         if (it.name == pm['pkgNominalPlatform'][0] && it.status == "Current") {
           if(pkgNomPlatform) {
             log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
           }else{
+            log.debug("Setze ${it.name} als nominalPlatform.")
             pkgNomPlatform = it
           }
         }
       }
 
       if (pkgNomPlatform) {
-        ph.v.nominalPlatform.org = pkgNomPlatform.name
         setUrlIfValid(pkgNomPlatform.primaryUrl, ph)
         ph.v.nominalPlatform.name = pkgNomPlatform.name
         ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)

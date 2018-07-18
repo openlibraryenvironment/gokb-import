@@ -44,6 +44,7 @@ class JsonTransformer {
 
         //Transformer.parseAdditionalProperties(json)
         
+        JsonTransformer.parseNominalPlatform(json)
         JsonTransformer.parseCuratoryGroups(json)
         JsonTransformer.parseSource(json)
         JsonTransformer.parseVariantNames(json)
@@ -124,6 +125,16 @@ class JsonTransformer {
          json.titles = titles
          
          json
+    }
+    static Object parseNominalPlatform(Object json) {
+        log.debug("parseNominalPlatform()")
+
+        def plt = [
+          'name': json.package.packageHeader.nominalPlatform.name,
+          'primaryUrl': json.package.packageHeader.nominalPlatform.primaryUrl
+        ]
+
+        json.package.packageHeader.nominalPlatform = plt
     }
      
     static Object parseCuratoryGroups(Object json) {

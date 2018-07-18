@@ -11,7 +11,7 @@ class GokbService {
     
     def grailsApplication
     
-    Map getPlatformMap(def qterm = null) {
+    Map getPlatformMap(def qterm = null, def suggest = true) {
         
         log.info("getting platform map from gokb ..")
         
@@ -20,7 +20,14 @@ class GokbService {
         try {
             String esQuery = qterm ? URLEncoder.encode(qterm) : ""
 
-            def json = geElasticsearchSuggests(esQuery, "Platform", null) // 10000 is maximum value allowed by now
+
+            def json = null
+
+            if(suggest) {
+              json = geElasticsearchSuggests(esQuery, "Platform", null) // 10000 is maximum value allowed by now
+            }else {
+              json = geElasticsearchFindings(esQuery, "Platform", null, 10)
+            }
 
             result.records = []
             result.map = [:]
@@ -28,14 +35,14 @@ class GokbService {
             if (json?.info?.records) {
 
                 json.info.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
             if (json?.warning?.records) {
 
                 json.warning.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
