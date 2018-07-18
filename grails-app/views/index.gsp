@@ -25,6 +25,11 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.45</dt><br />
+
+					<dd>- Optimiere nominal platform Behandlung</dd>
+					<dd>- Passe DNB-Request an Restrukturierung der DNB-API an</dd>
+
 					<br /><dt>0.44</dt><br />
 
 					<dd>- Ersetze Setzen eines exklusiven primären Identifiers durch fixe Priorisierung: 1. ZDB-ID, 2. eISSN, 3. pISSN</dd>
