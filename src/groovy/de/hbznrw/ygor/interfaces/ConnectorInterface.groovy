@@ -6,13 +6,6 @@ import de.hbznrw.ygor.enums.Query
 interface ConnectorInterface {
     
     /**
-     * 
-     * @param identifier
-     * @return
-     */
-    String getAPIQuery(String identifier, String queryIdentifier)
-    
-    /**
      * Storing polling response
      * 
      * @param identifier
