@@ -7,8 +7,6 @@ import de.hbznrw.ygor.tools.*
 
 class Enrichment {
 
-    def enrichmentService
-    
     static enum FileType {
         ORIGIN, 
         RESULT, 
@@ -17,15 +15,15 @@ class Enrichment {
         JSON_TITLES_ONLY, 
         JSON_DEBUG, 
         JSON_OO_RAW
-        }
+    }
     
 	static enum ProcessingState {
         UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR
-        }
+    }
     
 	ProcessingState status
     
-	// frontend api stuff    
+	// frontend api stuff
     String apiMessage
     float  apiProgress = 0.0
     
@@ -38,13 +36,13 @@ class Enrichment {
 	String resultPathName
 
 	File sessionFolder
-    
+
 	def thread
     def dataContainer
-	
+
     static constraints = {
     }
-	
+
 	Enrichment(File sessionFolder, String originalFilename) {
 		this.sessionFolder 	= sessionFolder
 		originName 			= originalFilename.replaceAll(/\s+/,'_')

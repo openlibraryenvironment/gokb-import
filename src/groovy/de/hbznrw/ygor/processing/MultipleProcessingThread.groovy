@@ -2,11 +2,15 @@ package de.hbznrw.ygor.processing;
 
 import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.connectors.KbartConnector
+import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.interfaces.BridgeInterface
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import com.google.common.base.Throwables
+import ygor.source.EzbSource
+import ygor.source.KbartSource
+import ygor.source.ZdbSource
 
 @Log4j
 class MultipleProcessingThread extends Thread {
@@ -14,6 +18,12 @@ class MultipleProcessingThread extends Thread {
     static final KEY_ORDER = [KbartConnector.KBART_HEADER_ZDB_ID,
                               KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
                               KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
+
+    static final SOURCE_ORDER = [KbartSource, ZdbSource, EzbSource]
+
+    DataContainer container
+
+    // old member variables following; TODO use or delete
 
     public ProcessorInterface processor
     public isRunning = true
@@ -27,13 +37,15 @@ class MultipleProcessingThread extends Thread {
     private int progressCurrent = 0
     
 	MultipleProcessingThread(Enrichment en, HashMap options) {
+        this.container = new DataContainer()
+
 		this.enrichment = en
         this.processor = new KbartProcessor()
 		this.apiCalls  = options.get('options')
         this.refactorThis = options // TODO refactor
 	}
 	
-	public void run() {
+	void run() {
 		if(null == enrichment.originPathName)
 			System.exit(0)
 		

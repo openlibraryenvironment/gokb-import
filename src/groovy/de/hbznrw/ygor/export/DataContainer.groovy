@@ -9,11 +9,11 @@ import ygor.identifier.ZdbIdentifier
 
 class DataContainer {
 
-    Meta info       // TODO: use or delete
+    Meta    info    // TODO: use or delete
     Package pkg     // TODO: use or delete
     HashMap titles  // TODO: use or delete
 
-    Map<ZdbIdentifier, Record> recordsPerZdbId = [:]
+    Map<ZdbIdentifier, Record>   recordsPerZdbId = [:]
     Map<EissnIdentifier, Record> recordsPerEissn = [:]
     Map<PissnIdentifier, Record> recordsPerPissn = [:]
 
