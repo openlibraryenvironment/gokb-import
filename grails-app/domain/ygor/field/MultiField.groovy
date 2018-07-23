@@ -1,9 +1,8 @@
 package ygor.field
 
-import org.apache.commons.lang.StringUtils
+import ygor.source.AbstractSource
 import ygor.source.EzbSource
 import ygor.source.KbartSource
-import ygor.source.SourceInterface
 import ygor.source.ZdbSource
 
 class MultiField {
@@ -46,7 +45,7 @@ class MultiField {
     }
 
 
-    def addValue(SourceInterface source, String value){
+    def addValue(AbstractSource source, String value){
         if (source instanceof KbartSource){
             fields.put(keys.get(FieldKeyMapping.KBART), new Field(source, keys.get(FieldKeyMapping.KBART), value))
         }

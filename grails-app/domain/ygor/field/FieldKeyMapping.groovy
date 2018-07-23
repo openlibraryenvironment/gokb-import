@@ -1,6 +1,7 @@
 package ygor.field
 
-import ygor.source.SourceInterface
+import ygor.source.AbstractSource
+
 
 class FieldKeyMapping {
 
@@ -22,7 +23,7 @@ class FieldKeyMapping {
         ezbKey   nullable : true
     }
 
-    FieldKeyMapping(Map<SourceInterface, String> mappings){
+    FieldKeyMapping(Map<AbstractSource, String> mappings){
         if (!mappings || !(mappings instanceof List) || mappings.size() != NECESSARY_KEYS.size()) {
             throw IllegalArgumentException("Illegal mapping argument given for FieldKeyMapping configuration: "
                     .concat(mappings))

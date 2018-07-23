@@ -1,6 +1,6 @@
 package ygor.source
 
-class EzbSource implements SourceInterface{
+class EzbSource extends AbstractSource{
 
     static constraints = {
     }

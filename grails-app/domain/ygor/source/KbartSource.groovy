@@ -1,6 +1,6 @@
 package ygor.source
 
-class KbartSource implements SourceInterface{
+class KbartSource extends AbstractSource{
 
     static constraints = {
     }

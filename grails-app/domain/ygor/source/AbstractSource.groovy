@@ -1,6 +1,6 @@
 package ygor.source
 
-interface SourceInterface {
+abstract class AbstractSource {
 
     static constraints = {
     }

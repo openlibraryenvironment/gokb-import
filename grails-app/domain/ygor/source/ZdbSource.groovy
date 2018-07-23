@@ -1,7 +1,8 @@
 package ygor.source
 
-class ZdbSource implements SourceInterface{
+class ZdbSource extends AbstractSource{
 
     static constraints = {
     }
+
 }

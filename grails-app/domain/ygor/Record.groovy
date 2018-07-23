@@ -1,6 +1,5 @@
 package ygor
 
-import com.sun.javaws.exceptions.InvalidArgumentException
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.EissnIdentifier
@@ -28,19 +27,19 @@ class Record {
     void addIdentifier(AbstractIdentifier id){
         if (id instanceof ZdbIdentifier){
             if (zdbId){
-                throw new InvalidArgumentException("ZDB id ".concat(zdbId).concat(" already given for record"))
+                throw new IllegalArgumentException("ZDB id ".concat(zdbId).concat(" already given for record"))
             }
             zdbId = id
         }
         else if (id instanceof EissnIdentifier){
             if (eissn){
-                throw new InvalidArgumentException("EISSN ".concat(eissn).concat(" already given for record"))
+                throw new IllegalArgumentException("EISSN ".concat(eissn).concat(" already given for record"))
             }
             eissn = id
         }
         else if (id instanceof PissnIdentifier){
             if (pissn){
-                throw new InvalidArgumentException("PISSN ".concat(pissn).concat(" already given for record"))
+                throw new IllegalArgumentException("PISSN ".concat(pissn).concat(" already given for record"))
             }
             pissn = id
         }

@@ -1,10 +1,11 @@
 package ygor.field
 
-import ygor.source.SourceInterface
+import ygor.source.AbstractSource
+
 
 class Field {
 
-    SourceInterface source
+    AbstractSource source
     String key
     String value
 
@@ -14,7 +15,7 @@ class Field {
         value  nullable : false
     }
 
-    Field(SourceInterface source, String key, String value){
+    Field(AbstractSource source, String key, String value){
         this.source = source
         this.key = key
         this.value = value

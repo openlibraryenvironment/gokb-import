@@ -3,19 +3,20 @@ package ygor.field
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 
+import javax.annotation.Nonnull
+
 class MappingsContainer {
 
     final private static JsonSlurper SLURPY = new JsonSlurper()
     private static URL MAPPINGS_URL =
             getClass().getResource("../../../../../java/resources/YgorFieldKeyMapping.json")
 
-    private static Map YGOR_MAPPINGS
-    private static Map KBART_MAPPINGS
-    private static Map ZDB_MAPPINGS
-    private static Map EZB_MAPPINGS
-
-    static hasMany = [YGOR_MAPPINGS : FieldKeyMapping, KBART_MAPPINGS : FieldKeyMapping,
-                      ZDB_MAPPINGS : FieldKeyMapping, EZB_MAPPINGS : FieldKeyMapping]
+    Map ygorMappings
+    Map kbartMappings
+    Map zdbMappings
+    Map ezbMappings
+    static hasMany = [ygorMappings : FieldKeyMapping, kbartMappings : FieldKeyMapping,
+                      zdbMappings : FieldKeyMapping, ezbMappings : FieldKeyMapping]
 
 
     MappingsContainer(){
@@ -28,18 +29,20 @@ class MappingsContainer {
 
 
     def initialize(File mappingsFile){
-        YGOR_MAPPINGS = [:]
-        KBART_MAPPINGS = [:]
-        ZDB_MAPPINGS = [:]
-        EZB_MAPPINGS = [:]
+        ygorMappings = [:]
+        kbartMappings = [:]
+        zdbMappings = [:]
+        ezbMappings = [:]
         readMappingsUrl(mappingsFile)
     }
 
     def readMappingsUrl(File mappingsFile){
-        def json = SLURPY.parse(mappingsFile)
-        json.each {map ->
-            FieldKeyMapping mapping = jsonNodeToMapping(map)
-            putMapping(mapping)
+        if (mappingsFile) {
+            def json = SLURPY.parse(mappingsFile)
+            json.each { map ->
+                FieldKeyMapping mapping = jsonNodeToMapping(map)
+                putMapping(mapping)
+            }
         }
     }
 
@@ -62,10 +65,10 @@ class MappingsContainer {
 
 
     private def putMapping(FieldKeyMapping mapping){
-        YGOR_MAPPINGS.put(mapping.ygorKey, mapping)
-        KBART_MAPPINGS.put(mapping.kbartKey, mapping)
-        ZDB_MAPPINGS.put(mapping.zdbKey, mapping)
-        EZB_MAPPINGS.put(mapping.ezbKey, mapping)
+        ygorMappings.put(mapping.ygorKey, mapping)
+        kbartMappings.put(mapping.kbartKey, mapping)
+        zdbMappings.put(mapping.zdbKey, mapping)
+        ezbMappings.put(mapping.ezbKey, mapping)
     }
 
 
@@ -75,18 +78,18 @@ class MappingsContainer {
      *      {@value FieldKeyMapping#EZB}
      * @return A mapping with keys for each FieldKeyMapping type.
      */
-    static def getMapping(String key, String type){
+    def getMapping(String key, String type){
         if (type == FieldKeyMapping.YGOR){
-            return YGOR_MAPPINGS.get(key)
+            return ygorMappings.get(key)
         }
         if (type == FieldKeyMapping.KBART){
-            return KBART_MAPPINGS.get(key)
+            return kbartMappings.get(key)
         }
         if (type == FieldKeyMapping.ZDB){
-            return ZDB_MAPPINGS.get(key)
+            return zdbMappings.get(key)
         }
         if (type == FieldKeyMapping.EZB){
-            return EZB_MAPPINGS.get(key)
+            return ezbMappings.get(key)
         }
     }
 
