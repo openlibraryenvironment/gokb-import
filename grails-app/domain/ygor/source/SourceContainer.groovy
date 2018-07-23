@@ -7,6 +7,9 @@ class SourceContainer {
     EzbSource   ezbSource
 
     static constraints = {
+        kbartSource nullable : false
+        zdbSource   nullable : false
+        ezbSource   nullable : false
     }
 
 }

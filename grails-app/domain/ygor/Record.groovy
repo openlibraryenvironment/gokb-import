@@ -12,7 +12,8 @@ class Record {
     ZdbIdentifier   zdbId
     EissnIdentifier eissn
     PissnIdentifier pissn
-    Map<String, MultiField> multiFields
+    Map multiFields
+    static hasMany = [multiFields : MultiField]
 
     static constraints = {
     }

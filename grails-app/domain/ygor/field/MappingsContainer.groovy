@@ -9,28 +9,31 @@ class MappingsContainer {
     private static URL MAPPINGS_URL =
             getClass().getResource("../../../../../java/resources/YgorFieldKeyMapping.json")
 
-    private static Map<String, FieldKeyMapping> YGOR_MAPPINGS = [:]
-    private static Map<String, FieldKeyMapping> KBART_MAPPINGS = [:]
-    private static Map<String, FieldKeyMapping> ZDB_MAPPINGS = [:]
-    private static Map<String, FieldKeyMapping> EZB_MAPPINGS = [:]
+    private static Map YGOR_MAPPINGS
+    private static Map KBART_MAPPINGS
+    private static Map ZDB_MAPPINGS
+    private static Map EZB_MAPPINGS
 
-
-    static constraints = {
-    }
+    static hasMany = [YGOR_MAPPINGS : FieldKeyMapping, KBART_MAPPINGS : FieldKeyMapping,
+                      ZDB_MAPPINGS : FieldKeyMapping, EZB_MAPPINGS : FieldKeyMapping]
 
 
     MappingsContainer(){
-        readMappingsUrl(MAPPINGS_URL)
+        initialize(MAPPINGS_URL)
     }
 
     MappingsContainer(URL mappingsFile){
+        initialize(mappingsFile)
+    }
+
+
+    def initialize(File mappingsFile){
         YGOR_MAPPINGS = [:]
         KBART_MAPPINGS = [:]
         ZDB_MAPPINGS = [:]
         EZB_MAPPINGS = [:]
         readMappingsUrl(mappingsFile)
     }
-
 
     def readMappingsUrl(File mappingsFile){
         def json = SLURPY.parse(mappingsFile)

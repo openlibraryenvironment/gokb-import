@@ -16,6 +16,10 @@ class FieldKeyMapping {
     String ezbKey
 
     static constraints = {
+        ygorKey  nullable : false
+        kbartKey nullable : true
+        zdbKey   nullable : true
+        ezbKey   nullable : true
     }
 
     FieldKeyMapping(Map<SourceInterface, String> mappings){

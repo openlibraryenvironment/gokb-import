@@ -8,11 +8,11 @@ import ygor.source.ZdbSource
 
 class MultiField {
 
-    static List<String> DEFAULT_SOURCE_PRIO = [FieldKeyMapping.ZDB, FieldKeyMapping.KBART, FieldKeyMapping.EZB]
-    List<String> sourcePrio
+    static def DEFAULT_SOURCE_PRIO = [FieldKeyMapping.ZDB, FieldKeyMapping.KBART, FieldKeyMapping.EZB]
     String ygorFieldKey
     FieldKeyMapping keys
-    Map<String, Field> fields = [:]
+    Map fields = [:]
+    static hasMany = [sourcePrio : String, fields : Field]
 
     static constraints = {
     }

@@ -9,6 +9,9 @@ class Field {
     String value
 
     static constraints = {
+        source nullable : false
+        key    nullable : false
+        value  nullable : false
     }
 
     Field(SourceInterface source, String key, String value){
