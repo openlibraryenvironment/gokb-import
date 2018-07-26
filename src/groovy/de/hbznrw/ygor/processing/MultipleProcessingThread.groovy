@@ -88,7 +88,15 @@ class MultipleProcessingThread extends Thread {
         enrichment.dataContainer.info.stash = processor.stash.values
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
 
-        // TODO: re-get duplicate keys
+        def duplicateKeys = []
+        for (key in KEY_ORDER){
+            enrichment.dataContainer.info.stash."${key}".each { k, v ->
+                if (! processor.stash.getKeyByValue("${key}", v)) {
+                    duplicateKeys << v
+                }
+            }
+        }
+        enrichment.dataContainer.info.stash.duplicateKeyEntries = duplicateKeys.unique()
 
         enrichment.saveResult()
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
