@@ -1,12 +1,27 @@
 package ygor.identifier
 
+import ygor.field.FieldKeyMapping
+
 class AbstractIdentifier {
 
-    String id
+    String identifier
 
     static constraints = {
-        id nullable : false
+        identifier nullable : false
     }
 
-    String toString(){return id}
+    String toString(){return identifier}
+
+    static Class byFieldKeyMapping(FieldKeyMapping fieldKeyMapping){
+        if (fieldKeyMapping == FieldKeyMapping.findByYgorKey("zdbId")){
+            return ZdbIdentifier.class
+        }
+        if (fieldKeyMapping == FieldKeyMapping.findByYgorKey("printIdentifier")){
+            return PissnIdentifier.class
+        }
+        if (fieldKeyMapping == FieldKeyMapping.findByYgorKey("onlineIdentifier")){
+            return EissnIdentifier.class
+        }
+        null
+    }
 }

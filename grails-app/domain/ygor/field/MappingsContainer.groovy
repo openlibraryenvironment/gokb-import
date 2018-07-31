@@ -23,6 +23,7 @@ class MappingsContainer {
         initialize(MAPPINGS_URL)
     }
 
+
     MappingsContainer(URL mappingsFile){
         initialize(mappingsFile)
     }
@@ -35,6 +36,7 @@ class MappingsContainer {
         ezbMappings = [:]
         readMappingsUrl(mappingsFile)
     }
+
 
     def readMappingsUrl(File mappingsFile){
         if (mappingsFile) {
@@ -93,4 +95,13 @@ class MappingsContainer {
         }
     }
 
+
+    def getAllIdFieldKeyMappings(){
+        // TODO
+    }
+
+
+    def getIdentifier(FieldKeyMapping mapping){
+        // TODO
+    }
 }

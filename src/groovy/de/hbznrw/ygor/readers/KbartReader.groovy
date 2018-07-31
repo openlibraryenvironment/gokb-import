@@ -43,7 +43,7 @@ class KbartReader extends AbstractReader{
     def readItemData(FieldKeyMapping fieldKeyMapping, String id) {
         // guess, the iterator is in the position to return the desired next record
         def next = getNext()
-        if (next && (!id || next.get(fieldKeyMapping.kbartKey == id))) {
+        if (next && (!id || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKey == id))) {
             return returnItem(next)
         }
         // otherwise, re-iterate over all entries

@@ -18,13 +18,17 @@ class MultiField {
 
 
     MultiField(String ygorFieldKey){
-        this.ygorFieldKey = ygorFieldKey
-        keys = MappingsContainer.getMapping(ygorFieldKey, FieldKeyMapping.YGOR)
+        this(MappingsContainer.getMapping(ygorFieldKey, FieldKeyMapping.YGOR))
+    }
+
+    MultiField(FieldKeyMapping fieldKeyMapping){
+        this.ygorFieldKey = fieldKeyMapping.ygorKey
+        keys = MappingsContainer.getMapping(fieldKeyMapping, FieldKeyMapping.YGOR)
         this.sourcePrio = DEFAULT_SOURCE_PRIO
     }
 
 
-    static void setSourcePrio(List<String> sourcePrio) {
+    static void setSourcePrio(def sourcePrio) {
         if (!sourcePrio || !(sourcePrio instanceof List) || sourcePrio.size() != DEFAULT_SOURCE_PRIO.size()){
             throw IllegalArgumentException("Illegal static list of sources given for MultiField configuration: "
                     .concat(sourcePrio))

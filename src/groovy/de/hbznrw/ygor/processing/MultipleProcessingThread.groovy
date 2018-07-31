@@ -38,7 +38,6 @@ class MultipleProcessingThread extends Thread {
     
 	MultipleProcessingThread(Enrichment en, HashMap options) {
         this.container = new DataContainer()
-
 		this.enrichment = en
         this.processor = new KbartProcessor()
 		this.apiCalls  = options.get('options')
@@ -48,11 +47,9 @@ class MultipleProcessingThread extends Thread {
 	void run() {
 		if(null == enrichment.originPathName)
 			System.exit(0)
-		
 		enrichment.setStatus(Enrichment.ProcessingState.WORKING)
 		log.info('Starting ..')
-        
-		try {  
+		try {
             apiCalls.each{ call ->
                 switch(call) {
                     case KbartBridge.IDENTIFIER:

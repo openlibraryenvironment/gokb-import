@@ -7,6 +7,6 @@ class EissnIdentifier extends AbstractIdentifier{
     }
 
     EissnIdentifier(String id){
-        this.id = id
+        this.identifier = id
     }
 }

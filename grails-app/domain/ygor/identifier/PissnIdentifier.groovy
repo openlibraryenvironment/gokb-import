@@ -7,6 +7,6 @@ class PissnIdentifier extends AbstractIdentifier{
     }
 
     PissnIdentifier(String id){
-        this.id = id
+        this.identifier = id
     }
 }

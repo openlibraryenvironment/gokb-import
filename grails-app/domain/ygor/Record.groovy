@@ -45,12 +45,4 @@ class Record {
         }
     }
 
-    MultiField putMultifield(MultiField multiField){
-        multiFields.put(multiField.ygorFieldKey, multiField)
-    }
-
-    MultiField getMultifield(String ygorFieldKey){
-        multiFields.get(ygorFieldKey)
-    }
-
 }

@@ -56,6 +56,7 @@ class FieldKeyMapping {
         }
     }
 
+
     /**
      * @param type One of {@value #YGOR}, {@value #KBART}, {@value #ZDB} or {@value #EZB}
      * @return The value of the given type.
