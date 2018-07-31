@@ -1,0 +1,48 @@
+package de.hbznrw.ygor.integrators
+
+import de.hbznrw.ygor.export.DataContainer
+import de.hbznrw.ygor.readers.KbartReader
+import grails.converters.JSON
+import ygor.Record
+import ygor.field.FieldKeyMapping
+import ygor.field.MappingsContainer
+import ygor.field.MultiField
+import ygor.identifier.AbstractIdentifier
+import ygor.source.KbartSource
+
+class KbartIntegrator {
+
+    static def integrate(String kbartFile, DataContainer data, MappingsContainer container){
+        KbartReader reader = new KbartReader(kbartFile)
+        List<FieldKeyMapping> idMappings = container.getAllIdFieldKeyMappings()
+
+        List<AbstractIdentifier> identifiers
+
+        JSON item = reader.readItemData(null, null)
+        while (item != null){
+            // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
+            identifiers = []
+            for (idMapping in idMappings) {
+                if (item.$(idMapping.kbartKey)){
+                    Class clazz = AbstractIdentifier.byFieldKeyMapping(idMapping)
+                    identifiers.add(clazz.newInstance(["identifier" : item.$(idMapping.kbartKey)]))
+                }
+            }
+            Record record = new Record(identifiers)
+
+            // fill record with all non-identifier fields
+            def fields = item.getData()
+            fields.items.each{ key, value ->
+                def fieldKeyMapping = FieldKeyMapping.findByKbartKey(key)
+                if (null == AbstractIdentifier.byFieldKeyMapping(fieldKeyMapping)){
+                    MultiField multiField = new MultiField(fieldKeyMapping)
+                    multiField.addValue(KbartSource, value)
+                    record.addToMultiFields(multiField)
+                }
+            }
+            data.putRecord(record)
+            item = reader.readItemData(null, null)
+        }
+    }
+
+}
