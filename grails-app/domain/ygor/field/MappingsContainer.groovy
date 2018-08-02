@@ -3,13 +3,12 @@ package ygor.field
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 
-import javax.annotation.Nonnull
+import java.nio.file.Paths
 
 class MappingsContainer {
 
     final private static JsonSlurper SLURPY = new JsonSlurper()
-    private static URL MAPPINGS_URL =
-            getClass().getResource("../../../../../java/resources/YgorFieldKeyMapping.json")
+    private static String MAPPINGS_FILE = Paths.get("src/java/resources/YgorFieldKeyMapping.json").toAbsolutePath().toString()
 
     Map ygorMappings
     Map kbartMappings
@@ -20,25 +19,25 @@ class MappingsContainer {
 
 
     MappingsContainer(){
-        initialize(MAPPINGS_URL)
+        initialize(MAPPINGS_FILE)
     }
 
 
-    MappingsContainer(URL mappingsFile){
+    MappingsContainer(String mappingsFile){
         initialize(mappingsFile)
     }
 
 
-    def initialize(File mappingsFile){
+    def initialize(String mappingsFile){
         ygorMappings = [:]
         kbartMappings = [:]
         zdbMappings = [:]
         ezbMappings = [:]
-        readMappingsUrl(mappingsFile)
+        readMappingsFile(new File(mappingsFile))
     }
 
 
-    def readMappingsUrl(File mappingsFile){
+    def readMappingsFile(File mappingsFile){
         if (mappingsFile) {
             def json = SLURPY.parse(mappingsFile)
             json.each { map ->
