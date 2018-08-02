@@ -4,7 +4,7 @@ import ygor.field.FieldKeyMapping
 
 class ZdbIdentifier extends AbstractIdentifier{
 
-    static FieldKeyMapping FIELD_KEY_MAPPING = FieldKeyMapping.findByYgorKey("zdb_id")
+    static FieldKeyMapping FIELD_KEY_MAPPING = FieldKeyMapping.findByYgorKey("zdbId")
 
     static constraints = {
         // TODO: check ZdbID format

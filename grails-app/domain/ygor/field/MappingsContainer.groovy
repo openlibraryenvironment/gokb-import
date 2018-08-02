@@ -3,6 +3,9 @@ package ygor.field
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
+import ygor.identifier.EissnIdentifier
+import ygor.identifier.PissnIdentifier
+import ygor.identifier.ZdbIdentifier
 
 import java.nio.file.Paths
 
@@ -103,11 +106,6 @@ class MappingsContainer {
 
 
     def getAllIdFieldKeyMappings(){
-        // TODO
-    }
-
-
-    def getIdentifier(FieldKeyMapping mapping){
-        // TODO
+        return [ZdbIdentifier.FIELD_KEY_MAPPING, PissnIdentifier.FIELD_KEY_MAPPING, EissnIdentifier.FIELD_KEY_MAPPING]
     }
 }

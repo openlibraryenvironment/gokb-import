@@ -13,13 +13,13 @@ class AbstractIdentifier {
     String toString(){return identifier}
 
     static Class byFieldKeyMapping(FieldKeyMapping fieldKeyMapping){
-        if (fieldKeyMapping == FieldKeyMapping.findByYgorKey("zdbId")){
+        if (fieldKeyMapping == ZdbIdentifier.FIELD_KEY_MAPPING){
             return ZdbIdentifier.class
         }
-        if (fieldKeyMapping == FieldKeyMapping.findByYgorKey("printIdentifier")){
+        if (fieldKeyMapping == PissnIdentifier.FIELD_KEY_MAPPING){
             return PissnIdentifier.class
         }
-        if (fieldKeyMapping == FieldKeyMapping.findByYgorKey("onlineIdentifier")){
+        if (fieldKeyMapping == EissnIdentifier.FIELD_KEY_MAPPING){
             return EissnIdentifier.class
         }
         null
