@@ -1,10 +1,12 @@
 package ygor.field
 
 import groovy.json.JsonSlurper
+import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 
 import java.nio.file.Paths
 
+@Log4j
 class MappingsContainer {
 
     final private static JsonSlurper SLURPY = new JsonSlurper()
@@ -24,11 +26,16 @@ class MappingsContainer {
 
 
     MappingsContainer(String mappingsFile){
-        initialize(mappingsFile)
+        try{
+            initialize(mappingsFile)
+        }
+        catch(MissingFieldException mfe){
+            log("Incomplete mapping.\n" + mfe)
+        }
     }
 
 
-    def initialize(String mappingsFile){
+    def initialize(String mappingsFile) throws MissingFieldException{
         ygorMappings = [:]
         kbartMappings = [:]
         zdbMappings = [:]
@@ -37,7 +44,7 @@ class MappingsContainer {
     }
 
 
-    def readMappingsFile(File mappingsFile){
+    def readMappingsFile(File mappingsFile) throws MissingFieldException{
         if (mappingsFile) {
             def json = SLURPY.parse(mappingsFile)
             json.each { map ->
@@ -48,17 +55,17 @@ class MappingsContainer {
     }
 
 
-    static FieldKeyMapping jsonNodeToMapping(def json){
-        if (!json.ygor | StringUtils.isEmpty(json.ygor)){
+    static FieldKeyMapping jsonNodeToMapping(def json) throws MissingFieldException{
+        if (json.ygor == null){
             throw new MissingFieldException("Missing YgorFieldKey entry in ".concat(json))
         }
-        if (!json.kbart | StringUtils.isEmpty(json.kbart)){
+        if (json.kbart == null){
             throw new MissingFieldException("Missing Kbart key entry in ".concat(json))
         }
-        if (!json.zdb | StringUtils.isEmpty(json.zdb)){
+        if (json.zdb == null){
             throw new MissingFieldException("Missing ZDB key entry in ".concat(json))
         }
-        if (!json.ezb | StringUtils.isEmpty(json.ezb)){
+        if (json.ezb == null){
             throw new MissingFieldException("Missing EZB key entry in ".concat(json))
         }
         new FieldKeyMapping(json)
