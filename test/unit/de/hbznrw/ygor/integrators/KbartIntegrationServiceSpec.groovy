@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
+import de.hbznrw.ygor.readers.KbartReader
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import grails.test.mixin.services.ServiceUnitTestMixin
@@ -18,11 +19,13 @@ class KbartIntegrationServiceSpec /*extends HibernateSpec implements ServiceUnit
     String kbartFileSimple
     DataContainer data
     MappingsContainer container
+    KbartReader.KbartReaderConfiguration configuration
 
     def setup() {
-        kbartFileSimple = "KbartIntegrationServiceSpec.kbartFileSimple.csv"
+        kbartFileSimple = "test/resources/KbartIntegrationServiceSpec.kbartFileSimple.csv"
         data = new DataContainer()
         container = new MappingsContainer()
+        configuration = new KbartReader.KbartReaderConfiguration(null, "comma", null, null, null)
         true
     }
 
@@ -31,7 +34,8 @@ class KbartIntegrationServiceSpec /*extends HibernateSpec implements ServiceUnit
     }
 
     void "test integrate simple"() {
-        KbartIntegrationService.integrate(kbartFileSimple, data, container)
+        setup()
+        KbartIntegrationService.integrate(kbartFileSimple, data, container, configuration)
         expect:
             data.getRecordsPerEissn() == 1 // TODO this is a dummy assert
             data.getRecordsPerPissn() == 1 // TODO this is a dummy assert

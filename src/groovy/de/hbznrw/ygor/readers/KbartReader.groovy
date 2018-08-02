@@ -3,13 +3,21 @@ package de.hbznrw.ygor.readers
 import de.hbznrw.ygor.processing.YgorProcessingException
 import grails.converters.JSON
 import groovy.json.JsonOutput
+import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
+import org.apache.commons.csv.QuoteMode
 import ygor.field.FieldKeyMapping
 
 import java.nio.file.Paths
 
 class KbartReader extends AbstractReader{
+
+    private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines()
+    private CSVParser csv
+    private Map<String, Integer> csvHeader
+    private Iterator<CSVRecord> iterator
+    private CSVRecord lastItemReturned
 
     static MANDATORY_KBART_KEYS = [
         'date_first_issue_online',
@@ -23,11 +31,6 @@ class KbartReader extends AbstractReader{
         'coverage_depth',
         'notes'
     ]
-
-    CSVParser csv
-    Map<String, Integer> csvHeader
-    Iterator<CSVRecord> iterator
-    CSVRecord lastItemReturned
 
     KbartReader(String kbartFile) {
         Paths.get(kbartFile).withReader { reader ->
@@ -97,10 +100,65 @@ class KbartReader extends AbstractReader{
         }
     }
 
-    private CSVParser getCSVParserFromReader(Reader reader) {
+
+    private CSVParser getCSVParserFromReader(Reader reader  ) {
         // Skip BOM
         reader.mark(1)
         if (reader.read() != 0xFEFF) reader.reset()
         new CSVParser(reader, csvFormat)
+    }
+
+
+    KbartReader setConfiguration(KbartReaderConfiguration configuration) {
+        if(null != configuration.delimiter) {
+            csvFormat = csvFormat.withDelimiter((char)configuration.delimiter)
+        }
+        if(null != configuration.quote) {
+            if('null' == configuration.quote) {
+                csvFormat = csvFormat.withQuote(null)
+            }
+            else {
+                csvFormat = csvFormat.withQuote((char)configuration.quote)
+            }
+        }
+        if(null != configuration.quoteMode) {
+            csvFormat = csvFormat.withEscape((char)'^')
+            csvFormat = csvFormat.withQuoteMode((QuoteMode)configuration.quoteMode)
+        }
+        if(null != configuration.recordSeparator) {
+            csvFormat = csvFormat.withRecordSeparator(configuration.recordSeparator)
+        }
+        csvFormat = csvFormat.withAllowMissingColumnNames(true)
+        csvFormat = csvFormat.withIgnoreHeaderCase(true)
+        this
+    }
+
+
+    class KbartReaderConfiguration{
+        String delimiter
+        String quote
+        String quoteMode
+        String recordSeparator
+        static def resolver = [
+                'comma'         : ',',
+                'semicolon'     : ';',
+                'tab'           : '\t',
+                'doublequote'   : '"',
+                'singlequote'   : "'",
+                'nullquote'     : 'null',
+                'all'           : QuoteMode.ALL,
+                'nonnumeric'    : QuoteMode.NON_NUMERIC,
+                'none'          : QuoteMode.NONE
+        ]
+
+        KbartReaderConfiguration(String delimiter, String quote, String quoteMode, String recordSeparator){
+            delimiter = resolver.get(delimiter)
+            quote     = resolver.get(quote)
+            quoteMode = resolver.get(quoteMode)
+            this.delimiter       = delimiter
+            this.quote           = quote
+            this.quoteMode       = quoteMode
+            this.recordSeparator = recordSeparator
+        }
     }
 }

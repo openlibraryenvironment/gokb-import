@@ -12,10 +12,10 @@ import ygor.source.KbartSource
 
 class KbartIntegrationService {
 
-    static def integrate(String kbartFile, DataContainer data, MappingsContainer container){
-        KbartReader reader = new KbartReader(kbartFile)
+    static def integrate(String kbartFile, DataContainer data, MappingsContainer container,
+                         KbartReader.KbartReaderConfiguration kbartReaderConfiguration){
+        KbartReader reader = new KbartReader(kbartFile).setConfiguration(kbartReaderConfiguration)
         List<FieldKeyMapping> idMappings = container.getAllIdFieldKeyMappings()
-
         List<AbstractIdentifier> identifiers
 
         JSON item = reader.readItemData(null, null)
