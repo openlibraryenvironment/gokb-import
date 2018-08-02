@@ -40,10 +40,10 @@ class KbartReader extends AbstractReader{
 
 
     @Override
-    def readItemData(FieldKeyMapping fieldKeyMapping, String id) {
+    def readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
         // guess, the iterator is in the position to return the desired next record
         def next = getNext()
-        if (next && (!id || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKey == id))) {
+        if (next && (!identifier || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKey == identifier))) {
             return returnItem(next)
         }
         // otherwise, re-iterate over all entries
@@ -51,7 +51,7 @@ class KbartReader extends AbstractReader{
         CSVRecord item
         while ({
             item = getNext()
-            if (item && item.get(fieldKeyMapping.kbartKey == id)){
+            if (item && item.get(fieldKeyMapping.kbartKey == identifier)){
                 return returnItem(item)
             }
             // following: "do while" continue condition, see https://stackoverflow.com/a/46474198

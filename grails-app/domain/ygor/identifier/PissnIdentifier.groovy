@@ -6,7 +6,7 @@ class PissnIdentifier extends AbstractIdentifier{
         // TODO: check PISSN format
     }
 
-    PissnIdentifier(String id){
-        this.identifier = id
+    PissnIdentifier(String identifier){
+        this.identifier = identifier
     }
 }

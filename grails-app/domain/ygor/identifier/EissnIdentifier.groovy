@@ -6,7 +6,7 @@ class EissnIdentifier extends AbstractIdentifier{
         // TODO: check EISSN format
     }
 
-    EissnIdentifier(String id){
-        this.identifier = id
+    EissnIdentifier(String identifier){
+        this.identifier = identifier
     }
 }

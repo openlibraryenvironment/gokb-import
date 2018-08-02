@@ -24,24 +24,24 @@ class Record {
         multiFields = [:]
     }
 
-    void addIdentifier(AbstractIdentifier id){
-        if (id instanceof ZdbIdentifier){
+    void addIdentifier(AbstractIdentifier identifier){
+        if (identifier instanceof ZdbIdentifier){
             if (zdbId){
                 throw new IllegalArgumentException("ZDB id ".concat(zdbId).concat(" already given for record"))
             }
-            zdbId = id
+            zdbId = identifier
         }
-        else if (id instanceof EissnIdentifier){
+        else if (identifier instanceof EissnIdentifier){
             if (eissn){
                 throw new IllegalArgumentException("EISSN ".concat(eissn).concat(" already given for record"))
             }
-            eissn = id
+            eissn = identifier
         }
-        else if (id instanceof PissnIdentifier){
+        else if (identifier instanceof PissnIdentifier){
             if (pissn){
                 throw new IllegalArgumentException("PISSN ".concat(pissn).concat(" already given for record"))
             }
-            pissn = id
+            pissn = identifier
         }
     }
 
