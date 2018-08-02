@@ -11,6 +11,7 @@ class MultiField {
     String ygorFieldKey
     FieldKeyMapping keys
     Map fields = [:]
+    List sourcePrio = []
     static hasMany = [sourcePrio : String, fields : Field]
 
     static constraints = {
@@ -21,6 +22,7 @@ class MultiField {
         this(MappingsContainer.getMapping(ygorFieldKey, FieldKeyMapping.YGOR))
     }
 
+
     MultiField(FieldKeyMapping fieldKeyMapping){
         this.ygorFieldKey = fieldKeyMapping.ygorKey
         keys = MappingsContainer.getMapping(fieldKeyMapping, FieldKeyMapping.YGOR)
@@ -28,8 +30,8 @@ class MultiField {
     }
 
 
-    static void setSourcePrio(def sourcePrio) {
-        if (!sourcePrio || !(sourcePrio instanceof List) || sourcePrio.size() != DEFAULT_SOURCE_PRIO.size()){
+    void setSourcePrio(List<String> sourcePrio) {
+        if (!sourcePrio || sourcePrio.size() != DEFAULT_SOURCE_PRIO.size()){
             throw IllegalArgumentException("Illegal static list of sources given for MultiField configuration: "
                     .concat(sourcePrio))
         }
