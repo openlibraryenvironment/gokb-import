@@ -54,6 +54,12 @@
     "ezb" : ""
   },
   {
+    "ygor" : "ezbId",
+    "kbart" : "n.a.",
+    "zdb" : "",
+    "ezb" : "jourid"
+  },
+  {
     "ygor" : "firstAuthor",
     "kbart" : "first_author",
     "zdb" : "",
@@ -183,7 +189,7 @@
     "ygor" : "publicationTitle",
     "kbart" : "publication_title",
     "zdb" : "",
-    "ezb" : ""
+    "ezb" : "title"
   },
   {
     "ygor" : "publicationType",
@@ -207,7 +213,7 @@
     "ygor" : "titleUrl",
     "kbart" : "title_url",
     "zdb" : "",
-    "ezb" : ""
+    "ezb" : "detail_link"
   },
   {
     "ygor" : "zdbId",
