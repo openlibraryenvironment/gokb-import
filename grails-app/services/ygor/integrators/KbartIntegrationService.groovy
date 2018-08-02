@@ -1,4 +1,4 @@
-package de.hbznrw.ygor.integrators
+package ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.readers.KbartReader
@@ -10,7 +10,7 @@ import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.source.KbartSource
 
-class KbartIntegrator {
+class KbartIntegrationService {
 
     static def integrate(String kbartFile, DataContainer data, MappingsContainer container){
         KbartReader reader = new KbartReader(kbartFile)
