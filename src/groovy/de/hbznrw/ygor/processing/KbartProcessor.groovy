@@ -167,7 +167,11 @@ class KbartProcessor extends AbstractProcessor {
         RandomAccessFile raf = new RandomAccessFile(inputFile, "rw");
         def header = raf.readLine()
         raf.seek(0)
-        raf.writeBytes(header.toLowerCase().replace("zdb-id", "zdb_id"))
+        raf.writeBytes(
+            header.toLowerCase()
+                  .replace("zdb-id", "zdb_id")
+                  .replace("coverage_notes", "notes")
+        )
         raf.close()
     }
 
