@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.processing
 
 import de.hbznrw.ygor.bridges.KbartBridge
+import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.export.structure.PackageStruct
@@ -122,27 +123,29 @@ class KbartProcessor extends AbstractProcessor {
                     def identifier
 
                     for (key in MultipleProcessingThread.KEY_ORDER) {
-                        identifier = record.get(key)?.toString()?.trim()
-                        if (identifier) {
-                            def uid = UUID.randomUUID().toString()
-                            // store enrichment keys (zdb or issn or eissn)
-                            addKey(key, ["${uid}": "${identifier}"])
+                        if (key != KbartConnector.KBART_HEADER_ZDB_ID || record.isMapped(key)) {
+                            identifier = record.get(key)?.toString()?.trim()
+                            if (identifier) {
+                                def uid = UUID.randomUUID().toString()
+                                // store enrichment keys (zdb or issn or eissn)
+                                addKey(key, ["${uid}": "${identifier}"])
 
-                            // store kbart fields
-                            def kbfs = [:]
-                            bridge.connector.kbartKeys.each { kbk ->
-                                kbfs << ["${kbk}": record.get(kbk).toString()]
-                            }
-                            bridge.connector.optionalKbartKeys.each { kbk ->
-                                if (record.isMapped(kbk)) {
+                                // store kbart fields
+                                def kbfs = [:]
+                                bridge.connector.kbartKeys.each { kbk ->
                                     kbfs << ["${kbk}": record.get(kbk).toString()]
                                 }
+                                bridge.connector.optionalKbartKeys.each { kbk ->
+                                    if (record.isMapped(kbk)) {
+                                        kbfs << ["${kbk}": record.get(kbk).toString()]
+                                    }
+                                }
+                                if (kbfs.size() > 0) {
+                                    kbartFields << ["${uid}": kbfs]
+                                }
+                                stash.putKeyType(uid, key)
+                                break
                             }
-                            if (kbfs.size() > 0) {
-                                kbartFields << ["${uid}": kbfs]
-                            }
-                            stash.putKeyType(uid, key)
-                            break
                         }
                     }
                     if (!identifier) {
