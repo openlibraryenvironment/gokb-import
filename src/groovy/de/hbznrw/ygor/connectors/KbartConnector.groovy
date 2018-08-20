@@ -13,7 +13,7 @@ import de.hbznrw.ygor.bridges.*
 @Log4j
 class KbartConnector extends AbstractConnector {
 
-    static final KBART_HEADER_ZDB_ID            = "ZDB-ID"
+    static final KBART_HEADER_ZDB_ID            = "zdb_id"
     static final KBART_HEADER_ONLINE_IDENTIFIER = "online_identifier"
     static final KBART_HEADER_PRINT_IDENTIFIER  = "print_identifier"
 
@@ -33,7 +33,7 @@ class KbartConnector extends AbstractConnector {
         'notes'
         /*
         'publication_title',
-        'ZDB-ID',
+        'zdb_id',
         'print_identifier',
         'online_identifier'
         */

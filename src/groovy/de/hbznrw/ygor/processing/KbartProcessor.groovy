@@ -107,6 +107,7 @@ class KbartProcessor extends AbstractProcessor {
         }
         def kbartFields    = [:]
         this.inputFile = options.get('inputFile')
+        trimHeader(inputFile)
 
         Paths.get(inputFile).withReader { reader ->
             CSVParser csv = getCSVParserFromReader(reader)
@@ -157,6 +158,14 @@ class KbartProcessor extends AbstractProcessor {
             }
         }
         return stash.get(KbartBridge.IDENTIFIER).size()
+    }
+
+    private void trimHeader(String inputFile){
+        RandomAccessFile raf = new RandomAccessFile(inputFile, "rw");
+        def header = raf.readLine()
+        raf.seek(0)
+        raf.writeBytes(header.toLowerCase().replace("zdb-id", "zdb_id"))
+        raf.close()
     }
 
     private CSVParser getCSVParserFromReader(Reader reader) {
