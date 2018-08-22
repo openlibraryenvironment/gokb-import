@@ -1,4 +1,6 @@
 package ygor
+
+import de.hbznrw.ygor.tools.SessionToolkit
 import grails.converters.JSON
 
 class EnrichmentController {
@@ -62,13 +64,19 @@ class EnrichmentController {
     }
     
     def uploadFile = {
+        def file        = request.getFile('uploadFile')
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
-        def foQuote     = null
-        def foQuoteMode = null
-        //def foQuote     = request.parameterMap['formatQuote'][0]
-        //def foQuoteMode = request.parameterMap['formatQuoteMode'][0]
-        
-        def file = request.getFile('uploadFile')
+        def foQuote     = null // = request.parameterMap['formatQuote'][0]
+        def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
+
+        if (!request.session.lastUpdate){
+            request.session.lastUpdate = [:]
+        }
+        request.session.lastUpdate.file = file
+        request.session.lastUpdate.foDelimiter = foDelimiter
+        request.session.lastUpdate.foQuote = foQuote
+        request.session.lastUpdate.foQuoteMode = foQuoteMode
+
         if (file.empty) {
             flash.info    = null
             flash.warning = null
@@ -87,6 +95,7 @@ class EnrichmentController {
 
     def prepareFile = {
         enrichmentService.prepareFile(getCurrentEnrichment(), request.parameterMap)
+        request.session.lastUpdate.parameterMap = request.parameterMap
         redirect(action:'process')
     }
     
@@ -98,6 +107,7 @@ class EnrichmentController {
             flash.error   = null
         }
         else {
+            request.session.lastUpdate.pmOptions = pmOptions
             def en = getCurrentEnrichment()
             if(en.status != Enrichment.ProcessingState.WORKING) {
                 flash.info    = 'Bearbeitung gestartet.'
