@@ -142,6 +142,7 @@ class EnrichmentController {
     }
     
     def deleteFile = {
+        request.session.lastUpdate = [:]
         enrichmentService.deleteFileAndFormat(getCurrentEnrichment())    
         render(
             view:'process',
@@ -151,7 +152,18 @@ class EnrichmentController {
             ]
         )
     }
-    
+
+    def correctFile = {
+        enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
+        render(
+            view:'process',
+            model:[
+                    enrichments: enrichmentService.getSessionEnrichments(),
+                    currentView: 'process'
+            ]
+        )
+    }
+
     def downloadPackageFile = {
         def en = getCurrentEnrichment()
         if(en){

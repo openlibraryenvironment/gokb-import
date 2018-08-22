@@ -80,11 +80,11 @@
 			
 			<ul class="list-group content-list">
 				<li class="list-group-item">
-					<label class="btn btn-default btn-file">
+					<label class="btn btn-link btn-file">
 						<input type="file" name="uploadFile" style="display: none;"/>Datei auswählen
 					</label>
 					
-					<input type="submit" value="Datei hochladen" class="btn btn-default" />
+					<input type="submit" value="Datei hochladen" class="btn btn-success" />
 					
 					<script>
 						jQuery(document).on('change', ':file', function() {
