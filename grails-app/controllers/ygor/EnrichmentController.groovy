@@ -65,6 +65,11 @@ class EnrichmentController {
     
     def uploadFile = {
         def file        = request.getFile('uploadFile')
+        if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
+            request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename){
+            // the file form is unpopulated but the previously selected file in unchanged
+            file = request.session.lastUpdate.file
+        }
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
         def foQuote     = null // = request.parameterMap['formatQuote'][0]
         def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
