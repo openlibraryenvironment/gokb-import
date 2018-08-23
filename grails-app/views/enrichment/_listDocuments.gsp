@@ -64,14 +64,24 @@
 														
 								<div class="input-group">
 									<span class="input-group-addon">Titel</span>
-									<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgTitle}">
+										<g:textField name="pkgTitle" size="48" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" class="form-control" />
+									</g:else>
 								</div>
 								
 								<br />
 							
 								<div class="input-group">
 									<span class="input-group-addon">ZDB-Paketsigel</span>
-									<g:textField name="pkgVariantName" size="24" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgVariantName}">
+										<g:textField name="pkgVariantName" size="48" value="${session.lastUpdate.parameterMap.pkgVariantName[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgVariantName" size="48" value="" class="form-control" />
+									</g:else>
 								</div>
 								
 								<br />
@@ -91,57 +101,76 @@
 								<br />
 
 								<script>
-                                                                  $(document).ready(function() {
-                                                                    $('#pkgNominalPlatform').select2({
-                                                                      allowClear: true,
-                                                                      placeholder: 'Bitte Plattform wählen..',
-                                                                      debug: true,
-                                                                      ajax: {
-                                                                        url: '/ygor/enrichment/suggestPlatform',
-                                                                        data: function (params) {
-                                                                          var query = {
-                                                                            q: params.term
-                                                                          }
-                                                                          return query;
-                                                                        },
-                                                                        processResults: function (data) {
-                                                                          return {
-                                                                            results: data.items
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    });
-
-                                                                    $('#pkgNominalProvider').select2({
-                                                                      allowClear: true,
-                                                                      placeholder: 'Bitte Anbieter wählen..',
-                                                                      debug: true,
-                                                                      ajax: {
-                                                                        url: '/ygor/enrichment/suggestProvider',
-                                                                        data: function (params) {
-                                                                          var query = {
-                                                                            q: params.term
-                                                                          }
-                                                                          return query;
-                                                                        },
-                                                                        processResults: function (data) {
-                                                                          return {
-                                                                            results: data.items
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    });
-                                                                  });
+                                    var platform = null;
+									if (${false != session.lastUpdate?.parameterMap?.pkgNominalPlatform?.getAt(0)}){
+									    platform = "${session.lastUpdate?.parameterMap?.pkgNominalPlatform?.getAt(0)}";
+									}
+                                    var provider = null;
+                                    if (${false != session.lastUpdate?.parameterMap?.pkgNominalProvider?.getAt(0)}){
+                                        provider = "${session.lastUpdate?.parameterMap?.pkgNominalProvider?.getAt(0)}";
+                                    }
+                                    $(document).ready(function() {
+									    $('#pkgNominalPlatform').select2({
+                                            allowClear: true,
+											placeholder: 'Bitte Plattform wählen..',
+											debug: true,
+											ajax: {
+											    url: '/ygor/enrichment/suggestPlatform',
+												data: function (params) {
+												    var query = {
+													    q: params.term
+													}
+													return query;
+												},
+												processResults: function (data) {
+												    return {
+													    results: data.items
+													}
+												}
+											}
+										});
+                                        $('#pkgNominalPlatform').append($('<option></option>').attr('value', platform).text(platform));
+										$('#pkgNominalProvider').select2({
+										    allowClear: true,
+											placeholder: 'Bitte Anbieter wählen..',
+											debug: true,
+											ajax: {
+											    url: '/ygor/enrichment/suggestProvider',
+												data: function (params) {
+												    var query = {
+													    q: params.term
+													}
+													return query;
+												},
+												processResults: function (data) {
+											        return {
+													    results: data.items
+													}
+												}
+											}
+										});
+                                        $('#pkgNominalProvider').append($('<option></option>').attr('value', provider).text(provider));
+									});
 								</script>
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>
-									<g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup1}">
+										<g:textField name="pkgCuratoryGroup1" size="24" value="${session.lastUpdate.parameterMap.pkgCuratoryGroup1[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" class="form-control" />
+									</g:else>
 								</div>
 								
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 2</span>
-									<g:textField name="pkgCuratoryGroup2" size="24" value="hbz" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup2}">
+										<g:textField name="pkgCuratoryGroup2" size="24" value="${session.lastUpdate.parameterMap.pkgCuratoryGroup2[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgCuratoryGroup2" size="24" value="hbz" class="form-control" />
+									</g:else>
 								</div>
 								
 							<!-- 
