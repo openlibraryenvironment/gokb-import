@@ -1,6 +1,5 @@
 package ygor
 
-import de.hbznrw.ygor.tools.SessionToolkit
 import grails.converters.JSON
 
 class EnrichmentController {
@@ -112,6 +111,9 @@ class EnrichmentController {
             flash.error   = null
         }
         else {
+            if (!request.session.lastUpdate){
+                request.session.lastUpdate = [:]
+            }
             request.session.lastUpdate.pmOptions = pmOptions
             def en = getCurrentEnrichment()
             if(en.status != Enrichment.ProcessingState.WORKING) {
