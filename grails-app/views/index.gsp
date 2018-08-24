@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.47</dt><br />
+
+					<dd>- Füge Button "Eingabe korrigieren" hinzu und behalte für diesen Schritt die vorherigen Einstellungen</dd>
+
 					<br /><dt>0.46</dt><br />
 
 					<dd>- Erlaube verschiedene Schreibweisen in der KBART-Spalte 'zdb_id'</dd>
