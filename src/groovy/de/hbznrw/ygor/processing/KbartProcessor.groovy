@@ -14,6 +14,7 @@ import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.QuoteMode
+import org.apache.commons.io.FileUtils
 
 import java.nio.file.Paths
 /**
@@ -164,15 +165,15 @@ class KbartProcessor extends AbstractProcessor {
     }
 
     private void trimHeader(String inputFile){
-        RandomAccessFile raf = new RandomAccessFile(inputFile, "rw");
-        def header = raf.readLine()
-        raf.seek(0)
-        raf.writeBytes(
-            header.toLowerCase()
-                  .replace("zdb-id", "zdb_id")
-                  .replace("coverage_notes", "notes")
-        )
-        raf.close()
+        File file = new File(inputFile)
+        List<String> lines = FileUtils.readLines(file)
+        if (lines != null && lines.size() > 0){
+            lines.set(0,
+                lines.get(0).toLowerCase()
+                    .replace("zdb-id", "zdb_id")
+                    .replace("coverage_notes", "notes"))
+        }
+        FileUtils.writeLines(file, lines)
     }
 
     private CSVParser getCSVParserFromReader(Reader reader) {
