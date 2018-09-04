@@ -1,4 +1,5 @@
 package ygor
+
 import grails.converters.JSON
 
 class EnrichmentController {
@@ -62,13 +63,24 @@ class EnrichmentController {
     }
     
     def uploadFile = {
+        def file        = request.getFile('uploadFile')
+        if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
+            request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename){
+            // the file form is unpopulated but the previously selected file in unchanged
+            file = request.session.lastUpdate.file
+        }
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
-        def foQuote     = null
-        def foQuoteMode = null
-        //def foQuote     = request.parameterMap['formatQuote'][0]
-        //def foQuoteMode = request.parameterMap['formatQuoteMode'][0]
-        
-        def file = request.getFile('uploadFile')
+        def foQuote     = null // = request.parameterMap['formatQuote'][0]
+        def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
+
+        if (!request.session.lastUpdate){
+            request.session.lastUpdate = [:]
+        }
+        request.session.lastUpdate.file = file
+        request.session.lastUpdate.foDelimiter = foDelimiter
+        request.session.lastUpdate.foQuote = foQuote
+        request.session.lastUpdate.foQuoteMode = foQuoteMode
+
         if (file.empty) {
             flash.info    = null
             flash.warning = null
@@ -87,6 +99,7 @@ class EnrichmentController {
 
     def prepareFile = {
         enrichmentService.prepareFile(getCurrentEnrichment(), request.parameterMap)
+        request.session.lastUpdate.parameterMap = request.parameterMap
         redirect(action:'process')
     }
     
@@ -98,6 +111,10 @@ class EnrichmentController {
             flash.error   = null
         }
         else {
+            if (!request.session.lastUpdate){
+                request.session.lastUpdate = [:]
+            }
+            request.session.lastUpdate.pmOptions = pmOptions
             def en = getCurrentEnrichment()
             if(en.status != Enrichment.ProcessingState.WORKING) {
                 flash.info    = 'Bearbeitung gestartet.'
@@ -132,6 +149,7 @@ class EnrichmentController {
     }
     
     def deleteFile = {
+        request.session.lastUpdate = [:]
         enrichmentService.deleteFileAndFormat(getCurrentEnrichment())    
         render(
             view:'process',
@@ -141,7 +159,18 @@ class EnrichmentController {
             ]
         )
     }
-    
+
+    def correctFile = {
+        enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
+        render(
+            view:'process',
+            model:[
+                    enrichments: enrichmentService.getSessionEnrichments(),
+                    currentView: 'process'
+            ]
+        )
+    }
+
     def downloadPackageFile = {
         def en = getCurrentEnrichment()
         if(en){

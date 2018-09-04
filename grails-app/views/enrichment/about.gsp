@@ -23,8 +23,9 @@
 		</p>
 		<br />
 		<p>
-			<em>Version <g:meta name="app.version"/></em> <br />
-			<em>basierend auf Grails <g:meta name="app.grails.version"/></em>
+			<em>Version <g:meta name="app.version"/></em> <br/>
+			<em>basierend auf Grails <g:meta name="app.grails.version"/></em> <br/>
+			<em>Angeschlossene GOKb-Instanz ${grailsApplication.config.gokbApi.baseUri}</em>
 		</p>
 
 	</div>
