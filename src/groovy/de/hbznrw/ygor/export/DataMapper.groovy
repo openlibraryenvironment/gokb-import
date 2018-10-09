@@ -206,10 +206,10 @@ class DataMapper {
         else if(query == Query.KBART_TIPP_ACCESS) {
 
             if(env.messages['accessStartDate']){
-                DataSetter.setDate(tipp.accessStart, Normalizer.IS_START_DATE, env.messages['accessStartDate'].first())
+                DataSetter.setDate(tipp.accessStartDate, Normalizer.IS_START_DATE, env.messages['accessStartDate'].first())
             }
             if(env.messages['accessEndDate']){
-                DataSetter.setDate(tipp.accessEnd, Normalizer.IS_END_DATE, env.messages['accessEndDate'].first())
+                DataSetter.setDate(tipp.accessEndDate, Normalizer.IS_END_DATE, env.messages['accessEndDate'].first())
             }
 
         }

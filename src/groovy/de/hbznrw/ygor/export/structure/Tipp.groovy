@@ -6,8 +6,8 @@ class Tipp {
     
     def _meta       = [:]
     
-    Pod accessEnd   = new Pod("")
-    Pod accessStart = new Pod("")
+    Pod accessEndDate   = new Pod("")
+    Pod accessStartDate = new Pod("")
     
     Pod medium      = new Pod(FixedValues.tipp_medium, Status.HARDCODED)
     Pod status      = new Pod(FixedValues.tipp_status, Status.HARDCODED)  
