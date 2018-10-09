@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.48 (Release)</dt><br />
+
+					<dd>- Bugfix: Tipp -> AccessStartDate & AccessEndDate </dd>
+
 					<br /><dt>0.47 (Release)</dt><br />
 
 					<dd>- Füge Button "Eingabe korrigieren" hinzu und behalte für diesen Schritt die vorherigen Einstellungen</dd>
