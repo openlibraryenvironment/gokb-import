@@ -78,7 +78,9 @@ class Normalizer {
             return str
             
         str = Normalizer.normString(str)
-        str = str.replaceAll(/[\/-]+/,"")
+        if(!(type.equals(TitleStruct.DOI))) {
+            str = str.replaceAll(/[\/-]+/, "")
+        }
         
         if(type.equals(TitleStruct.EISSN) || type.equals(TitleStruct.PISSN)){
             if(str.length() == 8)
@@ -89,6 +91,9 @@ class Normalizer {
         }
         else if(type.equals(EzbBridge.IDENTIFIER)){
             // TODO
+        }
+        else if(type.equals(TitleStruct.DOI)){
+            // TODO: DOI Normalizier
         }
 
         str

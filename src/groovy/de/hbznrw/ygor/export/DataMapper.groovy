@@ -34,19 +34,21 @@ class DataMapper {
     
     static void mapEnvelopeToTitle(Title title, Query query, Envelope env) {
 
-        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN]) {
+        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN, Query.KBART_EISSN, Query.KBART_PISSN, Query.KBART_DOI]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
                 ident.type.v = ZdbBridge.IDENTIFIER
             else if(Query.EZBID == query)
                 ident.type.v = EzbBridge.IDENTIFIER
-            else if(Query.ZDB_EISSN == query)
+            else if(Query.ZDB_EISSN == query || Query.KBART_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
-            else if(Query.ZDB_PISSN == query)
+            else if(Query.ZDB_PISSN == query || Query.KBART_PISSN == query)
                 ident.type.v = TitleStruct.PISSN
             else if(Query.ZDB_GVKPPN == query)
                 ident.type.v = "gvk_ppn"
+            else if(Query.KBART_DOI == query)
+                ident.type.v = TitleStruct.DOI
                 
             ident.type.m    = Status.IGNORE
             
@@ -55,16 +57,32 @@ class DataMapper {
             title.identifiers << ident // no pod
         }
         
-        else if(query == Query.ZDB_TITLE) {
+        else if(query == Query.ZDB_TITLE || query == Query.KBART_TITLE) {
             DataSetter.setString(title.name, env.message)
         }
 
-        else if(query == Query.ZDB_PUBLISHED_FROM) {
+        else if(query == Query.ZDB_PUBLISHED_FROM || query == Query.KBART_PUBLISHED_FROM) {
             DataSetter.setDate(title.publishedFrom, Normalizer.IS_START_DATE, env.message)
         }
         
-        else if(query == Query.ZDB_PUBLISHED_TO) {
+        else if(query == Query.ZDB_PUBLISHED_TO || query == Query.KBART_PUBLISHED_TO) {
             DataSetter.setDate(title.publishedTo, Normalizer.IS_END_DATE, env.message)
+        }
+         //TODO Überprüfen
+        else if (query == Query.KBART_PUBLISHER) {
+            def pubHistory = TitleStruct.getNewPublisherHistory()
+
+            DataSetter.setString(pubHistory.name, env.message[0])
+            def valid = StructValidator.isValidPublisherHistory(pubHistory)
+            def pod = new Pod(pubHistory, valid)
+
+            if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+                title.publisher_history << pod
+            }
+            else {
+                log.debug("! ignore crappy title publisher history")
+            }
+
         }
 
         else if(query == Query.ZDB_PUBLISHER) {
@@ -120,7 +138,7 @@ class DataMapper {
             }
         }
 
-        else if(query == Query.ZDB_HISTORY_EVENTS) {
+        else if(query == Query.ZDB_HISTORY_EVENTS || query == Query.KBART_HISTORY_EVENTS) {
             //def histEvent =  TitleStruct.getNewHistoryEvent()
 
             env.message.each{ e ->
@@ -173,13 +191,15 @@ class DataMapper {
      */
     static void mapEnvelopeToTipp(Tipp tipp, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.ZDB_EISSN]) {
+        if(query in [Query.ZDBID, Query.ZDB_EISSN, Query.KBART_EISSN, Query.KBART_DOI]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
                 ident.type.v = ZdbBridge.IDENTIFIER
-            else if(Query.ZDB_EISSN == query)
+            else if(Query.ZDB_EISSN == query || Query.KBART_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
+            else if(Query.KBART_DOI == query)
+                ident.type.v = TitleStruct.DOI
 
             ident.type.m    = Status.IGNORE
             
@@ -188,7 +208,7 @@ class DataMapper {
             tipp.title.v.identifiers << ident // no pod
         }
         
-        else if(query == Query.ZDB_TITLE) {
+        else if(query == Query.ZDB_TITLE || query == Query.KBART_TITLE) {
             DataSetter.setString(tipp.title.v.name, env.message)
         }
         

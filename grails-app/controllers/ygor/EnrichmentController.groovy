@@ -72,6 +72,7 @@ class EnrichmentController {
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
         def foQuote     = null // = request.parameterMap['formatQuote'][0]
         def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
+        def dataTyp     = request.parameterMap['dataTyp'][0]
 
         if (!request.session.lastUpdate){
             request.session.lastUpdate = [:]
@@ -80,6 +81,7 @@ class EnrichmentController {
         request.session.lastUpdate.foDelimiter = foDelimiter
         request.session.lastUpdate.foQuote = foQuote
         request.session.lastUpdate.foQuoteMode = foQuoteMode
+        request.session.lastUpdate.dataTyp = dataTyp
 
         if (file.empty) {
             flash.info    = null
@@ -93,7 +95,7 @@ class EnrichmentController {
             )
             return
         }
-        enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
+        enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
         redirect(action:'process')
     }
 
@@ -127,6 +129,7 @@ class EnrichmentController {
                     'delimiter':    format.get('delimiter'),
                     'quote':        format.get('quote'),
                     'quoteMode':    format.get('quoteMode'),
+                    'dataTyp':      format.get('dataTyp'),
                     'ygorVersion':  grailsApplication.config.ygor.version,
                     'ygorType':     grailsApplication.config.ygor.type
                 ]
@@ -247,7 +250,9 @@ class EnrichmentController {
 
     def ajaxGetStatus = {
         def en = getCurrentEnrichment()
-        render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
+        if(en) {
+            render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
+        }
     }
 
 

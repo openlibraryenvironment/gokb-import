@@ -14,7 +14,7 @@ class EnrichmentService {
     def grailsApplication
     GokbService gokbService
     
-    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode) {
+    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp) {
         
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
         en.setStatus(Enrichment.ProcessingState.PREPARE)
@@ -23,6 +23,7 @@ class EnrichmentService {
         tmp << ['delimiter': delimiter]
         tmp << ['quote':     quote]
         tmp << ['quoteMode': quoteMode]
+        tmp << ['dataTyp': dataTyp]
         
         def formats = getSessionFormats()
         formats << ["${en.originHash}":tmp]

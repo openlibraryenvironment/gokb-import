@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.49 (Release)</dt><br />
+
+					<dd>- Feature: Unterscheidung von Journal- und EBook-Paketen (Database -> disabled) und deren Informationsanreicherung</dd>
+
 					<br /><dt>0.47 (Release)</dt><br />
 
 					<dd>- Füge Button "Eingabe korrigieren" hinzu und behalte für diesen Schritt die vorherigen Einstellungen</dd>

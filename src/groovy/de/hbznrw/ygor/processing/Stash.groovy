@@ -20,6 +20,7 @@ class Stash {
         values[KbartConnector.KBART_HEADER_ZDB_ID]            = [:]
         values[KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER] = [:]
         values[KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]  = [:]
+        values[KbartConnector.KBART_HEADER_DOI_IDENTIFIER]  = [:]
 
         // file enrichment
         values[KbartBridge.IDENTIFIER]      = [:]

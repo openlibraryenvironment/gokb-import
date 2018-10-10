@@ -16,6 +16,7 @@ class KbartConnector extends AbstractConnector {
     static final KBART_HEADER_ZDB_ID            = "zdb_id"
     static final KBART_HEADER_ONLINE_IDENTIFIER = "online_identifier"
     static final KBART_HEADER_PRINT_IDENTIFIER  = "print_identifier"
+    static final KBART_HEADER_DOI_IDENTIFIER  = "doi_identifier"
 
 	private String requestUrl       = 'kbart-file'
     private HashMap response
@@ -100,6 +101,30 @@ class KbartConnector extends AbstractConnector {
             case Query.KBART_TIPP_ACCESS:
                 return getTippAccessDatesAsFatEnvelope()
                 break
+            case Query.KBART_PISSN:
+                return getPrintIdentifier()
+                break
+            case Query.KBART_EISSN:
+                return getOnlineIdentifier()
+                break
+            case Query.KBART_HISTORY_EVENTS:
+                return getHistoryEventAsFatEnvelope()
+                break
+            case Query.KBART_PUBLISHER:
+                return getPublisher()
+                break
+            case Query.KBART_PUBLISHED_TO:
+                return getPublishedTo()
+                break
+            case Query.KBART_PUBLISHED_FROM:
+                return getPublishedFrom()
+                break
+            case Query.KBART_DOI:
+                return getDOI()
+                break
+            case Query.KBART_TITLE:
+                return getTitle()
+                break
         }
         getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
@@ -107,7 +132,64 @@ class KbartConnector extends AbstractConnector {
     private Envelope getTippUrl() {
         def result = []
         result << getValue("title_url")
-        
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getTitle() {
+        def result = []
+        result << getValue("publication_title")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getPrintIdentifier() {
+        def result = []
+        result << getValue("print_identifier")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getOnlineIdentifier() {
+        def result = []
+        result << getValue("online_identifier")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    //TODO: Workflow arbeiten
+    private Envelope getHistoryEventAsFatEnvelope() {
+        def result = []
+        //result << getValue("online_identifier")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getPublishedTo() {
+        def result = []
+        result << getValue("published_to")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getPublishedFrom() {
+        def result = []
+        result << getValue("published_from")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getPublisher() {
+        def result = []
+        result << getValue("publisher_name")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getDOI() {
+        def result = []
+        result << getValue("doi_identifier")
+
         getEnvelopeWithMessage(result)
     }
 

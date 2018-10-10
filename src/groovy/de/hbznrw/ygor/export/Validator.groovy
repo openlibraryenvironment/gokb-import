@@ -93,6 +93,14 @@ class Validator {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
         }
+        else if(identifierType.equals(TitleStruct.DOI)){
+            if(str.startsWith("10.")){
+                return Status.VALIDATOR_IDENTIFIER_IS_VALID
+            }
+            else {
+                return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            }
+        }
         return Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
     }
     
