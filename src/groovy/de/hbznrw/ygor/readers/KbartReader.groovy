@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.readers
 
+import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.processing.YgorProcessingException
 import grails.converters.JSON
 import groovy.json.JsonOutput
@@ -12,6 +13,8 @@ import ygor.field.FieldKeyMapping
 import java.nio.file.Paths
 
 class KbartReader extends AbstractReader{
+
+    private MultipleProcessingThread owner
 
     private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines()
     private CSVParser csv
@@ -32,7 +35,8 @@ class KbartReader extends AbstractReader{
         'notes'
     ]
 
-    KbartReader(String kbartFile) {
+    KbartReader(MultipleProcessingThread owner, String kbartFile) {
+        this.owner = owner
         Paths.get(kbartFile).withReader { reader ->
             csv = getCSVParserFromReader(reader)
         }
@@ -80,6 +84,7 @@ class KbartReader extends AbstractReader{
     CSVRecord getNext() {
         if (iterator.hasNext()) {
             iterator.next()
+            owner.increaseProgress()
         }
         null
     }
