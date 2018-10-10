@@ -99,6 +99,7 @@ environments {
             enableDebugDownload = true
         }
         gokbApi {
+            baseUri          = 'http://localhost:8080/gokb/'
             xrTitleUri       = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
             xrPackageUri     = 'http://localhost:8080/gokb/integration/crossReferencePackage'
             xrSuggestUriStub = 'http://localhost:8080/gokb/api/suggest'
@@ -122,6 +123,7 @@ environments {
             enableDebugDownload = false
         }
         gokbApi {
+            baseUri          = 'http://phaeton.hbz-nrw.de/gokb/'
             xrTitleUri       = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
             xrPackageUri     = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
             xrSuggestUriStub = 'http://phaeton.hbz-nrw.de/gokb/api/suggest'

@@ -64,14 +64,24 @@
 														
 								<div class="input-group">
 									<span class="input-group-addon">Titel</span>
-									<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgTitle}">
+										<g:textField name="pkgTitle" size="48" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" class="form-control" />
+									</g:else>
 								</div>
 								
 								<br />
 							
 								<div class="input-group">
 									<span class="input-group-addon">ZDB-Paketsigel</span>
-									<g:textField name="pkgVariantName" size="24" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgVariantName}">
+										<g:textField name="pkgVariantName" size="48" value="${session.lastUpdate.parameterMap.pkgVariantName[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgVariantName" size="48" value="" class="form-control" />
+									</g:else>
 								</div>
 								
 								<br />
@@ -91,57 +101,76 @@
 								<br />
 
 								<script>
-                                                                  $(document).ready(function() {
-                                                                    $('#pkgNominalPlatform').select2({
-                                                                      allowClear: true,
-                                                                      placeholder: 'Bitte Plattform wählen..',
-                                                                      debug: true,
-                                                                      ajax: {
-                                                                        url: '/ygor/enrichment/suggestPlatform',
-                                                                        data: function (params) {
-                                                                          var query = {
-                                                                            q: params.term
-                                                                          }
-                                                                          return query;
-                                                                        },
-                                                                        processResults: function (data) {
-                                                                          return {
-                                                                            results: data.items
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    });
-
-                                                                    $('#pkgNominalProvider').select2({
-                                                                      allowClear: true,
-                                                                      placeholder: 'Bitte Anbieter wählen..',
-                                                                      debug: true,
-                                                                      ajax: {
-                                                                        url: '/ygor/enrichment/suggestProvider',
-                                                                        data: function (params) {
-                                                                          var query = {
-                                                                            q: params.term
-                                                                          }
-                                                                          return query;
-                                                                        },
-                                                                        processResults: function (data) {
-                                                                          return {
-                                                                            results: data.items
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    });
-                                                                  });
+                                    var platform = null;
+									if (${false != session.lastUpdate?.parameterMap?.pkgNominalPlatform?.getAt(0)}){
+									    platform = "${session.lastUpdate?.parameterMap?.pkgNominalPlatform?.getAt(0)}";
+									}
+                                    var provider = null;
+                                    if (${false != session.lastUpdate?.parameterMap?.pkgNominalProvider?.getAt(0)}){
+                                        provider = "${session.lastUpdate?.parameterMap?.pkgNominalProvider?.getAt(0)}";
+                                    }
+                                    $(document).ready(function() {
+									    $('#pkgNominalPlatform').select2({
+                                            allowClear: true,
+											placeholder: 'Bitte Plattform wählen..',
+											debug: true,
+											ajax: {
+											    url: '/ygor/enrichment/suggestPlatform',
+												data: function (params) {
+												    var query = {
+													    q: params.term
+													}
+													return query;
+												},
+												processResults: function (data) {
+												    return {
+													    results: data.items
+													}
+												}
+											}
+										});
+                                        $('#pkgNominalPlatform').append($('<option></option>').attr('value', platform).text(platform));
+										$('#pkgNominalProvider').select2({
+										    allowClear: true,
+											placeholder: 'Bitte Anbieter wählen..',
+											debug: true,
+											ajax: {
+											    url: '/ygor/enrichment/suggestProvider',
+												data: function (params) {
+												    var query = {
+													    q: params.term
+													}
+													return query;
+												},
+												processResults: function (data) {
+											        return {
+													    results: data.items
+													}
+												}
+											}
+										});
+                                        $('#pkgNominalProvider').append($('<option></option>').attr('value', provider).text(provider));
+									});
 								</script>
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>
-									<g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup1}">
+										<g:textField name="pkgCuratoryGroup1" size="24" value="${session.lastUpdate.parameterMap.pkgCuratoryGroup1[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" class="form-control" />
+									</g:else>
 								</div>
 								
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 2</span>
-									<g:textField name="pkgCuratoryGroup2" size="24" value="hbz" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup2}">
+										<g:textField name="pkgCuratoryGroup2" size="24" value="${session.lastUpdate.parameterMap.pkgCuratoryGroup2[0]}" class="form-control" />
+									</g:if>
+									<g:else>
+										<g:textField name="pkgCuratoryGroup2" size="24" value="hbz" class="form-control" />
+									</g:else>
 								</div>
 								
 							<!-- 
@@ -180,7 +209,12 @@
 											</label>
 											&nbsp;
 											<label>
-												<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}"/>
+												<g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbBridge.IDENTIFIER)}">
+													<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}" />
+												</g:if>
+												<g:else>
+													<g:checkBox name="processOption" checked="false" value="${EzbBridge.IDENTIFIER}" />
+												</g:else>
 												EZB <code>API</code>
 											</label>
 											<!--
@@ -217,25 +251,27 @@
 						
 					<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 		    			<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-default"/>
+						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
+						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-success"/>
 					</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-						<g:actionSubmit action="prepareFile" value="Weiter" class="btn btn-default"/>
+						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
+						<g:actionSubmit action="prepareFile" value="Weiter" class="btn btn-success"/>
 		    		</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
 						<g:actionSubmit action="stopProcessingFile" value="Bearbeitung abbrechen" class="btn btn-danger"/>
 					</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
 						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
+						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
 					</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
-						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
+
+						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-info">Statistik anzeigen</g:link>
 						
-						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-warning">Statistik anzeigen</g:link>
-						
-						<g:actionSubmit action="downloadPackageFile" value="Package speichern" class="btn btn-success"/>
-	    				<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-success"/>
+						<g:actionSubmit action="downloadPackageFile" value="Package speichern" class="btn btn-info"/>
+	    				<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-info"/>
 						
 		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
 							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
@@ -296,7 +332,12 @@
 			    				<g:actionSubmit action="downloadRawFile" value="Datenstruktur speichern" class="btn"/>
 		    			</g:if>
 
-		    		</g:if>
+						</li>
+                        <li class="list-group-item">
+						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
+						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
+
+					</g:if>
 		    		
 				</li>
 			</ul>

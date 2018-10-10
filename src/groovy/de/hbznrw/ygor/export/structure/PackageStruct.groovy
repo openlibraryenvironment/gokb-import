@@ -10,14 +10,6 @@ class PackageStruct {
 
     // PackageHeader
     
-    static PackageHeaderVariantName getNewPackageHeaderVariantName() {
-        return new PackageHeaderVariantName()
-    }
-    
-    static PackageHeaderCuratoryGroup getNewPackageHeaderCuratoryGroup() {
-        return new PackageHeaderCuratoryGroup()
-    }
-    
     static PackageHeaderSource getNewPackageHeaderSource() {
         return new PackageHeaderSource()
     }

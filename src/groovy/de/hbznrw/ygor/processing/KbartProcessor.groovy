@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.processing
 
 import de.hbznrw.ygor.bridges.KbartBridge
+import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.export.structure.PackageStruct
@@ -13,6 +14,7 @@ import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.QuoteMode
+import org.apache.commons.io.FileUtils
 
 import java.nio.file.Paths
 /**
@@ -107,6 +109,7 @@ class KbartProcessor extends AbstractProcessor {
         }
         def kbartFields    = [:]
         this.inputFile = options.get('inputFile')
+        trimHeader(inputFile)
 
         Paths.get(inputFile).withReader { reader ->
             CSVParser csv = getCSVParserFromReader(reader)
@@ -121,27 +124,29 @@ class KbartProcessor extends AbstractProcessor {
                     def identifier
 
                     for (key in MultipleProcessingThread.KEY_ORDER) {
-                        identifier = record.get(key)?.toString()?.trim()
-                        if (identifier) {
-                            def uid = UUID.randomUUID().toString()
-                            // store enrichment keys (zdb or issn or eissn)
-                            addKey(key, ["${uid}": "${identifier}"])
+                        if (key != KbartConnector.KBART_HEADER_ZDB_ID || record.isMapped(key)) {
+                            identifier = record.get(key)?.toString()?.trim()
+                            if (identifier) {
+                                def uid = UUID.randomUUID().toString()
+                                // store enrichment keys (zdb or issn or eissn)
+                                addKey(key, ["${uid}": "${identifier}"])
 
-                            // store kbart fields
-                            def kbfs = [:]
-                            bridge.connector.kbartKeys.each { kbk ->
-                                kbfs << ["${kbk}": record.get(kbk).toString()]
-                            }
-                            bridge.connector.optionalKbartKeys.each { kbk ->
-                                if (record.isMapped(kbk)) {
+                                // store kbart fields
+                                def kbfs = [:]
+                                bridge.connector.kbartKeys.each { kbk ->
                                     kbfs << ["${kbk}": record.get(kbk).toString()]
                                 }
+                                bridge.connector.optionalKbartKeys.each { kbk ->
+                                    if (record.isMapped(kbk)) {
+                                        kbfs << ["${kbk}": record.get(kbk).toString()]
+                                    }
+                                }
+                                if (kbfs.size() > 0) {
+                                    kbartFields << ["${uid}": kbfs]
+                                }
+                                stash.putKeyType(uid, key)
+                                break
                             }
-                            if (kbfs.size() > 0) {
-                                kbartFields << ["${uid}": kbfs]
-                            }
-                            stash.putKeyType(uid, key)
-                            break
                         }
                     }
                     if (!identifier) {
@@ -157,6 +162,18 @@ class KbartProcessor extends AbstractProcessor {
             }
         }
         return stash.get(KbartBridge.IDENTIFIER).size()
+    }
+
+    private void trimHeader(String inputFile){
+        File file = new File(inputFile)
+        List<String> lines = FileUtils.readLines(file)
+        if (lines != null && lines.size() > 0){
+            lines.set(0,
+                lines.get(0).toLowerCase()
+                    .replace("zdb-id", "zdb_id")
+                    .replace("coverage_notes", "notes"))
+        }
+        FileUtils.writeLines(file, lines)
     }
 
     private CSVParser getCSVParserFromReader(Reader reader) {

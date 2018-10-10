@@ -25,6 +25,20 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.48 (Release)</dt><br />
+
+					<dd>- Bugfix: Tipp -> AccessStartDate & AccessEndDate </dd>
+
+					<br /><dt>0.47 (Release)</dt><br />
+
+					<dd>- Füge Button "Eingabe korrigieren" hinzu und behalte für diesen Schritt die vorherigen Einstellungen</dd>
+
+					<br /><dt>0.46</dt><br />
+
+					<dd>- Erlaube verschiedene Schreibweisen in der KBART-Spalte 'zdb_id'</dd>
+					<dd>- Erlaube 'coverage_notes' statt 'notes' im KBART-File (Rückwärts-Kompatibilität zu KBART Phase I)</dd>
+					<dd>- Zeige Basisadresse der angeschlossenen GOKb-Instanz im Bereich 'Über'</dd>
+
 					<br /><dt>0.45</dt><br />
 
 					<dd>- Optimiere nominal platform Behandlung</dd>

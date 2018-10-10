@@ -43,7 +43,8 @@ class MultipleProcessingThread extends Thread {
 		this.apiCalls  = options.get('options')
         this.refactorThis = options // TODO refactor
 	}
-	
+
+    @Override
 	void run() {
 		if(null == enrichment.originPathName)
 			System.exit(0)
