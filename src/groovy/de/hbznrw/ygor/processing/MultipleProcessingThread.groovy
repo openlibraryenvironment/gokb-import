@@ -31,7 +31,9 @@ class MultipleProcessingThread extends Thread {
     private BridgeInterface bridge
     private enrichment
 	private apiCalls
-    private refactorThis // TODO refactor
+    private delimiter
+    private quote
+    private quoteMode
 
     private int progressTotal   = 0
     private int progressCurrent = 0
@@ -41,7 +43,9 @@ class MultipleProcessingThread extends Thread {
 		this.enrichment = en
         this.processor = new KbartProcessor()
 		this.apiCalls  = options.get('options')
-        this.refactorThis = options // TODO refactor
+        this.delimiter = options.get('delimiter')
+        this.quote = options.get('quote')
+        this.quoteMode = options.get('quoteMode')
 	}
 
     @Override
@@ -58,9 +62,9 @@ class MultipleProcessingThread extends Thread {
                         // writes stash->zdb or stash->issn
                         bridge = new KbartBridge(this, new HashMap(
                                 inputFile:  enrichment.originPathName,
-                                delimiter:  refactorThis.get('delimiter'),
-                                quote:      refactorThis.get('quote'),
-                                quoteMode:  refactorThis.get('quoteMode')
+                                delimiter:  delimiter,
+                                quote:      quote,
+                                quoteMode:  quoteMode
                             )
                         )
                         break
