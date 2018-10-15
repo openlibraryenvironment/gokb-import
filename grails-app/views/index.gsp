@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.49 (Release)</dt><br />
+
+					<dd>- Feature: Unterscheidung von Journal- und EBook-Paketen (Database -> disabled) und deren Informationsanreicherung</dd>
+
 					<br /><dt>0.48 (Release)</dt><br />
 
 					<dd>- Bugfix: Tipp -> AccessStartDate & AccessEndDate </dd>

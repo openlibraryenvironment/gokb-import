@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.bridges
 
+import de.hbznrw.ygor.export.DataMapper
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.Query
@@ -19,8 +20,28 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
 	KbartBridge(Thread master, HashMap options) {
         this.master     = master
 		this.options    = options
-		this.connector  = new KbartConnector(this)
-		this.processor  = master.processor
+        this.connector  = new KbartConnector(this)
+
+        if(this.options.dataTyp == 'ebooks') {
+            this.connector.kbartKeys.add('publication_title')
+            this.connector.kbartKeys.add('doi_identifier')
+            this.connector.kbartKeys.add('publisher_name')
+            this.connector.kbartKeys.add('published_to')
+            this.connector.kbartKeys.add('published_from')
+            this.connector.kbartKeys.add('online_identifier')
+            this.connector.kbartKeys.add('print_identifier')
+
+            this.tasks = this.tasks.plus(Query.KBART_TITLE)
+            this.tasks = this.tasks.plus(Query.KBART_DOI)
+            this.tasks = this.tasks.plus(Query.KBART_PUBLISHER)
+            this.tasks = this.tasks.plus(Query.KBART_EISSN)
+            this.tasks = this.tasks.plus(Query.KBART_PISSN)
+            this.tasks = this.tasks.plus(Query.KBART_PUBLISHED_FROM)
+            this.tasks = this.tasks.plus(Query.KBART_PUBLISHED_TO)
+            this.tasks = this.tasks.plus(Query.KBART_HISTORY_EVENTS)
+        }
+
+        this.processor  = master.processor
         this.stashIndex = KbartBridge.IDENTIFIER
 	}
 	

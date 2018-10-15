@@ -46,6 +46,25 @@
 									
 								</span>
 							</div>
+
+							<br />
+
+							<div class="input-group">
+								<span class="input-group-addon">Typ der Quelldaten</span>
+								<span class="form-control" >
+										<g:if test="${session.lastUpdate?.dataTyp == "journals"}">
+											Journals
+										</g:if>
+
+										<g:if test="${session.lastUpdate?.dataTyp == "database"}">
+											Database
+										</g:if>
+
+										<g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
+											EBooks
+										</g:if>
+								</span>
+							</div>
 							
 							<br />
 							
@@ -203,27 +222,29 @@
 												KBART <code>Datei</code>
 											</label>
 											&nbsp;
-											<label>
-												<g:checkBox name="processOption" required="true" checked="true" value="${ZdbBridge.IDENTIFIER}"/>
-												ZDB <em>@GBV</em> <code>API</code>
-											</label>
-											&nbsp;
-											<label>
-												<g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbBridge.IDENTIFIER)}">
-													<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}" />
-												</g:if>
-												<g:else>
-													<g:checkBox name="processOption" checked="false" value="${EzbBridge.IDENTIFIER}" />
-												</g:else>
-												EZB <code>API</code>
-											</label>
-											<!--
-											&nbsp;
-											<label>
-												<g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbBridge.IDENTIFIER}"/>
-												ZDB <code>API</code>
-											</label>
-											-->
+											<g:if test="${session.lastUpdate?.dataTyp == "journals" || session.lastUpdate?.dataTyp == "database"}">
+												<label>
+													<g:checkBox name="processOption" required="true" checked="true" value="${ZdbBridge.IDENTIFIER}"/>
+													ZDB <em>@GBV</em> <code>API</code>
+												</label>
+												&nbsp;
+												<label>
+													<g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbBridge.IDENTIFIER)}">
+														<g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}" />
+													</g:if>
+													<g:else>
+														<g:checkBox name="processOption" checked="false" value="${EzbBridge.IDENTIFIER}" />
+													</g:else>
+													EZB <code>API</code>
+												</label>
+												<!--
+												&nbsp;
+												<label>
+													<g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbBridge.IDENTIFIER}"/>
+													ZDB <code>API</code>
+												</label>
+												-->
+											</g:if>
 										</div>
 									</span>
 								</div>

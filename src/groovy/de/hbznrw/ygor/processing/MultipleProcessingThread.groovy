@@ -12,8 +12,10 @@ import com.google.common.base.Throwables
 class MultipleProcessingThread extends Thread {
 
     static final KEY_ORDER = [KbartConnector.KBART_HEADER_ZDB_ID,
+                              KbartConnector.KBART_HEADER_DOI_IDENTIFIER,
                               KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
-                              KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
+                              KbartConnector.KBART_HEADER_PRINT_IDENTIFIER
+                              ]
 
     public ProcessorInterface processor
     public isRunning = true
@@ -51,7 +53,8 @@ class MultipleProcessingThread extends Thread {
                                 inputFile:  enrichment.originPathName,
                                 delimiter:  refactorThis.get('delimiter'),
                                 quote:      refactorThis.get('quote'),
-                                quoteMode:  refactorThis.get('quoteMode')
+                                quoteMode:  refactorThis.get('quoteMode'),
+                                dataTyp:    refactorThis.get('dataTyp')
                             )
                         )
                         break
