@@ -195,8 +195,8 @@ class KbartConnector extends AbstractConnector {
 
     private Envelope getTippAccessDatesAsFatEnvelope() {
         getEnvelopeWithComplexMessage([
-            'accessStart':      ([] << getValue('access_start_date')),
-            'accessEnd':        ([] << getValue('access_end_date'))
+            'accessStartDate':      ([] << getValue('access_start_date')),
+            'accessEndDate':        ([] << getValue('access_end_date'))
         ])
     }
 

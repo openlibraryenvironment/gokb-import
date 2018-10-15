@@ -29,6 +29,10 @@
 
 					<dd>- Feature: Unterscheidung von Journal- und EBook-Paketen (Database -> disabled) und deren Informationsanreicherung</dd>
 
+					<br /><dt>0.48 (Release)</dt><br />
+
+					<dd>- Bugfix: Tipp -> AccessStartDate & AccessEndDate </dd>
+
 					<br /><dt>0.47 (Release)</dt><br />
 
 					<dd>- Füge Button "Eingabe korrigieren" hinzu und behalte für diesen Schritt die vorherigen Einstellungen</dd>
