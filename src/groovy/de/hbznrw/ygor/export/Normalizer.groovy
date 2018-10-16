@@ -174,7 +174,7 @@ class Normalizer {
             }
             else if(dateType.equals(Normalizer.IS_END_DATE)){
                 if(tmp.size() > 1){
-                    str = tmp[1]
+                    str = tmp[0]
                 }
             }  
         }
