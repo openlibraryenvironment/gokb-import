@@ -13,7 +13,8 @@ import java.nio.file.Paths
 class MappingsContainer {
 
     final private static JsonSlurper SLURPY = new JsonSlurper()
-    private static String MAPPINGS_FILE = Paths.get("src/java/resources/YgorFieldKeyMapping.json").toAbsolutePath().toString()
+    private static String MAPPINGS_FILE =
+            Paths.get("src/java/resources/YgorFieldKeyMapping.json").toAbsolutePath().toString()
 
     Map ygorMappings
     Map kbartMappings
@@ -59,9 +60,11 @@ class MappingsContainer {
 
 
     static FieldKeyMapping jsonNodeToMapping(def json) throws MissingFieldException{
-        if (json.ygor == null){
+        // ygor key must exist and is not allowed to have an empty value
+        if (json.ygor == null || StringUtils.isEmpty(json.ygor)){
             throw new MissingFieldException("Missing YgorFieldKey entry in ".concat(json))
         }
+        // other keys are allowed to be empty
         if (json.kbart == null){
             throw new MissingFieldException("Missing Kbart key entry in ".concat(json))
         }

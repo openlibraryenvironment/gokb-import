@@ -9,7 +9,7 @@ class FieldKeyMapping {
     final static String KBART   = "kbart"
     final static String ZDB     = "zdb"
     final static String EZB     = "ezb"
-    final static NECESSARY_KEYS = [YGOR, KBART, ZDB, EZB]
+    final static OBLIGATORY_KEYS = [YGOR, KBART, ZDB, EZB]
 
     String ygorKey
     String kbartKey
@@ -24,19 +24,19 @@ class FieldKeyMapping {
     }
 
     FieldKeyMapping(Map<AbstractSource, String> mappings){
-        if (!mappings || !(mappings instanceof List) || mappings.size() != NECESSARY_KEYS.size()) {
+        if (!mappings || !(mappings instanceof Map<?, ?>) || mappings.size() != OBLIGATORY_KEYS.size()) {
             throw IllegalArgumentException("Illegal mapping argument given for FieldKeyMapping configuration: "
                     .concat(mappings))
         }
-        for (necessaryKey in NECESSARY_KEYS){
+        for (obligatoryKey in OBLIGATORY_KEYS){
             boolean found = false
             for (mapping in mappings){
-                if (mapping.getKey() == necessaryKey){
+                if (mapping.getKey() == obligatoryKey){
                     found = true
                 }
             }
             if (!found){
-                throw NoSuchElementException("Missing ".concat(necessaryKey)
+                throw NoSuchElementException("Missing ".concat(obligatoryKey)
                         .concat(" in given FieldKeyMapping configuration: ".concat(mappings)))
             }
         }
