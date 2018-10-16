@@ -3,12 +3,9 @@ package de.hbznrw.ygor.processing;
 import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
-import de.hbznrw.ygor.interfaces.BridgeInterface
 import de.hbznrw.ygor.interfaces.ProcessorInterface
-import de.hbznrw.ygor.readers.AbstractReader
-import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
-import de.hbznrw.ygor.readers.ZdbReader
+import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import com.google.common.base.Throwables
@@ -47,6 +44,8 @@ class MultipleProcessingThread extends Thread {
 
     private int progressTotal   = 0
     private int progressCurrent
+
+    private KbartReader kbartReader
     
 	MultipleProcessingThread(Enrichment en, HashMap options) {
         this.dataContainer = new DataContainer()
@@ -57,7 +56,8 @@ class MultipleProcessingThread extends Thread {
         this.quote = options.get('quote')
         this.quoteMode = options.get('quoteMode')
         this.recordSeparator = options.get('recordSeparator')
-        this.kbartFile = options.get('kbartFile')
+        this.kbartFile = en.originPathName
+        this.kbartReader = new KbartReader(this)
 	}
 
     @Override
@@ -72,9 +72,9 @@ class MultipleProcessingThread extends Thread {
             apiCalls.each{ call ->
                 switch(call) {
                     case KbartBridge.IDENTIFIER:
-                        KbartReader.KbartReaderConfiguration conf =
-                                new KbartReader.KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
-                        KbartIntegrationService.integrate(this, kbartFile, dataContainer, mappingsContainer, conf)
+                        KbartReaderConfiguration conf =
+                            new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
+                        KbartIntegrationService.integrate(this, dataContainer, mappingsContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
                         EzbIntegrationService.integrate() // TODO

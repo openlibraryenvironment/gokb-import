@@ -70,8 +70,9 @@ class EnrichmentController {
             file = request.session.lastUpdate.file
         }
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
-        def foQuote     = null // = request.parameterMap['formatQuote'][0]
-        def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
+        def foQuote     = "doublequote"     // = request.parameterMap['formatQuote'][0]
+        def foQuoteMode = "none"            // = request.parameterMap['formatQuoteMode'][0]
+        def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
 
         if (!request.session.lastUpdate){
             request.session.lastUpdate = [:]
@@ -80,6 +81,7 @@ class EnrichmentController {
         request.session.lastUpdate.foDelimiter = foDelimiter
         request.session.lastUpdate.foQuote = foQuote
         request.session.lastUpdate.foQuoteMode = foQuoteMode
+        request.session.lastUpdate.recordSeparator = recordSeparator
 
         if (file.empty) {
             flash.info    = null

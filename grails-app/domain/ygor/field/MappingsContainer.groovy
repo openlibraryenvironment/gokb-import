@@ -109,6 +109,7 @@ class MappingsContainer {
 
 
     def getAllIdFieldKeyMappings(){
-        return [ZdbIdentifier.FIELD_KEY_MAPPING, PissnIdentifier.FIELD_KEY_MAPPING, EissnIdentifier.FIELD_KEY_MAPPING]
+        // [ZdbIdentifier.FIELD_KEY_MAPPING, PissnIdentifier.FIELD_KEY_MAPPING, EissnIdentifier.FIELD_KEY_MAPPING]
+        [ZdbIdentifier.FIELD_KEY_MAPPING, PissnIdentifier.FIELD_KEY_MAPPING, EissnIdentifier.FIELD_KEY_MAPPING]
     }
 }

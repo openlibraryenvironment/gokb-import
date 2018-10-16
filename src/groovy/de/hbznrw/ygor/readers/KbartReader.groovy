@@ -18,7 +18,7 @@ class KbartReader extends AbstractReader{
 
     private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines()
     private CSVParser csv
-    private Map<String, Integer> csvHeader
+    private List<String> csvHeader
     private Iterator<CSVRecord> iterator
     private CSVRecord lastItemReturned
 
@@ -35,13 +35,20 @@ class KbartReader extends AbstractReader{
         'notes'
     ]
 
-    KbartReader(MultipleProcessingThread owner, String kbartFile) {
+    static ALIASES = [
+        'notes' : ['coverage_notes']
+    ]
+
+    KbartReader(MultipleProcessingThread owner) {
         this.owner = owner
-        Paths.get(kbartFile).withReader { reader ->
+        Paths.get(owner.kbartFile).withReader { reader ->
             csv = getCSVParserFromReader(reader)
         }
-        checkHeader(csv)
-        csvHeader = csv.getHeaderMap()
+        csvHeader = new ArrayList<>()
+        for (def keys : csv.getHeaderMap().keySet()){
+            csvHeader.addAll(keys.split(KbartReaderConfiguration.resolve(owner.delimiter)))
+        }
+        checkHeader(csvHeader)
         iterator = csv.iterator()
     }
 
@@ -90,14 +97,22 @@ class KbartReader extends AbstractReader{
     }
 
 
-    void checkHeader(CSVParser csv){
+    void checkHeader(List<String> csvHeader){
         def missingKeys = []
-        if (! csv || ! csv.headerMap){
+        if (! csvHeader){
             throw new YgorProcessingException("Fehlender Dateiinhalt im CSV-File.")
         }
         MANDATORY_KBART_KEYS.each{ kbk ->
-            if (csv.headerMap.get(kbk) == null){
-                missingKeys << kbk.toString()
+            if (!csvHeader.contains(kbk)){
+                boolean isMissing = true
+                for (def alias : ALIASES[kbk]){
+                    if (csvHeader.contains(alias)){
+                        isMissing = false
+                    }
+                }
+                if (isMissing) {
+                    missingKeys << kbk.toString()
+                }
             }
         }
         if (missingKeys.size() > 0){
@@ -138,32 +153,4 @@ class KbartReader extends AbstractReader{
         this
     }
 
-
-    class KbartReaderConfiguration{
-        String delimiter
-        String quote
-        String quoteMode
-        String recordSeparator
-        static def resolver = [
-                'comma'         : ',',
-                'semicolon'     : ';',
-                'tab'           : '\t',
-                'doublequote'   : '"',
-                'singlequote'   : "'",
-                'nullquote'     : 'null',
-                'all'           : QuoteMode.ALL,
-                'nonnumeric'    : QuoteMode.NON_NUMERIC,
-                'none'          : QuoteMode.NONE
-        ]
-
-        KbartReaderConfiguration(String delimiter, String quote, String quoteMode, String recordSeparator){
-            delimiter = resolver.get(delimiter)
-            quote     = resolver.get(quote)
-            quoteMode = resolver.get(quoteMode)
-            this.delimiter       = delimiter
-            this.quote           = quote
-            this.quoteMode       = quoteMode
-            this.recordSeparator = recordSeparator
-        }
-    }
 }

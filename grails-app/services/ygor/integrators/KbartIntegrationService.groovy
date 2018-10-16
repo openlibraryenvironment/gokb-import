@@ -3,6 +3,7 @@ package ygor.integrators
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
+import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import grails.converters.JSON
 import ygor.Record
 import ygor.field.FieldKeyMapping
@@ -13,10 +14,10 @@ import ygor.source.KbartSource
 
 class KbartIntegrationService {
 
-    static def integrate(MultipleProcessingThread owner, String kbartFile, DataContainer data,
-                         MappingsContainer container, KbartReader.KbartReaderConfiguration kbartReaderConfiguration){
+    static def integrate(MultipleProcessingThread owner, DataContainer data,
+                         MappingsContainer container, KbartReaderConfiguration kbartReaderConfiguration){
 
-        KbartReader reader = new KbartReader(owner, kbartFile).setConfiguration(kbartReaderConfiguration)
+        KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
         List<FieldKeyMapping> idMappings = container.getAllIdFieldKeyMappings()
         List<AbstractIdentifier> identifiers
 
