@@ -17,6 +17,7 @@ class KbartIntegrationService {
     static def integrate(MultipleProcessingThread owner, DataContainer data,
                          MappingsContainer container, KbartReaderConfiguration kbartReaderConfiguration){
 
+        owner.setProgressTotal(1)
         KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
         List<FieldKeyMapping> idMappings = container.getAllIdFieldKeyMappings()
         List<AbstractIdentifier> identifiers

@@ -10,6 +10,9 @@ import groovy.util.logging.Log4j
 import ygor.Enrichment
 import com.google.common.base.Throwables
 import ygor.field.MappingsContainer
+import ygor.identifier.EissnIdentifier
+import ygor.identifier.PissnIdentifier
+import ygor.identifier.ZdbIdentifier
 import ygor.integrators.EzbIntegrationService
 import ygor.integrators.KbartIntegrationService
 import ygor.integrators.ZdbIntegrationService
@@ -58,6 +61,10 @@ class MultipleProcessingThread extends Thread {
         this.recordSeparator = options.get('recordSeparator')
         this.kbartFile = en.originPathName
         this.kbartReader = new KbartReader(this)
+        this.mappingsContainer = new MappingsContainer()
+        ZdbIdentifier.initialize()
+        PissnIdentifier.initialize()
+        EissnIdentifier.initialize()
 	}
 
     @Override
@@ -77,10 +84,10 @@ class MultipleProcessingThread extends Thread {
                         KbartIntegrationService.integrate(this, dataContainer, mappingsContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
-                        EzbIntegrationService.integrate() // TODO
+                        EzbIntegrationService.integrate(this, dataContainer, mappingsContainer)
                         break
                     case ZdbBridge.IDENTIFIER:
-                        ZdbIntegrationService.integrate() // TODO
+                        ZdbIntegrationService.integrate(this, dataContainer, mappingsContainer)
                         break
                 }
             }

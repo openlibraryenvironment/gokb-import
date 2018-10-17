@@ -36,7 +36,8 @@ class KbartReader extends AbstractReader{
     ]
 
     static ALIASES = [
-        'notes' : ['coverage_notes']
+        'notes' : ['coverage_notes'],
+        'zdb_id' : ['zdb-id', 'ZDB_ID', 'ZDB-ID']
     ]
 
     KbartReader(MultipleProcessingThread owner) {

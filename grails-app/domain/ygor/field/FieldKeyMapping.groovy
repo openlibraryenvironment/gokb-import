@@ -1,8 +1,5 @@
 package ygor.field
 
-import ygor.source.AbstractSource
-
-
 class FieldKeyMapping {
 
     final static String YGOR    = "ygor"
@@ -23,7 +20,11 @@ class FieldKeyMapping {
         ezbKey   nullable : true
     }
 
-    FieldKeyMapping(Map<AbstractSource, String> mappings){
+    FieldKeyMapping(){
+        // add explicit default constructor
+    }
+
+    FieldKeyMapping(Map<String, String> mappings){
         if (!mappings || !(mappings instanceof Map<?, ?>) || mappings.size() != OBLIGATORY_KEYS.size()) {
             throw IllegalArgumentException("Illegal mapping argument given for FieldKeyMapping configuration: "
                     .concat(mappings))
