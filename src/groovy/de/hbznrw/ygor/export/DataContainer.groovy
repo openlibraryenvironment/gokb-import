@@ -12,7 +12,6 @@ class DataContainer {
     Meta    info    // TODO: use or delete
     Package pkg     // TODO: use or delete
     HashMap titles  // TODO: use or delete
-    List    records
 
     Map<ZdbIdentifier, Record>   recordsPerZdbId = [:]
     Map<EissnIdentifier, Record> recordsPerEissn = [:]
@@ -20,8 +19,6 @@ class DataContainer {
 
     
     DataContainer() {
-
-        records = []
 
         // OLD CODE TODO: use or delete
 

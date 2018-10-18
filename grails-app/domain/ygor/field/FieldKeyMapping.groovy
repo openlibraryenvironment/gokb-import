@@ -1,12 +1,8 @@
 package ygor.field
 
-class FieldKeyMapping {
+import org.slf4j.Logger
 
-    final static String YGOR    = "ygor"
-    final static String KBART   = "kbart"
-    final static String ZDB     = "zdb"
-    final static String EZB     = "ezb"
-    final static OBLIGATORY_KEYS = [YGOR, KBART, ZDB, EZB]
+class FieldKeyMapping {
 
     String ygorKey
     String kbartKey
@@ -25,11 +21,12 @@ class FieldKeyMapping {
     }
 
     FieldKeyMapping(Map<String, String> mappings){
-        if (!mappings || !(mappings instanceof Map<?, ?>) || mappings.size() != OBLIGATORY_KEYS.size()) {
+        if (mappings == null || !(mappings instanceof Map<?, ?>) ||
+                mappings.size() != MappingsContainer.OBLIGATORY_KEYS.size()) {
             throw IllegalArgumentException("Illegal mapping argument given for FieldKeyMapping configuration: "
                     .concat(mappings))
         }
-        for (obligatoryKey in OBLIGATORY_KEYS){
+        for (obligatoryKey in MappingsContainer.OBLIGATORY_KEYS){
             boolean found = false
             for (mapping in mappings){
                 if (mapping.getKey() == obligatoryKey){
@@ -42,16 +39,16 @@ class FieldKeyMapping {
             }
         }
         for (mapping in mappings){
-            if (mapping.key == YGOR){
+            if (mapping.key == MappingsContainer.YGOR){
                 ygorKey = mapping.key
             }
-            else if (mapping.key == KBART){
+            else if (mapping.key == MappingsContainer.KBART){
                 kbartKey = mapping.key
             }
-            else if (mapping.key == ZDB){
+            else if (mapping.key == MappingsContainer.ZDB){
                 zdbKey = mapping.key
             }
-            else if (mapping.key == EZB){
+            else if (mapping.key == MappingsContainer.EZB){
                 ezbKey = mapping.key
             }
         }
@@ -59,20 +56,21 @@ class FieldKeyMapping {
 
 
     /**
-     * @param type One of {@value #YGOR}, {@value #KBART}, {@value #ZDB} or {@value #EZB}
+     * @param type One of {@value #MappingsContainer.YGOR}, {@value #KMappingsContainer.BART},
+     * {@value #MappingsContainer.ZDB} or {@value #MappingsContainer.EZB}
      * @return The value of the given type.
      */
     def get(String type){
-        if (type == YGOR){
+        if (type == MappingsContainer.YGOR){
             ygorKey
         }
-        else if (type == KBART){
+        else if (type == MappingsContainer.KBART){
             kbartKey
         }
-        else if (type == ZDB){
+        else if (type == MappingsContainer.ZDB){
             zdbKey
         }
-        else if (type == EZB){
+        else if (type == MappingsContainer.EZB){
             ezbKey
         }
     }

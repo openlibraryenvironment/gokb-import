@@ -12,6 +12,13 @@ import java.nio.file.Paths
 @Log4j
 class MappingsContainer {
 
+    final public static String YGOR    = "ygor"
+    final public static String KBART   = "kbart"
+    final public static String ZDB     = "zdb"
+    final public static String EZB     = "ezb"
+    final public static OBLIGATORY_KEYS = [YGOR, KBART, ZDB, EZB]
+    final public static DEFAULT_SOURCE_PRIO = [ZDB, KBART, EZB]
+
     final private static JsonSlurper SLURPY = new JsonSlurper()
     private static String MAPPINGS_FILE =
             Paths.get("src/java/resources/YgorFieldKeyMapping.json").toAbsolutePath().toString()
@@ -23,11 +30,9 @@ class MappingsContainer {
     static hasMany = [ygorMappings : FieldKeyMapping, kbartMappings : FieldKeyMapping,
                       zdbMappings : FieldKeyMapping, ezbMappings : FieldKeyMapping]
 
-
     MappingsContainer(){
         initialize(MAPPINGS_FILE)
     }
-
 
     MappingsContainer(String mappingsFile){
         try{
@@ -88,28 +93,26 @@ class MappingsContainer {
 
     /**
      * @param key The key to identify the mapping.
-     * @param type One of {@value FieldKeyMapping#YGOR}, {@value FieldKeyMapping#KBART}, {@value FieldKeyMapping#ZDB} or
-     *      {@value FieldKeyMapping#EZB}
+     * @param type One of {@value #YGOR}, {@value #KBART}, {@value #ZDB} or {@value #EZB}
      * @return A mapping with keys for each FieldKeyMapping type.
      */
     def getMapping(String key, String type){
-        if (type == FieldKeyMapping.YGOR){
+        if (type == YGOR){
             return ygorMappings.get(key)
         }
-        if (type == FieldKeyMapping.KBART){
+        if (type == KBART){
             return kbartMappings.get(key)
         }
-        if (type == FieldKeyMapping.ZDB){
+        if (type == ZDB){
             return zdbMappings.get(key)
         }
-        if (type == FieldKeyMapping.EZB){
+        if (type == EZB){
             return ezbMappings.get(key)
         }
     }
 
 
     def getAllIdFieldKeyMappings(){
-        // [ZdbIdentifier.FIELD_KEY_MAPPING, PissnIdentifier.FIELD_KEY_MAPPING, EissnIdentifier.FIELD_KEY_MAPPING]
         [ZdbIdentifier.FIELD_KEY_MAPPING, PissnIdentifier.FIELD_KEY_MAPPING, EissnIdentifier.FIELD_KEY_MAPPING]
     }
 }

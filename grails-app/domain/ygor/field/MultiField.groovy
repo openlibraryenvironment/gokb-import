@@ -7,7 +7,6 @@ import ygor.source.ZdbSource
 
 class MultiField {
 
-    static def DEFAULT_SOURCE_PRIO = [FieldKeyMapping.ZDB, FieldKeyMapping.KBART, FieldKeyMapping.EZB]
     String ygorFieldKey
     FieldKeyMapping keys
     Map fields = [:]
@@ -19,23 +18,23 @@ class MultiField {
 
 
     MultiField(String ygorFieldKey){
-        this(MappingsContainer.getMapping(ygorFieldKey, FieldKeyMapping.YGOR))
+        this(MappingsContainer.getMapping(ygorFieldKey, MappingsContainer.YGOR))
     }
 
 
     MultiField(FieldKeyMapping fieldKeyMapping){
         this.ygorFieldKey = fieldKeyMapping.ygorKey
-        keys = MappingsContainer.getMapping(fieldKeyMapping, FieldKeyMapping.YGOR)
-        this.sourcePrio = DEFAULT_SOURCE_PRIO
+        keys = MappingsContainer.getMapping(fieldKeyMapping, MappingsContainer.YGOR)
+        this.sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
     }
 
 
     void setSourcePrio(List<String> sourcePrio) {
-        if (!sourcePrio || sourcePrio.size() != DEFAULT_SOURCE_PRIO.size()){
+        if (!sourcePrio || sourcePrio.size() != MappingsContainer.DEFAULT_SOURCE_PRIO.size()){
             throw IllegalArgumentException("Illegal static list of sources given for MultiField configuration: "
                     .concat(sourcePrio))
         }
-        for (necessaryKey in [FieldKeyMapping.ZDB, FieldKeyMapping.KBART, FieldKeyMapping.EZB]){
+        for (necessaryKey in [MappingsContainer.ZDB, MappingsContainer.KBART, MappingsContainer.EZB]){
             boolean found = false
             for (givenSource in sourcePrio){
                 if (givenSource.getClass() == necessaryKey){
@@ -53,13 +52,13 @@ class MultiField {
 
     def addValue(AbstractSource source, String value){
         if (source instanceof KbartSource){
-            fields.put(keys.get(FieldKeyMapping.KBART), new Field(source, keys.get(FieldKeyMapping.KBART), value))
+            fields.put(keys.get(MappingsContainer.KBART), new Field(source, keys.get(MappingsContainer.KBART), value))
         }
         else if (source instanceof ZdbSource){
-            fields.put(keys.get(FieldKeyMapping.ZDB), new Field(source, keys.get(FieldKeyMapping.ZDB), value))
+            fields.put(keys.get(MappingsContainer.ZDB), new Field(source, keys.get(MappingsContainer.ZDB), value))
         }
         else if (source instanceof EzbSource){
-            fields.put(keys.get(FieldKeyMapping.EZB), new Field(source, keys.get(FieldKeyMapping.EZB), value))
+            fields.put(keys.get(MappingsContainer.EZB), new Field(source, keys.get(MappingsContainer.EZB), value))
         }
     }
 
