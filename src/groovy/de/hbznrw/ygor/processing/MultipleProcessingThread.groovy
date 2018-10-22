@@ -9,6 +9,7 @@ import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import com.google.common.base.Throwables
+import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
@@ -31,6 +32,9 @@ class MultipleProcessingThread extends Thread {
 
     DataContainer dataContainer
     MappingsContainer mappingsContainer
+    FieldKeyMapping zdbKeyMapping
+    FieldKeyMapping pissnKeyMapping
+    FieldKeyMapping eissnKeyMapping
 
     // old member variables following; TODO use or delete
 
@@ -51,20 +55,20 @@ class MultipleProcessingThread extends Thread {
     private KbartReader kbartReader
     
 	MultipleProcessingThread(Enrichment en, HashMap options) {
-        this.dataContainer = new DataContainer()
-		this.enrichment = en
-        this.processor = new KbartProcessor()
-		this.apiCalls  = options.get('options')
-        this.delimiter = options.get('delimiter')
-        this.quote = options.get('quote')
-        this.quoteMode = options.get('quoteMode')
-        this.recordSeparator = options.get('recordSeparator')
-        this.kbartFile = en.originPathName
-        this.kbartReader = new KbartReader(this)
-        this.mappingsContainer = new MappingsContainer()
-        ZdbIdentifier.initialize()
-        PissnIdentifier.initialize()
-        EissnIdentifier.initialize()
+        dataContainer = new DataContainer()
+		enrichment = en
+        processor = new KbartProcessor()
+		apiCalls  = options.get('options')
+        delimiter = options.get('delimiter')
+        quote = options.get('quote')
+        quoteMode = options.get('quoteMode')
+        recordSeparator = options.get('recordSeparator')
+        kbartFile = en.originPathName
+        kbartReader = new KbartReader(this)
+        mappingsContainer = new MappingsContainer()
+        zdbKeyMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
+        pissnKeyMapping = mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
+        eissnKeyMapping = mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)
 	}
 
     @Override

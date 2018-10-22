@@ -84,10 +84,18 @@ class MappingsContainer {
 
 
     private def putMapping(FieldKeyMapping mapping){
-        ygorMappings.put(mapping.ygorKey, mapping)
-        kbartMappings.put(mapping.kbartKey, mapping)
-        zdbMappings.put(mapping.zdbKey, mapping)
-        ezbMappings.put(mapping.ezbKey, mapping)
+        if (!StringUtils.isEmpty(mapping.ygorKey)){
+            ygorMappings.put(mapping.ygorKey, mapping)
+        }
+        if (!StringUtils.isEmpty(mapping.kbartKey)){
+            kbartMappings.put(mapping.kbartKey, mapping)
+        }
+        if (!StringUtils.isEmpty(mapping.zdbKey)){
+            zdbMappings.put(mapping.zdbKey, mapping)
+        }
+        if (!StringUtils.isEmpty(mapping.ezbKey)){
+            ezbMappings.put(mapping.ezbKey, mapping)
+        }
     }
 
 
@@ -113,6 +121,6 @@ class MappingsContainer {
 
 
     def getAllIdFieldKeyMappings(){
-        [ZdbIdentifier.FIELD_KEY_MAPPING, PissnIdentifier.FIELD_KEY_MAPPING, EissnIdentifier.FIELD_KEY_MAPPING]
+        [ZdbIdentifier.fieldKeyMapping, PissnIdentifier.fieldKeyMapping, EissnIdentifier.fieldKeyMapping]
     }
 }

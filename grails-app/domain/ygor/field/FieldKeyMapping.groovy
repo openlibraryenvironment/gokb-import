@@ -40,16 +40,16 @@ class FieldKeyMapping {
         }
         for (mapping in mappings){
             if (mapping.key == MappingsContainer.YGOR){
-                ygorKey = mapping.key
+                ygorKey = mapping.value
             }
             else if (mapping.key == MappingsContainer.KBART){
-                kbartKey = mapping.key
+                kbartKey = mapping.value
             }
             else if (mapping.key == MappingsContainer.ZDB){
-                zdbKey = mapping.key
+                zdbKey = mapping.value
             }
             else if (mapping.key == MappingsContainer.EZB){
-                ezbKey = mapping.key
+                ezbKey = mapping.value
             }
         }
     }

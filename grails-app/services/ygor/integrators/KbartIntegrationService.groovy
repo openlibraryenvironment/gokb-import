@@ -19,7 +19,7 @@ class KbartIntegrationService {
 
         owner.setProgressTotal(1)
         KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
-        List<FieldKeyMapping> idMappings = container.getAllIdFieldKeyMappings()
+        List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.pissnKeyMapping, owner.eissnKeyMapping]
         List<AbstractIdentifier> identifiers
 
         JSON item = reader.readItemData(null, null)

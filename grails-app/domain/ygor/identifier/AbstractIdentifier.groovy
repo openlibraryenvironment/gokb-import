@@ -10,16 +10,18 @@ class AbstractIdentifier {
         identifier nullable : false
     }
 
-    String toString(){return identifier}
+    String toString(){
+        return identifier
+    }
 
     static Class byFieldKeyMapping(FieldKeyMapping fieldKeyMapping){
-        if (fieldKeyMapping == ZdbIdentifier.FIELD_KEY_MAPPING){
+        if (fieldKeyMapping == ZdbIdentifier.fieldKeyMapping){
             return ZdbIdentifier.class
         }
-        if (fieldKeyMapping == PissnIdentifier.FIELD_KEY_MAPPING){
+        if (fieldKeyMapping == PissnIdentifier.fieldKeyMapping){
             return PissnIdentifier.class
         }
-        if (fieldKeyMapping == EissnIdentifier.FIELD_KEY_MAPPING){
+        if (fieldKeyMapping == EissnIdentifier.fieldKeyMapping){
             return EissnIdentifier.class
         }
         null
