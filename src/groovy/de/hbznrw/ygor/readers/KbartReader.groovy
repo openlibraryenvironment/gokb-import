@@ -46,9 +46,7 @@ class KbartReader extends AbstractReader{
             csv = getCSVParserFromReader(reader)
         }
         csvHeader = new ArrayList<>()
-        for (def keys : csv.getHeaderMap().keySet()){
-            csvHeader.addAll(keys.split(KbartReaderConfiguration.resolve(owner.delimiter)))
-        }
+        csvHeader.addAll(splitLine(csv.getHeaderMap().keySet().getAt(0)))
         checkHeader(csvHeader)
         iterator = csv.iterator()
     }
@@ -80,7 +78,8 @@ class KbartReader extends AbstractReader{
         if (!item) {
             return null
         }
-        if (item.size() != csvHeader.size()) {
+        def splitItem = splitLine(item)
+        if (splitItem.size() != csvHeader.size()) {
             log.info('Crappy record ignored, "size != header size" for: ' + item)
             return null
         }
@@ -91,8 +90,8 @@ class KbartReader extends AbstractReader{
 
     CSVRecord getNext() {
         if (iterator.hasNext()) {
-            iterator.next()
             owner.increaseProgress()
+            return iterator.next()
         }
         null
     }
@@ -122,7 +121,7 @@ class KbartReader extends AbstractReader{
     }
 
 
-    private CSVParser getCSVParserFromReader(Reader reader  ) {
+    private CSVParser getCSVParserFromReader(Reader reader) {
         // Skip BOM
         reader.mark(1)
         if (reader.read() != 0xFEFF) reader.reset()
@@ -152,6 +151,11 @@ class KbartReader extends AbstractReader{
         csvFormat = csvFormat.withAllowMissingColumnNames(true)
         csvFormat = csvFormat.withIgnoreHeaderCase(true)
         this
+    }
+
+
+    private def splitLine(def line){
+        return line.split(KbartReaderConfiguration.resolve(owner.delimiter))
     }
 
 }

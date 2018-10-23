@@ -1,7 +1,5 @@
 package ygor.field
 
-import org.slf4j.Logger
-
 class FieldKeyMapping {
 
     String ygorKey
@@ -20,7 +18,7 @@ class FieldKeyMapping {
         // add explicit default constructor
     }
 
-    FieldKeyMapping(Map<String, String> mappings){
+    FieldKeyMapping(boolean dontUseDefaultConstructor, def mappings){
         if (mappings == null || !(mappings instanceof Map<?, ?>) ||
                 mappings.size() != MappingsContainer.OBLIGATORY_KEYS.size()) {
             throw IllegalArgumentException("Illegal mapping argument given for FieldKeyMapping configuration: "
@@ -56,8 +54,8 @@ class FieldKeyMapping {
 
 
     /**
-     * @param type One of {@value #MappingsContainer.YGOR}, {@value #KMappingsContainer.BART},
-     * {@value #MappingsContainer.ZDB} or {@value #MappingsContainer.EZB}
+     * @param type One of {MappingsContainer.@value YGOR}, { MappingsContainer.@value KBART},
+     * {MappingsContainer.@value ZDB} or {MappingsContainer.@value EZB}
      * @return The value of the given type.
      */
     def get(String type){
