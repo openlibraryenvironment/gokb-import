@@ -3,11 +3,13 @@ package de.hbznrw.ygor.readers
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.processing.YgorProcessingException
 import grails.converters.JSON
+import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.apache.commons.csv.QuoteMode
+import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 
 import java.nio.file.Paths
@@ -46,16 +48,16 @@ class KbartReader extends AbstractReader{
             csv = getCSVParserFromReader(reader)
         }
         csvHeader = new ArrayList<>()
-        csvHeader.addAll(splitLine(csv.getHeaderMap().keySet().getAt(0)))
+        csvHeader = splitLine(csv.getHeaderMap().keySet().getAt(0))
         checkHeader(csvHeader)
         iterator = csv.iterator()
     }
 
 
     @Override
-    def readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
+    Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
         // guess, the iterator is in the position to return the desired next record
-        def next = getNext()
+        CSVRecord next = getNext()
         if (next && (!identifier || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKey == identifier))) {
             return returnItem(next)
         }
@@ -71,20 +73,25 @@ class KbartReader extends AbstractReader{
             item != currentRecord
         }()) continue
         null
+        // this last return statement should never be reached
     }
 
 
-    private JSON returnItem(CSVRecord item) {
+    private Map<String, String> returnItem(CSVRecord item) {
         if (!item) {
             return null
         }
-        def splitItem = splitLine(item)
+        def splitItem = splitLine(item.values()[0])
         if (splitItem.size() != csvHeader.size()) {
             log.info('Crappy record ignored, "size != header size" for: ' + item)
             return null
         }
+        Map<String, String> resultMap = new HashMap<>()
+        for (int i=0; i<csvHeader.size(); i++) {
+            resultMap.put(csvHeader.get(i), splitItem.get(i))
+        }
         lastItemReturned = item
-        JsonOutput.toJson(item.toMap())
+        resultMap
     }
 
 
@@ -102,6 +109,7 @@ class KbartReader extends AbstractReader{
         if (! csvHeader){
             throw new YgorProcessingException("Fehlender Dateiinhalt im CSV-File.")
         }
+        // check mandatory fields
         MANDATORY_KBART_KEYS.each{ kbk ->
             if (!csvHeader.contains(kbk)){
                 boolean isMissing = true
@@ -117,6 +125,16 @@ class KbartReader extends AbstractReader{
         }
         if (missingKeys.size() > 0){
             throw new YgorProcessingException("Fehlende Spalten im CSV-Header: " + missingKeys.toString())
+        }
+        // replace aliases
+        for (Map<String, List<String>> alias : ALIASES){
+            if (!csvHeader.contains(alias.keySet()[0])){
+                for (String value : alias.get(alias.keySet()[0])){
+                    if (csvHeader.contains(value)){
+                        csvHeader.set(csvHeader.indexOf(value), alias.keySet()[0])
+                    }
+                }
+            }
         }
     }
 
@@ -154,8 +172,23 @@ class KbartReader extends AbstractReader{
     }
 
 
-    private def splitLine(def line){
-        return line.split(KbartReaderConfiguration.resolve(owner.delimiter))
+    private ArrayList<String> splitLine(String line){
+        def result = new ArrayList<String>()
+        if (StringUtils.isEmpty(line)){
+            return result
+        }
+        String delimiter = KbartReaderConfiguration.resolve(owner.delimiter)
+        int i
+        while (line.length() > 0){
+            i = line.indexOf(delimiter)
+            if (i == -1){
+                result.add(line)
+                break
+            }
+            result.add(line.substring(0, i))
+            line = line.substring(i + delimiter.length())
+        }
+        return result
     }
 
 }

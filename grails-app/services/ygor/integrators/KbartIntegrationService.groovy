@@ -4,7 +4,6 @@ import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
-import grails.converters.JSON
 import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
@@ -22,12 +21,14 @@ class KbartIntegrationService {
         List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.pissnKeyMapping, owner.eissnKeyMapping]
         List<AbstractIdentifier> identifiers
 
-        JSON item = reader.readItemData(null, null)
+        // JsonOutput items = reader.readItems()
+        // items.each { item ->
+        Map<String, String> item = reader.readItemData(null, null)
         while (item != null){
             // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
             identifiers = []
             for (idMapping in idMappings) {
-                if (item.$(idMapping.kbartKey)){
+                if (item.(idMapping.kbartKey)){
                     Class clazz = AbstractIdentifier.byFieldKeyMapping(idMapping)
                     identifiers.add(clazz.newInstance(["identifier" : item.$(idMapping.kbartKey)]))
                 }
