@@ -17,7 +17,7 @@ class Record {
     static constraints = {
     }
 
-    Record(AbstractIdentifier... ids){
+    Record(ArrayList<AbstractIdentifier> ids){
         for (id in ids){
             addIdentifier(id)
         }

@@ -28,7 +28,9 @@ class MultipleProcessingThread extends Thread {
                               KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
                               KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
 
-    static final SOURCE_ORDER = [KbartSource, ZdbSource, EzbSource]
+    static final SOURCE_ORDER = [KbartSource, ZdbSource, EzbSource] // TODO
+
+    public identifierByKey = [:]
 
     DataContainer dataContainer
     MappingsContainer mappingsContainer
@@ -69,6 +71,9 @@ class MultipleProcessingThread extends Thread {
         zdbKeyMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
         pissnKeyMapping = mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
         eissnKeyMapping = mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)
+        identifierByKey = [(zdbKeyMapping) : ZdbIdentifier.class,
+                           (pissnKeyMapping) : PissnIdentifier.class,
+                           (eissnKeyMapping) : EissnIdentifier.class]
 	}
 
     @Override
@@ -85,7 +90,7 @@ class MultipleProcessingThread extends Thread {
                     case KbartBridge.IDENTIFIER:
                         KbartReaderConfiguration conf =
                             new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
-                        KbartIntegrationService.integrate(this, dataContainer, mappingsContainer, conf)
+                        new KbartIntegrationService().integrate(this, dataContainer, mappingsContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
                         EzbIntegrationService.integrate(this, dataContainer, mappingsContainer)

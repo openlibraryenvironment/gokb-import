@@ -127,11 +127,11 @@ class KbartReader extends AbstractReader{
             throw new YgorProcessingException("Fehlende Spalten im CSV-Header: " + missingKeys.toString())
         }
         // replace aliases
-        for (Map<String, List<String>> alias : ALIASES){
-            if (!csvHeader.contains(alias.keySet()[0])){
-                for (String value : alias.get(alias.keySet()[0])){
+        for (Map.Entry<String, List<String>> alias : ALIASES){
+            if (!csvHeader.contains(alias.getKey())){
+                for (String value : alias.getValue()){
                     if (csvHeader.contains(value)){
-                        csvHeader.set(csvHeader.indexOf(value), alias.keySet()[0])
+                        csvHeader.set(csvHeader.indexOf(value), alias.getKey())
                     }
                 }
             }
