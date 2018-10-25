@@ -4,7 +4,6 @@ import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
-import grails.transaction.Transactional
 import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
@@ -12,8 +11,9 @@ import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.source.KbartSource
 
-@Transactional
 class KbartIntegrationService {
+
+    static def SOURCE = new KbartSource()
 
     def integrate(MultipleProcessingThread owner, DataContainer data,
                          MappingsContainer container, KbartReaderConfiguration kbartReaderConfiguration) {
@@ -40,11 +40,18 @@ class KbartIntegrationService {
 
             // fill record with all non-identifier fields
             item.each { key, value ->
-                def fieldKeyMapping = FieldKeyMapping.findByKbartKey(key)
+                def fieldKeyMapping = container.getMapping(key, MappingsContainer.KBART)
+                if (fieldKeyMapping == null){
+                    fieldKeyMapping = new FieldKeyMapping(false,
+                            [(MappingsContainer.YGOR) : value,
+                             (MappingsContainer.KBART) : value,
+                             (MappingsContainer.ZDB) : "",
+                             (MappingsContainer.EZB) : ""])
+                }
                 if (null == owner.identifierByKey[fieldKeyMapping]) {
                     MultiField multiField = new MultiField(fieldKeyMapping)
-                    multiField.addValue(KbartSource, value)
-                    record.addToMultiFields(multiField)
+                    multiField.addValue(SOURCE, value)
+                    record.addMultiField(multiField)
                 }
             }
             data.putRecord(record)

@@ -24,7 +24,7 @@ class MultiField {
 
     MultiField(FieldKeyMapping fieldKeyMapping){
         this.ygorFieldKey = fieldKeyMapping.ygorKey
-        keys = MappingsContainer.getMapping(fieldKeyMapping, MappingsContainer.YGOR)
+        keys = fieldKeyMapping
         this.sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
     }
 

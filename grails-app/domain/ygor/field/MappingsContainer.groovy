@@ -23,10 +23,10 @@ class MappingsContainer {
     private static String MAPPINGS_FILE =
             Paths.get("src/java/resources/YgorFieldKeyMapping.json").toAbsolutePath().toString()
 
-    Map ygorMappings
-    Map kbartMappings
-    Map zdbMappings
-    Map ezbMappings
+    Map<String, FieldKeyMapping> ygorMappings
+    Map<String, FieldKeyMapping> kbartMappings
+    Map<String, FieldKeyMapping> zdbMappings
+    Map<String, FieldKeyMapping> ezbMappings
     static hasMany = [ygorMappings : FieldKeyMapping, kbartMappings : FieldKeyMapping,
                       zdbMappings : FieldKeyMapping, ezbMappings : FieldKeyMapping]
 
@@ -104,7 +104,7 @@ class MappingsContainer {
      * @param type One of {@value #YGOR}, {@value #KBART}, {@value #ZDB} or {@value #EZB}
      * @return A mapping with keys for each FieldKeyMapping type.
      */
-    def getMapping(String key, String type){
+    FieldKeyMapping getMapping(String key, String type){
         if (type == YGOR){
             return ygorMappings.get(key)
         }

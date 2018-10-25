@@ -45,4 +45,8 @@ class Record {
         }
     }
 
+    void addMultiField(MultiField multiField){
+        multiFields.put(multiField.ygorFieldKey, multiField)
+    }
+
 }
