@@ -151,6 +151,7 @@ class KbartReader extends AbstractReader{
         if(null != configuration.delimiter) {
             csvFormat = csvFormat.withDelimiter((char)configuration.delimiter)
         }
+        log.info("read Kbart: " + next)
         if(null != configuration.quote) {
             if('null' == configuration.quote) {
                 csvFormat = csvFormat.withQuote(null)

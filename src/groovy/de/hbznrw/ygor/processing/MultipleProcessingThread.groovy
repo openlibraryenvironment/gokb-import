@@ -4,8 +4,10 @@ import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.interfaces.ProcessorInterface
+import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
+import de.hbznrw.ygor.readers.ZdbReader
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import com.google.common.base.Throwables
@@ -55,6 +57,8 @@ class MultipleProcessingThread extends Thread {
     private int progressCurrent
 
     private KbartReader kbartReader
+    private ZdbReader zdbReader
+    private EzbReader ezbReader
     
 	MultipleProcessingThread(Enrichment en, HashMap options) {
         dataContainer = new DataContainer()
@@ -67,6 +71,8 @@ class MultipleProcessingThread extends Thread {
         recordSeparator = options.get('recordSeparator')
         kbartFile = en.originPathName
         kbartReader = new KbartReader(this)
+        zdbReader = new ZdbReader()
+        ezbReader = new EzbReader()
         mappingsContainer = new MappingsContainer()
         zdbKeyMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
         pissnKeyMapping = mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
@@ -93,10 +99,10 @@ class MultipleProcessingThread extends Thread {
                         new KbartIntegrationService().integrate(this, dataContainer, mappingsContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
-                        EzbIntegrationService.integrate(this, dataContainer, mappingsContainer)
+                        new EzbIntegrationService().integrate(this, dataContainer, mappingsContainer)
                         break
                     case ZdbBridge.IDENTIFIER:
-                        ZdbIntegrationService.integrate(this, dataContainer, mappingsContainer)
+                        new ZdbIntegrationService().integrate(this, dataContainer, mappingsContainer)
                         break
                 }
             }

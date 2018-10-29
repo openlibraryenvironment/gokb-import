@@ -23,8 +23,6 @@ class KbartIntegrationService {
         List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.pissnKeyMapping, owner.eissnKeyMapping]
         List<AbstractIdentifier> identifiers
 
-        // JsonOutput items = reader.readItems()
-        // items.each { item ->
         Map<String, String> item = reader.readItemData(null, null)
         while (item != null) {
             // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
