@@ -4,11 +4,12 @@ import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.ZdbReader
-import grails.transaction.Transactional
 import ygor.Record
 import ygor.field.MappingsContainer
+import ygor.identifier.EissnIdentifier
+import ygor.identifier.PissnIdentifier
+import ygor.identifier.ZdbIdentifier
 
-@Transactional
 class ZdbIntegrationService {
 
     def integrate(MultipleProcessingThread owner, DataContainer dataContainer,
@@ -24,29 +25,29 @@ class ZdbIntegrationService {
         Map<String, String> readData = null
         for (String key in owner.KEY_ORDER) {
             if (key == KbartConnector.KBART_HEADER_ZDB_ID){
-                for (Record item in dataContainer.recordsPerZdbId) {
-                    if (item.zdbId && !observedZdbIds.contains(item.zdbId)){
-                        readData = reader.readItemData(owner.zdbKeyMapping, item.zdbId)
-                        integrateWithExisting(item, readData)
-                        addToObserved(item, observedZdbIds, observedEissns, observedPissns)
+                for (Map.Entry<ZdbIdentifier, Record> item in dataContainer.recordsPerZdbId) {
+                    if (item.key && !observedZdbIds.contains(item.value.zdbId)){
+                        readData = reader.readItemData(owner.zdbKeyMapping, item.key.identifier)
+                        integrateWithExisting(item.value, readData)
+                        addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
             }
             else if (key == KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER){
-                for (Record item in dataContainer.recordsPerEissn) {
-                    if (item.eissn && !observedEissns.contains(item.eissn)){
-                        readData = reader.readItemData(owner.eissnKeyMapping, item.eissn)
-                        integrateWithExisting(item, readData)
-                        addToObserved(item, observedZdbIds, observedEissns, observedPissns)
+                for (Map.Entry<EissnIdentifier, Record> item in dataContainer.recordsPerEissn) {
+                    if (item.key && !observedEissns.contains(item.value.eissn)){
+                        readData = reader.readItemData(owner.eissnKeyMapping, item.key.identifier)
+                        integrateWithExisting(item.value, readData)
+                        addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
             }
             else if (key == KbartConnector.KBART_HEADER_PRINT_IDENTIFIER){
-                for (Record item in dataContainer.recordsPerPissn) {
-                    if (item.pissn && !observedPissns.contains(item.pissn)){
-                        readData = reader.readItemData(owner.pissnKeyMapping, item.pissn)
-                        integrateWithExisting(item, readData)
-                        addToObserved(item, observedZdbIds, observedEissns, observedPissns)
+                for (Map.Entry<PissnIdentifier, Record> item in dataContainer.recordsPerPissn) {
+                    if (item.key && !observedPissns.contains(item.value.pissn)){
+                        readData = reader.readItemData(owner.pissnKeyMapping, item.key.identifier)
+                        integrateWithExisting(item.value, readData)
+                        addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
             }

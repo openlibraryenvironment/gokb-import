@@ -25,17 +25,37 @@ class ZdbReader extends AbstractReader{
 
     @Override
     Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
-        GPathResult response
+        Map<String, String> result = new HashMap<>()
         try {
-            String queryString = getAPIQuery(identifier, fieldKeyMapping.zdbKey)
+            String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKey)
             log.info("query ZDB: " + queryString)
             String text = new URL(queryString).getText()
-            response = new XmlSlurper().parseText(text)
-            log.info("read ZDB: " + response)
-        } catch(Exception e) {
+            def records = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'records'}
+            if (records?.size() == 1){
+                def subfields = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'subf'}
+                subfields.each { subfield ->
+                    if (subfield.parent().parent().name() == "global"){
+                        def attribute = subfield.attributes().get("id")
+                        def parentAttribute = subfield.parent().attributes().get("id")
+                        def value = subfield.localText()[0]
+                        result.put(parentAttribute.concat(".").concat(attribute), value)
+                    }
+                }
+            }
+        }
+        catch(Exception e){
             log.error(e)
         }
+        result
     }
+
+
+    private def convertToMap(nodes) {
+        nodes.children().collectEntries {
+            [ it.name(), it.childNodes() ? convertToMap(it) : it.text() ]
+        }
+    }
+
 
 
     private String getAPIQuery(String identifier, String queryIdentifier) {
