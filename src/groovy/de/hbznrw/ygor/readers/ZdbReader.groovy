@@ -38,7 +38,7 @@ class ZdbReader extends AbstractReader{
                         def attribute = subfield.attributes().get("id")
                         def parentAttribute = subfield.parent().attributes().get("id")
                         def value = subfield.localText()[0]
-                        result.put(parentAttribute.concat(".").concat(attribute), value)
+                        result.put(parentAttribute.concat(":").concat(attribute), value)
                     }
                 }
             }

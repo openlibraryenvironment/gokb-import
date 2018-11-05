@@ -5,10 +5,13 @@ import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.ZdbReader
 import ygor.Record
+import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
+import ygor.field.MultiField
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
+import ygor.source.AbstractSource
 
 class ZdbIntegrationService {
 
@@ -54,8 +57,17 @@ class ZdbIntegrationService {
         }
     }
 
-    private void integrateWithExisting(Record item, Map<String, String> readData){
-        // TODO
+    private void integrateWithExisting(Record item, Map<String, String> readData,
+                                       FieldKeyMapping mapping, AbstractSource source){
+        if (!item || !readData || !mapping || !source){
+            // TODO: throw exception?
+            return
+        }
+        // TODO: get from readData
+        String value = ""
+
+        MultiField multiField = item.get(mapping.ygorKey)
+        multiField.addValue(source, value)
     }
 
 

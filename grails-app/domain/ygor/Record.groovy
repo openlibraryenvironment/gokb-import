@@ -1,5 +1,6 @@
 package ygor
 
+import groovy.json.JsonBuilder
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.EissnIdentifier
@@ -47,6 +48,10 @@ class Record {
 
     void addMultiField(MultiField multiField){
         multiFields.put(multiField.ygorFieldKey, multiField)
+    }
+
+    JsonBuilder toJson(){
+        // TODO
     }
 
 }
