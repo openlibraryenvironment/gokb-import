@@ -72,6 +72,17 @@
     "ezb" : ""
   },
   {
+    "ygor" : "historyEvents",
+    "kbart" : "",
+    "zdb" : [
+      "039E:c",
+      "039E:a, 039E:t",
+      "039E:C",
+      "039E:6"
+    ],
+    "ezb" : ""
+  },
+  {
     "ygor" : "listpriceEur",
     "kbart" : "listprice_eur",
     "zdb" : "",
@@ -195,6 +206,27 @@
     "ygor" : "publicationType",
     "kbart" : "publication_type",
     "zdb" : "",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "publishedFrom",
+    "kbart" : "",
+    "zdb" : "011@:a",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "publishedTo",
+    "kbart" : "",
+    "zdb" : "011@:b",
+    "ezb" : ""
+  },
+  {
+    "ygor" : "publisher_history",
+    "kbart" : "",
+    "zdb" : [
+      "033A:n",
+      "033A:h"
+    ],
     "ezb" : ""
   },
   {
