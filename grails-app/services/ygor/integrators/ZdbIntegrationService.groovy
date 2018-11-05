@@ -58,16 +58,16 @@ class ZdbIntegrationService {
     }
 
     private void integrateWithExisting(Record item, Map<String, String> readData,
-                                       FieldKeyMapping mapping, AbstractSource source){
-        if (!item || !readData || !mapping || !source){
+                                       MappingsContainer mappings, AbstractSource source){
+        if (!item || !readData || !mappings || !source){
             // TODO: throw exception?
             return
         }
-        // TODO: get from readData
-        String value = ""
-
-        MultiField multiField = item.get(mapping.ygorKey)
-        multiField.addValue(source, value)
+        for (Map.Entry<String, String> date : readData){
+            FieldKeyMapping mapping = mappings.getMapping(date.key, MappingsContainer.ZDB)
+            MultiField multiField = item.get(mapping.ygorKey)
+            multiField.addValue(source, date.value)
+        }
     }
 
 
