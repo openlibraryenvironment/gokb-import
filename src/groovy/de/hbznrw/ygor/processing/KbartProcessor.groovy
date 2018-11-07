@@ -308,7 +308,7 @@ class KbartProcessor extends AbstractProcessor {
                 }
             }
             
-            DataMapper.mapEnvelopeToTitle(title, q, env)
+            DataMapper.mapEnvelopeToTitle(title, q, env, dc)
             DataMapper.mapEnvelopeToTipp (tipp, q, env, dc)
         }
         

@@ -12,6 +12,7 @@
 	<g:each in="${enrichments}" var="e">
 		<g:form controller="enrichment" action="process">
 			<g:hiddenField name="originHash" value="${e.key}" />
+			<g:hiddenField name="dataTyp" value="${session.lastUpdate?.dataTyp}" />
 			
 			<div class="row">
 				<div class="col-xs-12">
@@ -171,6 +172,25 @@
                                         $('#pkgNominalProvider').append($('<option></option>').attr('value', provider).text(provider));
 									});
 								</script>
+
+								<g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
+
+								<div class="input-group">
+									<span class="input-group-addon">Namespace für Title Identifier</span>
+									<g:select name="namespace_title_id" id="namespace_title_id" from="${de.hbznrw.ygor.export.Normalizer.IdentifierNameSpaces}" noSelection="${['':'Bitte Namespace wählen..']}" required="required"></g:select>
+								</div>
+
+								<script>
+                                    $(document).ready(function() {
+                                        $('#namespace_title_id').select2({
+                                            allowClear: true,
+                                            placeholder: 'Bitte Namespace wählen..',
+                                            debug: true
+                                        });
+                                    });
+								</script>
+								<br>
+								</g:if>
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>

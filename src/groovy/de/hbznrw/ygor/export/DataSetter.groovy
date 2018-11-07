@@ -38,10 +38,10 @@ class DataSetter {
         }
     }
     
-    static def setIdentifier(Object obj, Object identType, Object orgValue){
+    static def setIdentifier(Object obj, Object identType, Object orgValue, String namespace){
         obj.org       = orgValue
-        def normValue = Normalizer.normIdentifier  (orgValue, identType)
-        def normMeta  = Validator.isValidIdentifier(normValue, identType)
+        def normValue = Normalizer.normIdentifier  (orgValue, identType, namespace)
+        def normMeta  = Validator.isValidIdentifier(normValue, identType, namespace)
         
         if(Status.VALIDATOR_IDENTIFIER_IS_VALID == normMeta){
             obj.v = normValue

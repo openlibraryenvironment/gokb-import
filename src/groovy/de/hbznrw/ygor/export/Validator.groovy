@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.export
 
 import de.hbznrw.ygor.enums.*
+import de.hbznrw.ygor.export.structure.Identifier
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
 import org.apache.commons.lang.StringUtils
@@ -59,45 +60,44 @@ class Validator {
      * @param identifierType
      * @return
      */
-    static isValidIdentifier(String str, Object identifierType) {
-        if(!str || str.trim().equals("")){
+    static isValidIdentifier(String str, Object identifierType, String namespace) {
+        if (!str || str.trim().equals("")) {
             return Status.VALIDATOR_IDENTIFIER_IS_MISSING
         }
-        
-        if(str.contains("|")){
+
+        if (str.contains("|")) {
             return Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC
         }
-        
-        if(identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)){
-            if(9 == str.length() && 4 == str.indexOf("-")){
+
+        if (identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)) {
+            if (9 == str.length() && 4 == str.indexOf("-")) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
-            }
-            else {
+            } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        }
-        else if(identifierType.equals(ZdbBridge.IDENTIFIER)){
-            if(2 < str.length() && str.indexOf("-") == str.length()-2){
+        } else if (identifierType.equals(ZdbBridge.IDENTIFIER)) {
+            if (2 < str.length() && str.indexOf("-") == str.length() - 2) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
-            }
-            else {
+            } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        }
-        else if(identifierType.equals(EzbBridge.IDENTIFIER)){
+        } else if (identifierType.equals(EzbBridge.IDENTIFIER)) {
             // TODO .. no valid definition 
-            if(str.length() > 2){
+            if (str.length() > 2) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
-            }
-            else {
+            } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        }
-        else if(identifierType.equals(TitleStruct.DOI)){
-            if(str.startsWith("10.")){
+        } else if (identifierType.equals(TitleStruct.DOI)) {
+            if (str.startsWith("10.")) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
+            } else {
+                return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-            else {
+        } else if (identifierType.equals("inID_" + namespace) && namespace in Normalizer.IdentifierNameSpaces) {
+            if (str) {
+                return Status.VALIDATOR_IDENTIFIER_IS_VALID
+            } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
         }

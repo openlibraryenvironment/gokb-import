@@ -15,6 +15,10 @@ class Normalizer {
 
     final static IS_START_DATE  = "IS_START_DATE"
     final static IS_END_DATE    = "IS_END_DATE"
+
+    static  final  IdentifierNameSpaces = [
+            'thieme'
+    ]
     
     /**
      * Removes double spaces. Removes leading and ending spaces.
@@ -73,7 +77,7 @@ class Normalizer {
      * @param str
      * @return
      */
-    static String normIdentifier(String str, Object type) {
+    static String normIdentifier(String str, Object type, String namespace) {
         if(!str)
             return str
             
@@ -93,7 +97,21 @@ class Normalizer {
             // TODO
         }
         else if(type.equals(TitleStruct.DOI)){
-            // TODO: DOI Normalizier
+            if(str.startsWith("http://doi.org/")){
+                str= str.replace("http://doi.org/", '')
+            }
+            if(str.startsWith("https://doi.org/")){
+                str= str.replace("https://doi.org/", '')
+            }
+            if(str.startsWith("http://dx.doi.org/")){
+                str= str.replace("http://dx.doi.org/", '')
+            }
+            if(str.startsWith("https://dx.doi.org/")){
+                str= str.replace("https://dx.doi.org/", '')
+            }
+        }
+        else if(type.equals("inID_"+namespace)){
+            str = namespace ? str : ''
         }
 
         str
@@ -108,13 +126,13 @@ class Normalizer {
      * @param list
      * @return
      */
-    static String normIdentifier(ArrayList list, Object type) {
+    static String normIdentifier(ArrayList list, Object type, String namespace) {
         if(null == list)
             return null
             
         def result = []
         list.each{ e ->
-            result << Normalizer.normIdentifier(e.toString(), type)
+            result << Normalizer.normIdentifier(e.toString(), type, namespace)
         }
         result.join("|")
     }

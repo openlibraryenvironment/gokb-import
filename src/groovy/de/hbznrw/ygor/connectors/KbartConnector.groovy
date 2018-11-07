@@ -107,23 +107,32 @@ class KbartConnector extends AbstractConnector {
             case Query.KBART_EISSN:
                 return getOnlineIdentifier()
                 break
-            case Query.KBART_HISTORY_EVENTS:
-                return getHistoryEventAsFatEnvelope()
-                break
             case Query.KBART_PUBLISHER:
                 return getPublisher()
-                break
-            case Query.KBART_PUBLISHED_TO:
-                return getPublishedTo()
-                break
-            case Query.KBART_PUBLISHED_FROM:
-                return getPublishedFrom()
                 break
             case Query.KBART_DOI:
                 return getDOI()
                 break
             case Query.KBART_TITLE:
                 return getTitle()
+                break
+            case Query.KBART_TITLE_ID:
+                return getTitleID()
+                break
+            case Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE:
+                return getDateMonographPublishedOnline()
+                break
+            case Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT:
+                return getDateMonographPublishedPrint()
+                break
+            case Query.KBART_MONOGRAPH_EDITION:
+                return getMonographEdition()
+                break
+            case Query.KBART_FIRST_AUTHOR:
+                return getFirstAuthor()
+                break
+            case Query.KBART_FIRST_EDITOR:
+                return getFirstEditor()
                 break
         }
         getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
@@ -142,7 +151,43 @@ class KbartConnector extends AbstractConnector {
 
         getEnvelopeWithMessage(result)
     }
+    private Envelope getTitleID() {
+        def result = []
+        result << getValue("title_id")
 
+        getEnvelopeWithMessage(result)
+    }
+    private Envelope getDateMonographPublishedPrint() {
+        def result = []
+        result << getValue("date_monograph_published_print")
+
+        getEnvelopeWithMessage(result)
+    }
+
+    private Envelope getDateMonographPublishedOnline() {
+        def result = []
+        result << getValue("date_monograph_published_online")
+
+        getEnvelopeWithMessage(result)
+    }
+    private Envelope getMonographEdition () {
+        def result = []
+        result << getValue("monograph_edition")
+
+        getEnvelopeWithMessage(result)
+    }
+    private Envelope getFirstEditor () {
+        def result = []
+        result << getValue("first_editor")
+
+        getEnvelopeWithMessage(result)
+    }
+    private Envelope getFirstAuthor() {
+        def result = []
+        result << getValue("first_author")
+
+        getEnvelopeWithMessage(result)
+    }
     private Envelope getPrintIdentifier() {
         def result = []
         result << getValue("print_identifier")
@@ -153,28 +198,6 @@ class KbartConnector extends AbstractConnector {
     private Envelope getOnlineIdentifier() {
         def result = []
         result << getValue("online_identifier")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    //TODO: Workflow arbeiten
-    private Envelope getHistoryEventAsFatEnvelope() {
-        def result = []
-        //result << getValue("online_identifier")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    private Envelope getPublishedTo() {
-        def result = []
-        result << getValue("published_to")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    private Envelope getPublishedFrom() {
-        def result = []
-        result << getValue("published_from")
 
         getEnvelopeWithMessage(result)
     }

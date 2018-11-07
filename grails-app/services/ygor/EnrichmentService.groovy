@@ -71,6 +71,10 @@ class EnrichmentService {
             ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
         }
 
+        if(pm['namespace_title_id']) {
+            enrichment.dataContainer.info.namespace_title_id = pm['namespace_title_id'][0]
+        }
+
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
     }
 
