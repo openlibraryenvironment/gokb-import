@@ -16,9 +16,6 @@ class Normalizer {
     final static IS_START_DATE  = "IS_START_DATE"
     final static IS_END_DATE    = "IS_END_DATE"
 
-    static  final  IdentifierNameSpaces = [
-            'thieme'
-    ]
     
     /**
      * Removes double spaces. Removes leading and ending spaces.

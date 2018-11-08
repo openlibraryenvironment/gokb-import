@@ -9,6 +9,10 @@
 	</li>
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+		&nbsp; Spezifizieren Sie den Typ der Quelldaten.
+	</li>
+	<li class="list-group-item">
+		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
 		&nbsp; Laden Sie die Datei auf den Server.
 	</li>
 </ul>

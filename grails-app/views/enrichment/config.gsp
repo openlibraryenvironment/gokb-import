@@ -278,31 +278,48 @@
 			</tr>
 
 			<tr>
+				<td>KBART <em>, Datei</em><br>
+					Ygor <em>, Formular</em>
+				</td>
+				<td>title.identifiers.inID_%namespace%</td>
+				<td>title.identifiers.inID_%namespace%</td>
+				<td>title_id <br>Liste von Namespaces</td>
+			</tr>
+
+			<tr>
 				<td>KBART <em>, Datei</em></td>
-				<td>title.publishedFrom</td>
+				<td>title.first_author</td>
 				<td></td>
-				<td>published_from</td>
+				<td>first_author</td>
 			</tr>
 			<tr>
 				<td>KBART <em>, Datei</em></td>
-				<td>title.publishedTo</td>
+				<td>title.first_editor </td>
 				<td></td>
-				<td>published_to</td>
+				<td>first_editor </td>
 			</tr>
 			<tr>
 				<td>KBART <em>, Datei</em></td>
-				<td><strong>title.publisher_history</strong></td>
+				<td>title.date_monograph_published_print</td>
 				<td></td>
 				<td>
-
+					date_monograph_published_print
 				</td>
 			</tr>
 			<tr>
 				<td>KBART <em>, Datei</em></td>
-				<td><strong>title.historyEvents</strong></td>
+				<td>title.date_monograph_published_online</td>
 				<td></td>
 				<td>
-
+					date_monograph_published_online
+				</td>
+			</tr>
+			<tr>
+				<td>KBART <em>, Datei</em></td>
+				<td>title.monograph_edition</td>
+				<td></td>
+				<td>
+					monograph_edition
 				</td>
 			</tr>
 

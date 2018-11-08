@@ -16,7 +16,11 @@ import de.hbznrw.ygor.tools.*
 
 @Log4j
 class DataMapper {
-    
+
+    static  final  IdentifierNameSpaces = [
+            'thieme'
+    ]
+
     /**
      * Creating:
      * 

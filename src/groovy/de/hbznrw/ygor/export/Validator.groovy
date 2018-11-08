@@ -94,7 +94,7 @@ class Validator {
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals("inID_" + namespace) && namespace in Normalizer.IdentifierNameSpaces) {
+        } else if (identifierType.equals("inID_" + namespace) && namespace in DataMapper.IdentifierNameSpaces) {
             if (str) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
