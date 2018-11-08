@@ -8,6 +8,10 @@
 		&nbsp; Benennen Sie Ihre Organisation als sekundäre <strong>Curatory Group</strong>.
 	</li>
 	<li class="list-group-item">
+		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+		&nbsp; Wenn der Typ der Quelldaten 'EBooks' ist, muss noch ein Namespace ausgewählt werden. Um den Titel Identifier vom Anbieter in der GOKB abzugleichen oder anzulegen.
+	</li>
+	<li class="list-group-item">
 		<span class="text-danger">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			&nbsp; <em>Ohne Übereinstimmung des Titels wird (im Fall einer Datenübertragung) ein neues Paket in der GOKb angelegt.</em>

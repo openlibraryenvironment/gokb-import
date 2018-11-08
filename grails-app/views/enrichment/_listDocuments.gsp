@@ -176,8 +176,8 @@
 								<g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
 
 								<div class="input-group">
-									<span class="input-group-addon">Namespace für Title Identifier</span>
-									<g:select name="namespace_title_id" id="namespace_title_id" from="${de.hbznrw.ygor.export.Normalizer.IdentifierNameSpaces}" noSelection="${['':'Bitte Namespace wählen..']}" required="required"></g:select>
+									<span class="input-group-addon">Namespace für Titel Identifier</span>
+									<g:select name="namespace_title_id" id="namespace_title_id" from="${de.hbznrw.ygor.export.DataMapper.IdentifierNameSpaces}" noSelection="${['':'Bitte Namespace wählen..']}" required="required"></g:select>
 								</div>
 
 								<script>
