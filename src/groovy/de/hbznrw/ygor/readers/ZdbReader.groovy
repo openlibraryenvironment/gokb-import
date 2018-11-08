@@ -1,8 +1,6 @@
 package de.hbznrw.ygor.readers
 
-import de.hbznrw.ygor.interfaces.AbstractEnvelope
 import groovy.util.logging.Log4j
-import groovy.util.slurpersupport.GPathResult
 import ygor.field.FieldKeyMapping
 
 @Log4j

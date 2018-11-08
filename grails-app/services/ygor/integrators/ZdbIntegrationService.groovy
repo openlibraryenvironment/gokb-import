@@ -5,15 +5,13 @@ import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.ZdbReader
 import ygor.Record
-import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
-import ygor.field.MultiField
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
-import ygor.source.AbstractSource
+import ygor.source.SourceContainer
 
-class ZdbIntegrationService {
+class ZdbIntegrationService extends ExternalIntegrationService{
 
     def integrate(MultipleProcessingThread owner, DataContainer dataContainer,
                          MappingsContainer mappingsContainer) {
@@ -31,7 +29,7 @@ class ZdbIntegrationService {
                 for (Map.Entry<ZdbIdentifier, Record> item in dataContainer.recordsPerZdbId) {
                     if (item.key && !observedZdbIds.contains(item.value.zdbId)){
                         readData = reader.readItemData(owner.zdbKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData)
+                        integrateWithExisting(item.value, readData, owner.mappingsContainer, SourceContainer.zdbSource)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
@@ -40,7 +38,7 @@ class ZdbIntegrationService {
                 for (Map.Entry<EissnIdentifier, Record> item in dataContainer.recordsPerEissn) {
                     if (item.key && !observedEissns.contains(item.value.eissn)){
                         readData = reader.readItemData(owner.eissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData)
+                        integrateWithExisting(item.value, readData, owner.mappingsContainer, SourceContainer.zdbSource)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
@@ -49,7 +47,7 @@ class ZdbIntegrationService {
                 for (Map.Entry<PissnIdentifier, Record> item in dataContainer.recordsPerPissn) {
                     if (item.key && !observedPissns.contains(item.value.pissn)){
                         readData = reader.readItemData(owner.pissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData)
+                        integrateWithExisting(item.value, readData, owner.mappingsContainer, SourceContainer.zdbSource)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
@@ -57,29 +55,5 @@ class ZdbIntegrationService {
         }
     }
 
-    private void integrateWithExisting(Record item, Map<String, String> readData,
-                                       MappingsContainer mappings, AbstractSource source){
-        if (!item || !readData || !mappings || !source){
-            // TODO: throw exception?
-            return
-        }
-        for (Map.Entry<String, String> date : readData){
-            FieldKeyMapping mapping = mappings.getMapping(date.key, MappingsContainer.ZDB)
-            MultiField multiField = item.get(mapping.ygorKey)
-            multiField.addValue(source, date.value)
-        }
-    }
 
-
-    private void addToObserved(Record item, def observedZdbIds, def observedEissns, def observedPissns){
-        if (item.zdbId){
-            observedZdbIds.add(item.zdbId)
-        }
-        if (item.eissn){
-            observedEissns.add(item.eissn)
-        }
-        if (item.pissn){
-            observedPissns.add(item.pissn)
-        }
-    }
 }

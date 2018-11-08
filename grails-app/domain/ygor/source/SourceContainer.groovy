@@ -2,9 +2,9 @@ package ygor.source
 
 class SourceContainer {
 
-    KbartSource kbartSource
-    ZdbSource   zdbSource
-    EzbSource   ezbSource
+    static KbartSource kbartSource
+    static ZdbSource   zdbSource
+    static EzbSource   ezbSource
 
     static constraints = {
         kbartSource nullable : false
