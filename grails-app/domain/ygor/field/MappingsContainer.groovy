@@ -85,16 +85,30 @@ class MappingsContainer {
 
     private def putMapping(FieldKeyMapping mapping){
         if (!StringUtils.isEmpty(mapping.ygorKey)){
-            ygorMappings.put(mapping.ygorKey, mapping)
+            putPartToMapping(ygorMappings, mapping, mapping.ygorKey)
         }
-        if (!StringUtils.isEmpty(mapping.kbartKey)){
-            kbartMappings.put(mapping.kbartKey, mapping)
+        if (mapping.kbartKey != null){
+            putPartToMapping(ygorMappings, mapping, mapping.kbartKey)
         }
-        if (!StringUtils.isEmpty(mapping.zdbKey)){
-            zdbMappings.put(mapping.zdbKey, mapping)
+        if (mapping.zdbKey != null){
+            putPartToMapping(ygorMappings, mapping, mapping.zdbKey)
         }
-        if (!StringUtils.isEmpty(mapping.ezbKey)){
-            ezbMappings.put(mapping.ezbKey, mapping)
+        if (mapping.ezbKey != null){
+            putPartToMapping(ygorMappings, mapping, mapping.ezbKey)
+        }
+    }
+
+
+    private void putPartToMapping(Map<String, FieldKeyMapping> mappingsPart, FieldKeyMapping mapping, def key){
+        if (key instanceof String){
+            // add simple key mapping
+            mappingsPart.put(key, mapping)
+        }
+        else if (key instanceof List<?>){
+            // add multiple key mapping
+            for (String item : key){
+                mappingsPart.put(item, mapping)
+            }
         }
     }
 

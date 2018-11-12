@@ -3,9 +3,9 @@ package ygor.field
 class FieldKeyMapping {
 
     String ygorKey
-    String kbartKey
-    String zdbKey
-    String ezbKey
+    def kbartKey
+    def zdbKey
+    def ezbKey
 
     static constraints = {
         ygorKey  nullable : false

@@ -4,16 +4,12 @@ import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.EzbReader
-import de.hbznrw.ygor.readers.ZdbReader
-import grails.transaction.Transactional
 import ygor.Record
 import ygor.field.MappingsContainer
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
-import ygor.source.SourceContainer
 
-@Transactional
 class EzbIntegrationService extends ExternalIntegrationService{
 
     def integrate(MultipleProcessingThread owner, DataContainer dataContainer,
@@ -31,7 +27,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
                 for (Map.Entry<ZdbIdentifier, Record> item in dataContainer.recordsPerZdbId) {
                     if (item.key && !observedZdbIds.contains(item.value.zdbId)){
                         readData = reader.readItemData(owner.zdbKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, owner.mappingsContainer, SourceContainer.ezbSource)
+                        integrateWithExisting(item.value, readData, owner.mappingsContainer, MappingsContainer.EZB)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
@@ -40,7 +36,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
                 for (Map.Entry<EissnIdentifier, Record> item in dataContainer.recordsPerEissn) {
                     if (item.key && !observedEissns.contains(item.value.eissn)){
                         readData = reader.readItemData(owner.eissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, owner.mappingsContainer, SourceContainer.ezbSource)
+                        integrateWithExisting(item.value, readData, owner.mappingsContainer, MappingsContainer.EZB)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
@@ -49,7 +45,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
                 for (Map.Entry<PissnIdentifier, Record> item in dataContainer.recordsPerPissn) {
                     if (item.key && !observedPissns.contains(item.value.pissn)){
                         readData = reader.readItemData(owner.pissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, owner.mappingsContainer, SourceContainer.ezbSource)
+                        integrateWithExisting(item.value, readData, owner.mappingsContainer, MappingsContainer.EZB)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }

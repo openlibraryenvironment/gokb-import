@@ -27,17 +27,12 @@ class EzbReader extends AbstractReader{
             String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKey)
             log.info("query EZB: " + queryString)
             String text = new URL(queryString).getText()
-            def records = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'records'}
+            def records = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'title'}
             if (records?.size() == 1){
-                def subfields = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'subf'}
-                subfields.each { subfield ->
-                    if (subfield.parent().parent().name() == "global"){
-                        def attribute = subfield.attributes().get("id")
-                        def parentAttribute = subfield.parent().attributes().get("id")
-                        def value = subfield.localText()[0]
-                        result.put(parentAttribute.concat(":").concat(attribute), value)
-                    }
-                }
+                String name = records.get(0).localText()[0]
+                String ezbId = records.get(0).parent().attributes().get("jourid")
+                result.put("ezbId", ezbId)
+                result.put("ezbTitle", name)
             }
         }
         catch(Exception e){

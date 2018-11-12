@@ -4,20 +4,21 @@ import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
-import ygor.source.AbstractSource
 
 class ExternalIntegrationService {
 
     static void integrateWithExisting(Record item, Map<String, String> readData,
-                                              MappingsContainer mappings, AbstractSource source){
+                                              MappingsContainer mappings, String source){
         if (!item || !readData || !mappings || !source){
             // TODO: throw exception?
             return
         }
         for (Map.Entry<String, String> date : readData){
             FieldKeyMapping mapping = mappings.getMapping(date.key, MappingsContainer.ZDB)
-            MultiField multiField = item.get(mapping.ygorKey)
-            multiField.addValue(source, date.value)
+            if (mapping) {
+                MultiField multiField = item.get(mapping.ygorKey)
+                multiField.addValue(source, date.value)
+            }
         }
     }
 
