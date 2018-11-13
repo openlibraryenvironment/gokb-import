@@ -26,6 +26,19 @@
 			<em>Version <g:meta name="app.version"/></em> <br/>
 			<em>basierend auf Grails <g:meta name="app.grails.version"/></em> <br/>
 			<em>Angeschlossene GOKb-Instanz ${grailsApplication.config.gokbApi.baseUri}</em>
+			<br/><br/>
+
+			<em> <g:if test="${grailsApplication.metadata['repository.revision.number']}">
+				<a target="_blank" class="item" href="https://github.com/hbz/laser-ygor/tree/${grailsApplication.metadata['repository.revision.number']}">
+					Build: ${grailsApplication.metadata['build.DateTimeStamp']}
+
+				</a><br>
+				Branch: ${grailsApplication.metadata['repository.branch']}
+			</g:if>
+				<g:else>
+					Build: ${grailsApplication.metadata['build.DateTimeStamp']}<br>
+					Branch: ${grailsApplication.metadata['repository.branch']}
+				</g:else></em>
 		</p>
 
 	</div>
