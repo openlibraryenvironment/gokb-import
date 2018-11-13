@@ -19,9 +19,6 @@ import ygor.identifier.ZdbIdentifier
 import ygor.integrators.EzbIntegrationService
 import ygor.integrators.KbartIntegrationService
 import ygor.integrators.ZdbIntegrationService
-import ygor.source.EzbSource
-import ygor.source.KbartSource
-import ygor.source.ZdbSource
 
 @Log4j
 class MultipleProcessingThread extends Thread {
@@ -30,7 +27,9 @@ class MultipleProcessingThread extends Thread {
                               KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
                               KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
 
-    static final SOURCE_ORDER = [KbartSource, ZdbSource, EzbSource] // TODO
+    static final SOURCE_ORDER = [MappingsContainer.KBART,
+                                 MappingsContainer.ZDB,
+                                 MappingsContainer.EZB] // TODO
 
     public identifierByKey = [:]
 

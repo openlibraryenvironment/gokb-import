@@ -69,7 +69,7 @@ class MappingsContainer {
         if (StringUtils.isEmpty(json.ygor)){
             throw new MissingFieldException("Missing YgorFieldKey entry in ".concat(json))
         }
-        // other keys are allowed to be empty Strings
+        // other keyMapping are allowed to be empty Strings
         if (json.kbart == null){
             throw new MissingFieldException("Missing Kbart key entry in ".concat(json))
         }
@@ -87,14 +87,14 @@ class MappingsContainer {
         if (!StringUtils.isEmpty(mapping.ygorKey)){
             putPartToMapping(ygorMappings, mapping, mapping.ygorKey)
         }
-        if (mapping.kbartKey != null){
-            putPartToMapping(ygorMappings, mapping, mapping.kbartKey)
+        if (!StringUtils.isEmpty(mapping.kbartKey)){
+            putPartToMapping(kbartMappings, mapping, mapping.kbartKey)
         }
-        if (mapping.zdbKey != null){
-            putPartToMapping(ygorMappings, mapping, mapping.zdbKey)
+        if (mapping.zdbKey instanceof List<?> || !StringUtils.isEmpty(mapping.zdbKey)){
+            putPartToMapping(zdbMappings, mapping, mapping.zdbKey)
         }
-        if (mapping.ezbKey != null){
-            putPartToMapping(ygorMappings, mapping, mapping.ezbKey)
+        if (!StringUtils.isEmpty(mapping.ezbKey)){
+            putPartToMapping(ezbMappings, mapping, mapping.ezbKey)
         }
     }
 
@@ -116,7 +116,7 @@ class MappingsContainer {
     /**
      * @param key The key to identify the mapping.
      * @param type One of {@value #YGOR}, {@value #KBART}, {@value #ZDB} or {@value #EZB}
-     * @return A mapping with keys for each FieldKeyMapping type.
+     * @return A mapping with keyMapping for each FieldKeyMapping type.
      */
     FieldKeyMapping getMapping(String key, String type){
         if (type == YGOR){

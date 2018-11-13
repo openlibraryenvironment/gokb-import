@@ -50,6 +50,10 @@ class Record {
         multiFields.put(multiField.ygorFieldKey, multiField)
     }
 
+    MultiField getMultiField(def ygorFieldKey){
+        multiFields.get(ygorFieldKey)
+    }
+
     JsonBuilder toJson(){
         // TODO
     }

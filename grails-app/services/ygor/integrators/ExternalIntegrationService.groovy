@@ -14,10 +14,17 @@ class ExternalIntegrationService {
             return
         }
         for (Map.Entry<String, String> date : readData){
-            FieldKeyMapping mapping = mappings.getMapping(date.key, MappingsContainer.ZDB)
+            FieldKeyMapping mapping = mappings.getMapping(date.key, source)
             if (mapping) {
-                MultiField multiField = item.get(mapping.ygorKey)
-                multiField.addValue(source, date.value)
+                MultiField multiField = item.getMultiField(mapping.ygorKey)
+                if (multiField != null) {
+                    multiField.addValue(source, date.value)
+                }
+                else {
+                    multiField = new MultiField(mapping.ygorKey)
+                    multiField.addValue(source, date.value)
+                    item.addToMultiFields(multiField)
+                }
             }
         }
     }

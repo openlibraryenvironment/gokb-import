@@ -55,7 +55,7 @@
   },
   {
     "ygor" : "ezbId",
-    "kbart" : "n.a.",
+    "kbart" : "ezb_id",
     "zdb" : "",
     "ezb" : "jourid"
   },
@@ -221,7 +221,7 @@
     "ezb" : ""
   },
   {
-    "ygor" : "publisher_history",
+    "ygor" : "publisherHistory",
     "kbart" : "",
     "zdb" : [
       "033A:n",

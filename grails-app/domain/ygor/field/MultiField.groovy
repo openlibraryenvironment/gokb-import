@@ -1,14 +1,11 @@
 package ygor.field
 
-import ygor.source.AbstractSource
 import ygor.source.EzbSource
-import ygor.source.KbartSource
-import ygor.source.ZdbSource
 
 class MultiField {
 
     String ygorFieldKey
-    FieldKeyMapping keys
+    FieldKeyMapping keyMapping
     Map fields = [:]
     List sourcePrio = []
     static hasMany = [sourcePrio : String, fields : Field]
@@ -24,7 +21,7 @@ class MultiField {
 
     MultiField(FieldKeyMapping fieldKeyMapping){
         this.ygorFieldKey = fieldKeyMapping.ygorKey
-        keys = fieldKeyMapping
+        keyMapping = fieldKeyMapping
         this.sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
     }
 
@@ -37,7 +34,7 @@ class MultiField {
         for (necessaryKey in [MappingsContainer.ZDB, MappingsContainer.KBART, MappingsContainer.EZB]){
             boolean found = false
             for (givenSource in sourcePrio){
-                if (givenSource.getClass() == necessaryKey){
+                if (givenSource == necessaryKey){
                     found = true
                 }
             }
@@ -50,16 +47,8 @@ class MultiField {
     }
 
 
-    def addValue(AbstractSource source, String value){
-        if (source instanceof KbartSource){
-            fields.put(keys.get(MappingsContainer.KBART), new Field(source, keys.get(MappingsContainer.KBART), value))
-        }
-        else if (source instanceof ZdbSource){
-            fields.put(keys.get(MappingsContainer.ZDB), new Field(source, keys.get(MappingsContainer.ZDB), value))
-        }
-        else if (source instanceof EzbSource){
-            fields.put(keys.get(MappingsContainer.EZB), new Field(source, keys.get(MappingsContainer.EZB), value))
-        }
+    def addValue(String source, String value){
+        fields.put(keyMapping.get(source), new Field(source, keyMapping.get(source), value))
     }
 
 

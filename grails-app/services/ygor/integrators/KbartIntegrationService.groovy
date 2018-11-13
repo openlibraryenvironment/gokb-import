@@ -9,11 +9,8 @@ import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
-import ygor.source.KbartSource
 
 class KbartIntegrationService {
-
-    static def SOURCE = new KbartSource()
 
     def integrate(MultipleProcessingThread owner, DataContainer data,
                          MappingsContainer container, KbartReaderConfiguration kbartReaderConfiguration) {
@@ -48,7 +45,7 @@ class KbartIntegrationService {
                 }
                 if (null == owner.identifierByKey[fieldKeyMapping]) {
                     MultiField multiField = new MultiField(fieldKeyMapping)
-                    multiField.addValue(SOURCE, value)
+                    multiField.addValue(MappingsContainer.KBART, value)
                     record.addMultiField(multiField)
                 }
             }
