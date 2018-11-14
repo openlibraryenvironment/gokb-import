@@ -90,4 +90,20 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
             processor.processEntry(master.enrichment.dataContainer, uid, 'TODO_REFACTOR_TO_ZdbBridge.IDENTIFIER')
         }
     }
+    @Override
+    void finish() throws Exception {
+        log.info("finish()")
+
+        def stash  = processor.getStash()
+        def orgMap = DataMapper.getOrganisationMap()
+
+//        master.enrichment.dataContainer.titles.each { key, value ->
+//            DataMapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
+//            DataMapper.mapOrganisations(orgMap, value.v)
+//        }
+        master.enrichment.dataContainer.pkg.tipps.each { key, value ->
+            DataMapper.mapPlatform(value.v, master.enrichment.dataContainer)
+        }
+    }
+
 }

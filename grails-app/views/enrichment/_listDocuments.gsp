@@ -229,7 +229,39 @@
 
 			
 							<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
-		
+
+								${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">\n' +
+										'  Kein Plattform Name vorhanden!\n' +
+										'</div>')}
+
+								<div class="input-group custom-control">
+									<span class="input-group-addon"><em>GOKb</em> Plattform Name</span>
+									<span class="form-control" >${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.name}</span>
+								</div>
+
+								<br />
+
+								${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">\n' +
+										'  Keine Plattform Url vorhanden!\n' +
+										'</div>')}
+								<div class="input-group">
+									<span class="input-group-addon"><em>GOKb</em> Plattform Url</span>
+									<span class="form-control" >${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.url}</span>
+								</div>
+
+								<br />
+
+								${e.value.dataContainer.pkg.packageHeader.v.nominalProvider.v ? '' : raw('<div class="alert alert-danger" role="alert">\n' +
+										'  Kein Provider vorhanden!\n' +
+										'</div>')}
+
+								<div class="input-group">
+									<span class="input-group-addon"><em>GOKb</em> Provider</span>
+									<span class="form-control" >${e.value.dataContainer.pkg.packageHeader.v.nominalProvider.v}</span>
+								</div>
+
+								<br />
+
 								Über die folgenden Schnittstellen sollen die Information hinzugefügt werden
 								<br /><br />	
 								

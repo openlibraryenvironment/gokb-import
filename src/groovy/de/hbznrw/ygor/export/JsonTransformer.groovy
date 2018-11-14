@@ -2,6 +2,7 @@ package de.hbznrw.ygor.export
 
 import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.enums.*
+import grails.converters.JSON
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
@@ -83,10 +84,10 @@ class JsonTransformer {
         }
         
         if(prettyPrint){
-            return new JsonBuilder(json).toPrettyString()
+            return new JSON(json).toString(true)
         }
         else {
-            return new JsonBuilder(json).toString()
+            return new JSON(json).toString()
         }
     }
     
