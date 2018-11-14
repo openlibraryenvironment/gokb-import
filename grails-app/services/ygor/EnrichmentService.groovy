@@ -99,7 +99,7 @@ class EnrichmentService {
       }
 
       if (pkgNomPlatform) {
-        setUrlIfValid(pkgNomPlatform.primaryUrl, ph)
+        setUrlIfValid(pkgNomPlatform.url, ph)
         ph.v.nominalPlatform.name = pkgNomPlatform.name
         ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
       }else{
@@ -108,8 +108,7 @@ class EnrichmentService {
     }
 
     private void setUrlIfValid(value, ph) {
-        //Rausgenommen 14.11.2018. Da eine Url wie z.B. https://roempp.thieme.de/ nicht genommen wird, aber es ist eine korrekte URL
-/*
+
         try {
             URL url = new URL(value)
             ph.v.nominalPlatform.url = value
@@ -117,8 +116,6 @@ class EnrichmentService {
         catch (MalformedURLException e) {
             ph.v.nominalPlatform.url = ""
         }
-*/
-        ph.v.nominalPlatform.url = value
     }
 
     void stopProcessing(Enrichment enrichment) {

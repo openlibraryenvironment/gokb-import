@@ -25,6 +25,10 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.51 </dt><br />
+
+					<dd>- Bugfix: Json Export mit UTF-8 & Plattform URL Mapping & EBooks mit Plattfrom Mapping </dd>
+
 					<br /><dt>0.50 </dt><br />
 
 					<dd>- Bugfix: Tipp -> AccessEndDate </dd>
