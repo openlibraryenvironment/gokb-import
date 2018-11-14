@@ -25,7 +25,7 @@ class ZdbReader extends AbstractReader{
     Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
         Map<String, String> result = new HashMap<>()
         try {
-            String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKey)
+            String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKeys)
             log.info("query ZDB: " + queryString)
             String text = new URL(queryString).getText()
             def records = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'records'}
@@ -56,9 +56,9 @@ class ZdbReader extends AbstractReader{
 
 
 
-    private String getAPIQuery(String identifier, String queryIdentifier) {
+    private String getAPIQuery(String identifier, Set<String> queryIdentifier) {
         return REQUEST_URL +
                 "&recordSchema=" + FORMAT_IDENTIFIER +
-                "&" + QUERY_IDS.get(queryIdentifier) + identifier + QUERY_ONLY_JOURNALS
+                "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier + QUERY_ONLY_JOURNALS
     }
 }

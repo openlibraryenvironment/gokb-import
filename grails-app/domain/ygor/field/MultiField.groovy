@@ -1,7 +1,5 @@
 package ygor.field
 
-import ygor.source.EzbSource
-
 class MultiField {
 
     String ygorFieldKey
@@ -11,11 +9,6 @@ class MultiField {
     static hasMany = [sourcePrio : String, fields : Field]
 
     static constraints = {
-    }
-
-
-    MultiField(String ygorFieldKey){
-        this(MappingsContainer.getMapping(ygorFieldKey, MappingsContainer.YGOR))
     }
 
 
@@ -47,8 +40,12 @@ class MultiField {
     }
 
 
-    def addValue(String source, String value){
-        fields.put(keyMapping.get(source), new Field(source, keyMapping.get(source), value))
+    def addField(String source, String key, String value){
+        for (mappedKey in keyMapping.get(source)) {
+            if (key == mappedKey) {
+                fields.put(keyMapping.get(source), new Field(source, mappedKey, value))
+            }
+        }
     }
 
 

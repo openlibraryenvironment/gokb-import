@@ -87,14 +87,14 @@ class MappingsContainer {
         if (!StringUtils.isEmpty(mapping.ygorKey)){
             putPartToMapping(ygorMappings, mapping, mapping.ygorKey)
         }
-        if (!StringUtils.isEmpty(mapping.kbartKey)){
-            putPartToMapping(kbartMappings, mapping, mapping.kbartKey)
+        if (mapping.kbartKeys instanceof Collection<?> || !StringUtils.isEmpty(mapping.kbartKeys)){
+            putPartToMapping(kbartMappings, mapping, mapping.kbartKeys)
         }
-        if (mapping.zdbKey instanceof List<?> || !StringUtils.isEmpty(mapping.zdbKey)){
-            putPartToMapping(zdbMappings, mapping, mapping.zdbKey)
+        if (mapping.zdbKeys instanceof Collection<?> || !StringUtils.isEmpty(mapping.zdbKeys)){
+            putPartToMapping(zdbMappings, mapping, mapping.zdbKeys)
         }
-        if (!StringUtils.isEmpty(mapping.ezbKey)){
-            putPartToMapping(ezbMappings, mapping, mapping.ezbKey)
+        if (mapping.ezbKeys instanceof Collection<?> || !StringUtils.isEmpty(mapping.ezbKeys)){
+            putPartToMapping(ezbMappings, mapping, mapping.ezbKeys)
         }
     }
 
@@ -104,7 +104,7 @@ class MappingsContainer {
             // add simple key mapping
             mappingsPart.put(key, mapping)
         }
-        else if (key instanceof List<?>){
+        else if (key instanceof Collection<?>){
             // add multiple key mapping
             for (String item : key){
                 mappingsPart.put(item, mapping)

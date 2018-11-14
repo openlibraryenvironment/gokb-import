@@ -1,18 +1,24 @@
 package ygor.field
 
+import org.apache.commons.lang.StringUtils
+
 class FieldKeyMapping {
 
     String ygorKey
-    def kbartKey
-    def zdbKey
-    def ezbKey
+    Set kbartKeys
+    Set zdbKeys
+    Set ezbKeys
 
     static constraints = {
-        ygorKey  nullable : false
-        kbartKey nullable : true
-        zdbKey   nullable : true
-        ezbKey   nullable : true
+        ygorKey   nullable : false
+        kbartKeys nullable : false
+        zdbKeys   nullable : false
+        ezbKeys   nullable : false
     }
+
+    static hasMany = [kbartKeys : String,
+                      zdbKeys : String,
+                      ezbKeys : String]
 
     FieldKeyMapping(){
         // add explicit default constructor
@@ -41,13 +47,31 @@ class FieldKeyMapping {
                 ygorKey = mapping.value
             }
             else if (mapping.key == MappingsContainer.KBART){
-                kbartKey = mapping.value
+                kbartKeys = new HashSet()
+                if (mapping.value instanceof Collection<?>){
+                    kbartKeys.addAll(mapping.value)
+                }
+                else if (!StringUtils.isEmpty(mapping.value)){
+                    kbartKeys.add(mapping.value)
+                }
             }
             else if (mapping.key == MappingsContainer.ZDB){
-                zdbKey = mapping.value
+                zdbKeys = new HashSet()
+                if (mapping.value instanceof Collection<?>){
+                    zdbKeys.addAll(mapping.value)
+                }
+                else if (!StringUtils.isEmpty(mapping.value)){
+                    zdbKeys.add(mapping.value)
+                }
             }
             else if (mapping.key == MappingsContainer.EZB){
-                ezbKey = mapping.value
+                ezbKeys = new HashSet()
+                if (mapping.value instanceof Collection<?>){
+                    ezbKeys.addAll(mapping.value)
+                }
+                else if (!StringUtils.isEmpty(mapping.value)){
+                    ezbKeys.add(mapping.value)
+                }
             }
         }
     }
@@ -63,13 +87,13 @@ class FieldKeyMapping {
             ygorKey
         }
         else if (type == MappingsContainer.KBART){
-            kbartKey
+            kbartKeys
         }
         else if (type == MappingsContainer.ZDB){
-            zdbKey
+            zdbKeys
         }
         else if (type == MappingsContainer.EZB){
-            ezbKey
+            ezbKeys
         }
     }
 }

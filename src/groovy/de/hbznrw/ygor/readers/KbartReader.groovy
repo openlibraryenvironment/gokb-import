@@ -2,9 +2,6 @@ package de.hbznrw.ygor.readers
 
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.processing.YgorProcessingException
-import grails.converters.JSON
-import groovy.json.JsonBuilder
-import groovy.json.JsonOutput
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -58,7 +55,7 @@ class KbartReader extends AbstractReader{
     Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
         // guess, the iterator is in the position to return the desired next record
         CSVRecord next = getNext()
-        if (next && (!identifier || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKey == identifier))) {
+        if (next && (!identifier || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKeys == identifier))) {
             return returnItem(next)
         }
         // otherwise, re-iterate over all entries
@@ -66,7 +63,7 @@ class KbartReader extends AbstractReader{
         CSVRecord item
         while ({
             item = getNext()
-            if (item && item.get(fieldKeyMapping.kbartKey == identifier)){
+            if (item && item.get(fieldKeyMapping.kbartKeys == identifier)){
                 return returnItem(item)
             }
             // following: "do while" continue condition, see https://stackoverflow.com/a/46474198

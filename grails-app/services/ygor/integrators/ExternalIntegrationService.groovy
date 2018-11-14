@@ -17,13 +17,13 @@ class ExternalIntegrationService {
             FieldKeyMapping mapping = mappings.getMapping(date.key, source)
             if (mapping) {
                 MultiField multiField = item.getMultiField(mapping.ygorKey)
-                if (multiField != null) {
-                    multiField.addValue(source, date.value)
+                if (multiField != null){
+                    multiField.addField(source, date.key, date.value)
                 }
                 else {
-                    multiField = new MultiField(mapping.ygorKey)
-                    multiField.addValue(source, date.value)
-                    item.addToMultiFields(multiField)
+                    multiField = new MultiField(mapping)
+                    multiField.addField(source, date.key, date.value)
+                    item.addMultiField(multiField)
                 }
             }
         }

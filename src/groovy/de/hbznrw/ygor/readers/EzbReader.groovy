@@ -24,15 +24,15 @@ class EzbReader extends AbstractReader{
     Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
         Map<String, String> result = new HashMap<>()
         try {
-            String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKey)
+            String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKeys)
             log.info("query EZB: " + queryString)
             String text = new URL(queryString).getText()
             def records = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'title'}
             if (records?.size() == 1){
                 String name = records.get(0).localText()[0]
                 String ezbId = records.get(0).parent().attributes().get("jourid")
-                result.put("ezbId", ezbId)
-                result.put("ezbTitle", name)
+                result.put("jourid", ezbId)
+                result.put("title", name)
             }
         }
         catch(Exception e){
@@ -50,9 +50,9 @@ class EzbReader extends AbstractReader{
 
 
 
-    private String getAPIQuery(String identifier, String queryIdentifier) {
+    private String getAPIQuery(String identifier, Set<String> queryIdentifier) {
         return REQUEST_URL +
                 "&" + FORMAT_IDENTIFIER +
-                "&" + QUERY_IDS.get(queryIdentifier) + identifier
+                "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier
     }
 }

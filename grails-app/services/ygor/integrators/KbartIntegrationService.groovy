@@ -25,10 +25,12 @@ class KbartIntegrationService {
             // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
             identifiers = []
             for (idMapping in idMappings) {
-                if (item.(idMapping.kbartKey)) {
-                    Class clazz = owner.identifierByKey[idMapping]
-                    def identifier = clazz.newInstance(["identifier": item[idMapping.kbartKey]])
-                    identifiers.add(identifier)
+                for (key in idMapping.kbartKeys) {
+                    if (item[key]) {
+                        Class clazz = owner.identifierByKey[idMapping]
+                        def identifier = clazz.newInstance(["identifier": item[key]])
+                        identifiers.add(identifier)
+                    }
                 }
             }
             Record record = new Record(identifiers)
@@ -38,14 +40,14 @@ class KbartIntegrationService {
                 def fieldKeyMapping = container.getMapping(key, MappingsContainer.KBART)
                 if (fieldKeyMapping == null){
                     fieldKeyMapping = new FieldKeyMapping(false,
-                            [(MappingsContainer.YGOR) : value,
-                             (MappingsContainer.KBART) : value,
+                            [(MappingsContainer.YGOR) : key,
+                             (MappingsContainer.KBART) : key,
                              (MappingsContainer.ZDB) : "",
                              (MappingsContainer.EZB) : ""])
                 }
                 if (null == owner.identifierByKey[fieldKeyMapping]) {
                     MultiField multiField = new MultiField(fieldKeyMapping)
-                    multiField.addValue(MappingsContainer.KBART, value)
+                    multiField.addField(MappingsContainer.KBART, key, value)
                     record.addMultiField(multiField)
                 }
             }
