@@ -26,7 +26,7 @@
     	</div><!-- /.container -->
     	
     	<script>
-			$('#ygor-messages .alert').fadeOut(5000)
+			$('#ygor-messages .alert').fadeOut(60000)
     	</script>
 	</body>
 </html>

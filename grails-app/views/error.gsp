@@ -12,6 +12,11 @@
 		<g:else>
 			<ul class="errors">
 				<li>An error has occurred</li>
+
+				<g:if test="${!flash.error}">
+						<li>${exception.message}</li>
+						<br/>
+				</g:if>
 			</ul>
 		</g:else>
 	</body>
