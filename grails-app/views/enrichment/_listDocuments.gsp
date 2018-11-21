@@ -134,6 +134,11 @@
                                             allowClear: true,
 											placeholder: 'Bitte Plattform wählen..',
 											debug: true,
+                                            templateSelection: function (data) {
+                                                // Add custom attributes to the <option> tag for the selected option
+                                                $(data.element).attr('value', data.findFilter);
+                                                return data.text;
+                                            },
 											ajax: {
 											    url: '/ygor/enrichment/suggestPlatform',
 												data: function (params) {

@@ -82,13 +82,18 @@ class EnrichmentService {
 
       log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
 
-      def platforms = gokbService.getPlatformMap(pm['pkgNominalPlatform'][0], false).records
+      def tmp = pm['pkgNominalPlatform'][0].split(';')
+      def platformID = tmp[0]
+      def qterm =  tmp[1]
+
+
+      def platforms = gokbService.getPlatformMap(qterm, false).records
       def pkgNomPlatform = null
 
       log.debug("Got platforms: ${platforms}")
 
       platforms.each {
-        if (it.name == pm['pkgNominalPlatform'][0] && it.status == "Current") {
+        if (it.name == qterm && it.status == "Current" && it.oid == platformID) {
           if(pkgNomPlatform) {
             log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
           }else{

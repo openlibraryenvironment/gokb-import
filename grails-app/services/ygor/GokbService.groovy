@@ -35,14 +35,14 @@ class GokbService {
             if (json?.info?.records) {
 
                 json.info.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})": ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
             if (json?.warning?.records) {
 
                 json.warning.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})": ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
@@ -143,14 +143,14 @@ class GokbService {
             if (json?.info?.records) {
 
                 json.info.records.each { r ->
-                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name, text: r.name.concat(r.status ? " (${r.status})": ""), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }
             if (json?.warning?.records) {
 
                 json.warning.records.each { r ->
-                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name, text: r.name.concat(r.status ? " (${r.status})": ""), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }

@@ -25,6 +25,9 @@
 				<p class="lead">Versionshistorie</p>
 
 				<dl>
+					<br /><dt>0.52 </dt><br />
+
+					<dd>- Bugfix: Mapping Platform after the Selection of the Platform </dd>
 					<br /><dt>0.51 </dt><br />
 
 					<dd>- Bugfix: Json Export mit UTF-8 & Plattform URL Mapping & EBooks mit Plattfrom Mapping </dd>
