@@ -4,12 +4,14 @@ import groovy.json.JsonBuilder
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.EissnIdentifier
+import ygor.identifier.EzbIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
 
 class Record {
 
     ZdbIdentifier   zdbId
+    EzbIdentifier   ezbId
     EissnIdentifier eissn
     PissnIdentifier pissn
     Map multiFields
@@ -21,6 +23,7 @@ class Record {
     Record(ArrayList<AbstractIdentifier> ids){
         for (id in ids){
             addIdentifier(id)
+
         }
         multiFields = [:]
     }
@@ -31,6 +34,12 @@ class Record {
                 throw new IllegalArgumentException("ZDB id ".concat(zdbId).concat(" already given for record"))
             }
             zdbId = identifier
+        }
+        else if (identifier instanceof EzbIdentifier){
+            if (ezbId){
+                throw new IllegalArgumentException("EZB id ".concat(ezbId).concat(" already given for record"))
+            }
+            ezbId = identifier
         }
         else if (identifier instanceof EissnIdentifier){
             if (eissn){
