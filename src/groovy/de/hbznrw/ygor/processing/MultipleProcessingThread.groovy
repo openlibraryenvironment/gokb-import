@@ -3,6 +3,7 @@ package de.hbznrw.ygor.processing;
 import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
+import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
@@ -11,6 +12,7 @@ import de.hbznrw.ygor.readers.ZdbReader
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import com.google.common.base.Throwables
+import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.identifier.EissnIdentifier
@@ -123,7 +125,9 @@ class MultipleProcessingThread extends Thread {
             enrichment.setMessage(stacktrace + " ..")
             return
         }
-		
+
+        extractTitles()
+
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
 
@@ -140,7 +144,14 @@ class MultipleProcessingThread extends Thread {
         enrichment.saveResult()
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}
-    
+
+    private void extractTitles() {
+        for (Record record : dataContainer.records) {
+            def title = DataMapper.getTitleFromRecord(record)
+            dataContainer.titles.put(record.uid, title)
+        }
+    }
+
     void setProgressTotal(int i) {
         progressTotal = i
     }

@@ -10,6 +10,7 @@ import ygor.identifier.ZdbIdentifier
 
 class Record {
 
+    String          uid
     ZdbIdentifier   zdbId
     EzbIdentifier   ezbId
     EissnIdentifier eissn
@@ -21,6 +22,7 @@ class Record {
     }
 
     Record(ArrayList<AbstractIdentifier> ids){
+        uid = UUID.randomUUID().toString()
         for (id in ids){
             addIdentifier(id)
 

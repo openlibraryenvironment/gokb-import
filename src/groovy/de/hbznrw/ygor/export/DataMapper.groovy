@@ -12,10 +12,45 @@ import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.tools.*
+import ygor.Record
 
 
 @Log4j
 class DataMapper {
+
+    static Title getTitleFromRecord(Record record){
+        Title result = new Title()
+        // identifiers
+        result.identifiers << getIdentifierFromRecord(record, "zdbId", "zdb")
+        result.identifiers << getIdentifierFromRecord(record, "ezbId", "edb")
+        result.identifiers << getIdentifierFromRecord(record, "eissn", "eissn")
+        result.identifiers << getIdentifierFromRecord(record, "pissn", "issn")
+        // other fields
+        result.name = new Pod(record.getMultiField("publicationTitle")?.getPrioValue())
+        result.type = new Pod(record.getMultiField("publicationType")?.getPrioValue())
+        result.publishedFrom = new Pod(record.getMultiField("publishedFrom")?.getPrioValue())
+        result.publishedTo = new Pod(record.getMultiField("publishedTo")?.getPrioValue())
+        result.publisher_history << new Pod(record.getMultiField("publisherHistory")?.getPrioValue())
+        result
+    }
+
+    private static def getIdentifierFromRecord(Record record, String idField, String typeName){
+        def id = TitleStruct.getNewIdentifier()
+        id.value = new Pod(record.("${idField}"))
+        if (!id.value){
+            id.value = ""
+        }
+        id.type = new Pod(typeName)
+        id
+    }
+
+
+    static Tipp getTippFromRecord(Record record){
+        Tipp result = new Tipp()
+
+
+        result
+    }
     
     /**
      * Creating:
@@ -473,6 +508,5 @@ class DataMapper {
 
         null
     }
-        
 
 }

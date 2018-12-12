@@ -21,6 +21,11 @@ class Pod {
     }
     
     Pod(Object value) {
-        this.v = value
+        if (value == null){
+            this.v = ""
+        }
+        else{
+            this.v = value
+        }
     }
 }

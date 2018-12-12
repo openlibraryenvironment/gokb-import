@@ -11,17 +11,14 @@ class DataContainer {
 
     Meta    info    // TODO: use or delete
     Package pkg     // TODO: use or delete
-    HashMap titles  // TODO: use or delete
 
     Map<ZdbIdentifier, Record>   recordsPerZdbId = [:]
     Map<EissnIdentifier, Record> recordsPerEissn = [:]
     Map<PissnIdentifier, Record> recordsPerPissn = [:]
-
+    Set<Record> records = []
+    HashMap titles = [:]
     
     DataContainer() {
-
-        // OLD CODE TODO: use or delete
-
         info = new Meta(
             file:   "TODO",
             type:   "TODO",
@@ -31,8 +28,7 @@ class DataContainer {
             stats:  [:],
             stash:  [:]
         )
-        pkg      = new Package()
-        titles   = [:]
+        pkg = new Package()
     }
 
     def putRecord(Record record){
@@ -44,6 +40,9 @@ class DataContainer {
         }
         if (record.pissn){
             recordsPerPissn.put(record.pissn, record)
+        }
+        if (record.zdbId || record.pissn || record .eissn){
+            records.add(record)
         }
     }
 }
