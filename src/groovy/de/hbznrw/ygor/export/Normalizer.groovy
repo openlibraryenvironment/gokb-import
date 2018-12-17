@@ -79,7 +79,8 @@ class Normalizer {
             return str
             
         str = Normalizer.normString(str)
-        if(!(type.equals(TitleStruct.DOI))) {
+
+        if(!type.equals(TitleStruct.DOI) && !type.equals(TitleStruct.EISBN)) {
             str = str.replaceAll(/[\/-]+/, "")
         }
         

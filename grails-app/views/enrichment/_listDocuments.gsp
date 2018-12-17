@@ -178,24 +178,13 @@
 									});
 								</script>
 
-								<g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
-
-								<div class="input-group">
-									<span class="input-group-addon">Namespace für Titel Identifier</span>
-									<g:select name="namespace_title_id" id="namespace_title_id" from="${de.hbznrw.ygor.export.DataMapper.IdentifierNameSpaces}" noSelection="${['':'Bitte Namespace wählen..']}" required="required"></g:select>
-								</div>
-
-								<script>
-                                    $(document).ready(function() {
-                                        $('#namespace_title_id').select2({
-                                            allowClear: true,
-                                            placeholder: 'Bitte Namespace wählen..',
-                                            debug: true
-                                        });
-                                    });
-								</script>
-								<br>
-								</g:if>
+								<g:if test="${namespaces?.size() > 0}">
+                                                                  <div class="input-group">
+                                                                          <span class="input-group-addon">Namespace für Titel Identifier</span>
+                                                                          <g:select name="namespace_title_id" id="namespace_title_id" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':'Bitte Namespace wählen..']}" class="form-control" required="required"></g:select>
+                                                                  </div>
+                                                                  <br>
+                                                                </g:if>
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>

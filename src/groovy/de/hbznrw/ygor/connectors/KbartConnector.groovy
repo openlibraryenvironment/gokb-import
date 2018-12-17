@@ -107,6 +107,9 @@ class KbartConnector extends AbstractConnector {
             case Query.KBART_EISSN:
                 return getOnlineIdentifier()
                 break
+            case Query.KBART_EISBN:
+                return getOnlineIdentifier()
+                break
             case Query.KBART_PUBLISHER:
                 return getPublisher()
                 break

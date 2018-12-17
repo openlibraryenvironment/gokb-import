@@ -14,11 +14,15 @@ class EnrichmentController {
     }
     
     def process = {
+
+        def gokb_ns = gokbService.getNamespaces()
+
         render(
             view:'process',
             model:[
                 enrichments:     enrichmentService.getSessionEnrichments(), 
                 gokbService:     gokbService,
+                namespaces:      gokb_ns,
                 currentView:    'process'
                 ]
             )
@@ -293,6 +297,15 @@ class EnrichmentController {
       def result = [:]
       def providers = gokbService.getProviderMap(params.q)
       result.items = providers.records
+
+      render result as JSON
+    }
+
+    def gokbNameSpaces = {
+      log.debug("Getting namespaces of connected GOKb instance..")
+      def result = [:]
+
+      result.items = gokbService.getNamespaces()
 
       render result as JSON
     }

@@ -11,7 +11,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
 
     static final IDENTIFIER = 'kbart'
     
-	Query[] tasks = [
+    Query[] tasks = [
         Query.KBART_TIPP_URL,
         Query.KBART_TIPP_COVERAGE,
         Query.KBART_TIPP_ACCESS
@@ -19,12 +19,11 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
 
 	KbartBridge(Thread master, HashMap options) {
         this.master     = master
-		this.options    = options
+        this.options    = options
         this.connector  = new KbartConnector(this)
 
         if(this.options.dataTyp == 'ebooks') {
             this.connector.kbartKeys.add('publication_title')
-            this.connector.kbartKeys.add('doi_identifier')
             this.connector.kbartKeys.add('publisher_name')
             this.connector.kbartKeys.add('online_identifier')
             this.connector.kbartKeys.add('print_identifier')
@@ -36,10 +35,9 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
             this.connector.kbartKeys.add('first_author')
 
             this.tasks = this.tasks.plus(Query.KBART_TITLE)
-            this.tasks = this.tasks.plus(Query.KBART_DOI)
             this.tasks = this.tasks.plus(Query.KBART_PUBLISHER)
-            this.tasks = this.tasks.plus(Query.KBART_EISSN)
-            this.tasks = this.tasks.plus(Query.KBART_PISSN)
+            this.tasks = this.tasks.plus(Query.KBART_EISBN)
+            this.tasks = this.tasks.plus(Query.KBART_PISBN)
             this.tasks = this.tasks.plus(Query.KBART_TITLE_ID)
             this.tasks = this.tasks.plus(Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT)
             this.tasks = this.tasks.plus(Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE)

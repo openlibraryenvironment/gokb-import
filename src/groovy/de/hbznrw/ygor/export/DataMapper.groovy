@@ -38,7 +38,7 @@ class DataMapper {
     
     static void mapEnvelopeToTitle(Title title, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN, Query.KBART_EISSN, Query.KBART_PISSN, Query.KBART_DOI, Query.KBART_TITLE_ID]) {
+        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN, Query.KBART_EISSN, Query.KBART_PISSN, Query.KBART_DOI, Query.KBART_TITLE_ID, Query.KBART_EISBN]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
@@ -49,12 +49,14 @@ class DataMapper {
                 ident.type.v = TitleStruct.EISSN
             else if(Query.ZDB_PISSN == query || Query.KBART_PISSN == query)
                 ident.type.v = TitleStruct.PISSN
+            else if(Query.KBART_EISBN == query)
+                ident.type.v = "isbn"
             else if(Query.ZDB_GVKPPN == query)
                 ident.type.v = "gvk_ppn"
             else if(Query.KBART_DOI == query)
                 ident.type.v = TitleStruct.DOI
             else if(Query.KBART_TITLE_ID == query)
-                ident.type.v = "inID_"+dc.info.namespace_title_id
+                ident.type.v = dc.info.namespace_title_id
                 
             ident.type.m    = Status.IGNORE
             
@@ -212,17 +214,19 @@ class DataMapper {
      */
     static void mapEnvelopeToTipp(Tipp tipp, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.ZDB_EISSN, Query.KBART_EISSN, Query.KBART_DOI, Query.KBART_TITLE_ID]) {
+        if(query in [Query.ZDBID, Query.ZDB_EISSN, Query.KBART_EISSN, Query.KBART_DOI, Query.KBART_TITLE_ID, Query.KBART_EISBN]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
                 ident.type.v = ZdbBridge.IDENTIFIER
             else if(Query.ZDB_EISSN == query || Query.KBART_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
+            else if(Query.KBART_EISBN == query)
+                ident.type.v = TitleStruct.EISBN
             else if(Query.KBART_DOI == query)
                 ident.type.v = TitleStruct.DOI
             else if(Query.KBART_TITLE_ID == query)
-                ident.type.v = "inID_"+dc.info.namespace_title_id
+                ident.type.v = dc.info.namespace_title_id
 
             ident.type.m    = Status.IGNORE
             

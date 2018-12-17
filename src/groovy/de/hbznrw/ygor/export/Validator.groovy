@@ -7,6 +7,7 @@ import de.hbznrw.ygor.bridges.*
 import org.apache.commons.lang.StringUtils
 
 import java.sql.Timestamp
+import java.lang.NumberFormatException
 
 // checks if given value meets the requirements
 
@@ -81,6 +82,12 @@ class Validator {
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
+        } else if (identifierType.equals(TitleStruct.EISBN)) {
+            if (validateISBN(str)) {
+                return Status.VALIDATOR_IDENTIFIER_IS_VALID
+            } else {
+                return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+            }
         } else if (identifierType.equals(EzbBridge.IDENTIFIER)) {
             // TODO .. no valid definition 
             if (str.length() > 2) {
@@ -143,6 +150,53 @@ class Validator {
         }
         catch(Exception e) {
             return Status.VALIDATOR_DATE_IS_INVALID
+        }
+    }
+
+    /**
+    * Validate ISBN 13
+    * https://www.moreofless.co.uk/validate-isbn-13-java/
+    *
+    * @param str
+    * @return
+    */
+
+    static boolean validateISBN(String str) {
+
+        def isbn = str
+
+        if ( isbn == null ) {
+            return false;
+        }
+
+        //remove any hyphens
+        isbn = isbn.replaceAll( "-", "" );
+
+        //must be a 13 digit ISBN
+        if ( isbn.length() != 13 ) {
+            return false;
+        }
+
+        try {
+            int tot = 0;
+            for ( int i = 0; i < 12; i++ )
+            {
+                int digit = Integer.parseInt( isbn.substring( i, i + 1 ) );
+                tot += (i % 2 == 0) ? digit * 1 : digit * 3;
+            }
+
+            //checksum must be 0-9. If calculated as 10 then = 0
+            int checksum = 10 - (tot % 10);
+            if ( checksum == 10 )
+            {
+                checksum = 0;
+            }
+
+            return checksum == Integer.parseInt( isbn.substring( 12 ) );
+        }
+        catch ( NumberFormatException nfe ) {
+            //to catch invalid ISBNs that have non-numeric characters in them
+            return false;
         }
     }
 }
