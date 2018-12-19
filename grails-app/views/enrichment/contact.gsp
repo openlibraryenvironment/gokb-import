@@ -7,14 +7,14 @@
 	
 	<div class="col-xs-10 col-xs-offset-1">
 		<br />
-		<p>Bei Problemen oder Fragen kontaktieren Sie bitte ...</p>
+		<p><g:message code="contact.intro" /></p>
 		<br />
 		<address>
-			<strong>Hochschulbibliothekszentrum des Landes Nordrhein-Westfalen (hbz)</strong><br />
-			Abteilung: Digitale Inhalte<br />
-			Projekt: LAS:eR<br />
-			Jülicher Straße 6<br />
-			50674 Köln<br />
+			<strong><g:message code="contact.name" /></strong><br />
+			<g:message code="contact.department" /><br />
+			<g:message code="contact.project" /><br />
+			<g:message code="contact.street" /><br />
+			<g:message code="contact.city" /><br />
 			<br />
 			<span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
 			&nbsp;(+49) 221 400 75 - 207 / 410<br />

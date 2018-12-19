@@ -1,26 +1,26 @@
 <ul class="list-group how-to-list">
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-		&nbsp; Stellen Sie über den <strong>Titel</strong> eine Verbindung zu einem existierenden Paket in der GOKb her.
+		&nbsp; <g:message code="howtostep2.packagename" />
 	</li>
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-		&nbsp; Benennen Sie Ihre Organisation als sekundäre <strong>Curatory Group</strong>.
+		&nbsp; <g:message code="howtostep2.curatorygroup" />
 	</li>
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-		&nbsp; Wenn der Typ der Quelldaten 'EBooks' ist, muss noch ein Namespace ausgewählt werden. Um den Titel Identifier vom Anbieter in der GOKB abzugleichen oder anzulegen.
+		&nbsp; <g:message code="howtostep2.ebooks" />
 	</li>
 	<li class="list-group-item">
 		<span class="text-danger">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			&nbsp; <em>Ohne Übereinstimmung des Titels wird (im Fall einer Datenübertragung) ein neues Paket in der GOKb angelegt.</em>
+			&nbsp; <g:message code="howtostep2.titlemismatch" />
 		</span>
 	</li>
 	<li class="list-group-item">
 		<span class="text-danger">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			&nbsp; <em>Ohne Angabe einer validen Plattform können einige Informationen (z.B. TIPP-URL &amp; -Plattform) nicht korrekt ermittelt werden.</em>
+			&nbsp; <g:message code="howtostep2.platformmismatch" />
 		</span>
 	</li>
 </ul>

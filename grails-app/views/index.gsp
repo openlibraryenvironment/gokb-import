@@ -15,16 +15,18 @@
 
 				<h3>
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					Bei dieser Installation handelt es sich um Software in der Entwicklungsphase.
-					Verwendung auf eigene Verantwortung.
+					<g:message code="index.development" />
 				</h3>
 			</div>
 
 			<div class="col-xs-10 col-xs-offset-1">
 				<br />
-				<p class="lead">Versionshistorie</p>
+				<p class="lead"><g:message code="index.versionhistory" /></p>
 
 				<dl>
+					<br /><dt>0.53 </dt><br />
+
+					<dd>- <g:message code="version.053.1" /></dd>
 					<br /><dt>0.52 </dt><br />
 
 					<dd>- Bugfix: Mapping Platform after the Selection of the Platform </dd>

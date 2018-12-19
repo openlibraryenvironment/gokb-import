@@ -1,16 +1,22 @@
 <ul class="list-group how-to-list">
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-		&nbsp; Speichern Sie das Ergebnis.
+		&nbsp; <g:message code="howtostep4.save" />
 	</li>
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-		&nbsp; Senden Sie das Ergebnis an eine GOKb-Instanz.
+		&nbsp; <g:message code="howtostep4.send" />
 	</li>
 	<li class="list-group-item">
 		<span class="text-danger">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			&nbsp; <em>Derzeit existiert noch keine Möglichkeit einer manuellen Korrektur von Ergebnissen vor dem Senden.</em>
+			&nbsp; <g:message code="howtostep4.sequence" />
+		</span>
+	</li>
+	<li class="list-group-item">
+		<span class="text-danger">
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			&nbsp; <g:message code="howtostep4.nomanualcorrection" />
 		</span>
 	</li>
 </ul>
