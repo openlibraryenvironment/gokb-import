@@ -127,6 +127,7 @@ class MultipleProcessingThread extends Thread {
         }
 
         extractTitles()
+        extractTipps()
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
@@ -149,6 +150,14 @@ class MultipleProcessingThread extends Thread {
         for (Record record : dataContainer.records) {
             def title = DataMapper.getTitleFromRecord(record)
             dataContainer.titles.put(record.uid, title)
+        }
+    }
+
+    private void extractTipps() {
+        def platform = enrichment.dataContainer.package.packageHeader.nominalPlatform
+        for (Record record : dataContainer.records) {
+            def tipp = DataMapper.getTippFromRecord(record, platform)
+            dataContainer.tipps.put(record.uid, tipp)
         }
     }
 

@@ -17,6 +17,7 @@ class DataContainer {
     Map<PissnIdentifier, Record> recordsPerPissn = [:]
     Set<Record> records = []
     HashMap titles = [:]
+    HashMap tipps = [:]
     
     DataContainer() {
         info = new Meta(

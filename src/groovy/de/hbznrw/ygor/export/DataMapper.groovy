@@ -4,6 +4,9 @@ import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.structure.PackageStruct
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.export.structure.Tipp
+import de.hbznrw.ygor.export.structure.TippCoverage
+import de.hbznrw.ygor.export.structure.TippPlatform
+import de.hbznrw.ygor.export.structure.TippTitle
 import de.hbznrw.ygor.export.structure.Title
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.processing.Envelope
@@ -45,13 +48,35 @@ class DataMapper {
     }
 
 
-    static Tipp getTippFromRecord(Record record){
+    static Tipp getTippFromRecord(Record record, TippPlatform platform){
+        TippTitle innerTitle = new TippTitle()
+        innerTitle.name = new Pod(record.getMultiField("publicationTitle")?.getPrioValue())
+        innerTitle.identifiers << getIdentifierFromRecord(record, "zdbId", "zdb")
+        innerTitle.identifiers << getIdentifierFromRecord(record, "ezbId", "edb")
+        innerTitle.identifiers << getIdentifierFromRecord(record, "eissn", "eissn")
+        innerTitle.identifiers << getIdentifierFromRecord(record, "pissn", "issn")
+
+        TippCoverage coverage = new TippCoverage()
+        coverage.coverageNote  = new Pod(record.getMultiField('coverageNote').getPrioValue())
+        coverage.embargo       = new Pod(record.getMultiField('embargoInfo').getPrioValue())
+        coverage.endDate       = new Pod("")
+        coverage.endIssue      = new Pod("")
+        coverage.endVolume     = new Pod("")
+        coverage.startDate     = new Pod("")
+        coverage.startIssue    = new Pod("")
+        coverage.startVolume   = new Pod("")
+
         Tipp result = new Tipp()
-
-
+        result.title = innerTitle
+        result.platform = platform
+        result.accessStartDate = new Pod(record.getMultiField("accessStartDate")?.getPrioValue())
+        result.accessEndDate = new Pod(record.getMultiField("accessEndDate")?.getPrioValue())
+        result.url = new Pod(record.getMultiField("titleUrl")?.getPrioValue())
+        result.coverage << coverage
         result
     }
-    
+
+
     /**
      * Creating:
      * 
