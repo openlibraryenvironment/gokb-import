@@ -12,23 +12,23 @@
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
 				<li <g:if test="${currentView == 'process'}">class="active"</g:if>>
-					<a href="${grailsApplication.config.grails.app.context}/enrichment/process">Informationsanreicherung</a>
+					<a href="${grailsApplication.config.grails.app.context}/enrichment/process"><g:message code="navigation.menue.enrichment" /></a>
 				</li>
 				<li <g:if test="${currentView == 'statistic'}">class="active"</g:if>>
-					<a href="${grailsApplication.config.grails.app.context}/statistic/index">Statistik</a>
+					<a href="${grailsApplication.config.grails.app.context}/statistic/index"><g:message code="navigation.menue.stats" /></a>
 				</li>
 				<!--<li><a href="zevport">ZevPort-Export</a></li>-->
 				<li <g:if test="${currentView == 'config'}">class="active"</g:if>>
-					<a href="${grailsApplication.config.grails.app.context}/enrichment/config">Konfiguration</a>
+					<a href="${grailsApplication.config.grails.app.context}/enrichment/config"><g:message code="navigation.menue.config" /></a>
 				</li>
 				<li <g:if test="${currentView == 'howto'}">class="active"</g:if>>
-					<a href="${grailsApplication.config.grails.app.context}/enrichment/howto">Anleitung</a>
+					<a href="${grailsApplication.config.grails.app.context}/enrichment/howto"><g:message code="navigation.menue.howto" /></a>
 				</li>
 				<li <g:if test="${currentView == 'about'}">class="active"</g:if>>
-					<a href="${grailsApplication.config.grails.app.context}/enrichment/about">Über</a>
+					<a href="${grailsApplication.config.grails.app.context}/enrichment/about"><g:message code="navigation.menue.about" /></a>
 				</li>
 				<li <g:if test="${currentView == 'contact'}">class="active"</g:if>>
-					<a href="${grailsApplication.config.grails.app.context}/enrichment/contact">Kontakt</a>
+					<a href="${grailsApplication.config.grails.app.context}/enrichment/contact"><g:message code="navigation.menue.contact" /></a>
 				</li>
 			</ul>
 		</div><!--/.nav-collapse -->

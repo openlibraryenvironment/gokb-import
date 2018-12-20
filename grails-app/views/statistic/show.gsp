@@ -68,16 +68,16 @@
 			</div>
 			<div id="statistics-meta" class="panel-body">
 				<p class="text-right">
-					<strong>Dateiname</strong><br />
+					<strong><g:message code="statistic.show.main.filename" /></strong><br />
 					<span class="meta-file"></span>
 					<br />
-					<strong>Erstellung</strong><br />
+					<strong><g:message code="statistic.show.main.creation" /></strong><br />
 					<span class="meta-date"></span>
 					<br />
-					<strong>Ygor-Version</strong><br />
+					<strong><g:message code="statistic.show.main.ygorversion" /></strong><br />
 					<span class="meta-ygor"></span>
 					<br />
-					<strong>Statistik-Hash</strong><br />
+					<strong><g:message code="statistic.show.main.hash" /></strong><br />
 					${sthash}
 				</p>
 			</div>
@@ -91,23 +91,23 @@
 			</div>
 			<div class="panel-body">
                 <span class="ignored-kbart-entries">
-                    Ignorierte KBART-Einträge: <span></span>
+					<g:message code="statistic.show.sub.ignored" /> <span></span>
                 </span>
                 |
                 <span class="processed-kbart-entries">
-                    Bearbeitete KBART-Einträge: <span></span>
+					<g:message code="statistic.show.sub.processed" /> <span></span>
                 </span>
                 |
 				<span class="duplicate-key-entries">
-					Mehrfach verwendete Identifier: <span>0</span>
+					<g:message code="statistic.show.sub.multipleids" /> <span>0</span>
 				</span>
                 |
                 <span class="tipps-delta">
-                    Fehlerhafte Package-Tipps werden final entfernt: <span></span>
+					<g:message code="statistic.show.sub.faultytipps" /> <span></span>
                 </span>
                 |
                 <span class="titles-delta">
-                    Fehlerhafte Titles werden final entfernt: <span></span>
+					<g:message code="statistic.show.sub.faultytitles" /> <span></span>
                 </span>
 			</div>
 		</div>

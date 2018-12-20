@@ -12,10 +12,10 @@
 		
 		<div class="col-xs-4">
 			<ul class="list-group">
-				<li class="list-group-item active">Quelldaten bestimmen</li>
-			  	<li class="list-group-item">Paketdaten festlegen</li>
-			  	<li class="list-group-item">Anreicherung</li>
-			  	<li class="list-group-item">Übermittlung an die Knowledgebase</li>
+				<li class="list-group-item active"><g:message code="processInfo.workflow.source" /></li>
+			  	<li class="list-group-item"><g:message code="processInfo.workflow.package" /></li>
+			  	<li class="list-group-item"><g:message code="processInfo.workflow.enrichment" /></li>
+			  	<li class="list-group-item"><g:message code="processInfo.workflow.transmission" /></li>
 			</ul>
 		</div>	
 
@@ -34,12 +34,12 @@
 
 				<div class="col-xs-4">
 					<ul class="list-group">
-						<li class="list-group-item">Quelldaten bestimmen</li>
-					  	<li class="list-group-item active">Paketdaten festlegen</li>
-					  	<li class="list-group-item">Anreicherung</li>
-					  	<li class="list-group-item">Übermittlung an die Knowledgebase</li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.source" /></li>
+						<li class="list-group-item active"><g:message code="processInfo.workflow.package" /></li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.enrichment" /></li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.transmission" /></li>
 					</ul>
-				</div>	
+				</div>
 				
 			</g:if>
 		
@@ -52,10 +52,10 @@
 				
 				<div class="col-xs-4">
 					<ul class="list-group">
-						<li class="list-group-item">Quelldaten bestimmen</li>
-					  	<li class="list-group-item">Paketdaten festlegen</li>
-					  	<li class="list-group-item">Anreicherung</li>
-					  	<li class="list-group-item active">Übermittlung an die Knowledgebase</li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.source" /></li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.package" /></li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.enrichment" /></li>
+						<li class="list-group-item active"><g:message code="processInfo.workflow.transmission" /></li>
 					</ul>
 				</div>
 				
@@ -70,10 +70,10 @@
 				
 				<div class="col-xs-4">
 					<ul class="list-group">
-						<li class="list-group-item">Quelldaten bestimmen</li>
-					  	<li class="list-group-item">Paketdaten festlegen</li>
-					  	<li class="list-group-item active">Anreicherung</li>
-					  	<li class="list-group-item">Übermittlung an die Knowledgebase</li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.source" /></li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.package" /></li>
+						<li class="list-group-item active"><g:message code="processInfo.workflow.enrichment" /></li>
+						<li class="list-group-item"><g:message code="processInfo.workflow.transmission" /></li>
 					</ul>
 				</div>
 

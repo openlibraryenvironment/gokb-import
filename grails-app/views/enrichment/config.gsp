@@ -9,49 +9,49 @@
 				
 	<div id="config-view" class="col-xs-10 col-xs-offset-1">
 		<br />
-		<p class="lead">API-Auswertungen für Journal-Pakete</p>
+		<p class="lead"><g:message code="config.heading.ejournal" /></p>
 		
 		<table class="table table-striped table-hover">			
 			<thead>
 				<th>API</th>
 				<th>Title</th>
 				<th>TIPP</th>
-				<th>Feld</th>
+				<th><g:message code="config.table.field" /></th>
 			</thead>
 			<tbody>
 				<tr>
-					<td>Ygor <em>, Formular</em></td>
+					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
 					<td>packageHeader.name</td>
 					<td>Titel</td>
 				</tr>
 				<tr>
-					<td>Ygor <em>, Formular</em></td>
+					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
 					<td>packageHeader.nominalProvider</td>
 					<td>GOKb Provider</td>
 				</tr>
 				<tr>
-					<td>Ygor <em>, Formular</em></td>
+					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
 					<td>packageHeader.nominalPlatform</td>
 					<td>GOKb Plattform</td>
 				</tr>
 				<tr>
-					<td>Ygor <em>, Formular</em></td>
+					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
 					<td>packageHeader.variantNames</td>
 					<td></td>
 				</tr>
 				<tr>
-					<td>Ygor <em>, Formular</em></td>
+					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
 					<td>packageHeader.curatoryGroups</td>
 					<td>GOKb Curatory Group</td>
 				</tr>
 							
 				<tr>
-					<td>KBART <em>, Datei</em></td>
+					<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 					<td></td>
 					<td><strong>tipps.coverage</strong></td>
 					<td>
@@ -70,7 +70,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>KBART <em>, Datei</em></td>
+					<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 					<td></td>
 					<td>tipps.access</td>
 					<td>
@@ -81,13 +81,13 @@
 					</td>
 				</tr>
 				<tr>
-					<td>KBART <em>, Datei</em></td>
+					<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 					<td></td>
 					<td>tipps.url</td>
 					<td>title_url</td>
 				</tr>
 				<tr>
-					<td>KBART <em>, Datei</em></td>
+					<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 					<td></td>
 					<td>tipps.platform</td>
 					<td>title_url</td>
@@ -167,49 +167,49 @@
 
 		<br />
 
-		<p class="lead">API-Auswertungen für EBook-Pakete </p>
+		<p class="lead"><g:message code="config.heading.ebook" /></p>
 
 		<table class="table table-striped table-hover">
 			<thead>
 			<th>API</th>
 			<th>Title</th>
 			<th>TIPP</th>
-			<th>Feld</th>
+			<th><g:message code="config.table.field" /></th>
 			</thead>
 			<tbody>
 			<tr>
-				<td>Ygor <em>, Formular</em></td>
+				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 				<td></td>
 				<td>packageHeader.name</td>
 				<td>Titel</td>
 			</tr>
 			<tr>
-				<td>Ygor <em>, Formular</em></td>
+				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 				<td></td>
 				<td>packageHeader.nominalProvider</td>
 				<td>GOKb Provider</td>
 			</tr>
 			<tr>
-				<td>Ygor <em>, Formular</em></td>
+				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 				<td></td>
 				<td>packageHeader.nominalPlatform</td>
 				<td>GOKb Plattform</td>
 			</tr>
 			<tr>
-				<td>Ygor <em>, Formular</em></td>
+				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 				<td></td>
 				<td>packageHeader.variantNames</td>
 				<td></td>
 			</tr>
 			<tr>
-				<td>Ygor <em>, Formular</em></td>
+				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 				<td></td>
 				<td>packageHeader.curatoryGroups</td>
 				<td>GOKb Curatory Group</td>
 			</tr>
 
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td></td>
 				<td><strong>tipps.coverage</strong></td>
 				<td>
@@ -228,7 +228,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td></td>
 				<td>tipps.access</td>
 				<td>
@@ -239,46 +239,46 @@
 				</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td></td>
 				<td>tipps.url</td>
 				<td>title_url</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td></td>
 				<td>tipps.platform</td>
 				<td>title_url</td>
 			</tr>
 
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.name</td>
 				<td>tipps.title.name</td>
 				<td>publication_title</td>
 			</tr>
 
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.identifiers.doi</td>
 				<td>tipps.title.identifiers.doi</td>
 				<td>doi_identifier</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.identifiers.eissn</td>
 				<td>tipps.title.identifiers.eissn</td>
 				<td>online_identifier</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.identifiers.issn</td>
 				<td></td>
 				<td>print_identifier</td>
 			</tr>
 
 			<tr>
-				<td>KBART <em>, Datei</em><br>
+				<td>KBART <em>, <g:message code="config.table.file" /></em><br>
 					Ygor <em>, Formular</em>
 				</td>
 				<td>title.identifiers.inID_%namespace%</td>
@@ -287,19 +287,19 @@
 			</tr>
 
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.first_author</td>
 				<td></td>
 				<td>first_author</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.first_editor </td>
 				<td></td>
 				<td>first_editor </td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.date_monograph_published_print</td>
 				<td></td>
 				<td>
@@ -307,7 +307,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.date_monograph_published_online</td>
 				<td></td>
 				<td>
@@ -315,7 +315,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>KBART <em>, Datei</em></td>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 				<td>title.monograph_edition</td>
 				<td></td>
 				<td>
@@ -328,14 +328,14 @@
 		
 		<br />
 		
-		<p class="lead">Hart kodierte Werte</p>
+		<p class="lead"><g:message code="config.heading.hard" /></p>
 		
 		<table class="table table-striped table-hover">	
 			<thead>
 				<th>API</th>
 				<th>Title</th>
 				<th>TIPP</th>
-				<th>Wert</th>
+				<th><g:message code="config.table.value" /></th>
 			</thead>
 			<tbody>		
 				<tr>
