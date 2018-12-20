@@ -124,7 +124,7 @@ class KbartProcessor extends AbstractProcessor {
                     def identifier
 
                     for (key in MultipleProcessingThread.KEY_ORDER) {
-                        if (key != KbartConnector.KBART_HEADER_ZDB_ID || record.isMapped(key)) {
+                        if ((key != KbartConnector.KBART_HEADER_ZDB_ID && key != KbartConnector.KBART_HEADER_DOI_IDENTIFIER) || record.isMapped(key)) {
                             identifier = record.get(key)?.toString()?.trim()
                             if (identifier) {
                                 def uid = UUID.randomUUID().toString()

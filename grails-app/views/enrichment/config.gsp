@@ -281,8 +281,8 @@
 				<td>KBART <em>, <g:message code="config.table.file" /></em><br>
 					Ygor <em>, Formular</em>
 				</td>
-				<td>title.identifiers.inID_%namespace%</td>
-				<td>title.identifiers.inID_%namespace%</td>
+				<td>title.identifiers.%namespace%</td>
+				<td>title.identifiers.%namespace%</td>
 				<td>title_id <br>Liste von Namespaces</td>
 			</tr>
 
