@@ -178,7 +178,6 @@
 									});
 								</script>
 
-<<<<<<< HEAD
 								<g:if test="${namespaces?.size() > 0}">
                                                                   <div class="input-group">
                                                                           <span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
