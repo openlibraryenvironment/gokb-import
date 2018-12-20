@@ -14,7 +14,7 @@
 			<g:hiddenField name="originHash" value="${e.key}" />
 			<g:hiddenField name="dataTyp" value="${session.lastUpdate?.dataTyp}" />
 			
-			<div class="row">
+			<div class="row" xmlns="http://www.w3.org/1999/html">
 				<div class="col-xs-12">
 					
 					<br /><br />
@@ -29,19 +29,19 @@
 				
 									<span><em>
 										<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
-											&rarr; Vorbereitung
+											&rarr; <g:message code="listDocuments.state.prepare" />
 										</g:if>
 										<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
-											&rarr; Nicht bearbeitet
+											&rarr; <g:message code="listDocuments.state.untouched" />
 										</g:if>
 										<g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
-											&rarr; In Bearbeitung ..
+											&rarr; <g:message code="listDocuments.state.working" />
 										</g:if>
 										<g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
-											&rarr; Fehler / Die Datei konnte nicht verarbeitet werden
+											&rarr; <g:message code="listDocuments.state.error" />
 										</g:if>
 										<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
-											&rarr; Bearbeitung abgeschlossen
+											&rarr; <g:message code="listDocuments.state.finished" />
 										</g:if>
 									</em></span>
 									
@@ -51,18 +51,18 @@
 							<br />
 
 							<div class="input-group">
-								<span class="input-group-addon">Typ der Quelldaten</span>
+								<span class="input-group-addon"><g:message code="listDocuments.key.mediatype" /></span>
 								<span class="form-control" >
 										<g:if test="${session.lastUpdate?.dataTyp == "journals"}">
-											Journals
+											<g:message code="listDocuments.mediatype.journal" />
 										</g:if>
 
 										<g:if test="${session.lastUpdate?.dataTyp == "database"}">
-											Database
+											<g:message code="listDocuments.mediatype.database" />
 										</g:if>
 
 										<g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
-											EBooks
+											<g:message code="listDocuments.mediatype.ebook" />
 										</g:if>
 								</span>
 							</div>
@@ -83,7 +83,7 @@
 							<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
 														
 								<div class="input-group">
-									<span class="input-group-addon">Titel</span>
+									<span class="input-group-addon"><g:message code="listDocuments.key.title" /></span>
 									<g:if test="${session.lastUpdate?.parameterMap?.pkgTitle}">
 										<g:textField name="pkgTitle" size="48" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" />
 									</g:if>
@@ -95,7 +95,7 @@
 								<br />
 							
 								<div class="input-group">
-									<span class="input-group-addon">ZDB-Paketsigel</span>
+									<span class="input-group-addon"><g:message code="listDocuments.key.isil" /></span>
 									<g:if test="${session.lastUpdate?.parameterMap?.pkgVariantName}">
 										<g:textField name="pkgVariantName" size="48" value="${session.lastUpdate.parameterMap.pkgVariantName[0]}" class="form-control" />
 									</g:if>
@@ -107,14 +107,14 @@
 								<br />
 
 								<div class="input-group">
-									<span class="input-group-addon"><em>GOKb</em> Plattform</span>
+									<span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.platform" /></span>
 									<select name="pkgNominalPlatform" id="pkgNominalPlatform"></select>
 								</div>
 
 								<br />
 
 								<div class="input-group">
-									<span class="input-group-addon"><em>GOKb</em> Provider</span>
+									<span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.provider" /></span>
 									<select name="pkgNominalProvider" id="pkgNominalProvider"></select>
 								</div>
 
@@ -132,7 +132,7 @@
                                     $(document).ready(function() {
 									    $('#pkgNominalPlatform').select2({
                                             allowClear: true,
-											placeholder: 'Bitte Plattform wählen..',
+											placeholder: <g:message code="listDocuments.js.placeholder.platform" />,
 											debug: true,
                                             templateSelection: function (data) {
                                                 // Add custom attributes to the <option> tag for the selected option
@@ -157,7 +157,7 @@
                                         $('#pkgNominalPlatform').append($('<option></option>').attr('value', platform).text(platform));
 										$('#pkgNominalProvider').select2({
 										    allowClear: true,
-											placeholder: 'Bitte Anbieter wählen..',
+											placeholder: <g:message code="listDocuments.js.placeholder.provider" />,
 											debug: true,
 											ajax: {
 											    url: '/ygor/enrichment/suggestProvider',
@@ -178,10 +178,11 @@
 									});
 								</script>
 
+<<<<<<< HEAD
 								<g:if test="${namespaces?.size() > 0}">
                                                                   <div class="input-group">
-                                                                          <span class="input-group-addon">Namespace für Titel Identifier</span>
-                                                                          <g:select name="namespace_title_id" id="namespace_title_id" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':'Bitte Namespace wählen..']}" class="form-control" required="required"></g:select>
+                                                                          <span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
+                                                                          <g:select name="namespace_title_id" id="namespace_title_id" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':message(code:'listDocuments.js.placeholder.namespace')]}" class="form-control" required="required"></g:select>
                                                                   </div>
                                                                   <br>
                                                                 </g:if>
@@ -224,48 +225,48 @@
 			
 							<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
 
-								${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">\n' +
-										'  Kein Plattform Name vorhanden!\n' +
-										'</div>')}
+								${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
+										message(code:'listDocuments.js.message.noplatformname') +
+										raw('</div>')}
 
 								<div class="input-group custom-control">
-									<span class="input-group-addon"><em>GOKb</em> Plattform Name</span>
+									<span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.platformname" /></span>
 									<span class="form-control" >${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.name}</span>
 								</div>
 
 								<br />
 
-								${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">\n' +
-										'  Keine Plattform Url vorhanden!\n' +
-										'</div>')}
+								${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">') +
+										message(code:'listDocuments.js.message.noplatformurl') +
+										raw('</div>')}
 								<div class="input-group">
-									<span class="input-group-addon"><em>GOKb</em> Plattform Url</span>
+									<span class="input-group-addon"><em>GOKb</em>  <g:message code="listDocuments.key.platformurl" /></span>
 									<span class="form-control" >${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.url}</span>
 								</div>
 
 								<br />
 
-								${e.value.dataContainer.pkg.packageHeader.v.nominalProvider.v ? '' : raw('<div class="alert alert-danger" role="alert">\n' +
-										'  Kein Provider vorhanden!\n' +
-										'</div>')}
+								${e.value.dataContainer.pkg.packageHeader.v.nominalProvider.v ? '' : raw('<div class="alert alert-danger" role="alert">') +
+										message(code:'listDocuments.js.message.noprovider') +
+										raw('</div>')}
 
 								<div class="input-group">
-									<span class="input-group-addon"><em>GOKb</em> Provider</span>
+									<span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.provider" /></span>
 									<span class="form-control" >${e.value.dataContainer.pkg.packageHeader.v.nominalProvider.v}</span>
 								</div>
 
 								<br />
 
-								Über die folgenden Schnittstellen sollen die Information hinzugefügt werden
+								<g:message code="listDocuments.enrichment.apis" />
 								<br /><br />	
 								
 								<div class="input-group">
-									<span class="input-group-addon">Quellen</span>
+									<span class="input-group-addon"><g:message code="listDocuments.key.sources" /></span>
 									<span class="form-control">
 										<div class="checkbox">
 											<label>
 												<g:checkBox name="processOption" required="true" checked="true" value="${KbartBridge.IDENTIFIER}"/>
-												KBART <code>Datei</code>
+												KBART <code><g:message code="listDocuments.enrichment.file" /></code>
 											</label>
 											&nbsp;
 											<g:if test="${session.lastUpdate?.dataTyp == "journals" || session.lastUpdate?.dataTyp == "database"}">
@@ -296,14 +297,14 @@
 								</div>
 							
 								<br />
-								Einstiegspunkt für die Anreicherung
+								<g:message code="listDocuments.enrichment.entry" />
 								<br /><br />
 		
 								<div class="input-group">
-									<span class="input-group-addon">Schlüssel</span>
+									<span class="input-group-addon"><g:message code="listDocuments.key.key" /></span>
 									<span class="form-control">
 										<div class="radio">
-											Als Einstiegspunkt wird pro Datensatz die folgende Reihenfolge angewandt: ZDB-ID, eISSN, pISSN
+											<g:message code="listDocuments.enrichment.sequence" />
 										</div>
 									</span>
 								</div>
@@ -317,54 +318,54 @@
 				<li class="list-group-item">
 						
 					<g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
-		    			<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
-						<g:actionSubmit action="processFile" value="Bearbeitung starten" class="btn btn-success"/>
+		    			<g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
+						<g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
+						<g:actionSubmit action="processFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
 					</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
-						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
-						<g:actionSubmit action="prepareFile" value="Weiter" class="btn btn-success"/>
+						<g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
+						<g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
+						<g:actionSubmit action="prepareFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
 		    		</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
-						<g:actionSubmit action="stopProcessingFile" value="Bearbeitung abbrechen" class="btn btn-danger"/>
+						<g:actionSubmit action="stopProcessingFile" value="${message(code:'listDocuments.button.stopprocessingfile')}" class="btn btn-danger"/>
 					</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
-						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
+						<g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
+						<g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
 					</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 
-						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-info">Statistik anzeigen</g:link>
+						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-info"><g:message code="listDocuments.button.showstatistics" /></g:link>
 						
-						<g:actionSubmit action="downloadPackageFile" value="Package speichern" class="btn btn-info"/>
-	    				<g:actionSubmit action="downloadTitlesFile" value="Titles speichern" class="btn btn-info"/>
+						<g:actionSubmit action="downloadPackageFile" value="${message(code:'listDocuments.button.downloadpackagefile')}" class="btn btn-info"/>
+	    				<g:actionSubmit action="downloadTitlesFile" value="${message(code:'listDocuments.button.downloadtitlesfile')}" class="btn btn-info"/>
 						
 		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
 							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
-									data-target="#credentialsModal">Package zur GOKb senden</button>
+									data-target="#credentialsModal"><g:message code="listDocuments.button.package" /></button>
 							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="titles"
-									data-target="#credentialsModal">Titles zur GOKb senden</button>
+									data-target="#credentialsModal"><g:message code="listDocuments.button.titles" /></button>
 							<div class="modal fade" id="credentialsModal" role="dialog">
 								<div class="modal-dialog">
 									<div class="modal-content">
 										<div class="modal-header">
 											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4 class="modal-title">Bitte geben Sie Ihre GOKb Credentials ein</h4>
+											<h4 class="modal-title"><g:message code="listDocuments.gokb.credentials" /></h4>
 										</div>
 										<div class="modal-body">
 											<g:form>
 												<div class="input-group">
-													<span class="input-group-addon">Benutzername</span>
+													<span class="input-group-addon"><g:message code="listDocuments.gokb.username" /></span>
 													<g:textField name="gokbUsername" size="24" class="form-control" />
 												</div>
 												<div class="input-group">
-													<span class="input-group-addon">Passwort</span>
+													<span class="input-group-addon"><g:message code="listDocuments.gokb.password" /></span>
 													<g:passwordField name="gokbPassword" size="24" class="form-control"/>
 												</div>
 												<div align="right">
-													<button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-													<g:actionSubmit action="" value="Senden" class="btn btn-success"
+													<button type="button" class="btn btn-default" data-dismiss="modal"><g:message code="listDocuments.button.cancel" /></button>
+													<g:actionSubmit action="" value="${message(code:'listDocuments.button.send')}" class="btn btn-success"
 																	name="cred-modal-btn-send" data-toggle="tooltip"
 																	data-placement="top" title="JavaScript erforderlich" />
 												</div>
@@ -386,23 +387,23 @@
 							</script>
 	    				</g:if>
 	    				<g:else>
-							<g:actionSubmit action="sendPackageFile" value="Package zur GOKb senden" class="btn btn-success disabled"
+							<g:actionSubmit action="sendPackageFile" value="${message(code:'listDocuments.button.sendPackageFile')}" class="btn btn-success disabled"
 		    					data-toggle="tooltip" data-placement="top" title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}" disabled="disabled"/>
-		    				<g:actionSubmit action="sendTitlesFile" value="Titles zur GOKb senden" class="btn btn-success disabled"
+		    				<g:actionSubmit action="sendTitlesFile" value="${message(code:'listDocuments.button.sendTitlesFile')}" class="btn btn-success disabled"
 		    					data-toggle="tooltip" data-placement="top" title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}" disabled="disabled"/>
 	    				</g:else>
 	    				
 		    			<g:if test="${grailsApplication.config.ygor.enableDebugDownload}">
 		    				</li>
 			    			<li class="list-group-item">
-			    				<g:actionSubmit action="downloadDebugFile" value="Debug-Datei speichern" class="btn"/>
-			    				<g:actionSubmit action="downloadRawFile" value="Datenstruktur speichern" class="btn"/>
+			    				<g:actionSubmit action="downloadDebugFile" value="${message(code:'listDocuments.button.downloadDebugFile')}" class="btn"/>
+			    				<g:actionSubmit action="downloadRawFile" value="${message(code:'listDocuments.button.downloadRawFile')}" class="btn"/>
 		    			</g:if>
 
 						</li>
                         <li class="list-group-item">
-						<g:actionSubmit action="deleteFile" value="Datei löschen" class="btn btn-danger"/>
-						<g:actionSubmit action="correctFile" value="Eingabe korrigieren" class="btn btn-warning"/>
+						<g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
+						<g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
 
 					</g:if>
 		    		

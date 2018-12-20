@@ -14,12 +14,12 @@
 	
 				<div class="col-xs-10 col-xs-offset-1">
 				<br />  
-				Statistikabfrage per Hash:
+				<g:message code="statistic.index.hash" />
 				<br /><br />  
 				<g:textField name="sthash" size="64" value="" />
 				<br />
 				<br />
-				<g:actionSubmit action="show" value="Anzeigen" class="btn btn-default"/>
+				<g:actionSubmit action="show" value="${message(code:'statistic.index.button.show')}" class="btn btn-default"/>
 			</div>
 		</g:form>
 	</body>
