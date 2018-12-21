@@ -132,7 +132,7 @@
                                     $(document).ready(function() {
 									    $('#pkgNominalPlatform').select2({
                                             allowClear: true,
-											placeholder: <g:message code="listDocuments.js.placeholder.platform" />,
+											placeholder: '${message(code:"listDocuments.js.placeholder.platform")}',
 											debug: true,
                                             templateSelection: function (data) {
                                                 // Add custom attributes to the <option> tag for the selected option
@@ -157,7 +157,7 @@
                                         $('#pkgNominalPlatform').append($('<option></option>').attr('value', platform).text(platform));
 										$('#pkgNominalProvider').select2({
 										    allowClear: true,
-											placeholder: <g:message code="listDocuments.js.placeholder.provider" />,
+											placeholder: '${message(code:"listDocuments.js.placeholder.provider")}',
 											debug: true,
 											ajax: {
 											    url: '/ygor/enrichment/suggestProvider',
