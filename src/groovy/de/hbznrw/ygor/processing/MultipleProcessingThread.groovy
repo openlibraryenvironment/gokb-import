@@ -28,14 +28,11 @@ class MultipleProcessingThread extends Thread {
     static final KEY_ORDER = [KbartConnector.KBART_HEADER_ZDB_ID,
                               KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
                               KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
-
     static final SOURCE_ORDER = [MappingsContainer.KBART,
                                  MappingsContainer.ZDB,
                                  MappingsContainer.EZB] // TODO
-
     public identifierByKey = [:]
 
-    DataContainer dataContainer
     MappingsContainer mappingsContainer
     FieldKeyMapping zdbKeyMapping
     FieldKeyMapping pissnKeyMapping
@@ -62,7 +59,6 @@ class MultipleProcessingThread extends Thread {
     private EzbReader ezbReader
     
 	MultipleProcessingThread(Enrichment en, HashMap options) {
-        dataContainer = new DataContainer()
 		enrichment = en
         processor = new KbartProcessor()
 		apiCalls  = options.get('options')
@@ -97,13 +93,13 @@ class MultipleProcessingThread extends Thread {
                     case KbartBridge.IDENTIFIER:
                         KbartReaderConfiguration conf =
                             new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
-                        new KbartIntegrationService().integrate(this, dataContainer, mappingsContainer, conf)
+                        new KbartIntegrationService().integrate(this, enrichment.dataContainer, mappingsContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
-                        new EzbIntegrationService().integrate(this, dataContainer, mappingsContainer)
+                        new EzbIntegrationService().integrate(this, enrichment.dataContainer, mappingsContainer)
                         break
                     case ZdbBridge.IDENTIFIER:
-                        new ZdbIntegrationService().integrate(this, dataContainer, mappingsContainer)
+                        new ZdbIntegrationService().integrate(this, enrichment.dataContainer, mappingsContainer)
                         break
                 }
             }
@@ -147,17 +143,17 @@ class MultipleProcessingThread extends Thread {
 	}
 
     private void extractTitles() {
-        for (Record record : dataContainer.records) {
+        for (Record record : enrichment.dataContainer.records) {
             def title = DataMapper.getTitleFromRecord(record)
-            dataContainer.titles.put(record.uid, title)
+            enrichment.dataContainer.titles.put(record.uid, title)
         }
     }
 
     private void extractTipps() {
-        def platform = enrichment.dataContainer.package.packageHeader.nominalPlatform
-        for (Record record : dataContainer.records) {
+        def platform = enrichment.dataContainer.pkg.packageHeader.nominalPlatform
+        for (Record record : enrichment.dataContainer.records) {
             def tipp = DataMapper.getTippFromRecord(record, platform)
-            dataContainer.tipps.put(record.uid, tipp)
+            enrichment.dataContainer.tipps.put(record.uid, tipp)
         }
     }
 

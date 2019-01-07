@@ -1,9 +1,7 @@
 package de.hbznrw.ygor.export
 
-import de.hbznrw.ygor.tools.*
 import de.hbznrw.ygor.enums.*
 import groovy.json.JsonBuilder
-import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 
 //import org.apache.commons.logging.Log
@@ -19,14 +17,6 @@ class JsonTransformer {
     static final USE_PRETTY_PRINT = true
     static final NO_PRETTY_PRINT  = false
 
-    static String getSimpleJSON(DataContainer dc, FileType type, boolean prettyPrint) {
-        
-        def jsonSlurper = new JsonSlurper()
-        def json = jsonSlurper.parseText(JsonToolkit.parseDataToJson(dc))
-        
-        JsonTransformer.getSimpleJSON(json, type, prettyPrint)
-    }
-    
     static String getSimpleJSON(Object json, FileType type, boolean prettyPrint) {
      
         log.info("getSimpleJSON()")

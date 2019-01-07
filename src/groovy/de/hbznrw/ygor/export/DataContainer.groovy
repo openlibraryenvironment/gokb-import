@@ -10,7 +10,7 @@ import ygor.identifier.ZdbIdentifier
 class DataContainer {
 
     Meta    info    // TODO: use or delete
-    Package pkg     // TODO: use or delete
+    Package pkg
 
     Map<ZdbIdentifier, Record>   recordsPerZdbId = [:]
     Map<EissnIdentifier, Record> recordsPerEissn = [:]
