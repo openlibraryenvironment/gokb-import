@@ -75,12 +75,13 @@ body .input-group .selection .select2-selection__rendered .select2-selection__cl
 	height: 33px;
 }
 
-
+select#namespace_title_id,
 select#pkgNominalPlatform,
 select#pkgNominalProvider {
 	width: 405px;
 }
 
+select#namespace_title_id .warning,
 select#pkgNominalPlatform .warning,
 select#pkgNominalProvider .warning {
 	font-style: italic;

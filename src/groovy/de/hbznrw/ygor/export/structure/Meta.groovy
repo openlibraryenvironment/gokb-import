@@ -9,4 +9,5 @@ class Meta {
     ArrayList api
     HashMap   stats
     HashMap   stash
+    String    namespace_title_id
 }

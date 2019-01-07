@@ -14,7 +14,7 @@ class EnrichmentService {
     def grailsApplication
     GokbService gokbService
     
-    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode) {
+    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp) {
         
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
         en.setStatus(Enrichment.ProcessingState.PREPARE)
@@ -23,6 +23,7 @@ class EnrichmentService {
         tmp << ['delimiter': delimiter]
         tmp << ['quote':     quote]
         tmp << ['quoteMode': quoteMode]
+        tmp << ['dataTyp': dataTyp]
         
         def formats = getSessionFormats()
         formats << ["${en.originHash}":tmp]
@@ -70,6 +71,10 @@ class EnrichmentService {
             ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
         }
 
+        if(pm['namespace_title_id']) {
+            enrichment.dataContainer.info.namespace_title_id = pm['namespace_title_id'][0]
+        }
+
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
     }
 
@@ -77,13 +82,18 @@ class EnrichmentService {
 
       log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
 
-      def platforms = gokbService.getPlatformMap(pm['pkgNominalPlatform'][0], false).records
+      def tmp = pm['pkgNominalPlatform'][0].split(';')
+      def platformID = tmp[0]
+      def qterm =  tmp[1]
+
+
+      def platforms = gokbService.getPlatformMap(qterm, false).records
       def pkgNomPlatform = null
 
       log.debug("Got platforms: ${platforms}")
 
       platforms.each {
-        if (it.name == pm['pkgNominalPlatform'][0] && it.status == "Current") {
+        if (it.name == qterm && it.status == "Current" && it.oid == platformID) {
           if(pkgNomPlatform) {
             log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
           }else{
@@ -94,7 +104,7 @@ class EnrichmentService {
       }
 
       if (pkgNomPlatform) {
-        setUrlIfValid(pkgNomPlatform.primaryUrl, ph)
+        setUrlIfValid(pkgNomPlatform.url, ph)
         ph.v.nominalPlatform.name = pkgNomPlatform.name
         ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
       }else{
@@ -103,6 +113,7 @@ class EnrichmentService {
     }
 
     private void setUrlIfValid(value, ph) {
+
         try {
             URL url = new URL(value)
             ph.v.nominalPlatform.url = value

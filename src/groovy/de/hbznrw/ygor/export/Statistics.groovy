@@ -127,6 +127,7 @@ class Statistics {
         
         tippIdentifiers[TitleStruct.EISSN]    = Statistics.getStorage()
         tippIdentifiers[ZdbBridge.IDENTIFIER] = Statistics.getStorage()
+        tippIdentifiers[TitleStruct.DOI]      = Statistics.getStorage()
         
         json.package.tipps.each{ tipp ->
             
@@ -284,6 +285,7 @@ class Statistics {
         titleIdentifiers[TitleStruct.EISSN]    = Statistics.getStorage()
         titleIdentifiers[ZdbBridge.IDENTIFIER] = Statistics.getStorage()
         titleIdentifiers[EzbBridge.IDENTIFIER] = Statistics.getStorage()
+        titleIdentifiers[TitleStruct.DOI]      = Statistics.getStorage()
         
         json.titles.each{ title ->
             title.value.v.identifiers.each { ident ->

@@ -25,4 +25,11 @@ class Title {
     Pod continuingSeries = new Pod("")
     Pod defaultAccessURL = new Pod("")
     Pod editStatus       = new Pod(FixedValues.title_editStatus, Status.HARDCODED)
+
+    Pod monographEdition = new Pod("")
+    Pod firstEditor      = new Pod("")
+    Pod firstAutor       = new Pod("")
+    Pod dateMonographPublishedPrint      = new Pod("")
+    Pod dateMonographPublishedOnline      = new Pod("")
+
 }

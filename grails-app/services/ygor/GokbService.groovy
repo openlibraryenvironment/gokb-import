@@ -35,14 +35,14 @@ class GokbService {
             if (json?.info?.records) {
 
                 json.info.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})": ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
             if (json?.warning?.records) {
 
                 json.warning.records.each { r ->
-                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none"), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})": ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
@@ -95,7 +95,7 @@ class GokbService {
                 log.info("server response: ${resp.statusLine}")
                 log.debug("server:          ${resp.headers.'Server'}")
                 log.debug("content length:  ${resp.headers.'Content-Length'}")
-                if(resp.status < 400){
+                if(resp.status > 400){
                     return ['warning':html]
                 }
                 else {
@@ -109,13 +109,16 @@ class GokbService {
         }
     }
 
-    private String buildUri(final String stub, final String query, final String type, final String role, final Integer max) {
+    private String buildUri(final String stub, final String query, final String type, final String role, final Integer max, String category = null) {
         String url = stub + "?"
         if (query) {
             url += "q=" + query + "&"
         }
         if (type){
             url += "componentType=" + type + "&"
+        }
+        if (category){
+            url += "category=" + category + "&"
         }
         if (role){
             url += "role=" + role + "&"
@@ -143,14 +146,14 @@ class GokbService {
             if (json?.info?.records) {
 
                 json.info.records.each { r ->
-                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name, text: r.name.concat(r.status ? " (${r.status})": ""), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }
             if (json?.warning?.records) {
 
                 json.warning.records.each { r ->
-                  result.records.add([id: r.name, text: r.name, status: r.status, oid: r.id, name: r.name])
+                  result.records.add([id: r.name, text: r.name.concat(r.status ? " (${r.status})": ""), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }
@@ -160,6 +163,37 @@ class GokbService {
         }
 
         result
+    }
+
+    def getNamespaces() {
+
+      String nsBase = grailsApplication.config.gokbApi.baseUri.toString() + "api/namespaces"
+      String nsCategory = grailsApplication.config.gokbApi.namespaceCategory ?: null
+      String nsUrl = buildUri(nsBase, null, null, null, null, nsCategory)
+      def result = [[id: 'doi', text:'doi']]
+
+      log.debug("Retrieving namespaces via: ${nsUrl}")
+
+      try {
+        def json = queryElasticsearch(nsUrl)
+
+        if (json?.info?.result) {
+
+            json.info.result.each { r ->
+              result.add([id: r.value, text: r.value, cat: r.category])
+            }
+        }
+        if (json?.warning?.result) {
+
+            json.warning.result.each { r ->
+              result.add([id: r.value, text: r.value, cat: r.category])
+            }
+        }
+      } catch (Exception e) {
+            log.error(e.getMessage())
+      }
+
+      result
     }
 
     // --- fallback

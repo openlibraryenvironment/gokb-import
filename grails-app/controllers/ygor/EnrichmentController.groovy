@@ -14,11 +14,15 @@ class EnrichmentController {
     }
     
     def process = {
+
+        def gokb_ns = gokbService.getNamespaces()
+
         render(
             view:'process',
             model:[
                 enrichments:     enrichmentService.getSessionEnrichments(), 
                 gokbService:     gokbService,
+                namespaces:      gokb_ns,
                 currentView:    'process'
                 ]
             )
@@ -70,9 +74,10 @@ class EnrichmentController {
             file = request.session.lastUpdate.file
         }
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
-        def foQuote     = "doublequote"     // = request.parameterMap['formatQuote'][0]
-        def foQuoteMode = "none"            // = request.parameterMap['formatQuoteMode'][0]
+        def foQuote     = null              // = request.parameterMap['formatQuote'][0]
+        def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
         def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
+        def dataTyp     = request.parameterMap['dataTyp'][0]
 
         if (!request.session.lastUpdate){
             request.session.lastUpdate = [:]
@@ -82,6 +87,7 @@ class EnrichmentController {
         request.session.lastUpdate.foQuote = foQuote
         request.session.lastUpdate.foQuoteMode = foQuoteMode
         request.session.lastUpdate.recordSeparator = recordSeparator
+        request.session.lastUpdate.dataTyp = dataTyp
 
         if (file.empty) {
             flash.info    = null
@@ -95,7 +101,7 @@ class EnrichmentController {
             )
             return
         }
-        enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
+        enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
         redirect(action:'process')
     }
 
@@ -129,6 +135,7 @@ class EnrichmentController {
                     'delimiter':    format.get('delimiter'),
                     'quote':        format.get('quote'),
                     'quoteMode':    format.get('quoteMode'),
+                    'dataTyp':      format.get('dataTyp'),
                     'ygorVersion':  grailsApplication.config.ygor.version,
                     'ygorType':     grailsApplication.config.ygor.type
                 ]
@@ -249,7 +256,9 @@ class EnrichmentController {
 
     def ajaxGetStatus = {
         def en = getCurrentEnrichment()
-        render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
+        if(en) {
+            render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
+        }
     }
 
 
@@ -290,6 +299,15 @@ class EnrichmentController {
       def result = [:]
       def providers = gokbService.getProviderMap(params.q)
       result.items = providers.records
+
+      render result as JSON
+    }
+
+    def gokbNameSpaces = {
+      log.debug("Getting namespaces of connected GOKb instance..")
+      def result = [:]
+
+      result.items = gokbService.getNamespaces()
 
       render result as JSON
     }

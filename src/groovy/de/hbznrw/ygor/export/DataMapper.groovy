@@ -21,6 +21,10 @@ import ygor.Record
 @Log4j
 class DataMapper {
 
+    static final IdentifierNameSpaces = [
+        'thieme'
+    ]
+
     static Title getTitleFromRecord(Record record){
         Title result = new Title()
         // identifiers
@@ -46,7 +50,6 @@ class DataMapper {
         id.type = new Pod(typeName)
         id
     }
-
 
     static Tipp getTippFromRecord(Record record, TippPlatform platform){
         TippTitle innerTitle = new TippTitle()
@@ -76,7 +79,6 @@ class DataMapper {
         result
     }
 
-
     /**
      * Creating:
      * 
@@ -92,30 +94,36 @@ class DataMapper {
      * @param env
      */
     
-    static void mapEnvelopeToTitle(Title title, Query query, Envelope env) {
+    static void mapEnvelopeToTitle(Title title, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN]) {
+        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN, Query.KBART_EISSN, Query.KBART_PISSN, Query.KBART_DOI, Query.KBART_TITLE_ID, Query.KBART_EISBN]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
                 ident.type.v = ZdbBridge.IDENTIFIER
             else if(Query.EZBID == query)
                 ident.type.v = EzbBridge.IDENTIFIER
-            else if(Query.ZDB_EISSN == query)
+            else if(Query.ZDB_EISSN == query || Query.KBART_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
-            else if(Query.ZDB_PISSN == query)
+            else if(Query.ZDB_PISSN == query || Query.KBART_PISSN == query)
                 ident.type.v = TitleStruct.PISSN
+            else if(Query.KBART_EISBN == query)
+                ident.type.v = "isbn"
             else if(Query.ZDB_GVKPPN == query)
                 ident.type.v = "gvk_ppn"
+            else if(Query.KBART_DOI == query)
+                ident.type.v = TitleStruct.DOI
+            else if(Query.KBART_TITLE_ID == query)
+                ident.type.v = dc.info.namespace_title_id
                 
             ident.type.m    = Status.IGNORE
             
-            DataSetter.setIdentifier(ident.value, ident.type.v, env.message.join("|"))
+            DataSetter.setIdentifier(ident.value, ident.type.v, env.message.join("|"), dc.info.namespace_title_id)
 
             title.identifiers << ident // no pod
         }
         
-        else if(query == Query.ZDB_TITLE) {
+        else if(query == Query.ZDB_TITLE || query == Query.KBART_TITLE) {
             DataSetter.setString(title.name, env.message)
         }
 
@@ -125,6 +133,22 @@ class DataMapper {
         
         else if(query == Query.ZDB_PUBLISHED_TO) {
             DataSetter.setDate(title.publishedTo, Normalizer.IS_END_DATE, env.message)
+        }
+         //TODO Überprüfen
+        else if (query == Query.KBART_PUBLISHER) {
+            def pubHistory = TitleStruct.getNewPublisherHistory()
+
+            DataSetter.setString(pubHistory.name, env.message[0])
+            def valid = StructValidator.isValidPublisherHistory(pubHistory)
+            def pod = new Pod(pubHistory, valid)
+
+            if(Status.STRUCTVALIDATOR_REMOVE_FLAG != valid){
+                title.publisher_history << pod
+            }
+            else {
+                log.debug("! ignore crappy title publisher history")
+            }
+
         }
 
         else if(query == Query.ZDB_PUBLISHER) {
@@ -206,7 +230,7 @@ class DataMapper {
                     ident.type.m  = Status.IGNORE
                     ident.type.v  = e.messages['identifierType'][i].toLowerCase()
                     
-                    DataSetter.setIdentifier(ident.value, ident.type.v, e.messages['identifierValue'][i])                 
+                    DataSetter.setIdentifier(ident.value, ident.type.v, e.messages['identifierValue'][i], dc.info.namespace_title_id)
                     
                     hEvent.identifiers << ident
 
@@ -215,6 +239,21 @@ class DataMapper {
                     title.historyEvents << new Pod(histEvent)
                 }
             }
+        }
+        else if(query == Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT) {
+            DataSetter.setDate(title.dateMonographPublishedPrint, Normalizer.IS_START_DATE, env.message)
+        }
+        else if(query == Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE) {
+            DataSetter.setDate(title.dateMonographPublishedOnline, Normalizer.IS_START_DATE, env.message)
+        }
+        else if(query == Query.KBART_MONOGRAPH_EDITION) {
+            DataSetter.setString(title.monographEdition, env.message)
+        }
+        else if(query == Query.KBART_FIRST_EDITOR) {
+            DataSetter.setString(title.firstEditor, env.message)
+        }
+        else if(query == Query.KBART_FIRST_AUTHOR) {
+            DataSetter.setString(title.firstAutor, env.message)
         }
     }
     
@@ -233,22 +272,28 @@ class DataMapper {
      */
     static void mapEnvelopeToTipp(Tipp tipp, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.ZDB_EISSN]) {
+        if(query in [Query.ZDBID, Query.ZDB_EISSN, Query.KBART_EISSN, Query.KBART_DOI, Query.KBART_TITLE_ID, Query.KBART_EISBN]) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
                 ident.type.v = ZdbBridge.IDENTIFIER
-            else if(Query.ZDB_EISSN == query)
+            else if(Query.ZDB_EISSN == query || Query.KBART_EISSN == query)
                 ident.type.v = TitleStruct.EISSN
+            else if(Query.KBART_EISBN == query)
+                ident.type.v = TitleStruct.EISBN
+            else if(Query.KBART_DOI == query)
+                ident.type.v = TitleStruct.DOI
+            else if(Query.KBART_TITLE_ID == query)
+                ident.type.v = dc.info.namespace_title_id
 
             ident.type.m    = Status.IGNORE
             
-            DataSetter.setIdentifier(ident.value, ident.type.v, env.message)
+            DataSetter.setIdentifier(ident.value, ident.type.v, env.message, dc.info.namespace_title_id)
 
             tipp.title.v.identifiers << ident // no pod
         }
         
-        else if(query == Query.ZDB_TITLE) {
+        else if(query == Query.ZDB_TITLE || query == Query.KBART_TITLE) {
             DataSetter.setString(tipp.title.v.name, env.message)
         }
         

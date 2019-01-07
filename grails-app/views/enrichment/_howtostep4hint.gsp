@@ -1,6 +1,6 @@
 <div class="well">
-	<strong>Hinweis</strong> 
+	<strong><g:message code="howtostep4hint.hint" /></strong>
 	<br /><br />
 	<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-	&nbsp; Auf diesen Server übertragene Dateien werden automatisch nach einiger Zeit gelöscht.
+	&nbsp; <g:message code="howtostep4hint.deleted" />
 </div>

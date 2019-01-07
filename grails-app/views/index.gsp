@@ -15,17 +15,33 @@
 
 				<h3>
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					Bei dieser Installation handelt es sich um Software in der Entwicklungsphase.
-					Verwendung auf eigene Verantwortung.
+					<g:message code="index.development" />
 				</h3>
 			</div>
 
 			<div class="col-xs-10 col-xs-offset-1">
 				<br />
-				<p class="lead">Versionshistorie</p>
+				<p class="lead"><g:message code="index.versionhistory" /></p>
 
 				<dl>
-					<br /><dt>0.48 (Release)</dt><br />
+					<br /><dt>0.53 </dt><br />
+
+					<dd>- <g:message code="version.053.1" /></dd>
+					<br /><dt>0.52 </dt><br />
+
+					<dd>- Bugfix: Mapping Platform after the Selection of the Platform </dd>
+					<br /><dt>0.51 </dt><br />
+
+					<dd>- Bugfix: Json Export mit UTF-8 & Plattform URL Mapping & EBooks mit Plattfrom Mapping </dd>
+
+					<br /><dt>0.50 </dt><br />
+
+					<dd>- Bugfix: Tipp -> AccessEndDate </dd>
+					<br /><dt>0.49 </dt><br />
+
+					<dd>- Feature: Unterscheidung von Journal- und EBook-Paketen (Database -> disabled) und deren Informationsanreicherung</dd>
+
+					<br /><dt>0.48 </dt><br />
 
 					<dd>- Bugfix: Tipp -> AccessStartDate & AccessEndDate </dd>
 

@@ -7,25 +7,35 @@
 	
 	<div class="col-xs-10 col-xs-offset-1">
 		<br />
-		<p>Wer oder was ist <em>Ygor</em>?</p>
+		<p><g:message code="about.title" /></p>
 		<p>
-			<em>Ygor</em> ist ein kleines Werkzeug zur Anreicherung existierender Daten.
-			Im KBART-Format <em>(Knowledge Base and Related Tools)</em> vorliegende Dateien können durch automatisierte Nutzung externer Webservices
-			um verschiedene Informationen erweitert werden.
-			Dieses Verfahren benötigt geeignete Identifikatoren, z.B. ISSN-Angaben oder ID-Nummern der Zeitschriftendatenbank ZDB. 
+			<g:message code="about.content.1" />
 		</p>
 		
 		<p>
-			Die angereicherten Daten können anschließend über eine Schnittstelle an eine vorgegebene <em><strong>Knowledgebase</strong></em> übermittelt werden.
+			<g:message code="about.content.2" />
 		</p>
 		<p>
-			Richten Sie sich nach den Anweisungen in den grauen Informationsfeldern.
+			<g:message code="about.content.3" />
 		</p>
 		<br />
 		<p>
-			<em>Version <g:meta name="app.version"/></em> <br/>
-			<em>basierend auf Grails <g:meta name="app.grails.version"/></em> <br/>
-			<em>Angeschlossene GOKb-Instanz ${grailsApplication.config.gokbApi.baseUri}</em>
+			<em><g:message code="about.version" /> <g:meta name="app.version"/></em> <br/>
+			<em><g:message code="about.grails" /> <g:meta name="app.grails.version"/></em> <br/>
+			<em><g:message code="about.gokb" />: ${grailsApplication.config.gokbApi.baseUri}</em>
+			<br/><br/>
+
+			<em> <g:if test="${grailsApplication.metadata['repository.revision.number']}">
+				<a target="_blank" class="item" href="https://github.com/hbz/laser-ygor/tree/${grailsApplication.metadata['repository.revision.number']}">
+					Build: ${grailsApplication.metadata['build.DateTimeStamp']}
+
+				</a><br>
+				Branch: ${grailsApplication.metadata['repository.branch']}
+			</g:if>
+				<g:else>
+					Build: ${grailsApplication.metadata['build.DateTimeStamp']}<br>
+					Branch: ${grailsApplication.metadata['repository.branch']}
+				</g:else></em>
 		</p>
 
 	</div>

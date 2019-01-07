@@ -124,7 +124,7 @@ class KbartProcessor extends AbstractProcessor {
                     def identifier
 
                     for (key in MultipleProcessingThread.KEY_ORDER) {
-                        if (key != KbartConnector.KBART_HEADER_ZDB_ID || record.isMapped(key)) {
+                        if ((key != KbartConnector.KBART_HEADER_ZDB_ID && key != KbartConnector.KBART_HEADER_DOI_IDENTIFIER) || record.isMapped(key)) {
                             identifier = record.get(key)?.toString()?.trim()
                             if (identifier) {
                                 def uid = UUID.randomUUID().toString()
@@ -214,14 +214,27 @@ class KbartProcessor extends AbstractProcessor {
 
 
     Title processEntry(DataContainer dc, String uid, String queryKey, Object record) {
-        
+
+        def options = super.bridge.options
+
         def saveTitle = false
         def title     = DataMapper.getExistingTitleByUid(dc, uid)
         if(title) {
             log.debug("> modifying existing Title: " + uid)
         }
         else {
-            title     = new Title()
+            if(options.dataTyp == 'ebooks')
+            {
+                title     = new Title(type: new Pod("Book"), medium: new Pod('Book'))
+            }
+            else if (options.dataTyp == 'database')
+            {
+                title     = new Title(type: new Pod("Database"), medium: new Pod('Database'))
+            }
+            else
+            {
+                title     = new Title(type: new Pod("Serial"), medium: new Pod('Journal'))
+            }
             saveTitle = true
         }
         
@@ -232,6 +245,20 @@ class KbartProcessor extends AbstractProcessor {
         }
         else {
             tipp     = PackageStruct.getNewTipp()
+
+            if(options.dataTyp == 'ebooks')
+            {
+                tipp.title.v.type.v     = "Book"
+            }
+            else if (options.dataTyp == 'database')
+            {
+                tipp.title.v.type.v     = "Database"
+            }
+            else
+            {
+                tipp.title.v.type.v     = "Serial"
+            }
+
             saveTipp = true
         }
 
@@ -281,7 +308,7 @@ class KbartProcessor extends AbstractProcessor {
                 }
             }
             
-            DataMapper.mapEnvelopeToTitle(title, q, env)
+            DataMapper.mapEnvelopeToTitle(title, q, env, dc)
             DataMapper.mapEnvelopeToTipp (tipp, q, env, dc)
         }
         

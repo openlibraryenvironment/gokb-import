@@ -8,7 +8,7 @@
 			
 			<br /><br />
 
-			<g:set var="filename" value="Keine Datei ausgewaehlt" scope="page" />
+			<g:set var="filename" value="${message(code:'uploadFile.file.nofile')}" scope="page" />
 			<g:if test="${session.lastUpdate?.file?.originalFilename != null}">
 				<g:set var="filename" value="${session.lastUpdate?.file?.originalFilename}" scope="page" />
 			</g:if>
@@ -19,24 +19,34 @@
 				<li class="list-group-item">
 				
 					<div class="input-group">
-						<span class="input-group-addon">Datei</span>
+						<span class="input-group-addon"><g:message code="uploadFile.file.label" /></span>
 						<input class="form-control" type="text" id="uploadFileLabel" name="uploadFileLabel" readonly value="${filename}" size="46"/>
 					</div>
 					
 		  			<br />
 		  			
 		  			<div class="input-group">
-						<span class="input-group-addon">Trennzeichen</span>
+						<span class="input-group-addon"><g:message code="uploadFile.separator.label" /></span>
 						<span class="form-control">
 							<div class="radio">
 								<label>
-									<g:if test="${session.lastUpdate?.foDelimiter == null || session.lastUpdate?.foDelimiter == "comma"}">
+									<g:if test="${session.lastUpdate?.foDelimiter == null || session.lastUpdate?.foDelimiter == "tab"}">
+										<g:radio name="formatDelimiter" checked="true" value="tab" />
+									</g:if>
+									<g:else>
+										<g:radio name="formatDelimiter" value="tab" />
+									</g:else>
+									<g:message code="uploadFile.separator.tabulator" />  <code>(\t)</code>
+								</label>
+								&nbsp;
+								<label>
+									<g:if test="${session.lastUpdate?.foDelimiter == "comma"}">
 										<g:radio name="formatDelimiter" checked="true" value="comma" />
 									</g:if>
 									<g:else>
 										<g:radio name="formatDelimiter" value="comma" />
 									</g:else>
-									Komma <code>(,)</code>
+									<g:message code="uploadFile.separator.comma" /> <code>(,)</code>
 								</label>
 								&nbsp;
 								<label>
@@ -46,17 +56,45 @@
 									<g:else>
 										<g:radio name="formatDelimiter" value="semicolon" />
 									</g:else>
-									Semikolon <code>(;)</code>
+									<g:message code="uploadFile.separator.semicolon" />  <code>(;)</code>
 								</label>
-								&nbsp;
+							</div>
+						</span>
+					</div>
+
+					<br />
+					<div class="input-group">
+						<span class="input-group-addon"><g:message code="uploadFile.mediatype.label" /></span>
+						<span class="form-control">
+							<div class="radio">
 								<label>
-									<g:if test="${session.lastUpdate?.foDelimiter == "tab"}">
-										<g:radio name="formatDelimiter" checked="true" value="tab" />
+									<g:if test="${session.lastUpdate?.dataTyp == null || session.lastUpdate?.dataTyp == "journals"}">
+										<g:radio name="dataTyp" checked="true" value="journals" />
 									</g:if>
 									<g:else>
-										<g:radio name="formatDelimiter" value="tab" />
+										<g:radio name="dataTyp" value="journals" />
 									</g:else>
-									Tabulator <code>(\t)</code>
+                                    <g:message code="uploadFile.mediatype.serial" />
+								</label>
+								%{--&nbsp;
+								<label>
+									<g:if test="${session.lastUpdate?.dataTyp == "database"}">
+										<g:radio name="dataTyp" checked="true" value="database" />
+									</g:if>
+									<g:else>
+										<g:radio name="dataTyp" value="database" />
+									</g:else>
+									Database
+								</label>--}%
+								&nbsp;
+								<label>
+									<g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
+										<g:radio name="dataTyp" checked="true" value="ebooks" />
+									</g:if>
+									<g:else>
+										<g:radio name="dataTyp" value="ebooks" />
+									</g:else>
+                                    <g:message code="uploadFile.mediatype.monograph" />
 								</label>
 							</div>
 						</span>
@@ -90,9 +128,9 @@
 			<ul class="list-group content-list">
 				<li class="list-group-item">
 					<label class="btn btn-link btn-file">
-						<input type="file" name="uploadFile" style="display: none;"/>Datei auswählen
+						<input type="file" name="uploadFile" style="display: none;"/><g:message code="uploadFile.button.select" />
 					</label>
-					<input type="submit" value="Datei hochladen" class="btn btn-success" />
+					<input type="submit" value="${message(code:'uploadFile.button.upload')}" class="btn btn-success" />
 					<script>
 						jQuery(document).on('change', ':file', function() {
 					        var input = $(this),

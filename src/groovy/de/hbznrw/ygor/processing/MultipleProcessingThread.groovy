@@ -26,6 +26,7 @@ import ygor.integrators.ZdbIntegrationService
 class MultipleProcessingThread extends Thread {
 
     static final KEY_ORDER = [KbartConnector.KBART_HEADER_ZDB_ID,
+                              KbartConnector.KBART_HEADER_DOI_IDENTIFIER,
                               KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
                               KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
     static final SOURCE_ORDER = [MappingsContainer.KBART,
@@ -88,6 +89,17 @@ class MultipleProcessingThread extends Thread {
 		enrichment.setStatus(Enrichment.ProcessingState.WORKING)
 		log.info('Starting MultipleProcessingThread run...')
 		try {
+            // TODO set values of previous run, formerly:
+            // // writes stash->kbart
+            // // writes stash->zdb or stash->issn
+            // bridge = new KbartBridge(this, new HashMap(
+            //         inputFile:  enrichment.originPathName,
+            //         delimiter:  refactorThis.get('delimiter'),
+            //         quote:      refactorThis.get('quote'),
+            //         quoteMode:  refactorThis.get('quoteMode'),
+            //         dataTyp:    refactorThis.get('dataTyp')
+            //     )
+            // )
             apiCalls.each{ call ->
                 switch(call) {
                     case KbartBridge.IDENTIFIER:
