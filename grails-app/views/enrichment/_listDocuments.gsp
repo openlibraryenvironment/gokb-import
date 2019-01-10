@@ -179,12 +179,12 @@
 								</script>
 
 								<g:if test="${namespaces?.size() > 0}">
-                                                                  <div class="input-group">
-                                                                          <span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
-                                                                          <g:select name="namespace_title_id" id="namespace_title_id" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':message(code:'listDocuments.js.placeholder.namespace')]}" class="form-control" required="required"></g:select>
-                                                                  </div>
-                                                                  <br>
-                                                                </g:if>
+									<div class="input-group">
+										<span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
+										<g:select name="namespace_title_id" id="namespace_title_id" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':message(code:'listDocuments.js.placeholder.namespace')]}" class="form-control" required="required"></g:select>
+									</div>
+									<br>
+								</g:if>
 
 								<div class="input-group">
 									<span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>

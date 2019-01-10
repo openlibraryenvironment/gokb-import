@@ -90,7 +90,7 @@ class EnrichmentController {
         if (file.empty) {
             flash.info    = null
             flash.warning = null
-            flash.error   = 'Sie müssen eine gültige Datei auswählen.'
+            flash.error   = message(code:'error.noValidFile')
             render(view:'process', 
                 model:[
                     enrichments: enrichmentService.getSessionEnrichments(),
@@ -113,7 +113,7 @@ class EnrichmentController {
         def pmOptions   = request.parameterMap['processOption']
         if(!pmOptions) {
             flash.info    = null
-            flash.warning = 'Wählen Sie mindestens eine Anreicherungsoption.'
+            flash.warning = message(code:'warning.noEnrichmentOption')
             flash.error   = null
         }
         else {
@@ -123,7 +123,7 @@ class EnrichmentController {
             request.session.lastUpdate.pmOptions = pmOptions
             def en = getCurrentEnrichment()
             if(en.status != Enrichment.ProcessingState.WORKING) {
-                flash.info    = 'Bearbeitung gestartet.'
+                flash.info    = message(code:'info.started')
                 flash.warning = null
                 flash.error   = null
 
@@ -275,7 +275,7 @@ class EnrichmentController {
     void noValidEnrichment() {
         
         flash.info    = null
-        flash.warning = 'Es existiert keine Datei. Vielleicht ist Ihre Session abgelaufen?'
+        flash.warning = message(code:'warning.fileNotFound')
         flash.error   = null
         
         redirect(action:'process')
