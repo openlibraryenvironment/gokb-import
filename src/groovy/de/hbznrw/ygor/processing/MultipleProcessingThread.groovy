@@ -1,8 +1,10 @@
-package de.hbznrw.ygor.processing;
+package de.hbznrw.ygor.processing
 
-import de.hbznrw.ygor.bridges.*
+import com.google.common.base.Throwables
+import de.hbznrw.ygor.bridges.EzbBridge
+import de.hbznrw.ygor.bridges.KbartBridge
+import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.connectors.KbartConnector
-import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
@@ -11,7 +13,6 @@ import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
 import groovy.util.logging.Log4j
 import ygor.Enrichment
-import com.google.common.base.Throwables
 import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
@@ -134,6 +135,7 @@ class MultipleProcessingThread extends Thread {
             return
         }
 
+        validate()
         extractTitles()
         extractTipps()
 
@@ -153,6 +155,12 @@ class MultipleProcessingThread extends Thread {
         enrichment.saveResult()
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}
+
+    private void validate(){
+        for (Record record : enrichment.dataContainer.records) {
+            record.validate()
+        }
+    }
 
     private void extractTitles() {
         for (Record record : enrichment.dataContainer.records) {

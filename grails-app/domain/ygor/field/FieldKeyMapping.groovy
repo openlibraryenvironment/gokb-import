@@ -8,12 +8,14 @@ class FieldKeyMapping {
     Set kbartKeys
     Set zdbKeys
     Set ezbKeys
+    String type
 
     static constraints = {
         ygorKey   nullable : false
         kbartKeys nullable : false
         zdbKeys   nullable : false
         ezbKeys   nullable : false
+        type      nullable : false
     }
 
     static hasMany = [kbartKeys : String,
@@ -73,13 +75,17 @@ class FieldKeyMapping {
                     ezbKeys.add(mapping.value)
                 }
             }
+            else if (mapping.key == MappingsContainer.TYPE){
+                type = mapping.value
+            }
         }
     }
 
 
     /**
      * @param type One of {MappingsContainer.@value YGOR}, { MappingsContainer.@value KBART},
-     * {MappingsContainer.@value ZDB} or {MappingsContainer.@value EZB}
+     * {MappingsContainer.@value ZDB}, {MappingsContainer.@value EZB} or
+     * {MappingsContainer.@value TYPE}
      * @return The value of the given type.
      */
     def get(String type){
@@ -94,6 +100,9 @@ class FieldKeyMapping {
         }
         else if (type == MappingsContainer.EZB){
             ezbKeys
+        }
+        else if (type == MappingsContainer.TYPE){
+            this.type
         }
     }
 }

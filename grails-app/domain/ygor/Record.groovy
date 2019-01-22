@@ -65,6 +65,10 @@ class Record {
         multiFields.get(ygorFieldKey)
     }
 
+    void validate(){
+        multiFields.forEach(k, v --> v.validate())
+    }
+
     JsonBuilder toJson(){
         // TODO
     }

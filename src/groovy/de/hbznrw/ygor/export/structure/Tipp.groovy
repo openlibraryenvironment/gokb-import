@@ -1,7 +1,5 @@
 package de.hbznrw.ygor.export.structure
 
-import de.hbznrw.ygor.enums.*
-
 class Tipp {
     
     def _meta       = [:]

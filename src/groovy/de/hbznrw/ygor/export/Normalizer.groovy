@@ -2,6 +2,7 @@ package de.hbznrw.ygor.export
 
 import de.hbznrw.ygor.bridges.EzbBridge
 import de.hbznrw.ygor.bridges.ZdbBridge
+import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.tools.UrlToolkit
@@ -15,6 +16,29 @@ class Normalizer {
 
     final static IS_START_DATE  = "IS_START_DATE"
     final static IS_END_DATE    = "IS_END_DATE"
+
+
+    static String normalize(String type, String value, String... additionalParameters){
+        switch (type) {
+            case "String":
+                return normString(value)
+                break
+            case "Number":
+                return normInteger(value)
+                break
+            case "ID":
+                return normIdentifier(value, additionalParameters)
+                break
+            case "URL":
+                return normURL(value)
+                break
+            case "Date":
+                return normDate(value)
+                break
+            default:
+                return Status.UNDEFINED
+        }
+    }
 
     
     /**

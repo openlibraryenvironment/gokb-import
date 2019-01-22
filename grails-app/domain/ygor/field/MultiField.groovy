@@ -1,11 +1,15 @@
 package ygor.field
 
+import de.hbznrw.ygor.export.Validator
+import de.hbznrw.ygor.export.Normalizer
+
 class MultiField {
 
     String ygorFieldKey
     FieldKeyMapping keyMapping
     Map fields = [:]
     List sourcePrio = []
+    String type
     static hasMany = [sourcePrio : String, fields : Field]
 
     static constraints = {
@@ -14,6 +18,7 @@ class MultiField {
 
     MultiField(FieldKeyMapping fieldKeyMapping){
         this.ygorFieldKey = fieldKeyMapping.ygorKey
+        this.type = fieldKeyMapping.type
         keyMapping = fieldKeyMapping
         this.sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
     }
@@ -48,15 +53,18 @@ class MultiField {
         }
     }
 
-
     String getPrioValue(){
         for (source in sourcePrio){
             def field = fields.get(source)
             if (field != null){
-                return field.value
+                return Normalizer.normalize(type, field.value)
             }
         }
         return null
+    }
+
+    void validate(){
+        Validator.validate(type, getPrioValue())
     }
 
 }

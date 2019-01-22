@@ -1,20 +1,43 @@
 package de.hbznrw.ygor.export
 
-import de.hbznrw.ygor.enums.*
-import de.hbznrw.ygor.export.structure.Identifier
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.enums.Status
 import org.apache.commons.lang.StringUtils
 
 import java.sql.Timestamp
-import java.lang.NumberFormatException
 
 // checks if given value meets the requirements
 
 class Validator {
 
     final static IS_START_DATE  = 1000
-    final static IS_END_DATE    = 1001 
+    final static IS_END_DATE    = 1001
+
+    static validate(String type, String value, String... additionalParameters){
+        switch (type) {
+            case "String":
+                return isValidString(value)
+                break
+            case "Number":
+                return isValidNumber(value)
+                break
+            case "ID":
+                return isValidIdentifier(value, additionalParameters)
+                break
+            case "URL":
+                return isValidURL(value)
+                break
+            case "Date":
+                return isValidDate(value)
+                break
+            case "ISBN":
+                return validateISBN(value)
+                break
+            default:
+                return Status.UNDEFINED
+        }
+    }
     
     /**
      *
