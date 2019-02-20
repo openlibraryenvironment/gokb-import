@@ -7,6 +7,7 @@ import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.interfaces.*
 import de.hbznrw.ygor.export.structure.TitleStruct
+import org.codehaus.groovy.runtime.DefaultGroovyMethods
 
 @Log4j
 class ZdbBridge extends AbstractBridge implements BridgeInterface {
@@ -63,7 +64,9 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 				}
 
 				increaseProgress()
-				def pollStatus = connector.poll(key, stash.getKeyType(uid))
+
+				def pollStatus = connector.poll(key, stash.getKeyType(uid),
+						DefaultGroovyMethods.getAt(stash.values.kbart.get(uid), "${'publication_title'}"))
 
 				// fallback for empty api response
 				if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {

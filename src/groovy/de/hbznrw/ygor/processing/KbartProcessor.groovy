@@ -223,16 +223,13 @@ class KbartProcessor extends AbstractProcessor {
             log.debug("> modifying existing Title: " + uid)
         }
         else {
-            if(options.dataTyp == 'ebooks')
-            {
+            if(options.dataTyp == 'ebooks') {
                 title     = new Title(type: new Pod("Book"), medium: new Pod('Book'))
             }
-            else if (options.dataTyp == 'database')
-            {
+            else if (options.dataTyp == 'database') {
                 title     = new Title(type: new Pod("Database"), medium: new Pod('Database'))
             }
-            else
-            {
+            else {
                 title     = new Title(type: new Pod("Serial"), medium: new Pod('Journal'))
             }
             saveTitle = true
@@ -246,19 +243,15 @@ class KbartProcessor extends AbstractProcessor {
         else {
             tipp     = PackageStruct.getNewTipp()
 
-            if(options.dataTyp == 'ebooks')
-            {
+            if(options.dataTyp == 'ebooks') {
                 tipp.title.v.type.v     = "Book"
             }
-            else if (options.dataTyp == 'database')
-            {
+            else if (options.dataTyp == 'database') {
                 tipp.title.v.type.v     = "Database"
             }
-            else
-            {
+            else {
                 tipp.title.v.type.v     = "Serial"
             }
-
             saveTipp = true
         }
 

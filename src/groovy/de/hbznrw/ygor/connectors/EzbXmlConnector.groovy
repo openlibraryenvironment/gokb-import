@@ -35,7 +35,7 @@ class EzbXmlConnector extends AbstractConnector {
     }
     
 	@Override
-	def poll(String identifier, String queryIdentifier) {
+	def poll(String identifier, String queryIdentifier, def publicationTitle) {
 		
 		try {
             String q = getAPIQuery(identifier, queryIdentifier)
