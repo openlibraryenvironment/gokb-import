@@ -31,9 +31,9 @@ class KbartConnector extends AbstractConnector {
         'title_url',
         'embargo_info',
         'coverage_depth',
-        'notes'
+        'notes',
+        'publication_title' // used in case of more specific ZDB queries
         /*
-        'publication_title',
         'zdb_id',
         'print_identifier',
         'online_identifier'
@@ -57,7 +57,7 @@ class KbartConnector extends AbstractConnector {
     }
     
 	@Override
-	def poll(String identifier, String queryIdentifier) {
+	def poll(String identifier, String queryIdentifier, def publicationTitle) {
 		
         log.info("polling(): " + identifier)
         

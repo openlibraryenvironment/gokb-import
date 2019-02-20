@@ -16,9 +16,11 @@ interface ConnectorInterface {
      * Storing polling response
      * 
      * @param identifier
+     * @param queryIdentifier
+     * @param publicationTitle
      * @return
      */
-    def poll(String identifier, String queryIdentifier)
+    def poll(String identifier, String queryIdentifier, def publicationTitle)
     
     /**
      * 
