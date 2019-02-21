@@ -165,7 +165,7 @@ class GokbService {
         result
     }
 
-    def getNamespaces() {
+    def getNamespaceList() {
 
       String nsBase = grailsApplication.config.gokbApi.baseUri.toString() + "api/namespaces"
       String nsCategory = grailsApplication.config.gokbApi.namespaceCategory ?: null

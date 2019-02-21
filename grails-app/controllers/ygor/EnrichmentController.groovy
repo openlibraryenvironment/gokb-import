@@ -15,7 +15,7 @@ class EnrichmentController {
     
     def process = {
 
-        def gokb_ns = gokbService.getNamespaces()
+        def gokb_ns = gokbService.getNamespaceList()
 
         render(
             view:'process',
@@ -24,8 +24,8 @@ class EnrichmentController {
                 gokbService:     gokbService,
                 namespaces:      gokb_ns,
                 currentView:    'process'
-                ]
-            )
+            ]
+        )
     }
     
     def json = {
@@ -34,36 +34,36 @@ class EnrichmentController {
             model:[
                 enrichments: enrichmentService.getSessionEnrichments(), 
                 currentView: 'json'
-                ]
-            )
+            ]
+        )
     }
     
     def howto = {
         render(
             view:'howto',
             model:[currentView:'howto']
-            )
+        )
     }
 
     def about = {
         render(
             view:'about',
             model:[currentView:'about']
-            )
+        )
     }
 
     def config = {
         render(
             view:'config',
             model:[currentView:'config']
-            )
+        )
     }
     
     def contact = {
         render(
             view:'contact',
             model:[currentView:'contact']
-            )
+        )
     }
     
     def uploadFile = {
@@ -307,7 +307,7 @@ class EnrichmentController {
       log.debug("Getting namespaces of connected GOKb instance..")
       def result = [:]
 
-      result.items = gokbService.getNamespaces()
+      result.items = gokbService.getNamespaceList()
 
       render result as JSON
     }
