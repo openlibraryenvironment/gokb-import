@@ -53,7 +53,7 @@ class EzbBridge extends AbstractBridge implements BridgeInterface {
                 }
 
                 increaseProgress()
-                connector.poll(key, stash.getKeyType(uid))
+                connector.poll(key, stash.getKeyType(uid), null)
 
                 processor.processEntry(master.enrichment.dataContainer, uid, key)
             }

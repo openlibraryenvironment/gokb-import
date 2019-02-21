@@ -24,6 +24,8 @@ class DnbSruPicaConnector extends AbstractConnector {
     private picaRecords   = []
     private currentRecord = null
 
+    private static XmlSlurper SLURPER = new XmlSlurper()
+
     DnbSruPicaConnector(BridgeInterface bridge) {
         super(bridge)
         queryIDs.put(KbartConnector.KBART_HEADER_ZDB_ID, "query=dnb.zdbid%3D")
@@ -38,18 +40,19 @@ class DnbSruPicaConnector extends AbstractConnector {
     }
 
     @Override
-    def poll(String identifier, String queryIdentifier) {
+    def poll(String identifier, String queryIdentifier, def publicationTitle) {
         try {
             String q = getAPIQuery(identifier, queryIdentifier)
-
             log.info("polling(): " + q)
-            String text = new URL(q).getText()
+            picaRecords = setPicaRecords(q)
 
-            response = new XmlSlurper().parseText(text)
-
-            picaRecords = []
-            def records = response.children().find {it.name() == "records"}.childNodes()
-            while (records.hasNext()) picaRecords << records.next()
+            // in case we have more than 1 hit, we repeat the query, trying to reduce the hits to 1
+            // by specifying the query with the title name
+            if (picaRecords?.size() > 1){
+                q = q + "%20and%20dnb.tit%3D${java.net.URLEncoder.encode(publicationTitle)}"
+                log.info("Found more than 1 hit. Trying to reduce to 1...\npolling(): " + q)
+                picaRecords = setPicaRecords(q)
+            }
 
         } catch(Exception e) {
             log.error(e)
@@ -61,6 +64,14 @@ class DnbSruPicaConnector extends AbstractConnector {
         else if (picaRecords.size() == 1) {
             return AbstractEnvelope.STATUS_OK
         }
+    }
+
+    private List setPicaRecords(String q) {
+        picaRecords = []
+        response = SLURPER.parseText(new URL(q).getText())
+        def records = response.children().find { it.name() == "records" }.childNodes()
+        while (records.hasNext()) picaRecords << records.next()
+        picaRecords
     }
 
     @Override

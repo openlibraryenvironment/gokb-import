@@ -82,7 +82,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
             increaseProgress()
 
             // for kbart file no really need
-            connector.poll(uid, stash.getKeyType(uid))
+            connector.poll(uid, stash.getKeyType(uid), null)
             
             // TODO refactor
             processor.processEntry(master.enrichment.dataContainer, uid, 'TODO_REFACTOR_TO_ZdbBridge.IDENTIFIER')
