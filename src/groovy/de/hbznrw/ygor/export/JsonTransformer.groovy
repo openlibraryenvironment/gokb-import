@@ -60,10 +60,10 @@ class JsonTransformer {
         
         if(type.equals(FileType.JSON_PACKAGE_ONLY)){
             
-            json.package.tipps.eachWithIndex{ tipp, i ->
-                json.package.tipps[i].remove("_meta")
+            json.pkg.tipps.eachWithIndex{ tipp, i ->
+                json.pkg.tipps[i].remove("_meta")
             }
-            json = json.package
+            json = json.pkg
         }
         else if(type.equals(FileType.JSON_TITLES_ONLY)){
             
@@ -84,17 +84,17 @@ class JsonTransformer {
     static Object parsePackageHeader(Object json) {
         log.debug("parsePackageHeader()")
         
-        json.package.packageHeader = json.package.packageHeader.v
-        json.package.packageHeader.additionalProperties = json.package.packageHeader.additionalProperties.v
+        json.pkg.packageHeader = json.pkg.packageHeader.v
+        json.pkg.packageHeader.additionalProperties = json.pkg.packageHeader.additionalProperties.v
 
-        json.package.packageHeader.each{ ph ->
+        json.pkg.packageHeader.each{ ph ->
             if(ph.value.v instanceof java.lang.String) {
-                json.package.packageHeader."${ph.key}" = (ph.value.v ? ph.value.v : "")
+                json.pkg.packageHeader."${ph.key}" = (ph.value.v ? ph.value.v : "")
             }
         }
 
-        if(json.package.packageHeader.name) {
-            json.package.packageHeader.name = json.package.packageHeader.name.v.v
+        if(json.pkg.packageHeader.name) {
+            json.pkg.packageHeader.name = json.pkg.packageHeader.name.v.v
         }
         
         json  
@@ -104,10 +104,10 @@ class JsonTransformer {
          log.debug("parseHashMaps()")
         
          def tipps = []
-         json.package.tipps.each{ tipp ->
+         json.pkg.tipps.each{ tipp ->
              tipps << tipp.value.v
          }
-         json.package.tipps = tipps
+         json.pkg.tipps = tipps
          
          def titles = []
          json.titles = json.titles.each{ title ->
@@ -121,18 +121,18 @@ class JsonTransformer {
         log.debug("parseNominalPlatform()")
 
         def plt = [
-          'name': json.package.packageHeader.nominalPlatform.name,
-          'primaryUrl': json.package.packageHeader.nominalPlatform.primaryUrl
+          'name': json.pkg.packageHeader.nominalPlatform.name,
+          'primaryUrl': json.pkg.packageHeader.nominalPlatform.primaryUrl
         ]
 
-        json.package.packageHeader.nominalPlatform = plt
+        json.pkg.packageHeader.nominalPlatform = plt
     }
      
     static Object parseCuratoryGroups(Object json) {
         log.debug("parseCuratoryGroups()")
         
-        json.package.packageHeader.curatoryGroups.eachWithIndex{ cg, i ->
-            json.package.packageHeader.curatoryGroups[i] = cg.v
+        json.pkg.packageHeader.curatoryGroups.eachWithIndex{ cg, i ->
+            json.pkg.packageHeader.curatoryGroups[i] = cg.v
         }
         
         json
@@ -141,15 +141,15 @@ class JsonTransformer {
     static Object parseSource(Object json) {
         log.debug("parseSource()")
         
-        json.package.packageHeader.source = json.package.packageHeader.source.v
+        json.pkg.packageHeader.source = json.pkg.packageHeader.source.v
         
         def source = [:]
-        json.package.packageHeader.source.eachWithIndex{ src, i ->
+        json.pkg.packageHeader.source.eachWithIndex{ src, i ->
             if(src.value.v instanceof java.lang.String && src.value.v.trim().size() > 0) {
                 source << ["${src.key}" : src.value.v]
             }
         }
-        json.package.packageHeader.source = source
+        json.pkg.packageHeader.source = source
         
         json
     }
@@ -157,8 +157,8 @@ class JsonTransformer {
     static Object parseVariantNames(Object json) {
         log.debug("parseVariantNames()")
         
-        json.package.packageHeader.variantNames.eachWithIndex{ vn, i ->
-            json.package.packageHeader.variantNames[i] = vn.v
+        json.pkg.packageHeader.variantNames.eachWithIndex{ vn, i ->
+            json.pkg.packageHeader.variantNames[i] = vn.v
         }
         
         json
@@ -167,7 +167,7 @@ class JsonTransformer {
     static Object parseTipps(Object json, boolean useValidator) {
         log.debug("parseTipps()")
         
-        json.package.tipps.each{ tipp ->
+        json.pkg.tipps.each{ tipp ->
             tipp.each{ attr ->
                 // ignore _meta
                 if(attr.key != '_meta'){ 
@@ -187,7 +187,7 @@ class JsonTransformer {
             }
         }
         
-        json.package.tipps.each{ tipp ->
+        json.pkg.tipps.each{ tipp ->
             tipp.platform   = tipp.platform.v
             tipp.title      = tipp.title.v           
             tipp.title.type = tipp.title.type.v
@@ -201,14 +201,14 @@ class JsonTransformer {
             tipp.title.name = value
         }
         
-        json.package.tipps.eachWithIndex{ tipp, i ->
+        json.pkg.tipps.eachWithIndex{ tipp, i ->
             def platform = [:]
             tipp.platform.each{ pf ->
                 if(pf.value.v instanceof java.lang.String) {
                     platform << ["${pf.key}" : pf.value.v]
                 }
             }
-            json.package.tipps[i].platform = platform
+            json.pkg.tipps[i].platform = platform
         }      
         
         json
@@ -217,7 +217,7 @@ class JsonTransformer {
     static Object parseTippCoverage(Object json, boolean useValidator) {
         log.debug("parseTippCoverage()")
         
-        json.package.tipps.each{ tipp ->
+        json.pkg.tipps.each{ tipp ->
             tipp.coverage.eachWithIndex{ cover, i ->
                 def coverage = [:]
                 
@@ -262,7 +262,7 @@ class JsonTransformer {
     static Object parseTippTitleIdentifiers(Object json, boolean useValidator) {
          log.debug("parseTippTitleIdentifiers()")
         
-         json.package.tipps.each{ tipp ->
+         json.pkg.tipps.each{ tipp ->
              def validIdentifiers = []
              tipp.title.identifiers.each{ ident ->
                  
@@ -496,7 +496,7 @@ class JsonTransformer {
         if(useValidator){
             
             def tipps = []
-            json.package.tipps.each{ tipp ->
+            json.pkg.tipps.each{ tipp ->
                 if(tipp.title.identifiers.size() == 0 || tipp.title.name == "") {
                     log.info("removeEmpty(): tipp removed from json")
                 }
@@ -504,7 +504,7 @@ class JsonTransformer {
                     tipps << tipp
                 }
             }
-            json.package.tipps = tipps
+            json.pkg.tipps = tipps
         }
             
         // remove titles without name and identifier

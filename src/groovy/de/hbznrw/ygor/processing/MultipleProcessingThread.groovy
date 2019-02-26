@@ -170,7 +170,7 @@ class MultipleProcessingThread extends Thread {
     }
 
     private void extractTipps() {
-        def platform = enrichment.dataContainer.pkg.packageHeader.nominalPlatform
+        def platform = enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform
         for (Record record : enrichment.dataContainer.records) {
             def tipp = DataMapper.getTippFromRecord(record, platform)
             enrichment.dataContainer.tipps.put(record.uid, tipp)

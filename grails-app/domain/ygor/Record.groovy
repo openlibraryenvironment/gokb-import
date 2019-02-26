@@ -66,7 +66,7 @@ class Record {
     }
 
     void validate(){
-        multiFields.forEach(k, v --> v.validate())
+        multiFields.each{k,v -> v.validate()}
     }
 
     JsonBuilder toJson(){

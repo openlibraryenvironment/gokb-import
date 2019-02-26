@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.export
 
 import de.hbznrw.ygor.connectors.KbartConnector
+import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
 import de.hbznrw.ygor.export.structure.PackageStruct
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.export.structure.Tipp
@@ -51,7 +52,7 @@ class DataMapper {
         id
     }
 
-    static Tipp getTippFromRecord(Record record, TippPlatform platform){
+    static Tipp getTippFromRecord(Record record, PackageHeaderNominalPlatform platform){
         TippTitle innerTitle = new TippTitle()
         innerTitle.name = new Pod(record.getMultiField("publicationTitle")?.getPrioValue())
         innerTitle.identifiers << getIdentifierFromRecord(record, "zdbId", "zdb")
@@ -60,7 +61,7 @@ class DataMapper {
         innerTitle.identifiers << getIdentifierFromRecord(record, "pissn", "issn")
 
         TippCoverage coverage = new TippCoverage()
-        coverage.coverageNote  = new Pod(record.getMultiField('coverageNote').getPrioValue())
+        coverage.coverageNote  = new Pod(record.getMultiField('notes').getPrioValue())
         coverage.embargo       = new Pod(record.getMultiField('embargoInfo').getPrioValue())
         coverage.endDate       = new Pod("")
         coverage.endIssue      = new Pod("")
