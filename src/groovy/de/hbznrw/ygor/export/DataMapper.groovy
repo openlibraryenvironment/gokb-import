@@ -14,6 +14,7 @@ import de.hbznrw.ygor.processing.Envelope
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.tools.DateToolkit
+import grails.converters.JSON
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.tools.*
 import ygor.Record
@@ -72,11 +73,11 @@ class DataMapper {
 
         Tipp result = new Tipp()
         result.title = innerTitle
-        result.platform = platform
-        result.accessStartDate = new Pod(record.getMultiField("accessStartDate")?.getPrioValue())
-        result.accessEndDate = new Pod(record.getMultiField("accessEndDate")?.getPrioValue())
-        result.url = new Pod(record.getMultiField("titleUrl")?.getPrioValue())
-        result.coverage << coverage
+        result.platform = TippPlatform.fromPackageHeaderNominalPlatform(platform)
+        result.accessStartDate = record.getMultiField("accessStartDate")?.getPrioValue()
+        result.accessEndDate = record.getMultiField("accessEndDate")?.getPrioValue()
+        result.url = record.getMultiField("titleUrl")?.getPrioValue()
+        result.coverage = coverage
         result
     }
 

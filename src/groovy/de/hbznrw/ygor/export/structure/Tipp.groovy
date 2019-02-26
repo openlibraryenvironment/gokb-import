@@ -1,20 +1,17 @@
 package de.hbznrw.ygor.export.structure
 
-import de.hbznrw.ygor.enums.Status
-
 class Tipp {
     
     def _meta       = [:]
     
-    Pod accessEndDate   = new Pod("")
-    Pod accessStartDate = new Pod("")
+    String accessEndDate    = ""
+    String accessStartDate  = ""
     
-    Pod medium      = new Pod(FixedValues.tipp_medium, Status.HARDCODED)
-    Pod status      = new Pod(FixedValues.tipp_status, Status.HARDCODED)  
-    Pod url         = new Pod("")
+    String medium           = FixedValues.tipp_medium
+    String status           = FixedValues.tipp_status
+    String url              = ""
     
-    Pod title       = new Pod(PackageStruct.getNewTippTitle())
-    Pod platform    = new Pod(PackageStruct.getNewTippPlatform())
-    
-    def coverage    = []
+    TippTitle title         = PackageStruct.getNewTippTitle()
+    TippPlatform platform   = PackageStruct.getNewTippPlatform()
+    TippCoverage coverage   = PackageStruct.getNewTippCoverage()
 }
