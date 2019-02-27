@@ -49,7 +49,7 @@ class DnbSruPicaConnector extends AbstractConnector {
             // in case we have more than 1 hit, we repeat the query, trying to reduce the hits to 1
             // by specifying the query with the title name
             if (picaRecords?.size() > 1){
-                q = q + "%20and%20dnb.tit%3D${java.net.URLEncoder.encode(publicationTitle)}"
+                q = q + "%20and%20dnb.tst%3D${java.net.URLEncoder.encode(publicationTitle)}"
                 log.info("Found more than 1 hit. Trying to reduce to 1...\npolling(): " + q)
                 picaRecords = setPicaRecords(q)
             }
