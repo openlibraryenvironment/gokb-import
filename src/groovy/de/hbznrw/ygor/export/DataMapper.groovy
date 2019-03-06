@@ -191,6 +191,9 @@ class DataMapper {
         else if(query == Query.KBART_MONOGRAPH_EDITION) {
             DataSetter.setString(title.monographEdition, env.message)
         }
+        else if(query == Query.KBART_MONOGRAPH_VOLUME) {
+            DataSetter.setString(title.volumeNumber, env.message)
+        }
         else if(query == Query.KBART_FIRST_EDITOR) {
             DataSetter.setString(title.firstEditor, env.message)
         }

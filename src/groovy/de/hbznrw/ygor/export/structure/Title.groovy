@@ -27,6 +27,7 @@ class Title {
     Pod editStatus       = new Pod(FixedValues.title_editStatus, Status.HARDCODED)
 
     Pod monographEdition = new Pod("")
+    Pod volumeNumber     = new Pod("")
     Pod firstEditor      = new Pod("")
     Pod firstAutor       = new Pod("")
     Pod dateMonographPublishedPrint      = new Pod("")

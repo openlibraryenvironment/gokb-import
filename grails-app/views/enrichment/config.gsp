@@ -322,6 +322,14 @@
 					monograph_edition
 				</td>
 			</tr>
+			<tr>
+				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
+				<td>title.monograph_volume</td>
+				<td></td>
+				<td>
+					monograph_volume
+				</td>
+			</tr>
 
 			</tbody>
 		</table>
