@@ -29,7 +29,7 @@ class Title {
     Pod monographEdition = new Pod("")
     Pod volumeNumber     = new Pod("")
     Pod firstEditor      = new Pod("")
-    Pod firstAutor       = new Pod("")
+    Pod firstAuthor      = new Pod("")
     Pod dateMonographPublishedPrint      = new Pod("")
     Pod dateMonographPublishedOnline      = new Pod("")
 

@@ -9,7 +9,6 @@ import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.processing.Envelope
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.bridges.*
-import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.tools.*
 
@@ -198,7 +197,7 @@ class DataMapper {
             DataSetter.setString(title.firstEditor, env.message)
         }
         else if(query == Query.KBART_FIRST_AUTHOR) {
-            DataSetter.setString(title.firstAutor, env.message)
+            DataSetter.setString(title.firstAuthor, env.message)
         }
     }
     
