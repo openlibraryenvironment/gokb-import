@@ -5,6 +5,8 @@ import org.apache.commons.csv.CSVFormat
 import de.hbznrw.ygor.export.DataContainer
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import org.apache.commons.lang.ClassUtils
+import com.fasterxml.*
 
 public class JsonToolkit {
 
@@ -41,13 +43,52 @@ public class JsonToolkit {
         
         def writer      = new StringWriter()
         def jsonBuilder = new groovy.json.StreamingJsonBuilder(writer)
-     
+
+        // dc.titles = removeMetaClass(dc.titles)
+
+        ObjectMapper mapper = new ObjectMapper()
+        /* String jsonString = mapper.writeValueAsString(dc.titles)
+        JsonOutput.prettyPrint(jsonString) */
+
         jsonBuilder {
-            'meta'    dc.info
-            'package' dc.pkg
+            // 'meta'    dc.info
+            // 'package' dc.pkg
             'titles'  dc.titles
         }
         
         JsonOutput.prettyPrint(writer.toString())
+    }
+
+    private static def removeMetaClass(def dataStructure){
+        System.out.println(dataStructure?.class)
+        if (dataStructure instanceof Map){
+            dataStructure.each { key, value ->
+                removeMetaClass(value)
+            }
+        }
+        else if (dataStructure instanceof Collection) {
+            dataStructure.each { item ->
+                removeMetaClass(item)
+            }
+        }
+        else if (dataStructure.getClass().isArray()) {
+            dataStructure.each { item ->
+                removeMetaClass(item)
+            }
+        }
+        else {
+            def iter = dataStructure.properties.iterator()
+            while (iter.hasNext()) {
+                def entry = iter.next()
+                if (entry.key in ["metaClass", "class"]) {
+                    dataStructure.properties.remove(entry.key)
+                } else {
+                    if (entry.value) {
+                        System.out.println(entry.value)
+                        removeMetaClass(entry.value)
+                    }
+                }
+            }
+        }
     }
 }
