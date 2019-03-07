@@ -182,10 +182,10 @@ class DataMapper {
             }
         }
         else if(query == Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT) {
-            DataSetter.setDate(title.dateMonographPublishedPrint, Normalizer.IS_START_DATE, env.message)
+            DataSetter.setDate(title.dateFirstInPrint, Normalizer.IS_START_DATE, env.message)
         }
         else if(query == Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE) {
-            DataSetter.setDate(title.dateMonographPublishedOnline, Normalizer.IS_START_DATE, env.message)
+            DataSetter.setDate(title.dateFirstOnline, Normalizer.IS_START_DATE, env.message)
         }
         else if(query == Query.KBART_MONOGRAPH_EDITION) {
             DataSetter.setString(title.monographEdition, env.message)

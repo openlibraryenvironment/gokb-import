@@ -33,7 +33,7 @@ class Title {
     Pod volumeNumber     = new Pod("")
     Pod firstEditor      = new Pod("")
     Pod firstAuthor      = new Pod("")
-    Pod dateMonographPublishedPrint      = new Pod("")
-    Pod dateMonographPublishedOnline      = new Pod("")
+    Pod dateFirstInPrint = new Pod("")
+    Pod dateFirstOnline  = new Pod("")
 
 }

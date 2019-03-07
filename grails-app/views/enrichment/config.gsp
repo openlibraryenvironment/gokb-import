@@ -300,7 +300,7 @@
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.dateMonographPublishedPrint</td>
+				<td>title.dateFirstInPrint</td>
 				<td></td>
 				<td>
 					date_monograph_published_print
@@ -308,7 +308,7 @@
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.dateMonographPublishedOnline</td>
+				<td>title.dateFirstOnline</td>
 				<td></td>
 				<td>
 					date_monograph_published_online
