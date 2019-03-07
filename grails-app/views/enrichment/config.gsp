@@ -316,7 +316,7 @@
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.monographEdition</td>
+				<td>title.monographEdition<br>title.editionNumber<br>title.editionDifferentiator<br>title.editionStatement</td>
 				<td></td>
 				<td>
 					monograph_edition
