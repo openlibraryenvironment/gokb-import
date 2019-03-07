@@ -288,19 +288,19 @@
 
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.first_author</td>
+				<td>title.firstAuthor</td>
 				<td></td>
 				<td>first_author</td>
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.first_editor </td>
+				<td>title.firstEditor </td>
 				<td></td>
 				<td>first_editor </td>
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.date_monograph_published_print</td>
+				<td>title.dateMonographPublishedPrint</td>
 				<td></td>
 				<td>
 					date_monograph_published_print
@@ -308,7 +308,7 @@
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.date_monograph_published_online</td>
+				<td>title.dateMonographPublishedOnline</td>
 				<td></td>
 				<td>
 					date_monograph_published_online
@@ -316,7 +316,7 @@
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.monograph_edition</td>
+				<td>title.monographEdition</td>
 				<td></td>
 				<td>
 					monograph_edition
@@ -324,7 +324,7 @@
 			</tr>
 			<tr>
 				<td>KBART <em>, <g:message code="config.table.file" /></em></td>
-				<td>title.monograph_volume</td>
+				<td>title.monographVolume</td>
 				<td></td>
 				<td>
 					monograph_volume
