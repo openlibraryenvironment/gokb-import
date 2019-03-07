@@ -14,7 +14,13 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
     Query[] tasks = [
         Query.KBART_TIPP_URL,
         Query.KBART_TIPP_COVERAGE,
-        Query.KBART_TIPP_ACCESS
+        Query.KBART_TIPP_ACCESS,
+        Query.KBART_MONOGRAPH_VOLUME,
+        Query.KBART_MONOGRAPH_EDITION,
+        Query.KBART_FIRST_AUTHOR,
+        Query.KBART_FIRST_EDITOR,
+        Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT,
+        Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE
     ]
 
 	KbartBridge(Thread master, HashMap options) {
