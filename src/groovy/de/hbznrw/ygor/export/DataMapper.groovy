@@ -9,7 +9,6 @@ import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.processing.Envelope
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.bridges.*
-import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.tools.*
 
@@ -183,19 +182,25 @@ class DataMapper {
             }
         }
         else if(query == Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT) {
-            DataSetter.setDate(title.dateMonographPublishedPrint, Normalizer.IS_START_DATE, env.message)
+            DataSetter.setDate(title.dateFirstInPrint, Normalizer.IS_START_DATE, env.message)
         }
         else if(query == Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE) {
-            DataSetter.setDate(title.dateMonographPublishedOnline, Normalizer.IS_START_DATE, env.message)
+            DataSetter.setDate(title.dateFirstOnline, Normalizer.IS_START_DATE, env.message)
         }
         else if(query == Query.KBART_MONOGRAPH_EDITION) {
             DataSetter.setString(title.monographEdition, env.message)
+            DataSetter.setString(title.editionStatement, env.message)
+            DataSetter.setString(title.editionNumber, env.message)
+            DataSetter.setString(title.editionDifferentiator, env.message)
+        }
+        else if(query == Query.KBART_MONOGRAPH_VOLUME) {
+            DataSetter.setString(title.volumeNumber, env.message)
         }
         else if(query == Query.KBART_FIRST_EDITOR) {
             DataSetter.setString(title.firstEditor, env.message)
         }
         else if(query == Query.KBART_FIRST_AUTHOR) {
-            DataSetter.setString(title.firstAutor, env.message)
+            DataSetter.setString(title.firstAuthor, env.message)
         }
     }
     

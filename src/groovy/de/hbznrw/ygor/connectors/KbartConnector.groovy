@@ -131,6 +131,9 @@ class KbartConnector extends AbstractConnector {
             case Query.KBART_MONOGRAPH_EDITION:
                 return getMonographEdition()
                 break
+            case Query.KBART_MONOGRAPH_VOLUME:
+                return getMonographVolume()
+                break
             case Query.KBART_FIRST_AUTHOR:
                 return getFirstAuthor()
                 break
@@ -176,6 +179,12 @@ class KbartConnector extends AbstractConnector {
     private Envelope getMonographEdition () {
         def result = []
         result << getValue("monograph_edition")
+
+        getEnvelopeWithMessage(result)
+    }
+    private Envelope getMonographVolume () {
+        def result = []
+        result << getValue("monograph_volume")
 
         getEnvelopeWithMessage(result)
     }
