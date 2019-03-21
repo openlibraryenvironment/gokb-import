@@ -9,14 +9,14 @@ class EnrichmentController {
     EnrichmentService enrichmentService
     GokbService gokbService
 
+
     def index = { 
         redirect(action:'process')   
     }
-    
+
+
     def process = {
-
         def gokb_ns = gokbService.getNamespaces()
-
         render(
             view:'process',
             model:[
@@ -24,61 +24,67 @@ class EnrichmentController {
                 gokbService:     gokbService,
                 namespaces:      gokb_ns,
                 currentView:    'process'
-                ]
-            )
+            ]
+        )
     }
-    
+
+
     def json = {
         render(
             view:'json',
             model:[
                 enrichments: enrichmentService.getSessionEnrichments(), 
                 currentView: 'json'
-                ]
-            )
+            ]
+        )
     }
-    
+
+
     def howto = {
         render(
             view:'howto',
             model:[currentView:'howto']
-            )
+        )
     }
+
 
     def about = {
         render(
             view:'about',
             model:[currentView:'about']
-            )
+        )
     }
+
 
     def config = {
         render(
             view:'config',
             model:[currentView:'config']
-            )
+        )
     }
-    
+
+
     def contact = {
         render(
             view:'contact',
             model:[currentView:'contact']
-            )
+        )
     }
-    
+
+
     def uploadFile = {
-        def file        = request.getFile('uploadFile')
+        def file = request.getFile('uploadFile')
         if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
-            request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename){
+            request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename) {
             // the file form is unpopulated but the previously selected file in unchanged
             file = request.session.lastUpdate.file
         }
         def foDelimiter = request.parameterMap['formatDelimiter'][0]
-        def foQuote     = null // = request.parameterMap['formatQuote'][0]
+        def foQuote = null // = request.parameterMap['formatQuote'][0]
         def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
-        def dataTyp     = request.parameterMap['dataTyp'][0]
+        def dataTyp = request.parameterMap['dataTyp'][0]
 
-        if (!request.session.lastUpdate){
+        if (!request.session.lastUpdate) {
             request.session.lastUpdate = [:]
         }
         request.session.lastUpdate.file = file
@@ -88,73 +94,79 @@ class EnrichmentController {
         request.session.lastUpdate.dataTyp = dataTyp
 
         if (file.empty) {
-            flash.info    = null
+            flash.info = null
             flash.warning = null
-            flash.error   = message(code:'error.noValidFile')
-            render(view:'process', 
-                model:[
-                    enrichments: enrichmentService.getSessionEnrichments(),
-                    currentView: 'process'
-                ]
+            flash.error = message(code: 'error.noValidFile')
+            render(view: 'process',
+                    model: [
+                            enrichments: enrichmentService.getSessionEnrichments(),
+                            currentView: 'process'
+                    ]
             )
             return
         }
         enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
-        redirect(action:'process')
+        redirect(action: 'process')
     }
+
 
     def prepareFile = {
         enrichmentService.prepareFile(getCurrentEnrichment(), request.parameterMap)
         request.session.lastUpdate.parameterMap = request.parameterMap
         redirect(action:'process')
     }
-    
-    def processFile = {
-        def pmOptions   = request.parameterMap['processOption']
-        if(!pmOptions) {
-            flash.info    = null
-            flash.warning = message(code:'warning.noEnrichmentOption')
-            flash.error   = null
-        }
-        else {
-            if (!request.session.lastUpdate){
-                request.session.lastUpdate = [:]
-            }
-            request.session.lastUpdate.pmOptions = pmOptions
-            def en = getCurrentEnrichment()
-            if(en.status != Enrichment.ProcessingState.WORKING) {
-                flash.info    = message(code:'info.started')
-                flash.warning = null
-                flash.error   = null
 
-                def format = getCurrentFormat()
-                def options = [
-                    'options':      pmOptions,
-                    'delimiter':    format.get('delimiter'),
-                    'quote':        format.get('quote'),
-                    'quoteMode':    format.get('quoteMode'),
-                    'dataTyp':      format.get('dataTyp'),
-                    'ygorVersion':  grailsApplication.config.ygor.version,
-                    'ygorType':     grailsApplication.config.ygor.type
-                ]
-                en.process(options)
+
+    def processFile = {
+        def pmOptions = request.parameterMap['processOption']
+        if (getCurrentEnrichment().status != Enrichment.ProcessingState.WORKING) {
+            if (!pmOptions) {
+                flash.info = null
+                flash.warning = message(code: 'warning.noEnrichmentOption')
+                flash.error = null
+            }
+            else {
+                if (!request.session.lastUpdate) {
+                    request.session.lastUpdate = [:]
+                }
+                request.session.lastUpdate.pmOptions = pmOptions
+                def en = getCurrentEnrichment()
+                if (en.status != Enrichment.ProcessingState.WORKING) {
+                    flash.info = message(code: 'info.started')
+                    flash.warning = null
+                    flash.error = null
+
+                    def format = getCurrentFormat()
+                    def options = [
+                            'options'    : pmOptions,
+                            'delimiter'  : format.get('delimiter'),
+                            'quote'      : format.get('quote'),
+                            'quoteMode'  : format.get('quoteMode'),
+                            'dataTyp'    : format.get('dataTyp'),
+                            'ygorVersion': grailsApplication.config.ygor.version,
+                            'ygorType'   : grailsApplication.config.ygor.type
+                    ]
+                    en.process(options)
+                }
             }
         }
         render(
-            view:'process',
-            model:[
-                enrichments: enrichmentService.getSessionEnrichments(), 
+            view: 'process',
+            model: [
+                enrichments: enrichmentService.getSessionEnrichments(),
                 currentView: 'process',
-                pOptions:    pmOptions,
+                pOptions   : pmOptions,
             ]
         )
     }
-    
+
+
     def stopProcessingFile = {
         enrichmentService.stopProcessing(getCurrentEnrichment())
         deleteFile()
     }
-    
+
+
     def deleteFile = {
         request.session.lastUpdate = [:]
         enrichmentService.deleteFileAndFormat(getCurrentEnrichment())    
@@ -167,16 +179,18 @@ class EnrichmentController {
         )
     }
 
+
     def correctFile = {
         enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
         render(
             view:'process',
             model:[
-                    enrichments: enrichmentService.getSessionEnrichments(),
-                    currentView: 'process'
+                enrichments: enrichmentService.getSessionEnrichments(),
+                currentView: 'process'
             ]
         )
     }
+
 
     def downloadPackageFile = {
         def en = getCurrentEnrichment()
@@ -188,7 +202,8 @@ class EnrichmentController {
             noValidEnrichment()
         }
     }
-    
+
+
     def downloadTitlesFile = {
         def en = getCurrentEnrichment()
         if(en){
@@ -199,7 +214,8 @@ class EnrichmentController {
             noValidEnrichment()
         }
     }
-    
+
+
     def downloadDebugFile = {
         def en = getCurrentEnrichment()
         if(en){
@@ -210,7 +226,8 @@ class EnrichmentController {
             noValidEnrichment()
         }
     }
-    
+
+
     def downloadRawFile = {
         def en = getCurrentEnrichment()
         if(en){
@@ -221,7 +238,8 @@ class EnrichmentController {
             noValidEnrichment()
         }
     }
-    
+
+
     def sendPackageFile = {
         def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
                 params.gokbUsername, params.gokbPassword)
@@ -261,25 +279,24 @@ class EnrichmentController {
 
 
     Enrichment getCurrentEnrichment() {
-
         def hash = (String) request.parameterMap['originHash'][0]
         enrichmentService.getSessionEnrichments().get("${hash}")
     }
-    
+
+
     HashMap getCurrentFormat() {
-        
         def hash = (String) request.parameterMap['originHash'][0]
         enrichmentService.getSessionFormats().get("${hash}")
     }
-    
+
+
     void noValidEnrichment() {
-        
         flash.info    = null
         flash.warning = message(code:'warning.fileNotFound')
         flash.error   = null
-        
         redirect(action:'process')
     }
+
 
     // get Platform suggestions for typeahead
     def suggestPlatform = {
@@ -287,9 +304,9 @@ class EnrichmentController {
       def result = [:]
       def platforms = gokbService.getPlatformMap(params.q)
       result.items = platforms.records
-
       render result as JSON
     }
+
 
     // get Org suggestions for typeahead
     def suggestProvider = {
@@ -297,16 +314,14 @@ class EnrichmentController {
       def result = [:]
       def providers = gokbService.getProviderMap(params.q)
       result.items = providers.records
-
       render result as JSON
     }
+
 
     def gokbNameSpaces = {
       log.debug("Getting namespaces of connected GOKb instance..")
       def result = [:]
-
       result.items = gokbService.getNamespaces()
-
       render result as JSON
     }
 }
