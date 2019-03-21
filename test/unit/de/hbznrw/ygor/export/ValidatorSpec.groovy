@@ -81,7 +81,7 @@ class ValidatorSpec extends Specification {
             println "${raw1}, ${raw2} -> ${result}"
         
         then:
-            Validator.isValidIdentifier(raw1, raw2) == result
+            Validator.isValidIdentifier(raw1, raw2, DataMapper.IdentifierNameSpaces[0]) == result
         
         where:
             raw1            | raw2              | result
