@@ -1,14 +1,14 @@
-package de.hbznrw.ygor.tools;
+package de.hbznrw.ygor.tools
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
 import de.hbznrw.ygor.export.DataContainer
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import org.apache.commons.lang.ClassUtils
-import com.fasterxml.*
+import com.fasterxml.jackson.core.*
 
-public class JsonToolkit {
+class JsonToolkit {
 
     static String parseCsvToJson(File file) {
         
@@ -47,8 +47,8 @@ public class JsonToolkit {
         // dc.titles = removeMetaClass(dc.titles)
 
         ObjectMapper mapper = new ObjectMapper()
-        /* String jsonString = mapper.writeValueAsString(dc.titles)
-        JsonOutput.prettyPrint(jsonString) */
+        String jsonString = mapper.writeValueAsString(dc.titles)
+        JsonOutput.prettyPrint(jsonString)
 
         jsonBuilder {
             // 'meta'    dc.info
