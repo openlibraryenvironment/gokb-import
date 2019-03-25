@@ -24,9 +24,10 @@
 					
 			</div>
     	</div><!-- /.container -->
-    	
+
+		<!-- TODO: Vielleicht rausnehmen?-->
     	<script>
-			$('#ygor-messages .alert').fadeOut(60000)
+			$('#ygor-messages .alert').fadeOut(600000)
     	</script>
 	</body>
 </html>

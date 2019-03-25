@@ -79,13 +79,13 @@ class Normalizer {
      * @param list
      * @return
      */
-    static String normString(ArrayList list) {
+    static String normString(List list) {
         if(null == list)
             return null
         
         def result = []
         list.each{ e ->
-            result << Normalizer.normString(e.toString())
+            result << normString(e.toString())
         }
         result.join("|")
     }
@@ -102,7 +102,7 @@ class Normalizer {
         if(!str)
             return str
             
-        str = Normalizer.normString(str)
+        str = normString(str)
 
         if(!type.equals(TitleStruct.DOI) && !type.equals(TitleStruct.EISBN)) {
             str = str.replaceAll(/[\/-]+/, "")
@@ -148,7 +148,7 @@ class Normalizer {
      * @param list
      * @return
      */
-    static String normIdentifier(ArrayList list, Object type, String namespace) {
+    static String normIdentifier(List list, Object type, String namespace) {
         if(null == list)
             return null
             
@@ -180,7 +180,7 @@ class Normalizer {
      * @param type
      * @return
      */
-    static String normInteger(ArrayList list, Object type) {
+    static String normInteger(List list, Object type) {
         if(null == list)
             return null
 
@@ -214,12 +214,12 @@ class Normalizer {
             }
             else if(dateType.equals(Normalizer.IS_END_DATE)){
                 if(tmp.size() > 1){
-                    str = tmp[0]
+                    str = tmp[1]
                 }
             }  
         }
         
-        def strList = Normalizer.parseDate(str, dateType)
+        def strList = parseDate(str, dateType)
         
         if(4 == strList[0].size()) {
             str = strList[0]
@@ -267,13 +267,13 @@ class Normalizer {
      * @param dateType DataMapper.IS_START_DATE|DataMapper.IS_END_DATE
      * @return
      */
-    static String normDate(ArrayList list, Object dateType) {
+    static String normDate(List list, Object dateType) {
         if(null == list)
             return null
             
         def result = []
         list.each{ e ->
-            result << Normalizer.normDate(e, dateType)
+            result << normDate(e, dateType)
         }
         result.join("|")
     }
@@ -368,7 +368,7 @@ class Normalizer {
      * @param list
      * @return
      */
-    static String normURL(ArrayList list, boolean onlyAuthority) {
+    static String normURL(List list, boolean onlyAuthority) {
         if(null == list)
             return null
             

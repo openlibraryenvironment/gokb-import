@@ -14,7 +14,13 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
     Query[] tasks = [
         Query.KBART_TIPP_URL,
         Query.KBART_TIPP_COVERAGE,
-        Query.KBART_TIPP_ACCESS
+        Query.KBART_TIPP_ACCESS,
+        Query.KBART_MONOGRAPH_VOLUME,
+        Query.KBART_MONOGRAPH_EDITION,
+        Query.KBART_FIRST_AUTHOR,
+        Query.KBART_FIRST_EDITOR,
+        Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT,
+        Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE
     ]
 
 	KbartBridge(Thread master, HashMap options) {
@@ -31,6 +37,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
             this.connector.kbartKeys.add('date_monograph_published_print')
             this.connector.kbartKeys.add('date_monograph_published_online')
             this.connector.kbartKeys.add('monograph_edition')
+            this.connector.kbartKeys.add('monograph_volume')
             this.connector.kbartKeys.add('first_editor')
             this.connector.kbartKeys.add('first_author')
 
@@ -42,6 +49,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
             this.tasks = this.tasks.plus(Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT)
             this.tasks = this.tasks.plus(Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE)
             this.tasks = this.tasks.plus(Query.KBART_MONOGRAPH_EDITION)
+            this.tasks = this.tasks.plus(Query.KBART_MONOGRAPH_VOLUME)
             this.tasks = this.tasks.plus(Query.KBART_FIRST_EDITOR)
             this.tasks = this.tasks.plus(Query.KBART_FIRST_AUTHOR)
         }

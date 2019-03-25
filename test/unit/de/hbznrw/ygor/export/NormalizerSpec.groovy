@@ -87,7 +87,7 @@ class NormalizerSpec extends Specification {
             ["a", "b", "c", "d"]                    | "a|b|c|d"
             ["x"]                                   | "x"
             []                                      | ""
-            null                                    | null
+            ((String)null)                          | null
             ""                                      | ""
     }
        
@@ -97,7 +97,7 @@ class NormalizerSpec extends Specification {
             println "${raw[0]}, ${raw[1]} -> ${result}"
         
         then:
-            Normalizer.normIdentifier(raw[0], raw[1]) == result
+            Normalizer.normIdentifier(raw[0], raw[1], DataMapper.IdentifierNameSpaces[0]) == result
         
         where:
             raw                                 | result
@@ -110,7 +110,7 @@ class NormalizerSpec extends Specification {
             ["1234-567X", ZdbBridge.IDENTIFIER] | "1234567-X"
             ["12345", ZdbBridge.IDENTIFIER]     | "1234-5"
             [null, null]                        | null
-            ["", ""]                                | ""
+            ["", ""]                            | ""
             
             // TODO: not implemented DataNormalizer.normIdentifier(", EzbBridge.IDENTIFIER) 
     }
@@ -127,8 +127,8 @@ class NormalizerSpec extends Specification {
             println "${list1} -> ${result1}"
             println "${list2} -> ${result2}"
             
-            Normalizer.normIdentifier(list1, TitleStruct.EISSN) == result1
-            Normalizer.normIdentifier(list2, TitleStruct.PISSN) == result2
+            Normalizer.normIdentifier(list1, TitleStruct.EISSN, DataMapper.IdentifierNameSpaces[0]) == result1
+            Normalizer.normIdentifier(list2, TitleStruct.PISSN, DataMapper.IdentifierNameSpaces[0]) == result2
     }   
     
     void "normDate(String str, Object dateType)"() {
