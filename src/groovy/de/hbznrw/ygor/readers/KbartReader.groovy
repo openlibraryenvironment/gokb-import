@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.readers
 
+import de.hbznrw.ygor.processing.KbartProcessor
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.processing.YgorProcessingException
 import org.apache.commons.csv.CSVFormat
@@ -9,13 +10,13 @@ import org.apache.commons.csv.QuoteMode
 import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 
-import java.nio.file.Paths
+import java.nio.charset.Charset
 
 class KbartReader extends AbstractReader{
 
     private MultipleProcessingThread owner
 
-    private CSVFormat csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines()
+    private CSVFormat csvFormat
     private CSVParser csv
     private List<String> csvHeader
     private Iterator<CSVRecord> iterator
@@ -39,13 +40,12 @@ class KbartReader extends AbstractReader{
         'zdb_id' : ['zdb-id', 'ZDB_ID', 'ZDB-ID']
     ]
 
-    KbartReader(MultipleProcessingThread owner) {
+    KbartReader(MultipleProcessingThread owner, String delimiter) {
         this.owner = owner
-        Paths.get(owner.kbartFile).withReader { reader ->
-            csv = getCSVParserFromReader(reader)
-        }
-        csvHeader = new ArrayList<>()
-        csvHeader = splitLine(csv.getHeaderMap().keySet().getAt(0))
+        char delimiterChar = KbartProcessor.resolver.get(delimiter)
+        csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar)
+        csv = CSVParser.parse(new File(owner.kbartFile), Charset.defaultCharset(), csvFormat)
+        csvHeader = csv.getHeaderMap().keySet() as ArrayList
         checkHeader(csvHeader)
         iterator = csv.iterator()
     }

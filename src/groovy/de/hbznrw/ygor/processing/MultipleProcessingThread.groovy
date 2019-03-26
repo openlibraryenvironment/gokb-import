@@ -69,7 +69,7 @@ class MultipleProcessingThread extends Thread {
         quoteMode = options.get('quoteMode')
         recordSeparator = options.get('recordSeparator')
         kbartFile = en.originPathName
-        kbartReader = new KbartReader(this)
+        kbartReader = new KbartReader(this, delimiter)
         zdbReader = new ZdbReader()
         ezbReader = new EzbReader()
         mappingsContainer = new MappingsContainer()

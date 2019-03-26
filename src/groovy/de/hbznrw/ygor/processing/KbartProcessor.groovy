@@ -48,18 +48,6 @@ class KbartProcessor extends AbstractProcessor {
     void setConfiguration(String delimiter, String quote, String quoteMode, String recordSeparator) {
         
         // TODO refactoring
-        def resolver = [
-            'comma'         : ',',
-            'semicolon'     : ';',
-            'tab'           : '\t',
-            'doublequote'   : '"',
-            'singlequote'   : "'",
-            'nullquote'     : 'null',
-            'all'           : QuoteMode.ALL,
-            'nonnumeric'    : QuoteMode.NON_NUMERIC,
-            'none'          : QuoteMode.NONE
-            ]
-        
         delimiter = resolver.get(delimiter)
         quote     = resolver.get(quote)
         quoteMode = resolver.get(quoteMode)
@@ -337,5 +325,17 @@ class KbartProcessor extends AbstractProcessor {
     int getCount() {
         count
     }
+
+    static def resolver = [
+        'comma'         : ',',
+        'semicolon'     : ';',
+        'tab'           : '\t',
+        'doublequote'   : '"',
+        'singlequote'   : "'",
+        'nullquote'     : 'null',
+        'all'           : QuoteMode.ALL,
+        'nonnumeric'    : QuoteMode.NON_NUMERIC,
+        'none'          : QuoteMode.NONE
+    ]
 
 }
