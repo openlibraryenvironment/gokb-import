@@ -1,12 +1,12 @@
 package de.hbznrw.ygor.tools
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
 import de.hbznrw.ygor.export.DataContainer
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import com.fasterxml.jackson.core.*
 
 class JsonToolkit {
 
@@ -47,6 +47,7 @@ class JsonToolkit {
         // dc.titles = removeMetaClass(dc.titles)
 
         ObjectMapper mapper = new ObjectMapper()
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         String jsonString = mapper.writeValueAsString(dc.titles)
         JsonOutput.prettyPrint(jsonString)
 
