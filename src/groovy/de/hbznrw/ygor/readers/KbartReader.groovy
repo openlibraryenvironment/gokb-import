@@ -78,14 +78,14 @@ class KbartReader extends AbstractReader{
         if (!item) {
             return null
         }
-        def splitItem = splitLine(item.values()[0])
-        if (splitItem.size() != csvHeader.size()) {
+        def splitItem = item.values()
+        if (splitItem.length != csvHeader.size()) {
             log.info('Crappy record ignored, "size != header size" for: ' + item)
             return null
         }
         Map<String, String> resultMap = new HashMap<>()
         for (int i=0; i<csvHeader.size(); i++) {
-            resultMap.put(csvHeader.get(i), splitItem.get(i))
+            resultMap.put(csvHeader.get(i), splitItem[i])
         }
         lastItemReturned = item
         resultMap
