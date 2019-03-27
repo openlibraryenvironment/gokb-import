@@ -16,8 +16,10 @@ class MappingsContainer {
     final public static String KBART   = "kbart"
     final public static String ZDB     = "zdb"
     final public static String EZB     = "ezb"
+    final public static String PRIO    = "prio"
+    final public static String GOKB    = "gokb"
     final public static String TYPE    = "type"
-    final public static OBLIGATORY_KEYS = [YGOR, KBART, ZDB, EZB]
+    final public static OBLIGATORY_KEYS = [YGOR, KBART, ZDB, EZB, PRIO]
     final public static DEFAULT_SOURCE_PRIO = [ZDB, KBART, EZB]
 
     final private static JsonSlurper SLURPY = new JsonSlurper()
@@ -71,13 +73,13 @@ class MappingsContainer {
             throw new MissingFieldException("Missing YgorFieldKey entry in ".concat(json))
         }
         // other keyMapping are allowed to be empty Strings
-        if (json.kbart == null){
+        if (json.in.kbart == null){
             throw new MissingFieldException("Missing Kbart key entry in ".concat(json))
         }
-        if (json.zdb == null){
+        if (json.in.zdb == null){
             throw new MissingFieldException("Missing ZDB key entry in ".concat(json))
         }
-        if (json.ezb == null){
+        if (json.in.ezb == null){
             throw new MissingFieldException("Missing EZB key entry in ".concat(json))
         }
         new FieldKeyMapping(false, json)
