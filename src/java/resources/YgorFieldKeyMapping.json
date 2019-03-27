@@ -79,7 +79,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.dateFirstOnline"]
     },
     "order" : ["kbart"]
   },
@@ -91,7 +91,19 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.dateFirstInPrint"]
+    },
+    "order" : ["kbart"]
+  },
+  {
+    "ygor" : "doi",
+    "in" : {
+      "kbart" : "doi_identifier",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:doi,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:doi,$VALUE)"]
     },
     "order" : ["kbart"]
   },
@@ -127,7 +139,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.firstAuthor"]
     },
     "order" : ["kbart"]
   },
@@ -139,7 +151,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.firstEditor"]
     },
     "order" : ["kbart"]
   },
@@ -204,7 +216,12 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : [
+        "$TITLE.monographEdition",
+        "$TITLE.editionNumber",
+        "$TITLE.editionDifferentiator",
+        "$TITLE.editionStatement"
+      ]
     },
     "order" : ["kbart"]
   },
@@ -216,7 +233,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.monographVolume"]
     },
     "order" : ["kbart"]
   },
@@ -348,7 +365,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:eissn,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:eissn,$VALUE)"]
     },
     "order" : ["kbart"]
   },
@@ -384,7 +401,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:issn,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:issn,$VALUE)"]
     },
     "order" : ["kbart"]
   },
