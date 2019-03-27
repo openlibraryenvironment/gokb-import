@@ -7,7 +7,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.accessEndDate"]
     },
     "order" : ["kbart"]
   },
@@ -19,7 +19,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.accessStartDate"]
     },
     "order" : ["kbart"]
   },
@@ -31,7 +31,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -43,7 +43,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.coverageDepth"]
     },
     "order" : ["kbart"]
   },
@@ -55,7 +55,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.startDate"]
     },
     "order" : ["kbart"]
   },
@@ -67,7 +67,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.endDate"]
     },
     "order" : ["kbart"]
   },
@@ -79,7 +79,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -91,7 +91,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -103,7 +103,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.embargo"]
     },
     "order" : ["kbart"]
   },
@@ -115,7 +115,7 @@
       "ezb" : "jourid"
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:ezb,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:ezb,$VALUE)"]
     },
     "order" : ["ezb", "kbart"]
   },
@@ -127,7 +127,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -139,7 +139,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -156,7 +156,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["zdb"]
   },
@@ -168,7 +168,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -180,7 +180,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -192,7 +192,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -204,7 +204,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -216,7 +216,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -228,7 +228,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.coverageNote"]
     },
     "order" : ["kbart"]
   },
@@ -240,7 +240,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.startIssue"]
     },
     "order" : ["kbart"]
   },
@@ -252,7 +252,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.startVolume"]
     },
     "order" : ["kbart"]
   },
@@ -264,7 +264,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.endIssue"]
     },
     "order" : ["kbart"]
   },
@@ -276,7 +276,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.coverage.$COUNT.endVolume"]
     },
     "order" : ["kbart"]
   },
@@ -288,7 +288,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -300,7 +300,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -312,7 +312,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -324,7 +324,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -336,7 +336,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -348,7 +348,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -360,7 +360,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -372,7 +372,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -384,7 +384,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -408,7 +408,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TITLE.type", "$TIPP.title.type"]
     },
     "order" : ["kbart"]
   },
@@ -420,7 +420,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["zdb"]
   },
@@ -432,7 +432,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["zdb"]
   },
@@ -447,7 +447,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["zdb"]
   },
@@ -459,7 +459,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -471,7 +471,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : []
     },
     "order" : ["kbart"]
   },
@@ -483,7 +483,7 @@
       "ezb" : "detail_link"
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TIPP.url"]
     },
     "order" : ["ezb","kbart"]
   },
@@ -495,7 +495,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.", "$TIPP."]
+      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:zdb,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:zdb,$VALUE)"]
     },
     "order" : ["kbart"]
   }
