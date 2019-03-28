@@ -9,6 +9,7 @@ class FieldKeyMapping {
     Set zdbKeys
     Set ezbKeys
     String type
+    Set gokb
 
     static constraints = {
         ygorKey   nullable : false
@@ -16,11 +17,13 @@ class FieldKeyMapping {
         zdbKeys   nullable : false
         ezbKeys   nullable : false
         type      nullable : false
+        gokb      nullable : false
     }
 
     static hasMany = [kbartKeys : String,
                       zdbKeys : String,
-                      ezbKeys : String]
+                      ezbKeys : String,
+                      gokb : String]
 
     FieldKeyMapping(){
         // add explicit default constructor
@@ -45,7 +48,7 @@ class FieldKeyMapping {
                     if (mapping.value instanceof Collection<?>) {
                         kbartKeys.addAll(mapping.value)
                     }
-                    else if (!StringUtils.isEmpty(mapping.value)) {
+                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
                         kbartKeys.add(mapping.value)
                     }
                     break
@@ -54,7 +57,7 @@ class FieldKeyMapping {
                     if (mapping.value instanceof Collection<?>) {
                         zdbKeys.addAll(mapping.value)
                     }
-                    else if (!StringUtils.isEmpty(mapping.value)) {
+                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
                         zdbKeys.add(mapping.value)
                     }
                     break
@@ -63,16 +66,26 @@ class FieldKeyMapping {
                     if (mapping.value instanceof Collection<?>) {
                         ezbKeys.addAll(mapping.value)
                     }
-                    else if (!StringUtils.isEmpty(mapping.value)) {
+                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
                         ezbKeys.add(mapping.value)
                     }
                     break
                 case MappingsContainer.TYPE:
                     type = mapping.value
+                    break
+                case MappingsContainer.GOKB:
+                    gokb = new HashSet<>()
+                    if (mapping.value instanceof Collection<?>) {
+                        gokb.addAll(mapping.value)
+                    }
+                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
+                        gokb.add(mapping.value)
+                    }
+                    break
                 case "in":
                     parseMapping(mapping.value)
                     break
-                case "in":
+                case "out":
                     parseMapping(mapping.value)
                     break
             }
