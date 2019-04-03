@@ -60,7 +60,7 @@ class MultiField {
                 return Normalizer.normalize(type, field.value)
             }
         }
-        return null
+        return ""
     }
 
     void validate(){

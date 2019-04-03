@@ -11,6 +11,7 @@ import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
+import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import ygor.Record
@@ -125,6 +126,7 @@ class MultipleProcessingThread extends Thread {
         }
 
         validate()
+
         extractTitles()
         extractTipps()
 
@@ -152,17 +154,16 @@ class MultipleProcessingThread extends Thread {
     }
 
     private void extractTitles() {
-        for (Record record : enrichment.dataContainer.records) {
-            def title = DataMapper.getTitleFromRecord(record)
-            enrichment.dataContainer.titles.put(record.uid, title)
+        def titles = []
+        for (def record in enrichment.dataContainer.records){
+            titles << JsonToolkit.getTitleJsonFromRecord("gokb", record)
         }
     }
 
     private void extractTipps() {
-        def platform = enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform
-        for (Record record : enrichment.dataContainer.records) {
-            def tipp = DataMapper.getTippFromRecord(record, platform)
-            enrichment.dataContainer.tipps.put(record.uid, tipp)
+        def tipps = []
+        for (def record in enrichment.dataContainer.records){
+            tipps << JsonToolkit.getTippJsonFromRecord("gokb", record)
         }
     }
 
