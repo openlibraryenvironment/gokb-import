@@ -22,9 +22,8 @@ class JsonToolkit {
 
     private static ObjectMapper MAPPER = new ObjectMapper()
     private static JsonNodeFactory FACTORY = JsonNodeFactory.instance
-    final private static String ARRAY = "\$COUNT"
-    final private static String TYPE = "\$TYPE"
-    final private static String VALUE = "\$VALUE"
+    final private static String ARRAY = "\$ARRAY"
+    final private static String COUNT = "\$COUNT"
 
 
     static String parseCsvToJson(File file) {
@@ -131,7 +130,7 @@ class JsonToolkit {
                 ArrayList splittedKey = qualifiedKey.split("\\.") as ArrayList
                 if (splittedKey.size() > 1 && splittedKey[0].equals(typeFilter)){
                     // JsonNode node = getJsonNodeFromSplitString(ARRAY, splittedKey[1..splittedKey.size()-1], multiField.getPrioValue())
-                    ArrayList subarray = splittedKey[1..splittedKey.size()-1]
+                    ArrayList subarray = splittedKey // [1..splittedKey.size()-1]
                     def value = multiField.getPrioValue()
                     upsertIntoJsonNode(result, subarray, value)
                 }
@@ -140,71 +139,61 @@ class JsonToolkit {
     }
 
 
-    /*
-    private static JsonNode getJsonNodeFromSplitString(String[] keyPath, String value){
-
-    }
-    */
-
     private static void upsertIntoJsonNode(JsonNode root, ArrayList<String> keyPath, String value){
-        if (keyPath.size() < 1){
-            return
-        }
-        if (keyPath[0].startsWith("(")){
-            // TODO special case with additional text node
-        }
-        else if (keyPath.size() == 1){
-            // root is final leaf / text node
-            root.put(keyPath[0], value)
-        }
-        else {
-            JsonNode subNode = getSubNode(keyPath)
-            if (keyPath[0].equals(ARRAY)){
-                root.add(subNode)
-            }
-            else {
-                root.put(keyPath[0], subNode)
-            }
-            upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value)
-        }
-
-        /* else if (keyPath[0].equals(ARRAY)){
-            // add element to array
-            JsonNode subNode = getSubNode(keyPath)
-            root.add(subNode)
-            upsertIntoJsonNode(subNode, keyPath[1..keyPath.size()-1], value)
-        }
-
-        else if (root.get(keyPath[0])){
-            // child already exists
-            upsertIntoJsonNode(root.get(keyPath[0]), keyPath[1..keyPath.size()-1], value)
+        assert keyPath.size() > 1
+        if (keyPath.size() == 2 && keyPath[1].startsWith("(")){
+            ObjectNode multiLeaf = buildMultiLeaf(keyPath, value)
+            putAddNode(keyPath, root, multiLeaf)
         }
         else{
-            // specified child node does not exist, yet
-            JsonNode subNode = getSubNode(keyPath)
-            root.put(keyPath[0], subNode)
-            ArrayList<String> subPath = keyPath[1..keyPath.size()-1]
-            upsertIntoJsonNode(subNode, subPath, value)
-        } */
+            if (keyPath.get(1).equals(COUNT)){
+                upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value)
+            }
+            else {
+                JsonNode subNode = getSubNode(keyPath, value)
+                putAddNode(keyPath, root, subNode)
+                if (keyPath.size() > 2) {
+                    // root is not final leaf --> iterate
+                    upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value)
+                }
+            }
+        }
     }
 
 
-    private static JsonNode getSubNode(ArrayList<String> keyPath){
-        if (keyPath.size() < 2){
-            return null
-        }
+    private static JsonNode getSubNode(ArrayList<String> keyPath, String value){
+        assert keyPath.size() > 1
         if (keyPath.size() == 2){
-            if (keyPath[1].startsWith("(")){
-                return new ObjectNode(FACTORY)
-            }
-            else{
-                return new TextNode(FACTORY)
-            }
+            return new TextNode(value)
         }
-        if (keyPath[1].equals(ARRAY)){
+        if (keyPath[2].equals(ARRAY)){
             return new ArrayNode(FACTORY)
         }
         // else
         return new ObjectNode(FACTORY)
+    }
+
+
+    private static putAddNode(ArrayList<String> keyPath, JsonNode root, JsonNode subNode){
+        if (root instanceof ArrayNode){
+            root.add(subNode)
+        }
+        else {
+
+            root.put(keyPath[1], subNode)
+        }
+    }
+
+
+    private static ObjectNode buildMultiLeaf(ArrayList<String> keyPath, String value){
+        ObjectNode result = new ObjectNode(FACTORY)
+        String[] singleNodes = keyPath[0].split(",")
+        for (int i=1; i<singleNodes.length; i++){
+            String[] entry = singleNodes[i-1].split(":")
+            assert entry.length == 2
+            result.put(entry[0], entry[1])
+        }
+        result.put(singleNodes[singleNodes.length-1], value)
+        result
     }
 }

@@ -43,7 +43,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.coverageDepth"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageDepth"]
     },
     "order" : ["kbart"]
   },
@@ -55,7 +55,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.startDate"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startDate"]
     },
     "order" : ["kbart"]
   },
@@ -67,7 +67,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.endDate"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endDate"]
     },
     "order" : ["kbart"]
   },
@@ -103,7 +103,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:doi,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:doi,$VALUE)"]
+      "gokb" : ["$TITLE.identifiers.$COUNT.(type:doi,value)", "$TIPP.title.identifiers.$COUNT.(type:doi,value)"]
     },
     "order" : ["kbart"]
   },
@@ -127,7 +127,7 @@
       "ezb" : "jourid"
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:ezb,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:ezb,$VALUE)"]
+      "gokb" : ["$TITLE.identifiers.$COUNT.(type:ezb,value)", "$TIPP.title.identifiers.$COUNT.(type:ezb,value)"]
     },
     "order" : ["ezb", "kbart"]
   },
@@ -245,7 +245,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.coverageNote"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageNote"]
     },
     "order" : ["kbart"]
   },
@@ -257,7 +257,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.startIssue"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
     },
     "order" : ["kbart"]
   },
@@ -269,7 +269,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.startVolume"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
     },
     "order" : ["kbart"]
   },
@@ -281,7 +281,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.endIssue"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
     },
     "order" : ["kbart"]
   },
@@ -293,7 +293,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$COUNT.endVolume"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
     },
     "order" : ["kbart"]
   },
@@ -365,7 +365,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:eissn,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:eissn,$VALUE)"]
+      "gokb" : ["$TITLE.identifiers.$COUNT.(type:eissn,value)", "$TIPP.title.identifiers.$COUNT.(type:eissn,value)"]
     },
     "order" : ["kbart"]
   },
@@ -401,7 +401,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:issn,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:issn,$VALUE)"]
+      "gokb" : ["$TITLE.identifiers.$COUNT.(type:issn,value)", "$TIPP.title.identifiers.$COUNT.(type:issn,value)"]
     },
     "order" : ["kbart"]
   },
@@ -512,7 +512,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.($TYPE:zdb,$VALUE)", "$TIPP.title.identifiers.$COUNT.($TYPE:zdb,$VALUE)"]
+      "gokb" : ["$TITLE.identifiers.$COUNT.(type:zdb,value)", "$TIPP.title.identifiers.$COUNT.(type:zdb,value)"]
     },
     "order" : ["kbart"]
   }
