@@ -107,6 +107,9 @@ class Validator {
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
+        } else if (identifierType == namespace){
+            // TODO use identifier type in GOKb (String, URL, ...) and specify here
+            return Status.VALIDATOR_IDENTIFIER_IS_VALID
         }
         return Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
     }
