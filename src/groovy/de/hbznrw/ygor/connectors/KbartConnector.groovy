@@ -32,7 +32,8 @@ class KbartConnector extends AbstractConnector {
         'embargo_info',
         'coverage_depth',
         'notes',
-        'publication_title' // used in case of more specific ZDB queries
+        'publication_title', // used in case of more specific ZDB queries
+        'title_id'
     ]
 
     public optionalKbartKeys = [
