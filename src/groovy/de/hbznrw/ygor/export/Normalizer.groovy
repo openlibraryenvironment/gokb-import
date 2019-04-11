@@ -8,6 +8,8 @@ import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
 
 import java.time.LocalDate
+import java.util.regex.Pattern
+
 // Trying to normalize values, but may return crap
 
 @Log4j
@@ -95,18 +97,7 @@ class Normalizer {
             // TODO
         }
         else if(type.equals(TitleStruct.DOI)){
-            if(str.startsWith("http://doi.org/")){
-                str= str.replace("http://doi.org/", '')
-            }
-            if(str.startsWith("https://doi.org/")){
-                str= str.replace("https://doi.org/", '')
-            }
-            if(str.startsWith("http://dx.doi.org/")){
-                str= str.replace("http://dx.doi.org/", '')
-            }
-            if(str.startsWith("https://dx.doi.org/")){
-                str= str.replace("https://dx.doi.org/", '')
-            }
+            str = Pattern.compile("^https?://(dx\\.)?doi.org/").matcher(str).replaceAll("")
         }
         else if(type.equals("inID_"+namespace)){
             str = namespace ? str : ''
