@@ -34,16 +34,11 @@ class KbartConnector extends AbstractConnector {
         'notes',
         'publication_title', // used in case of more specific ZDB queries
         'title_id'
-        /*
-        'zdb_id',
-        'print_identifier',
-        'online_identifier'
-        */
     ]
 
     public optionalKbartKeys = [
-            'access_start_date',
-            'access_end_date'
+        'access_start_date',
+        'access_end_date'
     ]
 
 	KbartConnector(BridgeInterface bridge) {
@@ -94,139 +89,47 @@ class KbartConnector extends AbstractConnector {
 
         switch(query){
             case Query.KBART_TIPP_URL:
-                return getTippUrl()
-                break
+                return getEnvelopeWithMessage("title_url")
             case Query.KBART_TIPP_COVERAGE:
                 return getTippCoverageAsFatEnvelope()
-                break
             case Query.KBART_TIPP_ACCESS:
                 return getTippAccessDatesAsFatEnvelope()
-                break
+            case Query.KBART_PISBN:
+                return getEnvelopeWithMessage("print_identifier")
             case Query.KBART_PISSN:
-                return getPrintIdentifier()
-                break
+                return getEnvelopeWithMessage("print_identifier")
             case Query.KBART_EISSN:
-                return getOnlineIdentifier()
-                break
+                return getEnvelopeWithMessage("online_identifier")
             case Query.KBART_EISBN:
-                return getOnlineIdentifier()
-                break
+                return getEnvelopeWithMessage("online_identifier")
             case Query.KBART_PUBLISHER:
-                return getPublisher()
-                break
+                return getEnvelopeWithMessage("publisher_name")
             case Query.KBART_DOI:
-                return getDOI()
-                break
+                return getEnvelopeWithMessage("doi_identifier")
             case Query.KBART_TITLE:
-                return getTitle()
-                break
+                return getEnvelopeWithMessage("publication_title")
             case Query.KBART_TITLE_ID:
-                return getTitleID()
-                break
+                return getEnvelopeWithMessage("title_id")
             case Query.KBART_DATE_MONOGRAPH_PUBLISHED_ONLINE:
-                return getDateMonographPublishedOnline()
-                break
+                return getEnvelopeWithMessage("date_monograph_published_online")
             case Query.KBART_DATE_MONOGRAPH_PUBLISHED_PRINT:
-                return getDateMonographPublishedPrint()
-                break
+                return getEnvelopeWithMessage("date_monograph_published_print")
             case Query.KBART_MONOGRAPH_EDITION:
-                return getMonographEdition()
-                break
+                return getEnvelopeWithMessage("monograph_edition")
             case Query.KBART_MONOGRAPH_VOLUME:
-                return getMonographVolume()
-                break
+                return getEnvelopeWithMessage("monograph_volume")
             case Query.KBART_FIRST_AUTHOR:
-                return getFirstAuthor()
-                break
+                return getEnvelopeWithMessage("first_author")
             case Query.KBART_FIRST_EDITOR:
-                return getFirstEditor()
-                break
+                return getEnvelopeWithMessage("first_editor")
         }
         getEnvelopeWithStatus(AbstractEnvelope.STATUS_UNKNOWN_REQUEST)
     }
-    
-    private Envelope getTippUrl() {
+
+    private Envelope getEnvelopeWithMessage(String fieldName) {
         def result = []
-        result << getValue("title_url")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    private Envelope getTitle() {
-        def result = []
-        result << getValue("publication_title")
-
-        getEnvelopeWithMessage(result)
-    }
-    private Envelope getTitleID() {
-        def result = []
-        result << getValue("title_id")
-
-        getEnvelopeWithMessage(result)
-    }
-    private Envelope getDateMonographPublishedPrint() {
-        def result = []
-        result << getValue("date_monograph_published_print")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    private Envelope getDateMonographPublishedOnline() {
-        def result = []
-        result << getValue("date_monograph_published_online")
-
-        getEnvelopeWithMessage(result)
-    }
-    private Envelope getMonographEdition () {
-        def result = []
-        result << getValue("monograph_edition")
-
-        getEnvelopeWithMessage(result)
-    }
-    private Envelope getMonographVolume () {
-        def result = []
-        result << getValue("monograph_volume")
-
-        getEnvelopeWithMessage(result)
-    }
-    private Envelope getFirstEditor () {
-        def result = []
-        result << getValue("first_editor")
-
-        getEnvelopeWithMessage(result)
-    }
-    private Envelope getFirstAuthor() {
-        def result = []
-        result << getValue("first_author")
-
-        getEnvelopeWithMessage(result)
-    }
-    private Envelope getPrintIdentifier() {
-        def result = []
-        result << getValue("print_identifier")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    private Envelope getOnlineIdentifier() {
-        def result = []
-        result << getValue("online_identifier")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    private Envelope getPublisher() {
-        def result = []
-        result << getValue("publisher_name")
-
-        getEnvelopeWithMessage(result)
-    }
-
-    private Envelope getDOI() {
-        def result = []
-        result << getValue("doi_identifier")
-
-        getEnvelopeWithMessage(result)
+        result << getValue(fieldName)
+        return getEnvelopeWithMessage(result)
     }
 
     private Envelope getTippAccessDatesAsFatEnvelope() {
