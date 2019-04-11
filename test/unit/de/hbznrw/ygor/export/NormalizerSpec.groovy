@@ -97,7 +97,7 @@ class NormalizerSpec extends Specification {
             println "${raw[0]}, ${raw[1]} -> ${result}"
         
         then:
-            Normalizer.normIdentifier(raw[0], raw[1], DataMapper.IdentifierNameSpaces[0]) == result
+            Normalizer.normIdentifier(raw[0], raw[1], DataMapper.IDENTIFIER_NAMESPACES[0]) == result
         
         where:
             raw                                 | result
@@ -127,8 +127,8 @@ class NormalizerSpec extends Specification {
             println "${list1} -> ${result1}"
             println "${list2} -> ${result2}"
             
-            Normalizer.normIdentifier(list1, TitleStruct.EISSN, DataMapper.IdentifierNameSpaces[0]) == result1
-            Normalizer.normIdentifier(list2, TitleStruct.PISSN, DataMapper.IdentifierNameSpaces[0]) == result2
+            Normalizer.normIdentifier(list1, TitleStruct.EISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result1
+            Normalizer.normIdentifier(list2, TitleStruct.PISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result2
     }   
     
     void "normDate(String str, Object dateType)"() {

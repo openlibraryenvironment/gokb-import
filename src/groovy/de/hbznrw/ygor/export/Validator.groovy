@@ -1,13 +1,11 @@
 package de.hbznrw.ygor.export
 
 import de.hbznrw.ygor.enums.*
-import de.hbznrw.ygor.export.structure.Identifier
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
 import org.apache.commons.lang.StringUtils
 
 import java.sql.Timestamp
-import java.lang.NumberFormatException
 
 // checks if given value meets the requirements
 
@@ -82,7 +80,7 @@ class Validator {
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals(TitleStruct.EISBN)) {
+        } else if (identifierType.equals(TitleStruct.EISBN) || identifierType.equals(TitleStruct.PISBN)) {
             if (validateISBN(str)) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
@@ -101,7 +99,7 @@ class Validator {
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals("inID_" + namespace) && namespace in DataMapper.IdentifierNameSpaces) {
+        } else if (identifierType.equals("inID_" + namespace) && namespace in DataMapper.IDENTIFIER_NAMESPACES) {
             if (str) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
