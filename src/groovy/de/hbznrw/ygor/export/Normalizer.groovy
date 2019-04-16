@@ -27,7 +27,7 @@ class Normalizer {
                 return normInteger(value)
                 break
             case "ID":
-                return normIdentifier(value, additionalParameters)
+                return normIdentifier(value, additionalParameters, null)
                 break
             case "URL":
                 return normURL(value)

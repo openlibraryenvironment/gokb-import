@@ -11,9 +11,6 @@ import java.sql.Timestamp
 
 class Validator {
 
-    final static IS_START_DATE  = 1000
-    final static IS_END_DATE    = 1001
-
     static validate(String type, String value, String... additionalParameters){
         switch (type) {
             case "String":
@@ -23,7 +20,9 @@ class Validator {
                 return isValidNumber(value)
                 break
             case "ID":
-                return isValidIdentifier(value, additionalParameters)
+                return isValidIdentifier(value,
+                                         additionalParameters[0] /* must contain ID type */,
+                                         additionalParameters[1] /* must contain namespace */)
                 break
             case "URL":
                 return isValidURL(value)

@@ -57,14 +57,15 @@ class MultiField {
         for (source in sourcePrio){
             def field = fields.get(source)
             if (field != null){
-                return Normalizer.normalize(type, field.value)
+                return field.value
             }
         }
         return ""
     }
 
     void validate(){
-        Validator.validate(type, getPrioValue())
+        Validator.validate(type, getPrioValue(), ygorFieldKey, "doi")
+        // TODO: fix hard-coded namespace
     }
 
 }

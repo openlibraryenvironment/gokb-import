@@ -112,17 +112,17 @@ class JsonToolkit {
     }
 
 
-    static JsonObject getTippJsonFromRecord(String target, Record record){
+    static ObjectNode getTippJsonFromRecord(String target, Record record){
         getJsonFromRecord("\$TITLE", target, record)
     }
 
 
-    static JsonObject getTitleJsonFromRecord(String target, Record record){
+    static ObjectNode getTitleJsonFromRecord(String target, Record record){
         getJsonFromRecord("\$TIPP", target, record)
     }
 
 
-    private static JsonObject getJsonFromRecord (String typeFilter, String target, Record record){
+    private static ObjectNode getJsonFromRecord (String typeFilter, String target, Record record){
         ObjectNode result = MAPPER.createObjectNode()
         for (MultiField multiField in record.multiFields.values()){
             Set qualifiedKeys = multiField.keyMapping."${target}"
@@ -136,6 +136,7 @@ class JsonToolkit {
                 }
             }
         }
+        result
     }
 
 
