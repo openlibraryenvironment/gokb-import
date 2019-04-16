@@ -94,26 +94,26 @@ class FieldKeyMapping {
 
 
     /**
-     * @param type One of {MappingsContainer.@value YGOR}, { MappingsContainer.@value KBART},
+     * @param source One of {MappingsContainer.@value YGOR}, { MappingsContainer.@value KBART},
      * {MappingsContainer.@value ZDB}, {MappingsContainer.@value EZB} or
      * {MappingsContainer.@value TYPE}
-     * @return The value of the given type.
+     * @return The value of the given source.
      */
-    def get(String type){
-        if (type == MappingsContainer.YGOR){
+    def get(String source){
+        if (source == MappingsContainer.YGOR){
             ygorKey
         }
-        else if (type == MappingsContainer.KBART){
+        else if (source == MappingsContainer.KBART){
             kbartKeys
         }
-        else if (type == MappingsContainer.ZDB){
+        else if (source == MappingsContainer.ZDB){
             zdbKeys
         }
-        else if (type == MappingsContainer.EZB){
+        else if (source == MappingsContainer.EZB){
             ezbKeys
         }
-        else if (type == MappingsContainer.TYPE){
-            this.type
+        else if (source == MappingsContainer.TYPE){
+            type
         }
     }
 }

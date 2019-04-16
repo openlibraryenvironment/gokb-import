@@ -48,7 +48,7 @@ class MultiField {
     def addField(String source, String key, String value){
         for (mappedKey in keyMapping.get(source)) {
             if (key == mappedKey) {
-                fields.put(keyMapping.get(source), new Field(source, mappedKey, value))
+                fields.put(source, new Field(source, mappedKey, value))
             }
         }
     }

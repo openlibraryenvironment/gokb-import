@@ -9,7 +9,8 @@
     "out" : {
       "gokb" : ["$TIPP.accessEndDate"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Date"
   },
   {
     "ygor" : "accessStartDate",
@@ -21,7 +22,8 @@
     "out" : {
       "gokb" : ["$TIPP.accessStartDate"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Date"
   },
   {
     "ygor" : "accessType",
@@ -33,7 +35,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "coverageDepth",
@@ -45,7 +48,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageDepth"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "dateFirstIssueOnline",
@@ -57,7 +61,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startDate"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Date"
   },
   {
     "ygor" : "dateLastIssueOnline",
@@ -69,7 +74,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endDate"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Date"
   },
   {
     "ygor" : "dateMonographPublishedOnline",
@@ -81,7 +87,8 @@
     "out" : {
       "gokb" : ["$TITLE.dateFirstOnline"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Date"
   },
   {
     "ygor" : "dateMonographPublishedPrint",
@@ -93,7 +100,8 @@
     "out" : {
       "gokb" : ["$TITLE.dateFirstInPrint"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Date"
   },
   {
     "ygor" : "doi",
@@ -105,7 +113,8 @@
     "out" : {
       "gokb" : ["$TITLE.identifiers.$COUNT.(type:doi,value)", "$TIPP.title.identifiers.$COUNT.(type:doi,value)"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "embargoInfo",
@@ -117,7 +126,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.embargo"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "ezbId",
@@ -129,7 +139,8 @@
     "out" : {
       "gokb" : ["$TITLE.identifiers.$COUNT.(type:ezb,value)", "$TIPP.title.identifiers.$COUNT.(type:ezb,value)"]
     },
-    "order" : ["ezb", "kbart"]
+    "order" : ["ezb", "kbart"],
+    "type" : "ID"
   },
   {
     "ygor" : "firstAuthor",
@@ -141,7 +152,8 @@
     "out" : {
       "gokb" : ["$TITLE.firstAuthor"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "firstEditor",
@@ -153,7 +165,8 @@
     "out" : {
       "gokb" : ["$TITLE.firstEditor"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "historyEvents",
@@ -170,7 +183,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["zdb"]
+    "order" : ["zdb"],
+    "type" : "String"
   },
   {
     "ygor" : "listpriceEur",
@@ -182,7 +196,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "listpriceGbp",
@@ -194,7 +209,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "listpriceUsd",
@@ -206,7 +222,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "monographEdition",
@@ -223,7 +240,8 @@
         "$TITLE.editionStatement"
       ]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "monographVolume",
@@ -235,7 +253,8 @@
     "out" : {
       "gokb" : ["$TITLE.monographVolume"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "notes",
@@ -247,7 +266,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageNote"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "numFirstIssueOnline",
@@ -259,7 +279,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "numFirstVolOnline",
@@ -271,7 +292,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "numLastIssueOnline",
@@ -283,7 +305,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "numLastVolOnline",
@@ -295,7 +318,8 @@
     "out" : {
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "oaApcEur",
@@ -307,7 +331,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "oaApcGbp",
@@ -319,7 +344,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "oaApcUsd",
@@ -331,7 +357,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "oaGold",
@@ -343,7 +370,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "oaHybrid",
@@ -355,7 +383,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "onlineIdentifier",
@@ -367,7 +396,8 @@
     "out" : {
       "gokb" : ["$TITLE.identifiers.$COUNT.(type:eissn,value)", "$TIPP.title.identifiers.$COUNT.(type:eissn,value)"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "ID"
   },
   {
     "ygor" : "parentPublicationTitleId",
@@ -379,7 +409,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "ID"
   },
   {
     "ygor" : "precedingPublicationTitleId",
@@ -391,7 +422,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "ID"
   },
   {
     "ygor" : "printIdentifier",
@@ -403,7 +435,8 @@
     "out" : {
       "gokb" : ["$TITLE.identifiers.$COUNT.(type:issn,value)", "$TIPP.title.identifiers.$COUNT.(type:issn,value)"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "ID"
   },
   {
     "ygor" : "publicationTitle",
@@ -415,7 +448,8 @@
     "out" : {
       "gokb" : ["$TITLE.name", "$TIPP.title.name"]
     },
-    "order" : ["zdb","ezb","kbart"]
+    "order" : ["zdb","ezb","kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "publicationType",
@@ -427,7 +461,8 @@
     "out" : {
       "gokb" : ["$TITLE.type", "$TIPP.title.type"]
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "publishedFrom",
@@ -439,7 +474,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["zdb"]
+    "order" : ["zdb"],
+    "type" : "Date"
   },
   {
     "ygor" : "publishedTo",
@@ -451,7 +487,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["zdb"]
+    "order" : ["zdb"],
+    "type" : "Date"
   },
   {
     "ygor" : "publisherHistory",
@@ -466,7 +503,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["zdb"]
+    "order" : ["zdb"],
+    "type" : "String"
   },
   {
     "ygor" : "publisherName",
@@ -478,7 +516,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "String"
   },
   {
     "ygor" : "titleId",
@@ -490,7 +529,8 @@
     "out" : {
       "gokb" : []
     },
-    "order" : ["kbart"]
+    "order" : ["kbart"],
+    "type" : "ID"
   },
   {
     "ygor" : "titleUrl",
@@ -502,7 +542,8 @@
     "out" : {
       "gokb" : ["$TIPP.url"]
     },
-    "order" : ["ezb","kbart"]
+    "order" : ["ezb","kbart"],
+    "type" : "URL"
   },
   {
     "ygor" : "zdbId",
@@ -514,6 +555,6 @@
     "out" : {
       "gokb" : ["$TITLE.identifiers.$COUNT.(type:zdb,value)", "$TIPP.title.identifiers.$COUNT.(type:zdb,value)"]
     },
-    "order" : ["kbart"]
-  }
+    "order" : ["kbart"],
+    "type" : "ID"}
 ]
