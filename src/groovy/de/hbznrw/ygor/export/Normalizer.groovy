@@ -8,6 +8,7 @@ import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
 
 import java.time.LocalDate
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 // Trying to normalize values, but may return crap
@@ -17,6 +18,9 @@ class Normalizer {
 
     final static IS_START_DATE  = "IS_START_DATE"
     final static IS_END_DATE    = "IS_END_DATE"
+
+    final static Pattern NUMBER_PATTERN =
+            Pattern.compile("([\\d]*)((st|nd|rd|th) )?((revised|and|expanded) ?)* ?(edition)?")
 
     
     /**
@@ -520,5 +524,28 @@ class Normalizer {
         str = str.replace('Digitalisierung;', '').replace('Digitalisierung', '')
         
         str
+    }
+
+    /**
+     * "3rd revised and expanded edition" --> "3" // and similar cases, see Regex in
+     *
+     */
+    static def extractNumbers(ArrayList<String> strings) {
+        if(!strings || strings.isEmpty()) {
+            return strings
+        }
+        StringBuilder result = new StringBuilder()
+        for (str in strings) {
+            Matcher matcher = NUMBER_PATTERN.matcher(str)
+            if (result.length() > 0) {
+                result.append("|")
+            }
+            if (matcher.matches()) {
+                result.append(matcher.group(1))
+            } else {
+                result.append(str)
+            }
+        }
+        result.toString()
     }
 }

@@ -151,4 +151,17 @@ class DataSetter {
             obj.m = normMeta
         }
     }
+
+    static def extractNumbers(Object obj, List<String> orgValue){
+        obj.org       = orgValue
+        def normValue = Normalizer.extractNumbers(orgValue)
+        obj.m         = Validator.isValidNumber(normValue)
+
+        if(Status.VALIDATOR_NUMBER_IS_VALID == obj.m){
+            obj.v = normValue
+        }
+        else {
+            obj.v = ''
+        }
+    }
 }
