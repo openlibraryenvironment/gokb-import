@@ -158,6 +158,7 @@ class MultipleProcessingThread extends Thread {
         for (def record in enrichment.dataContainer.records){
             titles << JsonToolkit.getTitleJsonFromRecord("gokb", record)
         }
+        enrichment.dataContainer.titles = titles
     }
 
     private void extractTipps() {
@@ -165,6 +166,7 @@ class MultipleProcessingThread extends Thread {
         for (def record in enrichment.dataContainer.records){
             tipps << JsonToolkit.getTippJsonFromRecord("gokb", record)
         }
+        enrichment.dataContainer.tipps = tipps
     }
 
     void setProgressTotal(int i) {
