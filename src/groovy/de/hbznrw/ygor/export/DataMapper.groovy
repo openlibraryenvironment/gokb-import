@@ -21,9 +21,14 @@ import ygor.Record
 @Log4j
 class DataMapper {
 
-    static final IdentifierNameSpaces = [
-        'thieme'
-    ]
+    static final IDENTIFIER_NAMESPACES = ['thieme']
+
+    static final TITLE_IDS = [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN,
+                              Query.KBART_EISSN, Query.KBART_PISSN, Query.KBART_DOI, Query.KBART_TITLE_ID,
+                              Query.KBART_EISBN, Query.KBART_PISBN]
+
+    static final TIPP_IDS = [Query.ZDBID, Query.ZDB_EISSN, Query.KBART_EISSN, Query.KBART_DOI, Query.KBART_TITLE_ID,
+                             Query.KBART_EISBN]
 
     static Title getTitleFromRecord(Record record){
         Title result = new Title()
@@ -96,7 +101,7 @@ class DataMapper {
     
     static void mapEnvelopeToTitle(Title title, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.EZBID, Query.ZDB_EISSN, Query.ZDB_PISSN, Query.ZDB_GVKPPN, Query.KBART_EISSN, Query.KBART_PISSN, Query.KBART_DOI, Query.KBART_TITLE_ID, Query.KBART_EISBN]) {
+        if(query in TITLE_IDS) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)
@@ -109,6 +114,8 @@ class DataMapper {
                 ident.type.v = TitleStruct.PISSN
             else if(Query.KBART_EISBN == query)
                 ident.type.v = "isbn"
+            else if(Query.KBART_PISBN == query)
+                ident.type.v = "pisbn"
             else if(Query.ZDB_GVKPPN == query)
                 ident.type.v = "gvk_ppn"
             else if(Query.KBART_DOI == query)
@@ -199,7 +206,7 @@ class DataMapper {
                     }
                     else {
                         log.debug("! ignore crappy title publisher history")
-                    }  
+                    }
                 }
             }
         }
@@ -249,7 +256,7 @@ class DataMapper {
         else if(query == Query.KBART_MONOGRAPH_EDITION) {
             DataSetter.setString(title.monographEdition, env.message)
             DataSetter.setString(title.editionStatement, env.message)
-            DataSetter.setString(title.editionNumber, env.message)
+            DataSetter.extractNumbers(title.editionNumber, env.message)
             DataSetter.setString(title.editionDifferentiator, env.message)
         }
         else if(query == Query.KBART_MONOGRAPH_VOLUME) {
@@ -278,7 +285,7 @@ class DataMapper {
      */
     static void mapEnvelopeToTipp(Tipp tipp, Query query, Envelope env, DataContainer dc) {
 
-        if(query in [Query.ZDBID, Query.ZDB_EISSN, Query.KBART_EISSN, Query.KBART_DOI, Query.KBART_TITLE_ID, Query.KBART_EISBN]) {
+        if(query in TIPP_IDS) {
             def ident = TitleStruct.getNewIdentifier()
             
             if(Query.ZDBID == query)

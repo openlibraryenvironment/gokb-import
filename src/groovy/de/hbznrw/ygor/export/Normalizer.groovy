@@ -9,6 +9,9 @@ import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
 
 import java.time.LocalDate
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 // Trying to normalize values, but may return crap
 
 @Log4j
@@ -17,6 +20,8 @@ class Normalizer {
     final static IS_START_DATE  = "IS_START_DATE"
     final static IS_END_DATE    = "IS_END_DATE"
 
+    final static Pattern NUMBER_PATTERN =
+            Pattern.compile("([\\d]*)((st|nd|rd|th) )?((revised|and|expanded) ?)* ?(edition)?")
 
     static String normalize(String type, String value, String... additionalParameters){
         switch (type) {
@@ -40,7 +45,6 @@ class Normalizer {
         }
     }
 
-    
     /**
      * Removes double spaces. Removes leading and ending spaces.
      * Returns null if null given.
@@ -52,7 +56,6 @@ class Normalizer {
     static String normString(String str) {
         if(!str)
             return str
-        
         str = str.trim().replaceAll(/\s+/," ").replaceAll(/\s*:\s*/,": ").replaceAll(/\s*,\s*/,", ")
     }
 
@@ -67,7 +70,6 @@ class Normalizer {
     static String normStringTitle(String str) {
         if(!str)
             return str
-
         str = str.replaceAll(" @(\\w)", ' $1')
     }
 
@@ -104,10 +106,9 @@ class Normalizer {
             
         str = normString(str)
 
-        if(!type.equals(TitleStruct.DOI) && !type.equals(TitleStruct.EISBN)) {
+        if(!type.equals(TitleStruct.DOI) && !type.equals(TitleStruct.EISBN) && !type.equals(TitleStruct.PISBN)) {
             str = str.replaceAll(/[\/-]+/, "")
         }
-        
         if(type.equals(TitleStruct.EISSN) || type.equals(TitleStruct.PISSN)){
             if(str.length() == 8)
                 str = new StringBuilder(str).insert(4, "-").toString();
@@ -119,23 +120,11 @@ class Normalizer {
             // TODO
         }
         else if(type.equals(TitleStruct.DOI)){
-            if(str.startsWith("http://doi.org/")){
-                str= str.replace("http://doi.org/", '')
-            }
-            if(str.startsWith("https://doi.org/")){
-                str= str.replace("https://doi.org/", '')
-            }
-            if(str.startsWith("http://dx.doi.org/")){
-                str= str.replace("http://dx.doi.org/", '')
-            }
-            if(str.startsWith("https://dx.doi.org/")){
-                str= str.replace("https://dx.doi.org/", '')
-            }
+            str = Pattern.compile("^https?://(dx\\.)?doi.org/").matcher(str).replaceAll("")
         }
         else if(type.equals("inID_"+namespace)){
             str = namespace ? str : ''
         }
-
         str
     }
     
@@ -255,7 +244,6 @@ class Normalizer {
         else {
             str = ''
         }
-        
         str
     }
     
@@ -310,9 +298,7 @@ class Normalizer {
             else {
                 str = Normalizer.parseCoverageVolume(str)
             }
-            
         }
-        
         Normalizer.normString(str)
     }
         
@@ -537,7 +523,6 @@ class Normalizer {
         else {
             str = ''
         }
-
         str
     }
     
@@ -553,5 +538,28 @@ class Normalizer {
         str = str.replace('Digitalisierung;', '').replace('Digitalisierung', '')
         
         str
+    }
+
+    /**
+     * "3rd revised and expanded edition" --> "3" // and similar cases, see Regex in
+     *
+     */
+    static def extractNumbers(ArrayList<String> strings) {
+        if(!strings || strings.isEmpty()) {
+            return strings
+        }
+        StringBuilder result = new StringBuilder()
+        for (str in strings) {
+            Matcher matcher = NUMBER_PATTERN.matcher(str)
+            if (result.length() > 0) {
+                result.append("|")
+            }
+            if (matcher.matches()) {
+                result.append(matcher.group(1))
+            } else {
+                result.append(str)
+            }
+        }
+        result.toString()
     }
 }

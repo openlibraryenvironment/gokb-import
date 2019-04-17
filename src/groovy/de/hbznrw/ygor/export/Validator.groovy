@@ -1,10 +1,9 @@
 package de.hbznrw.ygor.export
 
+import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
-import de.hbznrw.ygor.enums.Status
 import org.apache.commons.lang.StringUtils
-
 import java.sql.Timestamp
 
 // checks if given value meets the requirements
@@ -87,48 +86,55 @@ class Validator {
         if (!str || str.trim().equals("")) {
             return Status.VALIDATOR_IDENTIFIER_IS_MISSING
         }
-
         if (str.contains("|")) {
             return Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC
         }
-
         if (identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)) {
             if (9 == str.length() && 4 == str.indexOf("-")) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals(ZdbBridge.IDENTIFIER)) {
+        }
+        else if (identifierType.equals(ZdbBridge.IDENTIFIER)) {
             if (2 < str.length() && str.indexOf("-") == str.length() - 2) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals(TitleStruct.EISBN)) {
+        }
+        else if (identifierType.equals(TitleStruct.EISBN) || identifierType.equals(TitleStruct.PISBN)) {
             if (validateISBN(str)) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals(EzbBridge.IDENTIFIER)) {
+        }
+        else if (identifierType.equals(EzbBridge.IDENTIFIER)) {
             // TODO .. no valid definition 
             if (str.length() > 2) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals(TitleStruct.DOI)) {
+        }
+        else if (identifierType.equals(TitleStruct.DOI)) {
             if (str.startsWith("10.")) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
-        } else if (identifierType.equals("inID_" + namespace) && namespace in DataMapper.IdentifierNameSpaces) {
+        }
+        else if (identifierType.equals("inID_" + namespace) && namespace in DataMapper.IDENTIFIER_NAMESPACES) {
             if (str) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
+        }
+        else if (identifierType == namespace){
+            // TODO use identifier type in GOKb (String, URL, ...) and specify here
+            return Status.VALIDATOR_IDENTIFIER_IS_VALID
         }
         return Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
     }
@@ -140,20 +146,17 @@ class Validator {
      * @return
      */
     static isValidURL(String str) {
-      
         if(!str || str.trim().equals("")){
             return Status.VALIDATOR_URL_IS_MISSING
         }
         else if(str.contains("|")){
             return Status.VALIDATOR_URL_IS_NOT_ATOMIC
         }
-        
         try {
             def url = new URL(str)
         } catch(Exception e) {
             return Status.VALIDATOR_URL_IS_INVALID
         }
-        
         return Status.VALIDATOR_URL_IS_VALID
     }
     
@@ -167,7 +170,7 @@ class Validator {
             return Status.VALIDATOR_DATE_IS_MISSING
         }
         try {
-            def check = Timestamp.valueOf(str);
+            def check = Timestamp.valueOf(str)
             return Status.VALIDATOR_DATE_IS_VALID
         }
         catch(Exception e) {
@@ -184,41 +187,35 @@ class Validator {
     */
 
     static boolean validateISBN(String str) {
-
         def isbn = str
-
         if ( isbn == null ) {
-            return false;
+            return false
         }
-
         //remove any hyphens
-        isbn = isbn.replaceAll( "-", "" );
+        isbn = isbn.replaceAll( "-", "" )
 
         //must be a 13 digit ISBN
         if ( isbn.length() != 13 ) {
-            return false;
+            return false
         }
-
         try {
             int tot = 0;
             for ( int i = 0; i < 12; i++ )
             {
-                int digit = Integer.parseInt( isbn.substring( i, i + 1 ) );
-                tot += (i % 2 == 0) ? digit * 1 : digit * 3;
+                int digit = Integer.parseInt( isbn.substring( i, i + 1 ) )
+                tot += (i % 2 == 0) ? digit * 1 : digit * 3
             }
-
             //checksum must be 0-9. If calculated as 10 then = 0
-            int checksum = 10 - (tot % 10);
+            int checksum = 10 - (tot % 10)
             if ( checksum == 10 )
             {
-                checksum = 0;
+                checksum = 0
             }
-
-            return checksum == Integer.parseInt( isbn.substring( 12 ) );
+            return checksum == Integer.parseInt( isbn.substring( 12 ) )
         }
         catch ( NumberFormatException nfe ) {
             //to catch invalid ISBNs that have non-numeric characters in them
-            return false;
+            return false
         }
     }
 }

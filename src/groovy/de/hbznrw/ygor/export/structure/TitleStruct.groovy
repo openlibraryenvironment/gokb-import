@@ -6,6 +6,7 @@ class TitleStruct {
     static final EISSN = 'eissn'
     static final PISSN = 'issn'
     static final EISBN = 'isbn'
+    static final PISBN = 'pisbn'
     static final DOI = 'doi'
     
     static Identifier getNewIdentifier() {
