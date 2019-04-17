@@ -152,7 +152,7 @@ class JsonToolkit {
             }
             else {
                 JsonNode subNode = getSubNode(keyPath, value)
-                putAddNode(keyPath, root, subNode)
+                subNode = putAddNode(keyPath, root, subNode)
                 if (keyPath.size() > 2) {
                     // root is not final leaf --> iterate
                     upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value)
@@ -167,7 +167,7 @@ class JsonToolkit {
         if (keyPath.size() == 2){
             return new TextNode(value)
         }
-        if (keyPath[2].equals(ARRAY)){
+        if (keyPath[2].equals(COUNT) || keyPath[2].equals(ARRAY)){
             return new ArrayNode(FACTORY)
         }
         // else
@@ -175,14 +175,19 @@ class JsonToolkit {
     }
 
 
-    private static putAddNode(ArrayList<String> keyPath, JsonNode root, JsonNode subNode){
+    private static JsonNode putAddNode(ArrayList<String> keyPath, JsonNode root, JsonNode subNode){
         if (root instanceof ArrayNode){
             root.add(subNode)
         }
         else {
-
-            root.put(keyPath[1], subNode)
+            if (root.get(keyPath[1]) == null) {
+                root.put(keyPath[1], subNode)
+            }
+            else{
+                subNode = root.get(keyPath[1])
+            }
         }
+        return subNode
     }
 
 
