@@ -39,6 +39,19 @@
     "type" : "String"
   },
   {
+    "ygor" : "continuingSeries",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.continuingSeries"]
+    },
+    "order" : [""],
+    "type" : "String"
+  },
+  {
     "ygor" : "coverageDepth",
     "in" : {
       "kbart" : "coverage_depth",
@@ -102,6 +115,19 @@
     },
     "order" : ["kbart"],
     "type" : "Date"
+  },
+  {
+    "ygor" : "defaultAccessURL",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.defaultAccessURL"]
+    },
+    "order" : [""],
+    "type" : "String"
   },
   {
     "ygor" : "doi",
@@ -184,6 +210,19 @@
       "gokb" : []
     },
     "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "issuer",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.issuer"]
+    },
+    "order" : [""],
     "type" : "String"
   },
   {
@@ -387,6 +426,19 @@
     "type" : "String"
   },
   {
+    "ygor" : "oaStatus",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.OAStatus"]
+    },
+    "order" : [],
+    "type" : "String"
+  },
+  {
     "ygor" : "onlineIdentifier",
     "in" : {
       "kbart" : "online_identifier",
@@ -517,6 +569,19 @@
       "gokb" : []
     },
     "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "shortcode",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.shortcode"]
+    },
+    "order" : [""],
     "type" : "String"
   },
   {
