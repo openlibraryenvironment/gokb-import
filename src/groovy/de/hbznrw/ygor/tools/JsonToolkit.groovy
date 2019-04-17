@@ -113,12 +113,12 @@ class JsonToolkit {
 
 
     static ObjectNode getTippJsonFromRecord(String target, Record record){
-        getJsonFromRecord("\$TITLE", target, record)
+        getJsonFromRecord("\$TIPP", target, record)
     }
 
 
     static ObjectNode getTitleJsonFromRecord(String target, Record record){
-        getJsonFromRecord("\$TIPP", target, record)
+        getJsonFromRecord("\$TITLE", target, record)
     }
 
 
@@ -127,10 +127,10 @@ class JsonToolkit {
         for (MultiField multiField in record.multiFields.values()){
             Set qualifiedKeys = multiField.keyMapping."${target}"
             qualifiedKeys.each {qualifiedKey ->
-                ArrayList splittedKey = qualifiedKey.split("\\.") as ArrayList
-                if (splittedKey.size() > 1 && splittedKey[0].equals(typeFilter)){
+                ArrayList splitKey = qualifiedKey.split("\\.") as ArrayList
+                if (splitKey.size() > 1 && splitKey[0].equals(typeFilter)){
                     // JsonNode node = getJsonNodeFromSplitString(ARRAY, splittedKey[1..splittedKey.size()-1], multiField.getPrioValue())
-                    ArrayList subarray = splittedKey // [1..splittedKey.size()-1]
+                    ArrayList subarray = splitKey // [1..splittedKey.size()-1]
                     def value = multiField.getPrioValue()
                     upsertIntoJsonNode(result, subarray, value)
                 }
@@ -188,7 +188,7 @@ class JsonToolkit {
 
     private static ObjectNode buildMultiLeaf(ArrayList<String> keyPath, String value){
         ObjectNode result = new ObjectNode(FACTORY)
-        String[] singleNodes = keyPath[0].split(",")
+        String[] singleNodes = keyPath[1].replaceAll("^\\(|\\)\$", "").split(",")
         for (int i=1; i<singleNodes.length; i++){
             String[] entry = singleNodes[i-1].split(":")
             assert entry.length == 2

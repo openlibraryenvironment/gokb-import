@@ -556,5 +556,6 @@
       "gokb" : ["$TITLE.identifiers.$COUNT.(type:zdb,value)", "$TIPP.title.identifiers.$COUNT.(type:zdb,value)"]
     },
     "order" : ["kbart"],
-    "type" : "ID"}
+    "type" : "ID"
+  }
 ]
