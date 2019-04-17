@@ -68,4 +68,9 @@ class MultiField {
         // TODO: fix hard-coded namespace
     }
 
+
+    String toString(){
+        this.getClass().getName().concat(": ").concat(ygorFieldKey).concat(", fields: ").concat(fields.toString())
+    }
+
 }

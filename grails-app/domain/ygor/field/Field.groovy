@@ -19,4 +19,8 @@ class Field {
         this.value = value
     }
 
+    String toString(){
+        "Field: ".concat(source).concat("-").concat(key).concat(": ").concat(value)
+    }
+
 }
