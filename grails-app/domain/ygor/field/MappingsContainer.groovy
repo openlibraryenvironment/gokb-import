@@ -3,6 +3,7 @@ package ygor.field
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
+import ygor.Record
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier

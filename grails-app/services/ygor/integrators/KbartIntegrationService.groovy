@@ -13,7 +13,7 @@ import ygor.identifier.AbstractIdentifier
 class KbartIntegrationService {
 
     def integrate(MultipleProcessingThread owner, DataContainer data,
-                         MappingsContainer container, KbartReaderConfiguration kbartReaderConfiguration) {
+                  MappingsContainer container, KbartReaderConfiguration kbartReaderConfiguration) {
 
         owner.setProgressTotal(1)
         KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
@@ -33,7 +33,7 @@ class KbartIntegrationService {
                     }
                 }
             }
-            Record record = new Record(identifiers)
+            Record record = new Record(identifiers, container)
 
             // fill record with all non-identifier fields
             item.each { key, value ->

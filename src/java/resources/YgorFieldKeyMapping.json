@@ -524,7 +524,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.publishedFrom"]
     },
     "order" : ["zdb"],
     "type" : "Date"
@@ -537,7 +537,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.publishedTo"]
     },
     "order" : ["zdb"],
     "type" : "Date"
@@ -547,9 +547,9 @@
     "in" : {
       "kbart" : "",
       "zdb" : [
-      "033A:n",
-      "033A:h"
-    ],
+        "033A:n",
+        "033A:h"
+      ],
       "ezb" : ""
     },
     "out" : {
@@ -566,7 +566,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.publisher_history.$COUNT.name"]
     },
     "order" : ["kbart"],
     "type" : "String"

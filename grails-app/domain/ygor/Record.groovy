@@ -1,6 +1,8 @@
 package ygor
 
 import groovy.json.JsonBuilder
+import ygor.field.FieldKeyMapping
+import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.EissnIdentifier
@@ -21,13 +23,15 @@ class Record {
     static constraints = {
     }
 
-    Record(ArrayList<AbstractIdentifier> ids){
+    Record(ArrayList<AbstractIdentifier> ids, MappingsContainer container){
         uid = UUID.randomUUID().toString()
         for (id in ids){
             addIdentifier(id)
-
         }
         multiFields = [:]
+        for (def ygorMapping in container.ygorMappings){
+            multiFields.put(ygorMapping.key, new MultiField(ygorMapping.value))
+        }
     }
 
     void addIdentifier(AbstractIdentifier identifier){

@@ -127,8 +127,8 @@ class MultipleProcessingThread extends Thread {
 
         validate()
 
-        extractTitles()
-        extractTipps()
+        extractTitles() // to enrichment.dataContainer.titles
+        extractTipps()  // to enrichment.dataContainer.tipps
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
