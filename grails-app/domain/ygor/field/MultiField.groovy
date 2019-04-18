@@ -54,13 +54,18 @@ class MultiField {
     }
 
     String getPrioValue(){
+        if (keyMapping.valIsFix){
+            return keyMapping.val
+        }
+        // no fixed value --> search for collected values
         for (source in sourcePrio){
             def field = fields.get(source)
             if (field != null){
                 return field.value
             }
         }
-        return ""
+        // no collected value --> return default value (if any)
+        return keyMapping.val
     }
 
     void validate(){

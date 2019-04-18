@@ -62,7 +62,10 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageDepth"]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "value" : {
+      "fixed" : "Fulltext"
+    }
   },
   {
     "ygor" : "dateFirstIssueOnline",
@@ -141,6 +144,16 @@
     },
     "order" : ["kbart"],
     "type" : "String"
+  },
+  {
+    "ygor" : "editStatus",
+    "out" : {
+      "gokb" : ["$TITLE.editStatus"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "In Progress"
+    }
   },
   {
     "ygor" : "embargoInfo",
@@ -263,6 +276,16 @@
     },
     "order" : ["kbart"],
     "type" : "Number"
+  },
+  {
+    "ygor" : "medium",
+    "out" : {
+      "gokb" : ["$TIPP.medium"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Electronic"
+    }
   },
   {
     "ygor" : "monographEdition",

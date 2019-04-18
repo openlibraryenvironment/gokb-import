@@ -5,17 +5,16 @@ import org.apache.commons.lang.StringUtils
 class FieldKeyMapping {
 
     String ygorKey
-    Set kbartKeys
-    Set zdbKeys
-    Set ezbKeys
+    Set kbartKeys = new HashSet()
+    Set zdbKeys = new HashSet()
+    Set ezbKeys = new HashSet()
     String type
     Set gokb
+    String val = ""
+    boolean valIsFix
 
     static constraints = {
         ygorKey   nullable : false
-        kbartKeys nullable : false
-        zdbKeys   nullable : false
-        ezbKeys   nullable : false
         type      nullable : false
         gokb      nullable : false
     }
@@ -44,7 +43,6 @@ class FieldKeyMapping {
                     ygorKey = mapping.value
                     break
                 case MappingsContainer.KBART:
-                    kbartKeys = new HashSet()
                     if (mapping.value instanceof Collection<?>) {
                         kbartKeys.addAll(mapping.value)
                     }
@@ -53,7 +51,6 @@ class FieldKeyMapping {
                     }
                     break
                 case MappingsContainer.ZDB:
-                    zdbKeys = new HashSet()
                     if (mapping.value instanceof Collection<?>) {
                         zdbKeys.addAll(mapping.value)
                     }
@@ -62,7 +59,6 @@ class FieldKeyMapping {
                     }
                     break
                 case MappingsContainer.EZB:
-                    ezbKeys = new HashSet()
                     if (mapping.value instanceof Collection<?>) {
                         ezbKeys.addAll(mapping.value)
                     }
@@ -82,10 +78,21 @@ class FieldKeyMapping {
                         gokb.add(mapping.value)
                     }
                     break
+                case "default":
+                    val = mapping.value
+                    valIsFix = false
+                    break
+                case "fixed":
+                    val = mapping.value
+                    valIsFix = true
+                    break
                 case "in":
                     parseMapping(mapping.value)
                     break
                 case "out":
+                    parseMapping(mapping.value)
+                    break
+                case "val":
                     parseMapping(mapping.value)
                     break
             }

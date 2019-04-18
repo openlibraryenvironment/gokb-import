@@ -71,17 +71,7 @@ class MappingsContainer {
     static FieldKeyMapping jsonNodeToMapping(def json) throws MissingFieldException{
         // ygor key must exist and is not allowed to have an empty value
         if (StringUtils.isEmpty(json.ygor)){
-            throw new MissingFieldException("Missing YgorFieldKey entry in ".concat(json))
-        }
-        // other keyMapping are allowed to be empty Strings
-        if (json.in.kbart == null){
-            throw new MissingFieldException("Missing Kbart key entry in ".concat(json))
-        }
-        if (json.in.zdb == null){
-            throw new MissingFieldException("Missing ZDB key entry in ".concat(json))
-        }
-        if (json.in.ezb == null){
-            throw new MissingFieldException("Missing EZB key entry in ".concat(json))
+            throw new MissingFieldException("Missing YgorFieldKey entry in ".concat(json.toString()), FieldKeyMapping.class)
         }
         new FieldKeyMapping(false, json)
     }

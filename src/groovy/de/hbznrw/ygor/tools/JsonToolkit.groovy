@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import com.google.gson.JsonObject
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVFormat
 import de.hbznrw.ygor.export.DataContainer
@@ -26,26 +25,6 @@ class JsonToolkit {
     final private static String COUNT = "\$COUNT"
 
 
-    static String parseCsvToJson(File file) {
-        
-        def writer      = new StringWriter()
-        def jsonBuilder = new groovy.json.StreamingJsonBuilder(writer)
-        def records     = []
-        
-        file.withReader { reader ->
-            CSVParser csv = new CSVParser(reader, CSVFormat.EXCEL)
-            for (record in csv.iterator()) {
-                records << record
-            }
-        }
-                
-        jsonBuilder {
-            // TODO
-        }
-        
-        JsonOutput.prettyPrint(writer.toString())
-    }
-    
     static Object parseFileToJson(String filename) {
         
         def file        = new File(filename)
