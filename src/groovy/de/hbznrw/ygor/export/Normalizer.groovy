@@ -536,14 +536,16 @@ class Normalizer {
         }
         StringBuilder result = new StringBuilder()
         for (str in strings) {
-            Matcher matcher = NUMBER_PATTERN.matcher(str)
-            if (result.length() > 0) {
-                result.append("|")
-            }
-            if (matcher.matches()) {
-                result.append(matcher.group(1))
-            } else {
-                result.append(str)
+            if (str && str.length() > 0) {
+                Matcher matcher = NUMBER_PATTERN.matcher(str)
+                if (result.length() > 0) {
+                    result.append("|")
+                }
+                if (matcher.matches()) {
+                    result.append(matcher.group(1))
+                } else {
+                    result.append(str)
+                }
             }
         }
         result.toString()
