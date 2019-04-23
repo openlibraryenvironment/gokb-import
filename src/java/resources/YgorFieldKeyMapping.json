@@ -280,12 +280,9 @@
   {
     "ygor" : "medium",
     "out" : {
-      "gokb" : ["$TIPP.medium"]
+      "gokb" : ["$TITLE.medium"]
     },
-    "type" : "String",
-    "value" : {
-      "fixed" : "Electronic"
-    }
+    "type" : "String"
   },
   {
     "ygor" : "monographEdition",
@@ -606,6 +603,16 @@
     },
     "order" : [""],
     "type" : "String"
+  },
+  {
+    "ygor" : "tippMedium",
+    "out" : {
+      "gokb" : ["$TIPP.medium"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Electronic"
+    }
   },
   {
     "ygor" : "titleId",

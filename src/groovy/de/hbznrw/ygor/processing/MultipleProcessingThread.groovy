@@ -5,7 +5,6 @@ import de.hbznrw.ygor.bridges.EzbBridge
 import de.hbznrw.ygor.bridges.KbartBridge
 import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.connectors.KbartConnector
-import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
@@ -17,6 +16,7 @@ import ygor.Enrichment
 import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
+import ygor.field.MultiField
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
@@ -52,6 +52,7 @@ class MultipleProcessingThread extends Thread {
     private quote
     private quoteMode
     private recordSeparator
+    private dataType
     private kbartFile
 
     private int progressTotal   = 0
@@ -69,6 +70,7 @@ class MultipleProcessingThread extends Thread {
         quote = options.get('quote')
         quoteMode = options.get('quoteMode')
         recordSeparator = options.get('recordSeparator')
+        dataType = options.get('dataTyp')
         kbartFile = en.originPathName
         kbartReader = new KbartReader(this, delimiter)
         zdbReader = new ZdbReader()
@@ -127,8 +129,9 @@ class MultipleProcessingThread extends Thread {
 
         validate()
 
-        extractTitles() // to enrichment.dataContainer.titles
-        extractTipps()  // to enrichment.dataContainer.tipps
+        processUiSettings() // set "medium"
+        extractTitles()     // to enrichment.dataContainer.titles
+        extractTipps()      // to enrichment.dataContainer.tipps
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
@@ -147,11 +150,38 @@ class MultipleProcessingThread extends Thread {
 		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
 	}
 
+
     private void validate(){
         for (Record record : enrichment.dataContainer.records) {
             record.validate()
         }
     }
+
+
+    private void processUiSettings(){
+        setTitleMedium()
+    }
+
+
+    private void setTitleMedium() {
+        FieldKeyMapping mediumMapping = mappingsContainer.getMapping("medium", MappingsContainer.YGOR)
+
+        if (dataType == 'ebooks') {
+            mediumMapping.val = "Book"
+        }
+        else if (dataType == 'database') {
+            mediumMapping.val = "Database"
+        }
+        else {
+            mediumMapping.val = "Journal"
+        }
+
+        MultiField titleMedium = new MultiField(mediumMapping)
+        for (Record record in enrichment.dataContainer.records) {
+            record.addMultiField(titleMedium)
+        }
+    }
+
 
     private void extractTitles() {
         def titles = []
@@ -161,6 +191,7 @@ class MultipleProcessingThread extends Thread {
         enrichment.dataContainer.titles = titles
     }
 
+
     private void extractTipps() {
         def tipps = []
         for (def record in enrichment.dataContainer.records){
@@ -169,19 +200,23 @@ class MultipleProcessingThread extends Thread {
         enrichment.dataContainer.tipps = tipps
     }
 
+
     void setProgressTotal(int i) {
         progressTotal = i
     }
-    
+
+
     void increaseProgress() {
         progressCurrent++
         enrichment.setProgress((progressCurrent / progressTotal) * 100)
     }
-    
+
+
     int getApiCallsSize() {
         return apiCalls.size()    
     }
-    
+
+
     Enrichment getEnrichment() {
         enrichment
     }

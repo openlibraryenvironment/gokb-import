@@ -104,11 +104,11 @@ class FieldKeyMapping {
      * @param source One of {MappingsContainer.@value YGOR}, { MappingsContainer.@value KBART},
      * {MappingsContainer.@value ZDB}, {MappingsContainer.@value EZB} or
      * {MappingsContainer.@value TYPE}
-     * @return The value of the given source.
+     * @return The values of the given source.
      */
-    def get(String source){
+    Collection get(String source){
         if (source == MappingsContainer.YGOR){
-            ygorKey
+            [ygorKey]
         }
         else if (source == MappingsContainer.KBART){
             kbartKeys
@@ -120,7 +120,7 @@ class FieldKeyMapping {
             ezbKeys
         }
         else if (source == MappingsContainer.TYPE){
-            type
+            [type]
         }
     }
 }
