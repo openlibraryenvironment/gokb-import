@@ -226,6 +226,16 @@
     "type" : "String"
   },
   {
+    "ygor" : "imprint",
+    "out" : {
+      "gokb" : ["$TITLE.imprint"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : ""
+    }
+  },
+  {
     "ygor" : "issuer",
     "in" : {
       "kbart" : "",
@@ -310,7 +320,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.monographVolume"]
+      "gokb" : ["$TITLE.monographVolume", "$TITLE.volumeNumber"]
     },
     "order" : ["kbart"],
     "type" : "String"
@@ -639,6 +649,13 @@
     },
     "order" : ["ezb","kbart"],
     "type" : "URL"
+  },
+  {
+    "ygor" : "type",
+    "out" : {
+      "gokb" : ["$TITLE.type"]
+    },
+    "type" : "String"
   },
   {
     "ygor" : "zdbId",

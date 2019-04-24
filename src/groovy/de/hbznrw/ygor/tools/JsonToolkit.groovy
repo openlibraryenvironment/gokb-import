@@ -9,11 +9,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import org.apache.commons.csv.CSVParser
-import org.apache.commons.csv.CSVFormat
 import de.hbznrw.ygor.export.DataContainer
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import org.apache.commons.lang.StringUtils
 import ygor.Record
 import ygor.field.MultiField
 
@@ -159,7 +158,7 @@ class JsonToolkit {
             root.add(subNode)
         }
         else {
-            if (root.get(keyPath[1]) == null) {
+            if (isEmptyNode(root.get(keyPath[1]))) {
                 root.put(keyPath[1], subNode)
             }
             else{
@@ -180,5 +179,16 @@ class JsonToolkit {
         }
         result.put(singleNodes[singleNodes.length-1], value)
         result
+    }
+
+
+    private static boolean isEmptyNode (def obj){
+        if (obj == null)
+            return true
+        if (obj instanceof String && StringUtils.isEmpty(obj))
+            return true
+        if (obj instanceof TextNode && obj.toString() == "\"\"")
+            return true
+        return false
     }
 }

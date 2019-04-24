@@ -160,6 +160,7 @@ class MultipleProcessingThread extends Thread {
 
     private void processUiSettings(){
         setTitleMedium()
+        setTitleType()
     }
 
 
@@ -179,6 +180,26 @@ class MultipleProcessingThread extends Thread {
         MultiField titleMedium = new MultiField(mediumMapping)
         for (Record record in enrichment.dataContainer.records) {
             record.addMultiField(titleMedium)
+        }
+    }
+
+
+    private void setTitleType() {
+        FieldKeyMapping typeMapping = mappingsContainer.getMapping("type", MappingsContainer.YGOR)
+
+        if (dataType == 'ebooks') {
+            typeMapping.val = "Book"
+        }
+        else if (dataType == 'database') {
+            typeMapping.val = "Database"
+        }
+        else {
+            typeMapping.val = "Serial"
+        }
+
+        MultiField titleType = new MultiField(typeMapping)
+        for (Record record in enrichment.dataContainer.records) {
+            record.addMultiField(titleType)
         }
     }
 

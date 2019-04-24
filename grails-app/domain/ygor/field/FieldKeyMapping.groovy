@@ -92,7 +92,7 @@ class FieldKeyMapping {
                 case "out":
                     parseMapping(mapping.value)
                     break
-                case "val":
+                case "value":
                     parseMapping(mapping.value)
                     break
             }
