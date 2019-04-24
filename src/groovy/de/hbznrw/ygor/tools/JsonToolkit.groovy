@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.export.DataContainer
+import de.hbznrw.ygor.format.YgorFormatter
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
@@ -90,17 +91,18 @@ class JsonToolkit {
     }
 
 
-    static ObjectNode getTippJsonFromRecord(String target, Record record){
-        getJsonFromRecord("\$TIPP", target, record)
+    static ObjectNode getTippJsonFromRecord(String target, Record record, YgorFormatter formatter){
+        getJsonFromRecord("\$TIPP", target, record, formatter)
     }
 
 
-    static ObjectNode getTitleJsonFromRecord(String target, Record record){
-        getJsonFromRecord("\$TITLE", target, record)
+    static ObjectNode getTitleJsonFromRecord(String target, Record record, YgorFormatter formatter){
+        getJsonFromRecord("\$TITLE", target, record, formatter)
     }
 
 
-    private static ObjectNode getJsonFromRecord (String typeFilter, String target, Record record){
+    private static ObjectNode getJsonFromRecord(String typeFilter, String target, Record record,
+                                                YgorFormatter formatter){
         ObjectNode result = MAPPER.createObjectNode()
         for (MultiField multiField in record.multiFields.values()){
             Set qualifiedKeys = multiField.keyMapping."${target}"
@@ -110,7 +112,7 @@ class JsonToolkit {
                     // JsonNode node = getJsonNodeFromSplitString(ARRAY, splittedKey[1..splittedKey.size()-1], multiField.getPrioValue())
                     ArrayList subarray = splitKey // [1..splittedKey.size()-1]
                     def value = multiField.getPrioValue()
-                    upsertIntoJsonNode(result, subarray, value)
+                    upsertIntoJsonNode(result, subarray, value, multiField.type, formatter)
                 }
             }
         }
@@ -118,7 +120,8 @@ class JsonToolkit {
     }
 
 
-    private static void upsertIntoJsonNode(JsonNode root, ArrayList<String> keyPath, String value){
+    private static void upsertIntoJsonNode(JsonNode root, ArrayList<String> keyPath, String value, String type,
+                                           YgorFormatter formatter){
         assert keyPath.size() > 1
         if (keyPath.size() == 2 && keyPath[1].startsWith("(")){
             ObjectNode multiLeaf = buildMultiLeaf(keyPath, value)
@@ -126,24 +129,24 @@ class JsonToolkit {
         }
         else{
             if (keyPath.get(1).equals(COUNT)){
-                upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value)
+                upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, formatter)
             }
             else {
-                JsonNode subNode = getSubNode(keyPath, value)
+                JsonNode subNode = getSubNode(keyPath, value, type, formatter)
                 subNode = putAddNode(keyPath, root, subNode)
                 if (keyPath.size() > 2) {
                     // root is not final leaf --> iterate
-                    upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value)
+                    upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value, type, formatter)
                 }
             }
         }
     }
 
 
-    private static JsonNode getSubNode(ArrayList<String> keyPath, String value){
+    private static JsonNode getSubNode(ArrayList<String> keyPath, String value, String type, YgorFormatter formatter){
         assert keyPath.size() > 1
         if (keyPath.size() == 2){
-            return new TextNode(value)
+            return new TextNode(formatValue(type, value, formatter))
         }
         if (keyPath[2].equals(COUNT) || keyPath[2].equals(ARRAY)){
             return new ArrayNode(FACTORY)
@@ -190,5 +193,26 @@ class JsonToolkit {
         if (obj instanceof TextNode && obj.toString() == "\"\"")
             return true
         return false
+    }
+
+
+    private static String formatValue(String type, String value, YgorFormatter formatter){
+        switch (type){
+            case "String":
+                return formatter.formatString(value)
+            case "StartDate":
+                return formatter.formatStartDate(value)
+            case "EndDate":
+                return formatter.formatEndDate(value)
+            case "Date":
+                return formatter.formatDate(value)
+            case "ID":
+                return formatter.formatId(value)
+            case "Number":
+                return formatter.formatNumber(value)
+            case "URL":
+                return formatter.formatUrl(value)
+            return value
+        }
     }
 }

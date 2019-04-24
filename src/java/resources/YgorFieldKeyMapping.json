@@ -10,7 +10,7 @@
       "gokb" : ["$TIPP.accessEndDate"]
     },
     "order" : ["kbart"],
-    "type" : "Date"
+    "type" : "EndDate"
   },
   {
     "ygor" : "accessStartDate",
@@ -23,7 +23,7 @@
       "gokb" : ["$TIPP.accessStartDate"]
     },
     "order" : ["kbart"],
-    "type" : "Date"
+    "type" : "StartDate"
   },
   {
     "ygor" : "accessType",
@@ -78,7 +78,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startDate"]
     },
     "order" : ["kbart"],
-    "type" : "Date"
+    "type" : "StartDate"
   },
   {
     "ygor" : "dateLastIssueOnline",
@@ -91,7 +91,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endDate"]
     },
     "order" : ["kbart"],
-    "type" : "Date"
+    "type" : "EndDate"
   },
   {
     "ygor" : "dateMonographPublishedOnline",
@@ -104,7 +104,7 @@
       "gokb" : ["$TITLE.dateFirstOnline"]
     },
     "order" : ["kbart"],
-    "type" : "Date"
+    "type" : "StartDate"
   },
   {
     "ygor" : "dateMonographPublishedPrint",
@@ -117,7 +117,7 @@
       "gokb" : ["$TITLE.dateFirstInPrint"]
     },
     "order" : ["kbart"],
-    "type" : "Date"
+    "type" : "StartDate"
   },
   {
     "ygor" : "defaultAccessURL",
@@ -557,7 +557,7 @@
       "gokb" : ["$TITLE.publishedFrom"]
     },
     "order" : ["zdb"],
-    "type" : "Date"
+    "type" : "StartDate"
   },
   {
     "ygor" : "publishedTo",
@@ -570,7 +570,7 @@
       "gokb" : ["$TITLE.publishedTo"]
     },
     "order" : ["zdb"],
-    "type" : "Date"
+    "type" : "EndDate"
   },
   {
     "ygor" : "publisherHistory",
