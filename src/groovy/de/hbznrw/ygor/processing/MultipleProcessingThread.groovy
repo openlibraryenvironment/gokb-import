@@ -5,6 +5,7 @@ import de.hbznrw.ygor.bridges.EzbBridge
 import de.hbznrw.ygor.bridges.KbartBridge
 import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.connectors.KbartConnector
+import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
@@ -129,9 +130,9 @@ class MultipleProcessingThread extends Thread {
 
         validate()
 
-        processUiSettings() // set "medium"
-        extractTitles()     // to enrichment.dataContainer.titles
-        extractTipps()      // to enrichment.dataContainer.tipps
+        processUiSettings()                        // set "medium"
+        GokbExporter.extractTitles(enrichment)     // to enrichment.dataContainer.titles
+        GokbExporter.extractTipps(enrichment)      // to enrichment.dataContainer.tipps
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
@@ -201,24 +202,6 @@ class MultipleProcessingThread extends Thread {
         for (Record record in enrichment.dataContainer.records) {
             record.addMultiField(titleType)
         }
-    }
-
-
-    private void extractTitles() {
-        def titles = []
-        for (def record in enrichment.dataContainer.records){
-            titles << JsonToolkit.getTitleJsonFromRecord("gokb", record)
-        }
-        enrichment.dataContainer.titles = titles
-    }
-
-
-    private void extractTipps() {
-        def tipps = []
-        for (def record in enrichment.dataContainer.records){
-            tipps << JsonToolkit.getTippJsonFromRecord("gokb", record)
-        }
-        enrichment.dataContainer.tipps = tipps
     }
 
 
