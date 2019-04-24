@@ -671,13 +671,6 @@
     "type" : "URL"
   },
   {
-    "ygor" : "type",
-    "out" : {
-      "gokb" : ["$TITLE.type"]
-    },
-    "type" : "String"
-  },
-  {
     "ygor" : "zdbId",
     "in" : {
       "kbart" : "zdb_id",

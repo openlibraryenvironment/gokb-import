@@ -186,7 +186,7 @@ class MultipleProcessingThread extends Thread {
 
 
     private void setTitleType() {
-        FieldKeyMapping typeMapping = mappingsContainer.getMapping("type", MappingsContainer.YGOR)
+        FieldKeyMapping typeMapping = mappingsContainer.getMapping("publicationType", MappingsContainer.YGOR)
 
         if (dataType == 'ebooks') {
             typeMapping.val = "Book"
