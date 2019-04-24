@@ -524,7 +524,7 @@
     "ygor" : "publicationTitle",
     "in" : {
       "kbart" : "publication_title",
-      "zdb" : "025@:a",
+      "zdb" : ["025@:a", "021A:a"],
       "ezb" : "title"
     },
     "out" : {
