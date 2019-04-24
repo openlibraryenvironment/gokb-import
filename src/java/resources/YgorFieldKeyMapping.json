@@ -625,6 +625,16 @@
     }
   },
   {
+    "ygor" : "tippStatus",
+    "out" : {
+      "gokb" : ["$TIPP.status"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Current"
+    }
+  },
+  {
     "ygor" : "titleId",
     "in" : {
       "kbart" : "title_id",
@@ -636,6 +646,16 @@
     },
     "order" : ["kbart"],
     "type" : "ID"
+  },
+  {
+    "ygor" : "titleStatus",
+    "out" : {
+      "gokb" : ["$TITLE.status"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Current"
+    }
   },
   {
     "ygor" : "titleUrl",
