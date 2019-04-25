@@ -140,7 +140,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.(type:doi,value)", "$TIPP.title.identifiers.$COUNT.(type:doi,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:doi,value)", "$TIPP.title.identifiers.$ARRAY.(type:doi,value)"]
     },
     "order" : ["kbart"],
     "type" : "String"
@@ -163,7 +163,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.embargo"]
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.embargo"]
     },
     "order" : ["kbart"],
     "type" : "String"
@@ -176,7 +176,7 @@
       "ezb" : "jourid"
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.(type:ezb,value)", "$TIPP.title.identifiers.$COUNT.(type:ezb,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:ezb,value)", "$TIPP.title.identifiers.$ARRAY.(type:ezb,value)"]
     },
     "order" : ["ezb", "kbart"],
     "type" : "ID"
@@ -476,7 +476,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.(type:eissn,value)", "$TIPP.title.identifiers.$COUNT.(type:eissn,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:eissn,value)", "$TIPP.title.identifiers.$ARRAY.(type:eissn,value)"]
     },
     "order" : ["kbart"],
     "type" : "ID"
@@ -529,7 +529,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.(type:issn,value)", "$TIPP.title.identifiers.$COUNT.(type:issn,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:issn,value)", "$TIPP.title.identifiers.$ARRAY.(type:issn,value)"]
     },
     "order" : ["kbart"],
     "type" : "ID"
@@ -610,7 +610,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$COUNT.name"]
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.name"]
     },
     "order" : ["kbart"],
     "type" : "String"
@@ -692,7 +692,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$COUNT.(type:zdb,value)", "$TIPP.title.identifiers.$COUNT.(type:zdb,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:zdb,value)", "$TIPP.title.identifiers.$ARRAY.(type:zdb,value)"]
     },
     "order" : ["kbart"],
     "type" : "ID"

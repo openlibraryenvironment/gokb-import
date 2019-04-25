@@ -128,8 +128,15 @@ class JsonToolkit {
             putAddNode(keyPath, root, multiLeaf)
         }
         else{
-            if (keyPath.get(1).equals(COUNT)){
+            if (keyPath.get(1).equals(ARRAY)){
                 upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, formatter)
+            }
+            else if (keyPath.get(1).equals(COUNT)){
+                // TODO until now, only 1 element in array is supported ==> implement count
+                if (root.size() == 0){
+                    root.add(new ObjectNode(FACTORY))
+                }
+                upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, formatter)
             }
             else {
                 JsonNode subNode = getSubNode(keyPath, value, type, formatter)
@@ -148,7 +155,7 @@ class JsonToolkit {
         if (keyPath.size() == 2){
             return new TextNode(formatValue(type, value, formatter))
         }
-        if (keyPath[2].equals(COUNT) || keyPath[2].equals(ARRAY)){
+        if (keyPath[2].equals(ARRAY)){
             return new ArrayNode(FACTORY)
         }
         // else
