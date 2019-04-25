@@ -495,6 +495,20 @@
     "type" : "ID"
   },
   {
+    "ygor" : "platformName",
+    "out" : {
+      "gokb" : ["$TIPP.platform.name"]
+    },
+    "type" : "ID"
+  },
+  {
+    "ygor" : "platformUrl",
+    "out" : {
+      "gokb" : ["$TIPP.platform.primaryUrl"]
+    },
+    "type" : "ID"
+  },
+  {
     "ygor" : "precedingPublicationTitleId",
     "in" : {
       "kbart" : "preceding_publication_title_id",

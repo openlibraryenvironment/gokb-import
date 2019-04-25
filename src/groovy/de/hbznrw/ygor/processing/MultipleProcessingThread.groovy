@@ -11,7 +11,6 @@ import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
-import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import ygor.Record
@@ -54,6 +53,7 @@ class MultipleProcessingThread extends Thread {
     private quoteMode
     private recordSeparator
     private dataType
+    private platform
     private kbartFile
 
     private int progressTotal   = 0
@@ -72,6 +72,7 @@ class MultipleProcessingThread extends Thread {
         quoteMode = options.get('quoteMode')
         recordSeparator = options.get('recordSeparator')
         dataType = options.get('dataTyp')
+        platform = options.get('platform')
         kbartFile = en.originPathName
         kbartReader = new KbartReader(this, delimiter)
         zdbReader = new ZdbReader()
@@ -162,6 +163,7 @@ class MultipleProcessingThread extends Thread {
     private void processUiSettings(){
         setTitleMedium()
         setTitleType()
+        setTippPlatform()
     }
 
 
@@ -201,6 +203,22 @@ class MultipleProcessingThread extends Thread {
         MultiField titleType = new MultiField(typeMapping)
         for (Record record in enrichment.dataContainer.records) {
             record.addMultiField(titleType)
+        }
+    }
+
+
+    private void setTippPlatform() {
+        FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
+        FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
+
+        platformNameMapping.val = enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.name
+        platformUrlMapping.val = enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.url
+        MultiField nameField = new MultiField(platformNameMapping)
+        MultiField urlField = new MultiField(platformUrlMapping)
+
+        for (Record record in enrichment.dataContainer.records) {
+            record.addMultiField(nameField)
+            record.addMultiField(urlField)
         }
     }
 
