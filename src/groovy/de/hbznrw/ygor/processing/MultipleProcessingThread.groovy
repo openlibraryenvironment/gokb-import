@@ -131,9 +131,10 @@ class MultipleProcessingThread extends Thread {
 
         validate()
 
-        processUiSettings()                        // set "medium"
-        GokbExporter.extractTitles(enrichment)     // to enrichment.dataContainer.titles
-        GokbExporter.extractTipps(enrichment)      // to enrichment.dataContainer.tipps
+        processUiSettings()                           // set "medium"
+        GokbExporter.extractTitles(enrichment)        // to enrichment.dataContainer.titles
+        GokbExporter.extractTipps(enrichment)         // to enrichment.dataContainer.tipps
+        GokbExporter.removeInvalidFields(enrichment)  // e. g. empty identifiers, incomplete publisher_history, ...
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
