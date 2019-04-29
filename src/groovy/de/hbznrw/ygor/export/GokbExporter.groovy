@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.format.GokbFormatter
 import de.hbznrw.ygor.tools.JsonToolkit
+import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import ygor.Enrichment
 
+@Log4j
 class GokbExporter {
 
 
@@ -16,36 +18,43 @@ class GokbExporter {
 
 
     static void extractTitles(Enrichment enrichment) {
+        log.debug("extracting titles ...")
         def titles = []
         for (def record in enrichment.dataContainer.records){
             titles << JsonToolkit.getTitleJsonFromRecord("gokb", record, formatter)
         }
         enrichment.dataContainer.titles = titles
+        log.debug("extracting titles finished")
     }
 
 
     static void extractTipps(Enrichment enrichment) {
+        log.debug("extracting tipps ...")
         def tipps = []
         for (def record in enrichment.dataContainer.records){
             tipps << JsonToolkit.getTippJsonFromRecord("gokb", record, formatter)
         }
         enrichment.dataContainer.tipps = tipps
+        log.debug("extracting tipps finished")
     }
 
 
     static void removeInvalidFields(Enrichment enrichment){
+        log.debug("removing invalid fields ...")
         for (def title in enrichment.dataContainer.titles){
             removeEmptyIdentifiers(title.identifiers)
         }
         for (def tipp in enrichment.dataContainer.pkg.tipps){
             removeEmptyIdentifiers(tipp.title.identifiers)
         }
+        log.debug("removing invalid fields finished")
     }
 
 
     static def extractPackageHeader(Enrichment enrichment) {
         // this currently parses the old package header
         // TODO: refactor
+        log.debug("parsing package header ...")
         def packageHeader = enrichment.dataContainer.pkg.packageHeader.v
         def result = new ObjectNode(NODE_FACTORY)
 
@@ -74,6 +83,7 @@ class GokbExporter {
         result.set("source", source)
 
         enrichment.dataContainer.packageHeader = result
+        log.debug("parsing package header finished")
     }
 
 
