@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.export
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
 import ygor.Record
@@ -11,6 +12,7 @@ class DataContainer {
 
     Meta    info    // TODO: use or delete
     Package pkg
+    ObjectNode packageHeader
 
     Map<ZdbIdentifier, Record>   recordsPerZdbId = [:]
     Map<EissnIdentifier, Record> recordsPerEissn = [:]
