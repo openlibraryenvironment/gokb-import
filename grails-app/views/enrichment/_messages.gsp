@@ -5,10 +5,10 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <h4 class="panel-title">
-                <a data-toggle="collapse" href="#infomsg">GOKb Infos</a>
+                <a data-toggle="collapse" href="#gokb-info">GOKb Infos</a>
               </h4>
             </div>
-            <div id="infomsg" class="panel-collapse collapse in">
+            <div id="gokb-info" class="panel-collapse collapse in">
               <div class="panel-body">
                 <div class="alert alert-info" role="alert" style="z-index:2;">
                   ${flash.info}
@@ -23,10 +23,10 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <h4 class="panel-title">
-                <a data-toggle="collapse" href="#warningmsg">GOKb Infos</a>
+                <a data-toggle="collapse" href="#gokb-errors">GOKb Infos</a>
               </h4>
             </div>
-            <div id="warningmsg" class="panel-collapse collapse in">
+            <div id="gokb-errors" class="panel-collapse collapse in">
               <div class="panel-body">
                 <g:if test="${flash.error instanceof String}">
                   <div class="alert alert-danger" role="alert" style="z-index:2;">
@@ -50,10 +50,10 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <h4 class="panel-title">
-                <a data-toggle="collapse" href="#errormsg">GOKb Infos</a>
+                <a data-toggle="collapse" href="#gokb-warnings">GOKb Infos</a>
               </h4>
             </div>
-            <div id="errormsg" class="panel-collapse collapse in">
+            <div id="gokb-warnings" class="panel-collapse collapse in">
               <div class="panel-body">
                 <g:if test="${flash.warning instanceof String}">
                   <div class="alert alert-warning" role="alert" style="z-index:2;">
