@@ -164,15 +164,15 @@ class EnrichmentService {
                 log.debug("server:          ${resp.headers.'Server'}")
                 log.debug("content length:  ${resp.headers.'Content-Length'}")
                 if(resp.status < 400){
-                    return ['warning':html]
-                }
-                else {
                     return ['info':html]
                 }
+                else {
+                    return ['warning':html]
+                }
             }
-            response.failure = { resp ->
+            response.failure = { resp, html ->
                 log.error("server response: ${resp.statusLine}")
-                return ['error':resp.statusLine]
+                return ['error': html]
             }
         }
     }

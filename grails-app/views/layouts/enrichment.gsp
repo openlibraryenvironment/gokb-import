@@ -18,16 +18,11 @@
 		<g:render template="/navigation" />
 		
 		<div class="container">			
-    		<div class="content">
+                        <div class="content">
 		
 				<g:layoutBody/>
 					
-			</div>
-    	</div><!-- /.container -->
-
-		<!-- TODO: Vielleicht rausnehmen?-->
-    	<script>
-			$('#ygor-messages .alert').fadeOut(600000)
-    	</script>
+                        </div>
+                </div><!-- /.container -->
 	</body>
 </html>

@@ -241,31 +241,68 @@ class EnrichmentController {
 
 
     def sendPackageFile = {
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
+        def response = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
                 params.gokbUsername, params.gokbPassword)
-        status.each{ st ->
-            if(st.get('info'))
-                flash.info = st.get('info')
-            if(st.get('warning'))
-                flash.warning = st.get('warning')
-            if(st.get('error'))
-                flash.error = st.get('error')
+
+        if (response.info[0] != null) {
+          flash.info = response.info[0].message
+          flash.warning = []
+
+          response.info[0].errors?.each { e ->
+            flash.warning.add(e.message)
+          }
         }
+
+        if (response.warning[0] != null) {
+          log.debug("${response.warning[0]}")
+          flash.warning = [response.warning[0].message]
+
+          response.warning[0].errors.each { e ->
+            flash.warning.add(e.message)
+          }
+        }
+
+        if (response.error[0] != null) {
+          flash.error = [response.error[0].message]
+
+          response.error[0].errors.each { e ->
+            flash.error.add(e.message)
+          }
+        }
+
         process()
     }
 
 
     def sendTitlesFile = {
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY,
+        def response = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY,
                 params.gokbUsername, params.gokbPassword)
-        status.each{ st ->
-            if(st.get('info'))
-                flash.info = st.get('info')
-            if(st.get('warning'))
-                flash.warning = st.get('warning')
-            if(st.get('error'))
-                flash.error = st.get('error')
+
+        flash.info = []
+        flash.warning = []
+        flash.error = []
+        def total = 0
+        def errors = 0
+
+        log.debug("sendTitlesFile response: ${response}")
+
+
+        if (response.info) {
+          log.debug("json class: ${response.info.class}")
+          def info_objects = response.info.results
+
+          info_objects[0].each { robj ->
+            log.debug("robj: ${robj}")
+            if (robj.result == 'ERROR') {
+              flash.warning.add(robj.message)
+              errors++
+            }
+            total++
+          }
+
+          flash.info = "Total: ${total}, Errors: ${errors}"
         }
+
         process()
     }
 
