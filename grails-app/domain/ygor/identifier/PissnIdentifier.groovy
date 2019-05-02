@@ -7,7 +7,11 @@ class PissnIdentifier extends AbstractIdentifier{
     FieldKeyMapping fieldKeyMapping
 
     static constraints = {
-        // TODO: check PISSN format
+        fieldKeyMapping nullable : false
+
+        identifier validator: {
+            issnPattern.matcher(identifier).matches()
+        }
     }
 
     PissnIdentifier(String id, FieldKeyMapping fieldKeyMapping){

@@ -1,10 +1,11 @@
 package ygor.identifier
 
-import ygor.field.FieldKeyMapping
+import java.util.regex.Pattern
 
 class AbstractIdentifier {
 
     String identifier
+    static Pattern issnPattern = Pattern.compile("[\\d]{4}-?[\\d]{3}[\\dX]")
 
     static constraints = {
         identifier nullable : false
@@ -12,18 +13,5 @@ class AbstractIdentifier {
 
     String toString(){
         return identifier
-    }
-
-    static Class byFieldKeyMapping(FieldKeyMapping fieldKeyMapping){
-        if (fieldKeyMapping == ZdbIdentifier.fieldKeyMapping){
-            return ZdbIdentifier.class
-        }
-        if (fieldKeyMapping == PissnIdentifier.fieldKeyMapping){
-            return PissnIdentifier.class
-        }
-        if (fieldKeyMapping == EissnIdentifier.fieldKeyMapping){
-            return EissnIdentifier.class
-        }
-        null
     }
 }

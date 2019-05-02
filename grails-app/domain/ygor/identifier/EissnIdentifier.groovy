@@ -7,7 +7,11 @@ class EissnIdentifier extends AbstractIdentifier{
     FieldKeyMapping fieldKeyMapping
 
     static constraints = {
-        // TODO: check EISSN format
+        fieldKeyMapping nullable : false
+
+        identifier validator: {
+            issnPattern.matcher(identifier).matches()
+        }
     }
 
     EissnIdentifier(String id, FieldKeyMapping fieldKeyMapping){
