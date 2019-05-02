@@ -48,7 +48,7 @@ class MappingsContainer {
     }
 
 
-    def initialize(String mappingsFile) throws MissingFieldException{
+    private def initialize(String mappingsFile) throws MissingFieldException{
         ygorMappings = [:]
         kbartMappings = [:]
         zdbMappings = [:]
@@ -57,7 +57,7 @@ class MappingsContainer {
     }
 
 
-    def readMappingsFile(File mappingsFile) throws MissingFieldException{
+    private def readMappingsFile(File mappingsFile) throws MissingFieldException{
         if (mappingsFile) {
             def json = SLURPY.parse(mappingsFile)
             json.each { map ->

@@ -23,7 +23,7 @@ class Record {
     static constraints = {
     }
 
-    Record(ArrayList<AbstractIdentifier> ids, MappingsContainer container){
+    Record(List<AbstractIdentifier> ids, MappingsContainer container){
         uid = UUID.randomUUID().toString()
         for (id in ids){
             addIdentifier(id)
