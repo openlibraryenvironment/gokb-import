@@ -12,46 +12,56 @@ import ygor.Enrichment
 @Log4j
 class GokbExporter {
 
-
     static GokbFormatter formatter = new GokbFormatter()
     static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
+    static ObjectNode extractPackage(Enrichment enrichment){
+        ObjectNode pkg = new ObjectNode(NODE_FACTORY)
+        log.debug("extracting package ...")
+        pkg.set("packageHeader", extractPackageHeader(enrichment))
+        pkg.set("tipps", extractTipps(enrichment))
+        log.debug("extracting package finished")
+        pkg
+    }
 
-    static void extractTitles(Enrichment enrichment) {
+
+    static ArrayNode extractTitles(Enrichment enrichment) {
         log.debug("extracting titles ...")
-        def titles = []
+        ArrayNode titles = new ArrayNode(NODE_FACTORY)
         for (def record in enrichment.dataContainer.records){
-            titles << JsonToolkit.getTitleJsonFromRecord("gokb", record, formatter)
+            titles.add(JsonToolkit.getTitleJsonFromRecord("gokb", record, formatter))
         }
         enrichment.dataContainer.titles = titles
         log.debug("extracting titles finished")
+        titles
     }
 
 
-    static void extractTipps(Enrichment enrichment) {
+    static ArrayNode extractTipps(Enrichment enrichment) {
         log.debug("extracting tipps ...")
-        def tipps = []
+        ArrayNode tipps = new ArrayNode(NODE_FACTORY)
         for (def record in enrichment.dataContainer.records){
-            tipps << JsonToolkit.getTippJsonFromRecord("gokb", record, formatter)
+            tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, formatter))
         }
         enrichment.dataContainer.tipps = tipps
         log.debug("extracting tipps finished")
+        tipps
     }
 
 
-    static void removeInvalidFields(Enrichment enrichment){
+    static void removeEmptyIdentifiers(Enrichment enrichment){
         log.debug("removing invalid fields ...")
         for (def title in enrichment.dataContainer.titles){
-            removeEmptyIdentifiers(title.identifiers)
+            removeEmptyIds(title.identifiers)
         }
         for (def tipp in enrichment.dataContainer.pkg.tipps){
-            removeEmptyIdentifiers(tipp.title.identifiers)
+            removeEmptyIds(tipp.title.identifiers)
         }
         log.debug("removing invalid fields finished")
     }
 
 
-    static def extractPackageHeader(Enrichment enrichment) {
+    static ObjectNode extractPackageHeader(Enrichment enrichment) {
         // this currently parses the old package header
         // TODO: refactor
         log.debug("parsing package header ...")
@@ -84,6 +94,7 @@ class GokbExporter {
 
         enrichment.dataContainer.packageHeader = result
         log.debug("parsing package header finished")
+        result
     }
 
 
@@ -96,7 +107,7 @@ class GokbExporter {
     }
 
 
-    static private void removeEmptyIdentifiers(ArrayNode identifiers){
+    static private void removeEmptyIds(ArrayNode identifiers){
         def iter = identifiers.iterator()
         def count = 0
         def idsToBeRemoved = []

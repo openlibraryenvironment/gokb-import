@@ -6,7 +6,6 @@ import de.hbznrw.ygor.bridges.KbartBridge
 import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.GokbExporter
-import de.hbznrw.ygor.export.JsonTransformer
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
@@ -132,11 +131,11 @@ class MultipleProcessingThread extends Thread {
 
         validate()
 
-        processUiSettings()                           // set "medium"
-        GokbExporter.extractTitles(enrichment)        // to enrichment.dataContainer.titles
-        GokbExporter.extractTipps(enrichment)         // to enrichment.dataContainer.tipps
-        GokbExporter.removeInvalidFields(enrichment)  // e. g. empty identifiers, incomplete publisher_history, ...
-        GokbExporter.extractPackageHeader(enrichment) // to enrichment.dataContainer.packageHeader
+        processUiSettings()                              // set "medium"
+        GokbExporter.extractTitles(enrichment)           // to enrichment.dataContainer.titles
+        GokbExporter.extractTipps(enrichment)            // to enrichment.dataContainer.tipps
+        GokbExporter.removeEmptyIdentifiers(enrichment)  // e. g. empty identifiers, incomplete publisher_history, ...
+        GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()

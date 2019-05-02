@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.export
 
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
@@ -18,8 +19,8 @@ class DataContainer {
     Map<EissnIdentifier, Record> recordsPerEissn = [:]
     Map<PissnIdentifier, Record> recordsPerPissn = [:]
     Set<Record> records = []
-    List titles = []
-    List tipps = []
+    ArrayNode titles = []
+    ArrayNode tipps = []
     
     DataContainer() {
         info = new Meta(

@@ -1,9 +1,13 @@
 package ygor
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.JsonTransformer
 import de.hbznrw.ygor.tools.*
+import com.fasterxml.jackson.databind.node.ObjectNode
 
 class Enrichment {
 
@@ -20,6 +24,8 @@ class Enrichment {
 	static enum ProcessingState {
         UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR
     }
+
+    static ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper()
     
 	ProcessingState status
     
@@ -106,13 +112,15 @@ class Enrichment {
                 return file
                 break
             case FileType.JSON_PACKAGE_ONLY:
+                ObjectNode result = GokbExporter.extractPackage(this)
                 def file = new File(originPathName)
-                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON_PACKAGE_ONLY, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
+                file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
                 return file
                 break
             case FileType.JSON_TITLES_ONLY:
+                ArrayNode result = GokbExporter.extractTitles(this)
                 def file = new File(originPathName)
-                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON_TITLES_ONLY, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
+                file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
                 return file
                 break
             case FileType.JSON_DEBUG:
