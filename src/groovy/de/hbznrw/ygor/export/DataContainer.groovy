@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.export
 
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
@@ -11,6 +12,8 @@ import ygor.identifier.ZdbIdentifier
 
 class DataContainer {
 
+    static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
+
     Meta    info    // TODO: use or delete
     Package pkg
     ObjectNode packageHeader
@@ -19,8 +22,8 @@ class DataContainer {
     Map<EissnIdentifier, Record> recordsPerEissn = [:]
     Map<PissnIdentifier, Record> recordsPerPissn = [:]
     Set<Record> records = []
-    ArrayNode titles = []
-    ArrayNode tipps = []
+    ArrayNode titles = new ArrayNode(NODE_FACTORY)
+    ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     
     DataContainer() {
         info = new Meta(

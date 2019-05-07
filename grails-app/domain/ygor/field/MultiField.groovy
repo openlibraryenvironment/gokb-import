@@ -10,6 +10,8 @@ class MultiField {
     Map fields = [:]
     List sourcePrio = []
     String type
+    String status
+
     static hasMany = [sourcePrio : String, fields : Field]
 
     static constraints = {
@@ -68,9 +70,8 @@ class MultiField {
         return keyMapping.val
     }
 
-    void validate(){
-        Validator.validate(type, getPrioValue(), ygorFieldKey, "doi")
-        // TODO: fix hard-coded namespace
+    void validate(String namespace){
+        status = Validator.validate(type, getPrioValue(), ygorFieldKey, namespace)
     }
 
 

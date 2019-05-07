@@ -129,7 +129,7 @@ class MultipleProcessingThread extends Thread {
             return
         }
 
-        validate()
+        validate(enrichment.dataContainer.info.namespace_title_id)
 
         processUiSettings()                              // set "medium"
         GokbExporter.extractTitles(enrichment)           // to enrichment.dataContainer.titles

@@ -69,8 +69,8 @@ class Record {
         multiFields.get(ygorFieldKey)
     }
 
-    void validate(){
-        multiFields.each{k,v -> v.validate()}
+    void validate(String namespace){
+        multiFields.each{k,v -> v.validate(namespace)}
     }
 
     JsonBuilder toJson(){

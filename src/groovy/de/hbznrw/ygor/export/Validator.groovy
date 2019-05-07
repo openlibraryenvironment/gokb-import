@@ -26,6 +26,12 @@ class Validator {
             case "URL":
                 return isValidURL(value)
                 break
+            case "StartDate":
+                return isValidDate(value)
+                break
+            case "EndDate":
+                return isValidDate(value)
+                break
             case "Date":
                 return isValidDate(value)
                 break
