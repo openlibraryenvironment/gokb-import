@@ -298,6 +298,7 @@ class DnbSruPicaConnector extends AbstractConnector {
 
         result << getEnvelopeWithComplexMessage([
                 'type':            resultType,
+                'name':            resultTitle.minus('@'),
                 'title':           resultTitle.minus('@'),
                 'identifierType':  resultIdentifierType,
                 'identifierValue': resultIdentifierValue,
