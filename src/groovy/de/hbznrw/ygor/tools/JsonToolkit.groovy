@@ -49,9 +49,8 @@ class JsonToolkit {
         JsonOutput.prettyPrint(jsonString)
 
         jsonBuilder {
-            // 'meta'    dc.info
-            // 'package' dc.pkg
             'titles'  dc.titles
+            'tipps'   dc.tipps
         }
         
         JsonOutput.prettyPrint(writer.toString())

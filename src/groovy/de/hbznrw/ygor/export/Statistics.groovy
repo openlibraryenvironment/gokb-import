@@ -1,10 +1,20 @@
 package de.hbznrw.ygor.export
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.databind.node.ArrayNode
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
+import ygor.Enrichment
+import ygor.Record
+import ygor.field.MappingsContainer
+import ygor.field.MultiField
 
 class Statistics {
+
+    static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
     
     final static COUNT_1 = 0
     final static LIST_1  = 1
@@ -16,6 +26,40 @@ class Statistics {
     final static LIST_4  = 7
     final static COUNT_5 = 8
     final static LIST_5  = 9
+
+
+    static ObjectNode getRecordsStatisticsBeforeParsing(Enrichment enrichment){
+
+        ObjectNode stats = new ObjectNode(NODE_FACTORY)
+        stats.set("general", new ObjectNode(NODE_FACTORY))
+        stats.set("tipps", new ObjectNode(NODE_FACTORY))
+        stats.set("titles", new ObjectNode(NODE_FACTORY))
+
+        stats.set("tipps", new ObjectNode(NODE_FACTORY))
+        stats.get("tipps").set("coverage", new ObjectNode(NODE_FACTORY))
+        stats.get("tipps").set("title", new ObjectNode(NODE_FACTORY))
+        stats.get("tipps").set("title", new ObjectNode(NODE_FACTORY))
+        stats.get("tipps").get("title").set("identifiers", new ObjectNode(NODE_FACTORY))
+
+        stats.set("titles", new ObjectNode(NODE_FACTORY))
+        stats.get("titles").set("identifiers", new ObjectNode(NODE_FACTORY))
+        stats.get("titles").set("publisher_history", new ObjectNode(NODE_FACTORY))
+        stats.get("titles").set("historyEvents", new ObjectNode(NODE_FACTORY))
+
+        Statistics.processTipps(enrichment.dataContainer.records, stats)
+        // Statistics.processTitles(enrichment.dataContainer.records, stats)
+
+        stats.set("general", new ObjectNode(NODE_FACTORY))
+        stats.get("general").set("tipps before cleanUp", new TextNode(String.valueOf(enrichment.dataContainer.tipps.size())))
+        stats.get("general").set("titles before cleanUp", new TextNode(String.valueOf(enrichment.dataContainer.titles.size())))
+
+        /* TODO
+        json.meta.stats.general << ["processed kbart entries": json.meta.stash.processedKbartEntries]
+        json.meta.stats.general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries]
+        json.meta.stats.general << ["duplicate key entries":   json.meta.stash.duplicateKeyEntries] */
+
+        enrichment.stats = stats
+    }
     
     static Object getStatsBeforeParsing(Object json){
          
@@ -31,8 +75,8 @@ class Statistics {
         json.meta.stats.titles      << ['publisher_history':[:]]
         json.meta.stats.titles      << ['historyEvents':[:]]
 
-        Statistics.processTipps(json) 
-        Statistics.processTitles(json)
+        // Statistics.processTipps(json)
+        // Statistics.processTitles(json)
         
         json.meta.stats.general << ["tipps before cleanUp":    json.package.tipps.size()]
         json.meta.stats.general << ["titles before cleanUp":   json.titles.size()]
@@ -44,92 +88,80 @@ class Statistics {
         json
     }
     
-    static Object processTipps(Object json){
+    static Object processTipps(Set<Record> records, ObjectNode stats){
 
         List<Integer> tippTitleName = Statistics.getStorage()
+        records.each{record ->
 
-        json.package.tipps.each{ tipp ->
-            def name = tipp.value.v.title.v.name
+            MultiField nameField = record.getMultiField("publicationTitle")
+            String nameStatus = nameField.status
 
-            if(name?.m.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
+            if(nameStatus?.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
                 tippTitleName[Statistics.COUNT_1]++
             }
-            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
+            else if(nameStatus?.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
                 tippTitleName[Statistics.COUNT_2]++
-                tippTitleName[Statistics.LIST_2] << "${name.org}"
-
-                Statistics.addMetaData(tipp, 'tipp.title.name', name)
+                tippTitleName[Statistics.LIST_2] << "${nameField.getPrioValue()}"
+                // Statistics.addMetaData(record, 'tipp.title.name', nameStatus) TODO ?
             }
-            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
+            else if(nameStatus?.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
                 tippTitleName[Statistics.COUNT_3]++
-                tippTitleName[Statistics.LIST_3] << "${name.org}"
-
-                Statistics.addMetaData(tipp, 'tipp.title.name', name)
+                tippTitleName[Statistics.LIST_3] << "${nameField.getPrioValue()}"
+                // Statistics.addMetaData(record, 'tipp.title.name', nameStatus) TODO ?
             }
-            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
+            else if(nameStatus?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
                 tippTitleName[Statistics.COUNT_4]++
-
-                Statistics.addMetaData(tipp, 'tipp.title.name', name)
+                // Statistics.addMetaData(record, 'tipp.title.name', nameStatus) TODO ?
             }
         }
-
-        Statistics.format("NAME IS VALID",      tippTitleName, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.tipps.title)
-        Statistics.format("name is not atomic", tippTitleName, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.tipps.title)
-        Statistics.format("name is not valid",  tippTitleName, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps.title)
-        Statistics.format("name is missing",    tippTitleName, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.tipps.title)
+        Statistics.format("NAME IS VALID",      tippTitleName, Statistics.COUNT_1, Statistics.LIST_1, stats)
+        Statistics.format("name is not atomic", tippTitleName, Statistics.COUNT_2, Statistics.LIST_2, stats)
+        Statistics.format("name is not valid",  tippTitleName, Statistics.COUNT_3, Statistics.LIST_3, stats)
+        Statistics.format("name is missing",    tippTitleName, Statistics.COUNT_4, Statistics.LIST_4, stats)
 
 
         List<Integer> tippUrls = Statistics.getStorage()
-        
-        json.package.tipps.each{ tipp ->
-            def url = tipp.value.v.url
+        records.each{record ->
+            def urlField = record.getMultiField("titleUrl")
+            String urlStatus = urlField.status
 
-            if(url?.m.equals(Status.VALIDATOR_URL_IS_VALID.toString())) {
+            if(urlStatus.equals(Status.VALIDATOR_URL_IS_VALID.toString())) {
                 tippUrls[Statistics.COUNT_1]++
             }
-            else if(url?.m.equals(Status.VALIDATOR_URL_IS_INVALID.toString())) {
+            else if(urlStatus.equals(Status.VALIDATOR_URL_IS_INVALID.toString())) {
                 tippUrls[Statistics.COUNT_2]++
-                tippUrls[Statistics.LIST_2] << "${url.org}"
-                
-                    Statistics.addMetaData(tipp, 'tipp.url', url)
+                tippUrls[Statistics.LIST_2] << "${urlField.getPrioValue()}"
+                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
             }
-            else if(url?.m.equals(Status.VALIDATOR_URL_IS_NOT_ATOMIC.toString())) {
+            else if(urlStatus.equals(Status.VALIDATOR_URL_IS_NOT_ATOMIC.toString())) {
                 tippUrls[Statistics.COUNT_3]++
                 tippUrls[Statistics.LIST_3] << "${url.org}"
-                
-                    Statistics.addMetaData(tipp, 'tipp.url', url)
+                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
             }
-            else if(url?.m.equals(Status.VALIDATOR_URL_IS_MISSING.toString())) {
+            else if(urlStatus.equals(Status.VALIDATOR_URL_IS_MISSING.toString())) {
                 tippUrls[Statistics.COUNT_4]++
-                
-                    Statistics.addMetaData(tipp, 'tipp.url', url)
+                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
             }
-            else if(url?.m.equals(Status.VALIDATOR_TIPPURL_NOT_MATCHING.toString())) {
+            else if(urlStatus.equals(Status.VALIDATOR_TIPPURL_NOT_MATCHING.toString())) {
                 tippUrls[Statistics.COUNT_5]++
-                tippUrls[Statistics.LIST_5] << "${Normalizer.normString(url.org)}"
-                
-                    Statistics.addMetaData(tipp, 'tipp.url', url)
+                tippUrls[Statistics.LIST_5] << "${Normalizer.normString(urlField.getPrioValue())}"
+                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
             }
         }
-        
-        Statistics.format("URL IS VALID",      tippUrls, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.tipps)
-        Statistics.format("url is not valid",  tippUrls, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.tipps)
-        Statistics.format("url is not atomic", tippUrls, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps)
-        Statistics.format("url is missing",    tippUrls, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.tipps)
-        
+        Statistics.format("URL IS VALID",      tippUrls, Statistics.COUNT_1, Statistics.LIST_1, stats)
+        Statistics.format("url is not valid",  tippUrls, Statistics.COUNT_2, Statistics.LIST_2, stats)
+        Statistics.format("url is not atomic", tippUrls, Statistics.COUNT_3, Statistics.LIST_3, stats)
+        Statistics.format("url is missing",    tippUrls, Statistics.COUNT_4, Statistics.LIST_4, stats)
         Statistics.format("url is not matching against packageHeader.nominalPlattform",
-            tippUrls, Statistics.COUNT_5, Statistics.LIST_5, json.meta.stats.tipps)
+            tippUrls, Statistics.COUNT_5, Statistics.LIST_5, stats)
 
-        // tipp.title.identifiers
-        // tipp.title.identifiers
-        
+
         HashMap<String, List<Integer>> tippIdentifiers = [:]
-        
         tippIdentifiers[TitleStruct.EISSN]    = Statistics.getStorage()
         tippIdentifiers[ZdbBridge.IDENTIFIER] = Statistics.getStorage()
         tippIdentifiers[TitleStruct.DOI]      = Statistics.getStorage()
         
-        json.package.tipps.each{ tipp ->
+        /*json.package.tipps.each{ tipp ->
             
             tipp.value.v.title.v.identifiers.each { ident ->
                 
@@ -175,8 +207,7 @@ class Statistics {
         }
   
         // TODO invalid coverages
-        
-        // tipp.coverage.dates
+
         // tipp.coverage.dates
         
         List<Integer> coverages = Statistics.getStorage()
@@ -237,9 +268,9 @@ class Statistics {
         
         Statistics.format("VALID DATES FOUND",   covDates, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.tipps.coverage)
         Statistics.format("invalid dates found", covDates, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.tipps.coverage)
-        Statistics.format("missing dates found", covDates, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps.coverage)
+        Statistics.format("missing dates found", covDates, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps.coverage)*/
         
-        json
+        stats
     }
     
     static Object processTitles(Object json){
@@ -489,13 +520,14 @@ class Statistics {
         json
     }
 
-    static format(String key, List data, int indexCount, int indexResult, Object target){
+    static format(String key, List data, int indexCount, int indexResult, ObjectNode target){
         
         if(data[indexCount] > 0 && data[indexResult].minus("").size() > 0) {
-            target.put("${key}", [data[indexCount], data[indexResult].minus("")])
+            ArrayNode pair = new ArrayNode(NODE_FACTORY).add(data[indexCount]).add(data[indexResult])
+            target.set(key, pair)
         }
         else {
-            target.put("${key}", data[indexCount])
+            target.put(key, data[indexCount])
         }
     }
         

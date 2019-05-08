@@ -96,9 +96,10 @@ class Validator {
             return Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC
         }
         if (identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)) {
-            if (9 == str.length() && 4 == str.indexOf("-")) {
+            if (str.matches("\\d{4}-\\d{4}")){
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
-            } else {
+            }
+            else {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
         }

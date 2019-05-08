@@ -45,6 +45,7 @@ class Enrichment {
 
 	def thread
     def dataContainer
+    def stats
 
     static constraints = {
     }

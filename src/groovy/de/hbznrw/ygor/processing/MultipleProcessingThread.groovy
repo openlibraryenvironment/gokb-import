@@ -1,11 +1,14 @@
 package de.hbznrw.ygor.processing
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.base.Throwables
 import de.hbznrw.ygor.bridges.EzbBridge
 import de.hbznrw.ygor.bridges.KbartBridge
 import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.GokbExporter
+import de.hbznrw.ygor.export.JsonTransformer
+import de.hbznrw.ygor.export.Statistics
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
@@ -47,7 +50,7 @@ class MultipleProcessingThread extends Thread {
     public isRunning
 
     private enrichment
-	private apiCalls
+    private apiCalls
     private delimiter
     private quote
     private quoteMode
@@ -62,11 +65,11 @@ class MultipleProcessingThread extends Thread {
     private KbartReader kbartReader
     private ZdbReader zdbReader
     private EzbReader ezbReader
-    
-	MultipleProcessingThread(Enrichment en, HashMap options) {
-		enrichment = en
+
+    MultipleProcessingThread(Enrichment en, HashMap options) {
+        enrichment = en
         processor = new KbartProcessor()
-		apiCalls  = options.get('options')
+        apiCalls  = options.get('options')
         delimiter = options.get('delimiter')
         quote = options.get('quote')
         quoteMode = options.get('quoteMode')
@@ -84,22 +87,22 @@ class MultipleProcessingThread extends Thread {
         identifierByKey = [(zdbKeyMapping) : ZdbIdentifier.class,
                            (pissnKeyMapping) : PissnIdentifier.class,
                            (eissnKeyMapping) : EissnIdentifier.class]
-	}
+    }
 
     @Override
-	void run() {
+    void run() {
         isRunning = true
         progressCurrent = 0
-		if(null == enrichment.originPathName)
-			System.exit(0)
-		enrichment.setStatus(Enrichment.ProcessingState.WORKING)
-		log.info('Starting MultipleProcessingThread run...')
-		try {
+        if(null == enrichment.originPathName)
+            System.exit(0)
+        enrichment.setStatus(Enrichment.ProcessingState.WORKING)
+        log.info('Starting MultipleProcessingThread run...')
+        try {
             apiCalls.each{ call ->
                 switch(call) {
                     case KbartBridge.IDENTIFIER:
                         KbartReaderConfiguration conf =
-                            new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
+                                new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
                         new KbartIntegrationService().integrate(this, enrichment.dataContainer, mappingsContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
@@ -111,15 +114,15 @@ class MultipleProcessingThread extends Thread {
                 }
             }
             log.info('Done MultipleProcessingThread run.')
-		}
+        }
         catch(YgorProcessingException e) { // TODO Throw it in ...IntegrationService and / or ...Reader
-			enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
+            enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
             enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length() + 2))
-			log.error(e.getMessage())
+            log.error(e.getMessage())
             log.error(e.printStackTrace())
-			log.info('Aborted MultipleProcessingThread run.')
-			return
-		}
+            log.info('Aborted MultipleProcessingThread run.')
+            return
+        }
         catch(Exception e) {
             enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
             log.error(e.getMessage())
@@ -129,13 +132,23 @@ class MultipleProcessingThread extends Thread {
             return
         }
 
-        validate(enrichment.dataContainer.info.namespace_title_id)
+        validate()
 
         processUiSettings()                              // set "medium"
+
         GokbExporter.extractTitles(enrichment)           // to enrichment.dataContainer.titles
         GokbExporter.extractTipps(enrichment)            // to enrichment.dataContainer.tipps
+
+        Statistics.getRecordsStatisticsBeforeParsing(enrichment)
+                                                         // to enrichment.stats
+
         GokbExporter.removeEmptyIdentifiers(enrichment)  // e. g. empty identifiers, incomplete publisher_history, ...
         GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
+
+        /*ObjectNode[] asNodes = [] as ObjectNode[]
+        for (def record in enrichment.dataContainer.records){
+            asNodes << JsonTransformer.getRecordJson(record)
+        }*/
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
@@ -151,13 +164,13 @@ class MultipleProcessingThread extends Thread {
         enrichment.dataContainer.info.stash.duplicateKeyEntries = duplicateKeys.unique()
 
         enrichment.saveResult()
-		enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
-	}
+        enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+    }
 
 
     private void validate(){
         for (Record record : enrichment.dataContainer.records) {
-            record.validate()
+            record.validate(enrichment.dataContainer.info.namespace_title_id)
         }
     }
 
@@ -237,11 +250,11 @@ class MultipleProcessingThread extends Thread {
 
 
     int getApiCallsSize() {
-        return apiCalls.size()    
+        return apiCalls.size()
     }
 
 
     Enrichment getEnrichment() {
         enrichment
     }
-}  
+}

@@ -1,22 +1,36 @@
 package de.hbznrw.ygor.export
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.enums.*
 import grails.converters.JSON
-import groovy.json.JsonBuilder
 import groovy.util.logging.Log4j
 
 //import org.apache.commons.logging.Log
 
 import ygor.Enrichment.FileType
+import ygor.Record
 
 @Log4j
 class JsonTransformer {
-    
+
     static final USE_VALIDATOR = true
     static final NO_VALIDATOR  = false
     
     static final USE_PRETTY_PRINT = true
     static final NO_PRETTY_PRINT  = false
+
+    static ObjectMapper MAPPER = new ObjectMapper()
+    static{
+        MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+    }
+
+
+    static ObjectNode getRecordJson(Record record){
+        MAPPER.convertValue(record, ObjectNode.class)
+    }
+
 
     static String getSimpleJSON(Object json, FileType type, boolean prettyPrint) {
      
@@ -27,7 +41,7 @@ class JsonTransformer {
         if(type.equals(FileType.JSON_DEBUG)){
             
             validator = JsonTransformer.NO_VALIDATOR
-            Statistics.getStatsBeforeParsing(json)
+            Statistics.getRecordsStatisticsBeforeParsing(json)
         }
 
         JsonTransformer.parsePackageHeader(json)
