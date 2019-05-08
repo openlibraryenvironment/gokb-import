@@ -246,10 +246,10 @@ class EnrichmentController {
 
         if (response.info[0] != null) {
           flash.info = response.info[0].message
-          flash.warning = []
+          flash.error = []
 
           response.info[0].errors?.each { e ->
-            flash.warning.add(e.message)
+            flash.error.add(e.message)
           }
         }
 
@@ -294,7 +294,7 @@ class EnrichmentController {
           info_objects[0].each { robj ->
             log.debug("robj: ${robj}")
             if (robj.result == 'ERROR') {
-              flash.warning.add(robj.message)
+              flash.error.add(robj.message)
               errors++
             }
             total++
