@@ -10,7 +10,7 @@ class PissnIdentifier extends AbstractIdentifier{
         fieldKeyMapping nullable : false
 
         identifier validator: {
-            issnPattern.matcher(identifier).matches()
+            ISSN_PATTERN.matcher(identifier).matches()
         }
     }
 
