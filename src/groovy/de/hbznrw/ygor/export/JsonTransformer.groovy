@@ -27,11 +27,6 @@ class JsonTransformer {
     }
 
 
-    static ObjectNode getRecordJson(Record record){
-        MAPPER.convertValue(record, ObjectNode.class)
-    }
-
-
     static String getSimpleJSON(Object json, FileType type, boolean prettyPrint) {
      
         log.info("getSimpleJSON()")

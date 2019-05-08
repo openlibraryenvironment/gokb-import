@@ -1,5 +1,10 @@
 package ygor
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ObjectNode
 import groovy.json.JsonBuilder
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
@@ -11,6 +16,11 @@ import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
 
 class Record {
+
+    static ObjectMapper MAPPER = new ObjectMapper()
+    static{
+        MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+    }
 
     String          uid
     ZdbIdentifier   zdbId
@@ -73,8 +83,30 @@ class Record {
         multiFields.each{k,v -> v.validate(namespace)}
     }
 
-    JsonBuilder toJson(){
-        // TODO
+    String asJson(){
+        Writer writer=new StringWriter()
+        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+        jsonGenerator.writeStartObject()
+        jsonGenerator.writeStringField("uid", uid)
+        jsonGenerator.writeStringField("zdbId", zdbId?.identifier)
+        jsonGenerator.writeStringField("ezbId", ezbId?.identifier)
+        jsonGenerator.writeStringField("eissn", eissn?.identifier)
+        jsonGenerator.writeStringField("pissn", pissn?.identifier)
+
+        jsonGenerator.writeFieldName("multiFields")
+        jsonGenerator.writeStartArray()
+        for (MultiField mf in multiFields){
+            jsonGenerator.writeString(mf.asJson())
+        }
+        jsonGenerator.writeEndArray()
+        jsonGenerator.writeEndObject()
+        jsonGenerator.close()
+        return writer.toString()
+    }
+
+
+    ObjectNode asObjectNode(){
+        MAPPER.convertValue(this, ObjectNode.class)
     }
 
 }
