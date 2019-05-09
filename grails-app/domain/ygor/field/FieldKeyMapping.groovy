@@ -1,5 +1,7 @@
 package ygor.field
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
 import org.apache.commons.lang.StringUtils
 
 class FieldKeyMapping {
@@ -144,5 +146,55 @@ class FieldKeyMapping {
             }
         }
         this.sourcePrio = sourcePrio
+    }
+
+
+    String asJson(){
+        Writer writer = new StringWriter()
+        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+        jsonGenerator.writeStartObject()
+        jsonGenerator.writeStringField("ygorKey", ygorKey)
+        jsonGenerator.writeStringField("type", type)
+        jsonGenerator.writeStringField("value", val)
+        jsonGenerator.writeStringField("valueIsFix", valIsFix)
+
+        jsonGenerator.writeFieldName("kbartKeys")
+        jsonGenerator.writeStartArray()
+        for (String kk in kbartKeys){
+            jsonGenerator.writeStringField(kk)
+        }
+        jsonGenerator.writeEndArray()
+
+        jsonGenerator.writeFieldName("zdbKeys")
+        jsonGenerator.writeStartArray()
+        for (String zk in zdbKeys){
+            jsonGenerator.writeStringField(zk)
+        }
+        jsonGenerator.writeEndArray()
+
+        jsonGenerator.writeFieldName("ezbKeys")
+        jsonGenerator.writeStartArray()
+        for (String ek in ezbKeys){
+            jsonGenerator.writeStringField(ek)
+        }
+        jsonGenerator.writeEndArray()
+
+        jsonGenerator.writeFieldName("gokbFields")
+        jsonGenerator.writeStartArray()
+        for (String gf in gokb){
+            jsonGenerator.writeStringField(gf)
+        }
+        jsonGenerator.writeEndArray()
+
+        jsonGenerator.writeFieldName("sourcePrio")
+        jsonGenerator.writeStartArray()
+        for (String sp in sourcePrio){
+            jsonGenerator.writeStringField(sp)
+        }
+        jsonGenerator.writeEndArray()
+
+        jsonGenerator.writeEndObject()
+        jsonGenerator.close()
+        return writer.toString()
     }
 }

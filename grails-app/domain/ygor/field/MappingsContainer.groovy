@@ -1,9 +1,10 @@
 package ygor.field
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
-import ygor.Record
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
@@ -24,8 +25,9 @@ class MappingsContainer {
     final public static DEFAULT_SOURCE_PRIO = [ZDB, KBART, EZB]
 
     final private static JsonSlurper SLURPY = new JsonSlurper()
-    private static String MAPPINGS_FILE =
+    private static String DEFAULT_MAPPINGS_FILE =
             Paths.get("src/java/resources/YgorFieldKeyMapping.json").toAbsolutePath().toString()
+    private String mappingsFile
 
     Map<String, FieldKeyMapping> ygorMappings
     Map<String, FieldKeyMapping> kbartMappings
@@ -35,12 +37,13 @@ class MappingsContainer {
                       zdbMappings : FieldKeyMapping, ezbMappings : FieldKeyMapping]
 
     MappingsContainer(){
-        initialize(MAPPINGS_FILE)
+        initialize(DEFAULT_MAPPINGS_FILE)
     }
 
     MappingsContainer(String mappingsFile){
         try{
             initialize(mappingsFile)
+            this.mappingsFile = mappingsFile
         }
         catch(MissingFieldException mfe){
             log("Incomplete mapping.\n" + mfe)
@@ -130,5 +133,23 @@ class MappingsContainer {
 
     def getAllIdFieldKeyMappings(){
         [ZdbIdentifier.fieldKeyMapping, PissnIdentifier.fieldKeyMapping, EissnIdentifier.fieldKeyMapping]
+    }
+
+
+    String asJson(){
+        Writer writer = new StringWriter()
+        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+        jsonGenerator.writeStartObject()
+        jsonGenerator.writeStringField("mappingsFile", mappingsFile)
+
+        jsonGenerator.writeFieldName("ygorMappings")
+        jsonGenerator.writeStartArray()
+        for (FieldKeyMapping fkm in ygorMappings.values()){
+            jsonGenerator.writeString(fkm.asJson())
+        }
+        jsonGenerator.writeEndArray()
+        jsonGenerator.writeEndObject()
+        jsonGenerator.close()
+        return writer.toString()
     }
 }
