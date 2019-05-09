@@ -1,15 +1,16 @@
 package ygor.field
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
 import de.hbznrw.ygor.export.Validator
-import de.hbznrw.ygor.export.Normalizer
 
 class MultiField {
 
     String ygorFieldKey
-    FieldKeyMapping keyMapping
+    FieldKeyMapping keyMapping          // TODO: keep in MappingsContainer only and access by ygorFieldKey
     Map fields = [:]
-    List sourcePrio = []
-    String type
+    List sourcePrio = []                // TODO: move to FieldKeyMapping
+    String type                         // TODO: move to FieldKeyMapping (?)
     String status
 
     static hasMany = [sourcePrio : String, fields : Field]
@@ -77,6 +78,24 @@ class MultiField {
 
     String toString(){
         this.getClass().getName().concat(": ").concat(ygorFieldKey).concat(", fields: ").concat(fields.toString())
+    }
+
+    String asJson(){
+        Writer writer=new StringWriter()
+        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+        jsonGenerator.writeStartObject()
+        jsonGenerator.writeStringField("ygorKey", ygorFieldKey)
+        jsonGenerator.writeStringField("status", status)
+
+        jsonGenerator.writeFieldName("fields")
+        jsonGenerator.writeStartArray()
+        for (Field f in fields){
+            jsonGenerator.writeString(f.asJson())
+        }
+        jsonGenerator.writeEndArray()
+        jsonGenerator.writeEndObject()
+        jsonGenerator.close()
+        return writer.toString()
     }
 
 }
