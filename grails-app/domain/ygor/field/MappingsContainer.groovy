@@ -136,20 +136,16 @@ class MappingsContainer {
     }
 
 
-    String asJson(){
-        Writer writer = new StringWriter()
-        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+    void asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
         jsonGenerator.writeStringField("mappingsFile", mappingsFile)
 
         jsonGenerator.writeFieldName("ygorMappings")
         jsonGenerator.writeStartArray()
         for (FieldKeyMapping fkm in ygorMappings.values()){
-            jsonGenerator.writeString(fkm.asJson())
+            fkm.asJson(jsonGenerator)
         }
         jsonGenerator.writeEndArray()
         jsonGenerator.writeEndObject()
-        jsonGenerator.close()
-        return writer.toString()
     }
 }

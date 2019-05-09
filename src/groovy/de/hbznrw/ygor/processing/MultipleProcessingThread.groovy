@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.processing
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.base.Throwables
 import de.hbznrw.ygor.bridges.EzbBridge
@@ -14,6 +16,7 @@ import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
+import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import ygor.Record
@@ -80,7 +83,7 @@ class MultipleProcessingThread extends Thread {
         kbartReader = new KbartReader(this, delimiter)
         zdbReader = new ZdbReader()
         ezbReader = new EzbReader()
-        mappingsContainer = new MappingsContainer()
+        mappingsContainer = en.mappingsContainer
         zdbKeyMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
         pissnKeyMapping = mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
         eissnKeyMapping = mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)
@@ -147,7 +150,7 @@ class MultipleProcessingThread extends Thread {
 
         /*ObjectNode[] asNodes = [] as ObjectNode[]
         for (def record in enrichment.dataContainer.records){
-            asNodes << JsonTransformer.getRecordJson(record)
+            asNodes << record.asObjectNode()
         }*/
 
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following

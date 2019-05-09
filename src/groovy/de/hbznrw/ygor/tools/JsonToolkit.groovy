@@ -2,6 +2,8 @@ package de.hbznrw.ygor.tools
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.PropertyAccessor
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -220,5 +222,35 @@ class JsonToolkit {
                 return formatter.formatUrl(value)
             return value
         }
+    }
+
+
+    /**
+     * Requires an asJson(JsonGenerator) method for the given object class or Collection of given object(s) class
+     */
+    static String toJson(Object obj){
+        Writer writer = new StringWriter()
+        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+        if (obj instanceof Collection){
+            if (obj instanceof Map){
+                jsonGenerator.writeStartObject()
+                for (Map.Entry item in (obj as Map)){
+                    jsonGenerator.writeObjectField(item.key, item.value.asJson(jsonGenerator))
+                }
+                jsonGenerator.writeEndObject()
+            }
+            else{
+                jsonGenerator.writeStartArray()
+                for (Object item in (obj as List)){
+                    item.asJson(jsonGenerator)
+                }
+                jsonGenerator.writeEndArray()
+            }
+        }
+        else{
+            obj.asJson(jsonGenerator)
+        }
+        jsonGenerator.close()
+        writer.toString()
     }
 }

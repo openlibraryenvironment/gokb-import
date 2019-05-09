@@ -83,9 +83,7 @@ class Record {
         multiFields.each{k,v -> v.validate(namespace)}
     }
 
-    String asJson(){
-        Writer writer=new StringWriter()
-        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+    String asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
         jsonGenerator.writeStringField("uid", uid)
         jsonGenerator.writeStringField("zdbId", zdbId?.identifier)
@@ -95,13 +93,11 @@ class Record {
 
         jsonGenerator.writeFieldName("multiFields")
         jsonGenerator.writeStartArray()
-        for (MultiField mf in multiFields){
-            jsonGenerator.writeString(mf.asJson())
+        for (MultiField mf in multiFields.values()){
+            mf.asJson(jsonGenerator)
         }
         jsonGenerator.writeEndArray()
         jsonGenerator.writeEndObject()
-        jsonGenerator.close()
-        return writer.toString()
     }
 
 

@@ -32,7 +32,7 @@ class StatisticController {
                 dir.eachFile() { file ->
                     if(file.getName() == sthash){
                         def raw = JsonToolkit.parseFileToJson(file.getAbsolutePath())
-                        def tmp = JsonTransformer.getSimpleJSON(raw, FileType.JSON_DEBUG, JsonTransformer.NO_PRETTY_PRINT)
+                        def tmp = JsonTransformer.getSimpleJSON(raw, FileType.JSON_OO_RAW, JsonTransformer.NO_PRETTY_PRINT)
                         json = tmp.toString()
                     }
                 }

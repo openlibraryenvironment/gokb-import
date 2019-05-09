@@ -219,18 +219,6 @@ class EnrichmentController {
     }
 
 
-    def downloadDebugFile = {
-        def en = getCurrentEnrichment()
-        if(en){
-            def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_DEBUG)
-            render(file:result, fileName:"${en.resultName}.debug.json")
-        }
-        else {
-            noValidEnrichment()
-        }
-    }
-
-
     def downloadRawFile = {
         def en = getCurrentEnrichment()
         if(en){

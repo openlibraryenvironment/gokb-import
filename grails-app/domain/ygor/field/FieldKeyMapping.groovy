@@ -25,7 +25,8 @@ class FieldKeyMapping {
     static hasMany = [kbartKeys : String,
                       zdbKeys : String,
                       ezbKeys : String,
-                      gokb : String]
+                      gokb : String,
+                      sourcePrio : String]
 
     FieldKeyMapping(){
         // add explicit default constructor
@@ -149,52 +150,48 @@ class FieldKeyMapping {
     }
 
 
-    String asJson(){
-        Writer writer = new StringWriter()
-        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+    void asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
         jsonGenerator.writeStringField("ygorKey", ygorKey)
         jsonGenerator.writeStringField("type", type)
         jsonGenerator.writeStringField("value", val)
-        jsonGenerator.writeStringField("valueIsFix", valIsFix)
+        jsonGenerator.writeStringField("valueIsFix", String.valueOf(valIsFix))
 
         jsonGenerator.writeFieldName("kbartKeys")
         jsonGenerator.writeStartArray()
         for (String kk in kbartKeys){
-            jsonGenerator.writeStringField(kk)
+            jsonGenerator.writeString(kk)
         }
         jsonGenerator.writeEndArray()
 
         jsonGenerator.writeFieldName("zdbKeys")
         jsonGenerator.writeStartArray()
         for (String zk in zdbKeys){
-            jsonGenerator.writeStringField(zk)
+            jsonGenerator.writeString(zk)
         }
         jsonGenerator.writeEndArray()
 
         jsonGenerator.writeFieldName("ezbKeys")
         jsonGenerator.writeStartArray()
         for (String ek in ezbKeys){
-            jsonGenerator.writeStringField(ek)
+            jsonGenerator.writeString(ek)
         }
         jsonGenerator.writeEndArray()
 
         jsonGenerator.writeFieldName("gokbFields")
         jsonGenerator.writeStartArray()
         for (String gf in gokb){
-            jsonGenerator.writeStringField(gf)
+            jsonGenerator.writeString(gf)
         }
         jsonGenerator.writeEndArray()
 
         jsonGenerator.writeFieldName("sourcePrio")
         jsonGenerator.writeStartArray()
         for (String sp in sourcePrio){
-            jsonGenerator.writeStringField(sp)
+            jsonGenerator.writeString(sp)
         }
         jsonGenerator.writeEndArray()
 
         jsonGenerator.writeEndObject()
-        jsonGenerator.close()
-        return writer.toString()
     }
 }

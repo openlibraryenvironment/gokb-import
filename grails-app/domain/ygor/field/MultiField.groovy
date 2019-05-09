@@ -12,7 +12,7 @@ class MultiField {
     String type                         // TODO: move to FieldKeyMapping (?)
     String status
 
-    static hasMany = [sourcePrio : String, fields : Field]
+    static hasMany = [fields : Field]
 
     static constraints = {
     }
@@ -57,22 +57,18 @@ class MultiField {
         this.getClass().getName().concat(": ").concat(ygorFieldKey).concat(", fields: ").concat(fields.toString())
     }
 
-    String asJson(){
-        Writer writer=new StringWriter()
-        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+    String asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
         jsonGenerator.writeStringField("ygorKey", ygorFieldKey)
         jsonGenerator.writeStringField("status", status)
 
         jsonGenerator.writeFieldName("fields")
         jsonGenerator.writeStartArray()
-        for (Field f in fields){
-            jsonGenerator.writeString(f.asJson())
+        for (Field f in fields.values()){
+            f.asJson(jsonGenerator)
         }
         jsonGenerator.writeEndArray()
         jsonGenerator.writeEndObject()
-        jsonGenerator.close()
-        return writer.toString()
     }
 
 }

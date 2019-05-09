@@ -26,16 +26,12 @@ class Field {
         "Field: ".concat(source).concat("-").concat(key).concat(": ").concat(value)
     }
 
-    String asJson(){
-        Writer writer = new StringWriter()
-        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+    String asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
         jsonGenerator.writeStringField("source", source)
         jsonGenerator.writeStringField("key", key)
         jsonGenerator.writeStringField("value", value)
         jsonGenerator.writeEndObject()
-        jsonGenerator.close()
-        return writer.toString()
     }
 
 }

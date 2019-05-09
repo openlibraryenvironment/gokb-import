@@ -33,12 +33,6 @@ class JsonTransformer {
         
         def validator = JsonTransformer.USE_VALIDATOR
         
-        if(type.equals(FileType.JSON_DEBUG)){
-            
-            validator = JsonTransformer.NO_VALIDATOR
-            Statistics.getRecordsStatisticsBeforeParsing(json)
-        }
-
         JsonTransformer.parsePackageHeader(json)
         JsonTransformer.parseHashMaps(json)
 
@@ -59,14 +53,8 @@ class JsonTransformer {
         JsonTransformer.parseHistoryEvents(json, validator)
 
         JsonTransformer.removeEmpty(json, validator)
-        
-        if(type.equals(FileType.JSON_DEBUG)){
-            Statistics.getStatsAfterCleanUp(json)
-        }
-        else {
-            json.meta.stats = []
-        }
-        
+        json.meta.stats = []
+
         if(type.equals(FileType.JSON_PACKAGE_ONLY)){
             
             json.pkg.tipps.eachWithIndex{ tipp, i ->

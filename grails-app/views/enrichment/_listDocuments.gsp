@@ -395,7 +395,6 @@
 		    			<g:if test="${grailsApplication.config.ygor.enableDebugDownload}">
 		    				</li>
 			    			<li class="list-group-item">
-			    				<g:actionSubmit action="downloadDebugFile" value="${message(code:'listDocuments.button.downloadDebugFile')}" class="btn"/>
 			    				<g:actionSubmit action="downloadRawFile" value="${message(code:'listDocuments.button.downloadRawFile')}" class="btn"/>
 		    			</g:if>
 

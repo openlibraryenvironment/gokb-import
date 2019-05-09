@@ -8,6 +8,8 @@ import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.JsonTransformer
 import de.hbznrw.ygor.tools.*
 import com.fasterxml.jackson.databind.node.ObjectNode
+import groovy.json.JsonOutput
+import ygor.field.MappingsContainer
 
 class Enrichment {
 
@@ -16,8 +18,7 @@ class Enrichment {
         RESULT, 
         JSON, 
         JSON_PACKAGE_ONLY, 
-        JSON_TITLES_ONLY, 
-        JSON_DEBUG, 
+        JSON_TITLES_ONLY,
         JSON_OO_RAW
     }
     
@@ -44,6 +45,7 @@ class Enrichment {
 	File sessionFolder
 
 	def thread
+    MappingsContainer mappingsContainer
     def dataContainer
     def stats
 
@@ -69,6 +71,7 @@ class Enrichment {
         dataContainer.info.file = originName
         dataContainer.info.ygor = options.get('ygorVersion')
         dataContainer.info.type = options.get('ygorType')
+        mappingsContainer = new MappingsContainer()
         
         thread         = new MultipleProcessingThread(this, options)
 		thread.start()
@@ -124,25 +127,20 @@ class Enrichment {
                 file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
                 return file
                 break
-            case FileType.JSON_DEBUG:
-                def file = new File(originPathName)
-                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON_DEBUG, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
-                return file
-                break
             case FileType.JSON_OO_RAW:
-                def file = new File(originPathName)
-                file.write(JsonToolkit.parseDataToJson(dataContainer), "UTF-8")
-                return file
+                return new File(resultPathName)
                 break
         }
     }
     
     void saveResult() {
-        
-        // TODO refactoring
-        def json = JsonToolkit.parseDataToJson(dataContainer)
-        
+        StringWriter result = new StringWriter().append("{\"configuration\":{\"mappingsContainer\":")
+        result.append(JsonToolkit.toJson(mappingsContainer))
+        result.append("},\"data\":")
+        result.append(JsonToolkit.toJson(dataContainer.records))
+        result.append("}")
         File file = new File(resultPathName)
-        file.write(json.toString(), "UTF-8")
+        file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
     }
+
 }
