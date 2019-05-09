@@ -12,6 +12,7 @@ class FieldKeyMapping {
     Set gokb
     String val = ""
     boolean valIsFix
+    List sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
 
     static constraints = {
         ygorKey   nullable : false
@@ -122,5 +123,26 @@ class FieldKeyMapping {
         else if (source == MappingsContainer.TYPE){
             [type]
         }
+    }
+
+
+    void setSourcePrio(List<String> sourcePrio) {
+        if (!sourcePrio || sourcePrio.size() != MappingsContainer.DEFAULT_SOURCE_PRIO.size()){
+            throw IllegalArgumentException("Illegal static list of sources given for MultiField configuration: "
+                    .concat(sourcePrio))
+        }
+        for (necessaryKey in [MappingsContainer.ZDB, MappingsContainer.KBART, MappingsContainer.EZB]){
+            boolean found = false
+            for (givenSource in sourcePrio){
+                if (givenSource == necessaryKey){
+                    found = true
+                }
+            }
+            if (!found){
+                throw NoSuchElementException("Missing ".concat(necessaryKey)
+                        .concat(" in given MultiField configuration: ".concat(sourcePrio)))
+            }
+        }
+        this.sourcePrio = sourcePrio
     }
 }
