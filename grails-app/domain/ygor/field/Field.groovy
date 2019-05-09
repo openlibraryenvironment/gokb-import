@@ -1,5 +1,8 @@
 package ygor.field
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
+
 
 class Field {
 
@@ -21,6 +24,18 @@ class Field {
 
     String toString(){
         "Field: ".concat(source).concat("-").concat(key).concat(": ").concat(value)
+    }
+
+    String asJson(){
+        Writer writer = new StringWriter()
+        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+        jsonGenerator.writeStartObject()
+        jsonGenerator.writeStringField("source", source)
+        jsonGenerator.writeStringField("key", key)
+        jsonGenerator.writeStringField("value", value)
+        jsonGenerator.writeEndObject()
+        jsonGenerator.close()
+        return writer.toString()
     }
 
 }
