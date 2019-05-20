@@ -232,32 +232,38 @@ class EnrichmentController {
 
 
     def sendPackageFile = {
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
-                params.gokbUsername, params.gokbPassword)
-        status.each{ st ->
-            if(st.get('info'))
-                flash.info = st.get('info')
-            if(st.get('warning'))
-                flash.warning = st.get('warning')
-            if(st.get('error'))
-                flash.error = st.get('error')
+        def en = getCurrentEnrichment()
+        if(en) {
+            def status = enrichmentService.sendFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY,
+                    params.gokbUsername, params.gokbPassword)
+            status.each { st ->
+                if (st.get('info'))
+                    flash.info = st.get('info')
+                if (st.get('warning'))
+                    flash.warning = st.get('warning')
+                if (st.get('error'))
+                    flash.error = st.get('error')
+            }
+            process()
         }
-        process()
     }
 
 
     def sendTitlesFile = {
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY,
-                params.gokbUsername, params.gokbPassword)
-        status.each{ st ->
-            if(st.get('info'))
-                flash.info = st.get('info')
-            if(st.get('warning'))
-                flash.warning = st.get('warning')
-            if(st.get('error'))
-                flash.error = st.get('error')
+        def en = getCurrentEnrichment()
+        if(en) {
+            def status = enrichmentService.sendFile(en, Enrichment.FileType.JSON_TITLES_ONLY,
+                    params.gokbUsername, params.gokbPassword)
+            status.each { st ->
+                if (st.get('info'))
+                    flash.info = st.get('info')
+                if (st.get('warning'))
+                    flash.warning = st.get('warning')
+                if (st.get('error'))
+                    flash.error = st.get('error')
+            }
+            process()
         }
-        process()
     }
 
 

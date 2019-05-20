@@ -366,7 +366,7 @@
 													<button type="button" class="btn btn-default" data-dismiss="modal"><g:message code="listDocuments.button.cancel" /></button>
 													<g:actionSubmit action="" value="${message(code:'listDocuments.button.send')}" class="btn btn-success"
 																	name="cred-modal-btn-send" data-toggle="tooltip"
-																	data-placement="top" title="JavaScript erforderlich" />
+																	data-placement="top" title="JavaScript ${message(code:'technical.required')}." />
 												</div>
 											</g:form>
 										</div>

@@ -15,7 +15,6 @@ class EnrichmentService {
     GokbService gokbService
     
     void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp) {
-        
         def en = new Enrichment(getSessionFolder(), file.originalFilename)
         en.setStatus(Enrichment.ProcessingState.PREPARE)
         
@@ -33,14 +32,14 @@ class EnrichmentService {
         
         file.transferTo(new File(en.originPathName))
     }
-    
+
+
     File getFile(Enrichment enrichment, Enrichment.FileType type) {
-        
         enrichment.getFile(type)
     }
-    
+
+
     void deleteFileAndFormat(Enrichment enrichment) {
-        
         if(enrichment) {
             def origin = enrichment.getFile(Enrichment.FileType.ORIGIN)
             if(origin)
@@ -49,11 +48,10 @@ class EnrichmentService {
             getSessionFormats()?.remove("${enrichment.originHash}")
         }
     }
-    
+
+
     void prepareFile(Enrichment enrichment, Map pm){
-        
         def ph = enrichment.dataContainer.pkg.packageHeader
-        
         ph.v.name.v          = new Pod(pm['pkgTitle'][0])
         ph.v.variantNames   << new Pod(pm['pkgVariantName'][0])
         if("" != pm['pkgCuratoryGroup1'][0].trim()){
@@ -70,22 +68,19 @@ class EnrichmentService {
             ph.v.nominalProvider.v = pkgNomProvider
             ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
         }
-
         if(pm['namespace_title_id']) {
             enrichment.dataContainer.info.namespace_title_id = pm['namespace_title_id'][0]
         }
-
         enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
     }
 
-    private void setPlatformMap(Map pm, ph) {
 
+    private void setPlatformMap(Map pm, ph) {
       log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
 
       def tmp = pm['pkgNominalPlatform'][0].split(';')
       def platformID = tmp[0]
       def qterm =  tmp[1]
-
 
       def platforms = gokbService.getPlatformMap(qterm, false).records
       def pkgNomPlatform = null
@@ -112,8 +107,8 @@ class EnrichmentService {
       }
     }
 
-    private void setUrlIfValid(value, ph) {
 
+    private void setUrlIfValid(value, ph) {
         try {
             URL url = new URL(value)
             ph.v.nominalPlatform.url = value
@@ -123,33 +118,23 @@ class EnrichmentService {
         }
     }
 
-    void stopProcessing(Enrichment enrichment) {
 
+    void stopProcessing(Enrichment enrichment) {
         enrichment.thread.isRunning = false
     }
-    
-    List sendFile(Enrichment enrichment, Object fileType, def user, def pwd) {
-        
-        def result = []
-        def json
-        
-        if(fileType == Enrichment.FileType.JSON_PACKAGE_ONLY){
-            json = enrichment.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
-            
-            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
-        }
-        else if(fileType == Enrichment.FileType.JSON_TITLES_ONLY){
-            json = enrichment.getFile(Enrichment.FileType.JSON_TITLES_ONLY)
-            
-            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrTitleUri, user, pwd)
-        }
 
+
+    List sendFile(Enrichment enrichment, Object fileType, def user, def pwd) {
+        def result = []
+        def uri = fileType == Enrichment.FileType.JSON_PACKAGE_ONLY ? grailsApplication.config.gokbApi.xrPackageUri :
+                (fileType == Enrichment.FileType.JSON_TITLES_ONLY ? grailsApplication.config.gokbApi.xrTitleUri : null)
+        def json = enrichment.getFile(uri)
+        result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
         result
     }
 
 
     private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
-        
         log.info("exportFile: " + enrichment.resultHash + " -> " + url)
 
         def http = new HTTPBuilder(url)
@@ -176,7 +161,8 @@ class EnrichmentService {
             }
         }
     }
-    
+
+
     def getSessionEnrichments(){
         HttpSession session = SessionToolkit.getSession()
         if(!session.enrichments){
@@ -184,7 +170,8 @@ class EnrichmentService {
         }
         session.enrichments
     }
-    
+
+
     def getSessionFormats(){
         HttpSession session = SessionToolkit.getSession()
         if(!session.formats){
@@ -192,14 +179,13 @@ class EnrichmentService {
         }
         session.formats
     }
-    
+
+
     /**
      * Return session depending directory for file upload.
      * Creates if not existing.
      */
-
     File getSessionFolder() {
-        
         def session = WebUtils.retrieveGrailsWebRequest().session
         def path = grailsApplication.config.ygor.uploadLocation + File.separator + session.id
         def sessionFolder = new File(path)

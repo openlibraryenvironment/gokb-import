@@ -26,7 +26,7 @@ class Field {
         "Field: ".concat(source).concat("-").concat(key).concat(": ").concat(value)
     }
 
-    String asJson(JsonGenerator jsonGenerator){
+    void asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
         jsonGenerator.writeStringField("source", source)
         jsonGenerator.writeStringField("key", key)
