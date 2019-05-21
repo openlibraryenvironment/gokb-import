@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.enums.*
 import grails.converters.JSON
 import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
 
 //import org.apache.commons.logging.Log
 
@@ -262,19 +263,15 @@ class JsonTransformer {
          json.pkg.tipps.each{ tipp ->
              def validIdentifiers = []
              tipp.title.identifiers.each{ ident ->
-                 
-                 // use validator
-                 if(useValidator){
-                     if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
-                         ident.type  = ident.type.v
-                         ident.value = ident.value.v
-                         validIdentifiers << ident
+                 if (!StringUtils.isEmpty(ident.type.v)){
+                     if (useValidator){
+                         if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
+                             addValidIdentifier(ident, validIdentifiers)
+                         }
                      }
-                 }
-                 else {
-                     ident.type  = ident.type.v
-                     ident.value = ident.value.v
-                     validIdentifiers << ident
+                     else {
+                         addValidIdentifier(ident, validIdentifiers)
+                     }
                  }
              }
              tipp.title.identifiers = validIdentifiers
@@ -282,7 +279,13 @@ class JsonTransformer {
 
          json
      }
-        
+
+    private static void addValidIdentifier(def ident, def validIdentifiers) {
+        ident.type = ident.type.v
+        ident.value = ident.value.v
+        validIdentifiers << ident
+    }
+
     static Object parseTitles(Object json, boolean useValidator) {
         log.debug("parseTitles()")
         
@@ -319,18 +322,14 @@ class JsonTransformer {
              def validIdentifiers = []
              title.identifiers.each{ ident ->
 
-                 // use validator
-                 if(useValidator){
-                     if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
-                         ident.type  = ident.type.v
-                         ident.value = ident.value.v
-                         validIdentifiers << ident
+                 if (!StringUtils.isEmpty(ident.type.v)){
+                     if (useValidator) {
+                         if (ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()) {
+                             addValidIdentifier(ident, validIdentifiers)
+                         }
+                     } else {
+                         addValidIdentifier(ident, validIdentifiers)
                      }
-                 }
-                 else {
-                     ident.type  = ident.type.v
-                     ident.value = ident.value.v
-                     validIdentifiers << ident
                  }
              }
              title.identifiers = validIdentifiers
@@ -403,15 +402,11 @@ class JsonTransformer {
                         // use validator
                         if(useValidator){
                             if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
-                                ident.type  = ident.type.v
-                                ident.value = ident.value.v
-                                validIdentifiers << ident
+                                addValidIdentifier(ident, validIdentifiers)
                             }
                         }
                         else {
-                            ident.type  = ident.type.v
-                            ident.value = ident.value.v
-                            validIdentifiers << ident
+                            addValidIdentifier(ident, validIdentifiers)
                         }
                     }
                     from.identifiers = validIdentifiers
@@ -436,15 +431,11 @@ class JsonTransformer {
                         // use validator
                         if(useValidator){
                             if(ident.value.m == Status.VALIDATOR_IDENTIFIER_IS_VALID.toString()){
-                                ident.type  = ident.type.v
-                                ident.value = ident.value.v
-                                validIdentifiers << ident
+                                addValidIdentifier(ident, validIdentifiers)
                             }
                         }
                         else {
-                            ident.type  = ident.type.v
-                            ident.value = ident.value.v
-                            validIdentifiers << ident
+                            addValidIdentifier(ident, validIdentifiers)
                         }
                     }
                     to.identifiers = validIdentifiers
