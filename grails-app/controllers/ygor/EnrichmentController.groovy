@@ -246,6 +246,9 @@ class EnrichmentController {
             }
             process()
         }
+        else {
+            noValidEnrichment()
+        }
     }
 
 
@@ -263,6 +266,9 @@ class EnrichmentController {
                     flash.error = st.get('error')
             }
             process()
+        }
+        else {
+            noValidEnrichment()
         }
     }
 
