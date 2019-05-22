@@ -1,5 +1,6 @@
 package ygor
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import de.hbznrw.ygor.export.GokbExporter
@@ -132,15 +133,33 @@ class Enrichment {
                 break
         }
     }
-    
+
+
     void saveResult() {
-        StringWriter result = new StringWriter().append("{\"configuration\":{\"mappingsContainer\":")
+        StringWriter result = new StringWriter()
+        result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
+        result.append("\"originalFileName\":\"").append(originName).append("\",")
+        result.append("\"configuration\":{\"mappingsContainer\":")
         result.append(JsonToolkit.toJson(mappingsContainer))
         result.append("},\"data\":")
         result.append(JsonToolkit.toJson(dataContainer.records))
         result.append("}")
         File file = new File(resultPathName)
         file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
+    }
+
+
+    static Enrichment fromRaw(String rawJson){
+
+        ObjectMapper mapper = new ObjectMapper()
+        JsonNode rootNode = mapper.readTree(rawJson)
+
+        String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
+        String originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
+
+        def en = new Enrichment(new File(sessionFolder), originPathName)
+        // TODO:
+        en.mappingsContainer = JsonToolkit.fromJson(rawJson, "configuration.mappingsContainer")
     }
 
 }

@@ -34,4 +34,9 @@ class Field {
         jsonGenerator.writeEndObject()
     }
 
+
+    static Field fromJson(String json){
+
+    }
+
 }

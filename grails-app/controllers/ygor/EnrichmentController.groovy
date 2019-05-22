@@ -9,7 +9,6 @@ class EnrichmentController {
     EnrichmentService enrichmentService
     GokbService gokbService
 
-
     def index = { 
         redirect(action:'process')   
     }
@@ -110,6 +109,22 @@ class EnrichmentController {
         }
         enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
         redirect(action: 'process')
+    }
+
+
+    def uploadRawFile = {
+        def file = request.getFile('uploadRawFile')
+        String json = file.getInputStream()?.text
+        enrichmentService.rawJsonToCurrentEnrichment(json)
+        // redirect(action: 'process')
+        render(
+                view: 'process',
+                model: [
+                        enrichments: enrichmentService.getSessionEnrichments(),
+                        currentView: 'process',
+                        pOptions   : pmOptions,
+                ]
+        )
     }
 
 

@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.export.DataContainer
@@ -16,13 +19,17 @@ import de.hbznrw.ygor.format.YgorFormatter
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
+import ygor.Enrichment
 import ygor.Record
 import ygor.field.MultiField
+
+import java.lang.reflect.Array
 
 class JsonToolkit {
 
     private static ObjectMapper MAPPER = new ObjectMapper()
-    private static JsonNodeFactory FACTORY = JsonNodeFactory.instance
+    private static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
+    private static JsonFactory FACTORY = new JsonFactory()
     final private static String ARRAY = "\$ARRAY"
     final private static String COUNT = "\$COUNT"
 
@@ -135,7 +142,7 @@ class JsonToolkit {
             else if (keyPath.get(1).equals(COUNT)){
                 // TODO until now, only 1 element in array is supported ==> implement count
                 if (root.size() == 0){
-                    root.add(new ObjectNode(FACTORY))
+                    root.add(new ObjectNode(NODE_FACTORY))
                 }
                 upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, formatter)
             }
@@ -157,10 +164,10 @@ class JsonToolkit {
             return new TextNode(formatValue(type, value, formatter))
         }
         if (keyPath[2].equals(ARRAY)){
-            return new ArrayNode(FACTORY)
+            return new ArrayNode(NODE_FACTORY)
         }
         // else
-        return new ObjectNode(FACTORY)
+        return new ObjectNode(NODE_FACTORY)
     }
 
 
@@ -181,7 +188,7 @@ class JsonToolkit {
 
 
     private static ObjectNode buildMultiLeaf(ArrayList<String> keyPath, String value){
-        ObjectNode result = new ObjectNode(FACTORY)
+        ObjectNode result = new ObjectNode(NODE_FACTORY)
         String[] singleNodes = keyPath[1].replaceAll("^\\(|\\)\$", "").split(",")
         for (int i=1; i<singleNodes.length; i++){
             String[] entry = singleNodes[i-1].split(":")
@@ -252,5 +259,28 @@ class JsonToolkit {
         }
         jsonGenerator.close()
         writer.toString()
+    }
+
+
+    /**
+     * Requires a fromJson(JsonNode) method for the desired object(s) class
+     */
+    static Object fromJson(JsonNode root, String subField){
+
+        JsonNode subNode = root.path(subField)
+
+        if (subNode instanceof TextNode){
+            return subNode.asText()
+        }
+        else if (subNode instanceof ArrayNode){
+
+        }
+        else if (subNode instanceof ObjectNode) {
+
+        }
+        else{
+            assert subNode instanceof MissingNode
+            return null
+        }
     }
 }

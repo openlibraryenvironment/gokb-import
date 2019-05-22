@@ -105,4 +105,8 @@ class Record {
         MAPPER.convertValue(this, ObjectNode.class)
     }
 
+
+    static Record fromJson(String json){
+
+    }
 }

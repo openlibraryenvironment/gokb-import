@@ -192,4 +192,12 @@ class EnrichmentService {
         }
         sessionFolder
     }
+
+
+    void rawJsonToCurrentEnrichment(String rawJson){
+        HttpSession session = SessionToolkit.getSession()
+        session.enrichments = [:]
+        Enrichment en = Enrichment.fromRaw(rawJson)
+        session.enrichments << [en.originHash, en]
+    }
 }

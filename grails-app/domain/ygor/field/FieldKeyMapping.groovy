@@ -194,4 +194,9 @@ class FieldKeyMapping {
 
         jsonGenerator.writeEndObject()
     }
+
+
+    static FieldKeyMapping fromJson(String json){
+
+    }
 }

@@ -71,4 +71,8 @@ class MultiField {
         jsonGenerator.writeEndObject()
     }
 
+
+    static MultiField fromJson(String json){
+
+    }
 }
