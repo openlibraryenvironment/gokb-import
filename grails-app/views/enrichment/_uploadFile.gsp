@@ -128,7 +128,7 @@
 				<ul class="list-group content-list">
 					<li class="list-group-item">
 						<label class="btn btn-link btn-file">
-							<input type="file" name="uploadFile" style="display: none;"/><g:message code="uploadFile.button.select" />
+							<input type="file" accept=".csv,.tsv,.ssv" name="uploadFile" style="display: none;"/><g:message code="uploadFile.button.select" />
 						</label>
 						<input type="submit" value="${message(code:'uploadFile.button.upload')}" class="btn btn-success" />
 						<script>
@@ -178,7 +178,7 @@
 				<ul class="list-group content-list">
 					<li class="list-group-item">
 						<label class="btn btn-link btn-file">
-							<input type="file" name="uploadRawFile" style="display: none;"/><g:message code="uploadFile.button.select" />
+							<input type="file" accept=".raw.json" name="uploadRawFile" style="display: none;"/><g:message code="uploadFile.button.select" />
 						</label>
 						<input type="submit" value="${message(code:'uploadFile.button.upload')}" class="btn btn-success" />
 						<script>
