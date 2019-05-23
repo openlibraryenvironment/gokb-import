@@ -2,7 +2,8 @@ package ygor
 
 import de.hbznrw.ygor.export.Validator
 import de.hbznrw.ygor.export.structure.Pod
-import groovyx.net.http.HTTPBuilder
+
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import groovyx.net.http.*
 import org.springframework.web.multipart.commons.CommonsMultipartFile
@@ -194,10 +195,7 @@ class EnrichmentService {
     }
 
 
-    void rawJsonToCurrentEnrichment(String rawJson){
-        HttpSession session = SessionToolkit.getSession()
-        session.enrichments = [:]
-        Enrichment en = Enrichment.fromRaw(rawJson)
-        session.enrichments << [en.originHash, en]
+    Enrichment rawJsonToCurrentEnrichment(String rawJson){
+        return Enrichment.fromRawJson(rawJson)
     }
 }

@@ -115,16 +115,17 @@ class EnrichmentController {
     def uploadRawFile = {
         def file = request.getFile('uploadRawFile')
         String json = file.getInputStream()?.text
-        enrichmentService.rawJsonToCurrentEnrichment(json)
-        // redirect(action: 'process')
+        Enrichment enrichment = enrichmentService.rawJsonToCurrentEnrichment(json)
+        enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+        request.session.enrichments << [(enrichment.originHash) : enrichment]
         render(
-                view: 'process',
-                model: [
-                        enrichments: enrichmentService.getSessionEnrichments(),
-                        currentView: 'process',
-                        pOptions   : pmOptions,
-                ]
+            view: 'process',
+            model: [
+                    enrichments: enrichment,
+                    currentView: 'process'
+            ]
         )
+        redirect(action: 'process')
     }
 
 
@@ -298,7 +299,7 @@ class EnrichmentController {
 
     Enrichment getCurrentEnrichment() {
         def hash = (String) request.parameterMap['originHash'][0]
-        enrichmentService.getSessionEnrichments().get("${hash}")
+        enrichmentService.getSessionEnrichments()[hash]
     }
 
 

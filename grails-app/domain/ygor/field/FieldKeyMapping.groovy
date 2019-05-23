@@ -1,11 +1,14 @@
 package ygor.field
 
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.reflect.FieldUtils
 
 class FieldKeyMapping {
 
+    final static ObjectMapper MAPPER = new ObjectMapper()
     String ygorKey
     Set kbartKeys = new HashSet()
     Set zdbKeys = new HashSet()
@@ -97,8 +100,12 @@ class FieldKeyMapping {
                     parseMapping(mapping.value)
                     break
                 case "value":
-                    parseMapping(mapping.value)
+                    if (!mapping.value instanceof String){
+                        parseMapping(mapping.value)
+                    }
                     break
+                default:
+                    continue
             }
         }
     }
@@ -196,7 +203,8 @@ class FieldKeyMapping {
     }
 
 
-    static FieldKeyMapping fromJson(String json){
-
+    static FieldKeyMapping fromJson(JsonNode jsonNode){
+        Map<String, Object> map = MAPPER.convertValue(jsonNode, Map.class)
+        return new FieldKeyMapping(false, map)
     }
 }

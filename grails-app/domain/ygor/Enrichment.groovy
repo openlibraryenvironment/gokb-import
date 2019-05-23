@@ -149,17 +149,17 @@ class Enrichment {
     }
 
 
-    static Enrichment fromRaw(String rawJson){
-
+    static Enrichment fromRawJson(String rawJson){
         ObjectMapper mapper = new ObjectMapper()
         JsonNode rootNode = mapper.readTree(rawJson)
-
         String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
         String originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
-
         def en = new Enrichment(new File(sessionFolder), originPathName)
-        // TODO:
-        en.mappingsContainer = JsonToolkit.fromJson(rawJson, "configuration.mappingsContainer")
+        en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
+        en.resultName = FileToolkit.getDateTimePrefixedFileName(originPathName)
+        en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originPathName + Math.random()))
+        en.saveResult()
+        return en
     }
 
 }

@@ -1,8 +1,8 @@
 package ygor.field
 
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
@@ -151,7 +151,12 @@ class MappingsContainer {
     }
 
 
-    static MappingsContainer fromJson(JsonParser){
-        // TODO
+    static MappingsContainer fromJson(JsonNode jsonNode){
+        MappingsContainer mc = new MappingsContainer()
+        for (JsonNode mapping in jsonNode.path("ygorMappings").iterator()){
+            FieldKeyMapping fkm = FieldKeyMapping.fromJson(mapping)
+            mc.putMapping(fkm)
+        }
+        return mc
     }
 }

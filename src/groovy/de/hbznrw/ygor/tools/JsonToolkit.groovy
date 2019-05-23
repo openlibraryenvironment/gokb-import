@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -19,11 +17,9 @@ import de.hbznrw.ygor.format.YgorFormatter
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
-import ygor.Enrichment
 import ygor.Record
 import ygor.field.MultiField
-
-import java.lang.reflect.Array
+import java.lang.reflect.Method
 
 class JsonToolkit {
 
@@ -267,20 +263,28 @@ class JsonToolkit {
      */
     static Object fromJson(JsonNode root, String subField){
 
-        JsonNode subNode = root.path(subField)
+        String[] pathSplit = subField.split("\\.", 2)
+        JsonNode subNode = root.path(pathSplit[0])
 
+        if (pathSplit.length > 1){
+            return fromJson(subNode, pathSplit[1])
+        }
         if (subNode instanceof TextNode){
             return subNode.asText()
         }
         else if (subNode instanceof ArrayNode){
-
+            int i=0 // TODO
         }
         else if (subNode instanceof ObjectNode) {
-
+            Class clazz = Class.forName("ygor.field.".concat(
+                    subField.substring(0, 1).toUpperCase() + subField.substring(1)))
+            Method method = clazz.getMethod("fromJson", JsonNode.class)
+            return method.invoke(null, subNode)
         }
         else{
             assert subNode instanceof MissingNode
             return null
         }
     }
+
 }
