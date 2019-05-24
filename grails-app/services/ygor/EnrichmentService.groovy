@@ -161,18 +161,29 @@ class EnrichmentService {
             body = json.getText()
             response.success = { resp, html ->
                 log.info("server response: ${resp.statusLine}")
+                log.debug("server:          ${resp.headers.'Content-Type'}")
                 log.debug("server:          ${resp.headers.'Server'}")
                 log.debug("content length:  ${resp.headers.'Content-Length'}")
-                if(resp.status < 400){
-                    return ['info':html]
+                if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
+                    if(resp.status < 400){
+                        return ['info':html]
+                    }
+                    else {
+                        return ['warning':html]
+                    }
                 }
                 else {
-                    return ['warning':html]
+                    return ['error': ['message':"Authentication error!", 'result':"ERROR"]]
                 }
             }
             response.failure = { resp, html ->
                 log.error("server response: ${resp.statusLine}")
-                return ['error': html]
+                if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
+                    return ['error': html]
+                }
+                else {
+                    return ['error': ['message':"Authentication error!", 'result':"ERROR"]]
+                }
             }
         }
     }
