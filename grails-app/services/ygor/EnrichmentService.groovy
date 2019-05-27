@@ -1,5 +1,6 @@
 package ygor
 
+import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.export.Validator
 import de.hbznrw.ygor.export.structure.Pod
 
@@ -195,7 +196,7 @@ class EnrichmentService {
     }
 
 
-    Enrichment rawJsonToCurrentEnrichment(String rawJson){
+    Enrichment rawJsonToCurrentEnrichment(JsonNode rawJson){
         return Enrichment.fromRawJson(rawJson)
     }
 }

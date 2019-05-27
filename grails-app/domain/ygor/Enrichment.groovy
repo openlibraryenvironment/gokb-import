@@ -150,19 +150,18 @@ class Enrichment {
         result.append(JsonToolkit.toJson(dataContainer.records))
         result.append("}")
         File file = new File(resultPathName)
+        file.getParentFile().mkdirs()
         file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
     }
 
 
-    static Enrichment fromRawJson(String rawJson){
-        ObjectMapper mapper = new ObjectMapper()
-        JsonNode rootNode = mapper.readTree(rawJson)
+    static Enrichment fromRawJson(JsonNode rootNode){
         String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
-        String originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
-        def en = new Enrichment(new File(sessionFolder), originPathName)
+        String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
+        def en = new Enrichment(new File(sessionFolder), originalFileName)
         en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
-        en.resultName = FileToolkit.getDateTimePrefixedFileName(originPathName)
-        en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originPathName + Math.random()))
+        en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
+        en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
         en.saveResult()
         return en
     }
