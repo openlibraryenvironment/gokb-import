@@ -1,6 +1,5 @@
 package ygor.field
 
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
 
 
@@ -32,11 +31,6 @@ class Field {
         jsonGenerator.writeStringField("key", key)
         jsonGenerator.writeStringField("value", value)
         jsonGenerator.writeEndObject()
-    }
-
-
-    static Field fromJson(String json){
-
     }
 
 }

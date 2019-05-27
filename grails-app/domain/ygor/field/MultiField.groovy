@@ -1,7 +1,9 @@
 package ygor.field
 
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.export.Validator
+import de.hbznrw.ygor.tools.JsonToolkit
 
 class MultiField {
 
@@ -71,7 +73,17 @@ class MultiField {
     }
 
 
-    static MultiField fromJson(String json){
-
+    static MultiField fromJson(JsonNode json, FieldKeyMapping mapping){
+        MultiField result = new MultiField(mapping)
+        result.status = JsonToolkit.fromJson(json, "status")
+        Iterator it = json.path("fields").iterator()
+        while (it.hasNext()){
+            JsonNode fieldNode = it.next()
+            String source = JsonToolkit.fromJson(fieldNode, "source")
+            String key = JsonToolkit.fromJson(fieldNode, "key")
+            String value = JsonToolkit.fromJson(fieldNode, "value")
+            result.addField(source, key, value)
+        }
+        result
     }
 }
