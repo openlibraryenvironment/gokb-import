@@ -23,29 +23,30 @@ class Enrichment {
         JSON_OO_RAW
     }
     
-	static enum ProcessingState {
+    static enum ProcessingState {
         UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR
     }
 
     static ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper()
     
-	ProcessingState status
+    ProcessingState status
     
-	// frontend api stuff
+    // frontend api stuff
     String apiMessage
     float  apiProgress = 0.0
     
-	String originName
-	String originHash
-	String originPathName
-	
-	String resultName
-	String resultHash
-	String resultPathName
+    String originName
+    String originHash
+    String originPathName
+    
+    String resultName
+    String resultHash
+    String resultPathName
+    String dataType
 
-	File sessionFolder
+    File sessionFolder
 
-	def thread
+    def thread
     MappingsContainer mappingsContainer
     def dataContainer
     def stats
@@ -53,31 +54,33 @@ class Enrichment {
     static constraints = {
     }
 
-	Enrichment(File sessionFolder, String originalFilename) {
-		this.sessionFolder 	= sessionFolder
-		originName 			= originalFilename.replaceAll(/\s+/,'_')
-		originHash 			= FileToolkit.getMD5Hash(originName + Math.random())
-		originPathName 		= this.sessionFolder.getPath() + File.separator + originHash
-		
+    Enrichment(File sessionFolder, String originalFilename) {
+        this.sessionFolder     = sessionFolder
+        originName             = originalFilename.replaceAll(/\s+/,'_')
+        originHash             = FileToolkit.getMD5Hash(originName + Math.random())
+        originPathName         = this.sessionFolder.getPath() + File.separator + originHash
+        
         dataContainer       = new DataContainer()
         
-		setStatus(ProcessingState.UNTOUCHED)
-	}
-	
-	def process(HashMap options) {    
-		resultName 	   = FileToolkit.getDateTimePrefixedFileName(originName)
-		resultHash 	   = FileToolkit.getMD5Hash(originName + Math.random())
-		resultPathName = sessionFolder.getPath() + File.separator + resultHash
-		
+        setStatus(ProcessingState.UNTOUCHED)
+    }
+    
+    def process(HashMap options) {    
+        resultName        = FileToolkit.getDateTimePrefixedFileName(originName)
+        resultHash        = FileToolkit.getMD5Hash(originName + Math.random())
+        resultPathName = sessionFolder.getPath() + File.separator + resultHash
+        dataType       = options.get('dataTyp')
+
         dataContainer.info.file = originName
         dataContainer.info.ygor = options.get('ygorVersion')
         dataContainer.info.type = options.get('ygorType')
+
         mappingsContainer = new MappingsContainer()
         
         thread         = new MultipleProcessingThread(this, options)
-		thread.start()
-	}
-	
+        thread.start()
+    }
+    
     def setProgress(float progress) {
         this.apiProgress = progress
     }
@@ -98,14 +101,14 @@ class Enrichment {
         setStatus(status)
     }
     
-	def setStatus(ProcessingState status) {
-		this.status = status
-	}
-	
-	ProcessingState getStatus() {
-		status
-	}
-	
+    def setStatus(ProcessingState status) {
+        this.status = status
+    }
+    
+    ProcessingState getStatus() {
+        status
+    }
+    
     File getFile(FileType type) {
         switch(type) {
             case FileType.ORIGIN:
@@ -139,7 +142,9 @@ class Enrichment {
         StringWriter result = new StringWriter()
         result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
         result.append("\"originalFileName\":\"").append(originName).append("\",")
-        result.append("\"configuration\":{\"mappingsContainer\":")
+        result.append("\"configuration\":{")
+        result.append("\"dataType\":\"").append(dataType).append("\",")
+        result.append("\"mappingsContainer\":")
         result.append(JsonToolkit.toJson(mappingsContainer))
         result.append("},\"data\":")
         result.append(JsonToolkit.toJson(dataContainer.records))

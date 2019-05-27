@@ -1,22 +1,17 @@
 package de.hbznrw.ygor.processing
 
-import com.fasterxml.jackson.core.JsonFactory
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.base.Throwables
 import de.hbznrw.ygor.bridges.EzbBridge
 import de.hbznrw.ygor.bridges.KbartBridge
 import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.GokbExporter
-import de.hbznrw.ygor.export.JsonTransformer
 import de.hbznrw.ygor.export.Statistics
 import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
-import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import ygor.Record
@@ -52,13 +47,12 @@ class MultipleProcessingThread extends Thread {
     public ProcessorInterface processor
     public isRunning
 
-    private enrichment
+    private Enrichment enrichment
     private apiCalls
     private delimiter
     private quote
     private quoteMode
     private recordSeparator
-    private dataType
     private platform
     private kbartFile
 
@@ -77,7 +71,6 @@ class MultipleProcessingThread extends Thread {
         quote = options.get('quote')
         quoteMode = options.get('quoteMode')
         recordSeparator = options.get('recordSeparator')
-        dataType = options.get('dataTyp')
         platform = options.get('platform')
         kbartFile = en.originPathName
         kbartReader = new KbartReader(this, delimiter)
@@ -188,10 +181,10 @@ class MultipleProcessingThread extends Thread {
     private void setTitleMedium() {
         FieldKeyMapping mediumMapping = mappingsContainer.getMapping("medium", MappingsContainer.YGOR)
 
-        if (dataType == 'ebooks') {
+        if (enrichment.dataType == 'ebooks') {
             mediumMapping.val = "Book"
         }
-        else if (dataType == 'database') {
+        else if (enrichment.dataType == 'database') {
             mediumMapping.val = "Database"
         }
         else {
@@ -208,10 +201,10 @@ class MultipleProcessingThread extends Thread {
     private void setTitleType() {
         FieldKeyMapping typeMapping = mappingsContainer.getMapping("publicationType", MappingsContainer.YGOR)
 
-        if (dataType == 'ebooks') {
+        if (enrichment.dataType == 'ebooks') {
             typeMapping.val = "Book"
         }
-        else if (dataType == 'database') {
+        else if (enrichment.dataType == 'database') {
             typeMapping.val = "Database"
         }
         else {

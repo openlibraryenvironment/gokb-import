@@ -14,8 +14,8 @@ class DataContainer {
 
     static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
-    Meta    info    // TODO: use or delete
-    Package pkg
+    Meta       info    // TODO: use or delete
+    Package    pkg
     ObjectNode packageHeader
 
     Map<ZdbIdentifier, Record>   recordsPerZdbId = [:]
