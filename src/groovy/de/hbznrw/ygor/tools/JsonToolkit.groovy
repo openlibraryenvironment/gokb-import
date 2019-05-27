@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
+import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.export.DataContainer
@@ -282,7 +283,7 @@ class JsonToolkit {
             return method.invoke(null, subNode)
         }
         else{
-            assert subNode instanceof MissingNode
+            assert (subNode instanceof MissingNode || subNode instanceof NullNode)
             return null
         }
     }

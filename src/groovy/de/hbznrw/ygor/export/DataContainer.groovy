@@ -1,11 +1,13 @@
 package de.hbznrw.ygor.export
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
 import ygor.Record
+import ygor.field.MappingsContainer
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
@@ -52,5 +54,15 @@ class DataContainer {
         if (record.zdbId || record.pissn || record .eissn){
             records.add(record)
         }
+    }
+
+
+    static DataContainer fromJson(ArrayNode dataContainerNode, MappingsContainer mappings){
+        DataContainer result = new DataContainer()
+        Iterator it = dataContainerNode.iterator()
+        while (it.hasNext()){
+            result.records << Record.fromJson(it.next(), mappings)
+        }
+        result
     }
 }
