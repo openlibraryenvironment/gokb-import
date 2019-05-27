@@ -1,12 +1,12 @@
 package ygor
 
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.node.ObjectNode
-import groovy.json.JsonBuilder
-import ygor.field.FieldKeyMapping
+import de.hbznrw.ygor.tools.JsonToolkit
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
@@ -34,7 +34,16 @@ class Record {
     }
 
     Record(List<AbstractIdentifier> ids, MappingsContainer container){
-        uid = UUID.randomUUID().toString()
+        this(ids, container, null)
+    }
+
+    Record(List<AbstractIdentifier> ids, MappingsContainer container, String uid){
+        if (null == uid) {
+            this.uid = UUID.randomUUID().toString()
+        }
+        else{
+            this.uid = uid
+        }
         for (id in ids){
             addIdentifier(id)
         }
@@ -101,12 +110,21 @@ class Record {
     }
 
 
-    ObjectNode asObjectNode(){
-        MAPPER.convertValue(this, ObjectNode.class)
+    static Record fromJson(JsonNode json, MappingsContainer mappings){
+        List<AbstractIdentifier> ids = new ArrayList<>()
+        ids.add(new ZdbIdentifier(JsonToolkit.fromJson(json, "zdbId"), mappings.getMapping("zdbId", MappingsContainer.YGOR)))
+        ids.add(new EzbIdentifier(JsonToolkit.fromJson(json, "ezbId"), mappings.getMapping("ezbId", MappingsContainer.YGOR)))
+        ids.add(new EissnIdentifier(JsonToolkit.fromJson(json, "eissn"), mappings.getMapping("eissn", MappingsContainer.YGOR)))
+        ids.add(new PissnIdentifier(JsonToolkit.fromJson(json, "pissn"), mappings.getMapping("pissn", MappingsContainer.YGOR)))
+        String uid = JsonToolkit.fromJson(json, "uid")
+        Record result = new Record(ids, mappings, uid)
+        Iterator it = ((ArrayNode)(json.path("multiFields"))).iterator()
+        while (it.hasNext()){
+            ObjectNode nextNode = it.next()
+            String ygorKey = JsonToolkit.fromJson(nextNode, "ygorKey")
+            result.addMultiField(MultiField.fromJson(nextNode, mappings.getMapping(ygorKey, MappingsContainer.YGOR)))
+        }
+        result
     }
 
-
-    static Record fromJson(String json){
-
-    }
 }
