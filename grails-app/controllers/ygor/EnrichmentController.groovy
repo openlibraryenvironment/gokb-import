@@ -2,6 +2,8 @@ package ygor
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import de.hbznrw.ygor.export.GokbExporter
+import de.hbznrw.ygor.export.Statistics
 import de.hbznrw.ygor.tools.JsonToolkit
 import grails.converters.JSON
 
@@ -127,6 +129,13 @@ class EnrichmentController {
             request.session.lastUpdate = [:]
         }
         request.session.lastUpdate << [dataTyp : (JsonToolkit.fromJson(rootNode, "configuration.dataType"))]
+
+        GokbExporter.extractTitles(enrichment)
+        GokbExporter.extractTipps(enrichment)
+        Statistics.getRecordsStatisticsBeforeParsing(enrichment)
+        GokbExporter.removeEmptyIdentifiers(enrichment)
+        GokbExporter.extractPackageHeader(enrichment)
+        
         render(
             view: 'process',
             model: [

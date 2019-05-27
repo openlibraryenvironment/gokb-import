@@ -60,7 +60,7 @@ class Enrichment {
         originHash             = FileToolkit.getMD5Hash(originName + Math.random())
         originPathName         = this.sessionFolder.getPath() + File.separator + originHash
         
-        dataContainer       = new DataContainer()
+        dataContainer          = new DataContainer()
         
         setStatus(ProcessingState.UNTOUCHED)
     }
@@ -162,6 +162,7 @@ class Enrichment {
         en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
         en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
         en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
+        en.dataContainer = DataContainer.fromJson(rootNode.path("data"), en.mappingsContainer)
         en.saveResult()
         return en
     }

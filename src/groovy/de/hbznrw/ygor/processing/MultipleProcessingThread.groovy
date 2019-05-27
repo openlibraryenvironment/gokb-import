@@ -141,11 +141,6 @@ class MultipleProcessingThread extends Thread {
         GokbExporter.removeEmptyIdentifiers(enrichment)  // e. g. empty identifiers, incomplete publisher_history, ...
         GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
 
-        /*ObjectNode[] asNodes = [] as ObjectNode[]
-        for (def record in enrichment.dataContainer.records){
-            asNodes << record.asObjectNode()
-        }*/
-
         enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
 
