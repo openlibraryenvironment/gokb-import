@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.reflect.FieldUtils
 
 class FieldKeyMapping {
 
@@ -85,10 +84,6 @@ class FieldKeyMapping {
                         gokb.add(mapping.value)
                     }
                     break
-                case "default":
-                    val = mapping.value
-                    valIsFix = false
-                    break
                 case "fixed":
                     val = mapping.value
                     valIsFix = true
@@ -103,6 +98,13 @@ class FieldKeyMapping {
                     if (!mapping.value instanceof String){
                         parseMapping(mapping.value)
                     }
+                    else{
+                        val = mapping.value
+                    }
+                    break
+                case "default":
+                    val = mapping.value
+                    valIsFix = false
                     break
                 default:
                     continue
@@ -159,33 +161,33 @@ class FieldKeyMapping {
 
     void asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
-        jsonGenerator.writeStringField("ygorKey", ygorKey)
-        jsonGenerator.writeStringField("type", type)
+        jsonGenerator.writeStringField(MappingsContainer.YGOR, ygorKey)
+        jsonGenerator.writeStringField(MappingsContainer.TYPE, type)
         jsonGenerator.writeStringField("value", val)
         jsonGenerator.writeStringField("valueIsFix", String.valueOf(valIsFix))
 
-        jsonGenerator.writeFieldName("kbartKeys")
+        jsonGenerator.writeFieldName(MappingsContainer.KBART)
         jsonGenerator.writeStartArray()
         for (String kk in kbartKeys){
             jsonGenerator.writeString(kk)
         }
         jsonGenerator.writeEndArray()
 
-        jsonGenerator.writeFieldName("zdbKeys")
+        jsonGenerator.writeFieldName(MappingsContainer.ZDB)
         jsonGenerator.writeStartArray()
         for (String zk in zdbKeys){
             jsonGenerator.writeString(zk)
         }
         jsonGenerator.writeEndArray()
 
-        jsonGenerator.writeFieldName("ezbKeys")
+        jsonGenerator.writeFieldName(MappingsContainer.EZB)
         jsonGenerator.writeStartArray()
         for (String ek in ezbKeys){
             jsonGenerator.writeString(ek)
         }
         jsonGenerator.writeEndArray()
 
-        jsonGenerator.writeFieldName("gokbFields")
+        jsonGenerator.writeFieldName(MappingsContainer.GOKB)
         jsonGenerator.writeStartArray()
         for (String gf in gokb){
             jsonGenerator.writeString(gf)
