@@ -20,9 +20,11 @@ class MultiField {
 
 
     MultiField(FieldKeyMapping fieldKeyMapping){
-        this.ygorFieldKey = fieldKeyMapping.ygorKey
-        this.type = fieldKeyMapping.type
-        keyMapping = fieldKeyMapping
+        if (fieldKeyMapping != null) {
+            this.ygorFieldKey = fieldKeyMapping.ygorKey
+            this.type = fieldKeyMapping.type
+            keyMapping = fieldKeyMapping
+        }
     }
 
 
@@ -86,6 +88,9 @@ class MultiField {
 
     static MultiField fromJson(JsonNode json, FieldKeyMapping mapping){
         MultiField result = new MultiField(mapping)
+        if (mapping == null){
+            result.ygorFieldKey = JsonToolkit.fromJson(json, "ygorKey")
+        }
         result.status = JsonToolkit.fromJson(json, "status")
         Iterator it = json.path("fields").iterator()
         while (it.hasNext()){
