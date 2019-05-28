@@ -10,7 +10,10 @@ import de.hbznrw.ygor.export.JsonTransformer
 import de.hbznrw.ygor.tools.*
 import com.fasterxml.jackson.databind.node.ObjectNode
 import groovy.json.JsonOutput
+import org.apache.commons.lang.StringUtils
+import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
+import ygor.field.MultiField
 
 class Enrichment {
 
@@ -163,8 +166,67 @@ class Enrichment {
         en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
         en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
         en.dataContainer = DataContainer.fromJson(rootNode.path("data"), en.mappingsContainer)
-        en.saveResult()
+        en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
         return en
     }
+
+
+    FieldKeyMapping setTitleMediumMapping() {
+        FieldKeyMapping mediumMapping = mappingsContainer.getMapping("medium", MappingsContainer.YGOR)
+        if (dataType == 'ebooks') {
+            mediumMapping.val = "Book"
+        }
+        else if (dataType == 'database') {
+            mediumMapping.val = "Database"
+        }
+        else {
+            mediumMapping.val = "Journal"
+        }
+        return mediumMapping
+    }
+
+
+    FieldKeyMapping setTitleTypeMapping() {
+        FieldKeyMapping typeMapping = mappingsContainer.getMapping("publicationType", MappingsContainer.YGOR)
+        if (dataType == 'ebooks') {
+            typeMapping.val = "Book"
+        }
+        else if (dataType == 'database') {
+            typeMapping.val = "Database"
+        }
+        else {
+            typeMapping.val = "Serial"
+        }
+        return typeMapping
+    }
+
+
+    FieldKeyMapping setTippPlatformNameMapping() {
+        FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
+        if (StringUtils.isEmpty(platformNameMapping.val)){
+            platformNameMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.name
+        }
+        platformNameMapping
+    }
+
+
+    FieldKeyMapping setTippPlatformUrlMapping() {
+        FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
+        if (StringUtils.isEmpty(platformUrlMapping.val)){
+            platformUrlMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.url
+        }
+        platformUrlMapping
+    }
+
+
+    void enrollMappingToRecords(FieldKeyMapping mapping){
+        MultiField titleMedium = new MultiField(mapping)
+        for (Record record in dataContainer.records) {
+            record.addMultiField(titleMedium)
+        }
+    }
+
+
+
 
 }

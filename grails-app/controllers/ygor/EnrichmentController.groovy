@@ -123,6 +123,10 @@ class EnrichmentController {
         String json = file.getInputStream()?.text
         JsonNode rootNode = MAPPER.readTree(json)
         Enrichment enrichment = enrichmentService.rawJsonToCurrentEnrichment(rootNode)
+        enrichment.setTitleMediumMapping()
+        enrichment.setTitleTypeMapping()
+        enrichment.setTippPlatformNameMapping()
+        enrichment.setTippPlatformUrlMapping()
         enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
         request.session.enrichments << [(enrichment.originHash) : enrichment]
         if (null == request.session.lastUpdate){
@@ -134,8 +138,9 @@ class EnrichmentController {
         GokbExporter.extractTipps(enrichment)
         Statistics.getRecordsStatisticsBeforeParsing(enrichment)
         GokbExporter.removeEmptyIdentifiers(enrichment)
-        GokbExporter.extractPackageHeader(enrichment)
-        
+        enrichment.saveResult()
+        // GokbExporter.extractPackageHeader(enrichment)
+
         render(
             view: 'process',
             model: [

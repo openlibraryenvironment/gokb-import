@@ -27,7 +27,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
                 for (Map.Entry<ZdbIdentifier, Record> item in dataContainer.recordsPerZdbId) {
                     if (item.key && !observedZdbIds.contains(item.value.zdbId)){
                         readData = reader.readItemData(owner.zdbKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, owner.mappingsContainer, MappingsContainer.EZB)
+                        integrateWithExisting(item.value, readData, mappingsContainer, MappingsContainer.EZB)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
@@ -36,7 +36,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
                 for (Map.Entry<EissnIdentifier, Record> item in dataContainer.recordsPerEissn) {
                     if (item.key && !observedEissns.contains(item.value.eissn)){
                         readData = reader.readItemData(owner.eissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, owner.mappingsContainer, MappingsContainer.EZB)
+                        integrateWithExisting(item.value, readData, mappingsContainer, MappingsContainer.EZB)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }
@@ -45,7 +45,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
                 for (Map.Entry<PissnIdentifier, Record> item in dataContainer.recordsPerPissn) {
                     if (item.key && !observedPissns.contains(item.value.pissn)){
                         readData = reader.readItemData(owner.pissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, owner.mappingsContainer, MappingsContainer.EZB)
+                        integrateWithExisting(item.value, readData, mappingsContainer, MappingsContainer.EZB)
                         addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
                     }
                 }

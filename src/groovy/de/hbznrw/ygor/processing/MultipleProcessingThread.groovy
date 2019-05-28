@@ -37,7 +37,6 @@ class MultipleProcessingThread extends Thread {
                                  MappingsContainer.EZB] // TODO
     public identifierByKey = [:]
 
-    MappingsContainer mappingsContainer
     FieldKeyMapping zdbKeyMapping
     FieldKeyMapping pissnKeyMapping
     FieldKeyMapping eissnKeyMapping
@@ -76,10 +75,9 @@ class MultipleProcessingThread extends Thread {
         kbartReader = new KbartReader(this, delimiter)
         zdbReader = new ZdbReader()
         ezbReader = new EzbReader()
-        mappingsContainer = en.mappingsContainer
-        zdbKeyMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
-        pissnKeyMapping = mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
-        eissnKeyMapping = mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)
+        zdbKeyMapping = en.mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
+        pissnKeyMapping = en.mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
+        eissnKeyMapping = en.mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)
         identifierByKey = [(zdbKeyMapping) : ZdbIdentifier.class,
                            (pissnKeyMapping) : PissnIdentifier.class,
                            (eissnKeyMapping) : EissnIdentifier.class]
@@ -99,13 +97,13 @@ class MultipleProcessingThread extends Thread {
                     case KbartBridge.IDENTIFIER:
                         KbartReaderConfiguration conf =
                                 new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
-                        new KbartIntegrationService().integrate(this, enrichment.dataContainer, mappingsContainer, conf)
+                        new KbartIntegrationService().integrate(this, enrichment.dataContainer, enrichment.mappingsContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
-                        new EzbIntegrationService().integrate(this, enrichment.dataContainer, mappingsContainer)
+                        new EzbIntegrationService().integrate(this, enrichment.dataContainer, enrichment.mappingsContainer)
                         break
                     case ZdbBridge.IDENTIFIER:
-                        new ZdbIntegrationService().integrate(this, enrichment.dataContainer, mappingsContainer)
+                        new ZdbIntegrationService().integrate(this, enrichment.dataContainer, enrichment.mappingsContainer)
                         break
                 }
             }
@@ -167,65 +165,14 @@ class MultipleProcessingThread extends Thread {
 
 
     private void processUiSettings(){
-        setTitleMedium()
-        setTitleType()
-        setTippPlatform()
-    }
-
-
-    private void setTitleMedium() {
-        FieldKeyMapping mediumMapping = mappingsContainer.getMapping("medium", MappingsContainer.YGOR)
-
-        if (enrichment.dataType == 'ebooks') {
-            mediumMapping.val = "Book"
-        }
-        else if (enrichment.dataType == 'database') {
-            mediumMapping.val = "Database"
-        }
-        else {
-            mediumMapping.val = "Journal"
-        }
-
-        MultiField titleMedium = new MultiField(mediumMapping)
-        for (Record record in enrichment.dataContainer.records) {
-            record.addMultiField(titleMedium)
-        }
-    }
-
-
-    private void setTitleType() {
-        FieldKeyMapping typeMapping = mappingsContainer.getMapping("publicationType", MappingsContainer.YGOR)
-
-        if (enrichment.dataType == 'ebooks') {
-            typeMapping.val = "Book"
-        }
-        else if (enrichment.dataType == 'database') {
-            typeMapping.val = "Database"
-        }
-        else {
-            typeMapping.val = "Serial"
-        }
-
-        MultiField titleType = new MultiField(typeMapping)
-        for (Record record in enrichment.dataContainer.records) {
-            record.addMultiField(titleType)
-        }
-    }
-
-
-    private void setTippPlatform() {
-        FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
-        FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
-
-        platformNameMapping.val = enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.name
-        platformUrlMapping.val = enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.url
-        MultiField nameField = new MultiField(platformNameMapping)
-        MultiField urlField = new MultiField(platformUrlMapping)
-
-        for (Record record in enrichment.dataContainer.records) {
-            record.addMultiField(nameField)
-            record.addMultiField(urlField)
-        }
+        FieldKeyMapping mediumMapping = enrichment.setTitleMediumMapping()
+        enrichment.enrollMappingToRecords(mediumMapping)
+        FieldKeyMapping typeMapping = enrichment.setTitleTypeMapping()
+        enrichment.enrollMappingToRecords(typeMapping)
+        FieldKeyMapping tippNameMapping = enrichment.setTippPlatformNameMapping()
+        enrichment.enrollMappingToRecords(tippNameMapping)
+        FieldKeyMapping tippUrlMapping = enrichment.setTippPlatformUrlMapping()
+        enrichment.enrollMappingToRecords(tippUrlMapping)
     }
 
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.export.Validator
 import de.hbznrw.ygor.export.structure.Pod
 
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import groovyx.net.http.*
 import org.springframework.web.multipart.commons.CommonsMultipartFile
