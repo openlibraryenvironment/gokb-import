@@ -47,7 +47,14 @@ class EnrichmentService {
             if(origin)
                 origin.delete()
             getSessionEnrichments()?.remove("${enrichment.originHash}")
+            getSessionEnrichments()?.remove(enrichment.originHash)
             getSessionFormats()?.remove("${enrichment.originHash}")
+            getSessionFormats()?.remove(enrichment.originHash)
+            /* double remove calls are necessary in different processes by now:
+             * .remove("${enrichment.originHash}")   works for CSV uploads
+             * .remove(enrichment.originHash)        works for raw Json uploads
+             * TODO cleanup
+             */
         }
     }
 

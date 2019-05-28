@@ -27,14 +27,23 @@ class MultiField {
 
 
     def addField(String source, String key, String value){
-        for (mappedKey in keyMapping.get(source)) {
-            if (key == mappedKey) {
-                fields.put(source, new Field(source, mappedKey, value))
+        if (keyMapping == null){
+            fields.put(source, new Field(source, key, value))
+        }
+        else{
+            for (mappedKey in keyMapping.get(source)) {
+                if (key == mappedKey) {
+                    fields.put(source, new Field(source, mappedKey, value))
+                }
             }
         }
     }
 
+
     String getPrioValue(){
+        if (keyMapping == null){
+            return fields.values().toArray()[0]
+        }
         if (keyMapping.valIsFix){
             return keyMapping.val
         }
@@ -49,6 +58,7 @@ class MultiField {
         return keyMapping.val
     }
 
+
     void validate(String namespace){
         status = Validator.validate(type, getPrioValue(), ygorFieldKey, namespace)
     }
@@ -57,6 +67,7 @@ class MultiField {
     String toString(){
         this.getClass().getName().concat(": ").concat(ygorFieldKey).concat(", fields: ").concat(fields.toString())
     }
+
 
     String asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()

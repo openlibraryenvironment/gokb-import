@@ -110,14 +110,21 @@ class JsonToolkit {
                                                 YgorFormatter formatter){
         ObjectNode result = MAPPER.createObjectNode()
         for (MultiField multiField in record.multiFields.values()){
-            Set qualifiedKeys = multiField.keyMapping."${target}"
-            qualifiedKeys.each {qualifiedKey ->
-                ArrayList splitKey = qualifiedKey.split("\\.") as ArrayList
-                if (splitKey.size() > 1 && splitKey[0].equals(typeFilter)){
-                    // JsonNode node = getJsonNodeFromSplitString(ARRAY, splittedKey[1..splittedKey.size()-1], multiField.getPrioValue())
-                    ArrayList subarray = splitKey // [1..splittedKey.size()-1]
-                    def value = multiField.getPrioValue()
-                    upsertIntoJsonNode(result, subarray, value, multiField.type, formatter)
+            if (multiField.keyMapping == null){
+                def value = multiField.getPrioValue()
+                ArrayList concatKey = Arrays.asList(typeFilter)
+                concatKey.addAll(multiField.fields.values().iterator().next().key)
+                upsertIntoJsonNode(result, concatKey, value, multiField.type, formatter)
+            }
+            else{
+                Set qualifiedKeys = multiField.keyMapping."${target}"
+                qualifiedKeys.each {qualifiedKey ->
+                    ArrayList splitKey = qualifiedKey.split("\\.") as ArrayList
+                    if (splitKey.size() > 1 && splitKey[0].equals(typeFilter)){
+                        // JsonNode node = getJsonNodeFromSplitString(ARRAY, splittedKey[1..splittedKey.size()-1], multiField.getPrioValue())
+                        def value = multiField.getPrioValue()
+                        upsertIntoJsonNode(result, splitKey, value, multiField.type, formatter)
+                    }
                 }
             }
         }
