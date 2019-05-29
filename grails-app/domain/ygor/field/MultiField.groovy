@@ -2,7 +2,7 @@ package ygor.field
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
-import de.hbznrw.ygor.export.Validator
+import de.hbznrw.ygor.validators.Validator
 import de.hbznrw.ygor.tools.JsonToolkit
 
 class MultiField {

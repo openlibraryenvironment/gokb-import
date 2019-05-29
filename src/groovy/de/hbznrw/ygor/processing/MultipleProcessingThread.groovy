@@ -159,7 +159,7 @@ class MultipleProcessingThread extends Thread {
 
     private void validate(){
         for (Record record : enrichment.dataContainer.records) {
-            record.validate(enrichment.dataContainer.info.namespace_title_id)
+            record.validateMultifields(enrichment.dataContainer.info.namespace_title_id)
         }
     }
 

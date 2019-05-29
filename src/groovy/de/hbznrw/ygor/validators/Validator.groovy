@@ -1,6 +1,7 @@
-package de.hbznrw.ygor.export
+package de.hbznrw.ygor.validators
 
 import de.hbznrw.ygor.enums.*
+import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
 import org.apache.commons.lang.StringUtils

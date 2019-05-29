@@ -13,6 +13,7 @@ import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.processing.Envelope
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.validators.StructValidator
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.tools.*
 import ygor.Record

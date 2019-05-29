@@ -1,4 +1,4 @@
-package de.hbznrw.ygor.export
+package de.hbznrw.ygor.validators
 
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.export.structure.TippCoverage

@@ -2,6 +2,7 @@ package de.hbznrw.ygor.export
 
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.export.structure.TitleStruct
+import de.hbznrw.ygor.validators.Validator
 import groovy.util.logging.Log4j
 
 // if validator result is NOT valid, use org value

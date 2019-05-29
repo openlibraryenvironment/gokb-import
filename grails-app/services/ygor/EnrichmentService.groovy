@@ -1,7 +1,7 @@
 package ygor
 
 import com.fasterxml.jackson.databind.JsonNode
-import de.hbznrw.ygor.export.Validator
+import de.hbznrw.ygor.validators.Validator
 import de.hbznrw.ygor.export.structure.Pod
 
 import javax.servlet.http.HttpSession
