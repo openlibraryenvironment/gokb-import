@@ -5,6 +5,7 @@ import de.hbznrw.ygor.export.structure.TippCoverage
 import de.hbznrw.ygor.export.structure.TitleHistoryEvent
 import de.hbznrw.ygor.export.structure.TitlePublisherHistory
 
+// TODO: delete (has moved to RecordValidator)
 class StructValidator {
     
     static isValidCoverage(TippCoverage coverage){

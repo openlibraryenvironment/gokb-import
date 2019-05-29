@@ -28,7 +28,10 @@ class Record {
     EissnIdentifier eissn
     PissnIdentifier pissn
     Map multiFields
-    static hasMany = [multiFields : MultiField]
+    Map validation
+
+    static hasMany = [multiFields : MultiField,
+                      validation : String]
 
     static constraints = {
     }
@@ -80,6 +83,16 @@ class Record {
         }
     }
 
+
+    void addValidation(String property, String status){
+        validation.put(property, status)
+    }
+
+    String getValidation(String property){
+        return validation.get(property)
+    }
+
+
     void addMultiField(MultiField multiField){
         multiFields.put(multiField.ygorFieldKey, multiField)
     }
@@ -88,9 +101,10 @@ class Record {
         multiFields.get(ygorFieldKey)
     }
 
-    void validate(String namespace){
+    void validateMultifields(String namespace){
         multiFields.each{k,v -> v.validate(namespace)}
     }
+
 
     String asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()
