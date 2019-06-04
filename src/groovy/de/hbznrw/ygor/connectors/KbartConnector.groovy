@@ -16,7 +16,7 @@ class KbartConnector extends AbstractConnector {
     static final KBART_HEADER_ZDB_ID            = "zdb_id"
     static final KBART_HEADER_ONLINE_IDENTIFIER = "online_identifier"
     static final KBART_HEADER_PRINT_IDENTIFIER  = "print_identifier"
-    static final KBART_HEADER_DOI_IDENTIFIER  = "doi_identifier"
+    static final KBART_HEADER_DOI_IDENTIFIER    = "doi_identifier"
 
 	private String requestUrl       = 'kbart-file'
     private HashMap response

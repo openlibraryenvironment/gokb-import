@@ -10,6 +10,7 @@ import de.hbznrw.ygor.tools.JsonToolkit
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
+import ygor.identifier.DoiIdentifier
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.EzbIdentifier
 import ygor.identifier.PissnIdentifier
@@ -25,10 +26,12 @@ class Record {
     String          uid
     ZdbIdentifier   zdbId
     EzbIdentifier   ezbId
+    DoiIdentifier   doiId
     EissnIdentifier eissn
     PissnIdentifier pissn
     Map multiFields
     Map validation
+
 
     static hasMany = [multiFields : MultiField,
                       validation : String]
@@ -68,6 +71,12 @@ class Record {
                 throw new IllegalArgumentException("EZB id ".concat(ezbId).concat(" already given for record"))
             }
             ezbId = identifier
+        }
+        else if (identifier instanceof DoiIdentifier){
+            if (doiId){
+                throw new IllegalArgumentException("EISSN ".concat(doiId).concat(" already given for record"))
+            }
+            doiId = identifier
         }
         else if (identifier instanceof EissnIdentifier){
             if (eissn){
@@ -111,6 +120,7 @@ class Record {
         jsonGenerator.writeStringField("uid", uid)
         jsonGenerator.writeStringField("zdbId", zdbId?.identifier)
         jsonGenerator.writeStringField("ezbId", ezbId?.identifier)
+        jsonGenerator.writeStringField("doiId", doiId?.identifier)
         jsonGenerator.writeStringField("eissn", eissn?.identifier)
         jsonGenerator.writeStringField("pissn", pissn?.identifier)
 
@@ -128,6 +138,7 @@ class Record {
         List<AbstractIdentifier> ids = new ArrayList<>()
         ids.add(new ZdbIdentifier(JsonToolkit.fromJson(json, "zdbId"), mappings.getMapping("zdbId", MappingsContainer.YGOR)))
         ids.add(new EzbIdentifier(JsonToolkit.fromJson(json, "ezbId"), mappings.getMapping("ezbId", MappingsContainer.YGOR)))
+        ids.add(new DoiIdentifier(JsonToolkit.fromJson(json, "doiId"), mappings.getMapping("doiId", MappingsContainer.YGOR)))
         ids.add(new EissnIdentifier(JsonToolkit.fromJson(json, "eissn"), mappings.getMapping("eissn", MappingsContainer.YGOR)))
         ids.add(new PissnIdentifier(JsonToolkit.fromJson(json, "pissn"), mappings.getMapping("pissn", MappingsContainer.YGOR)))
         String uid = JsonToolkit.fromJson(json, "uid")
