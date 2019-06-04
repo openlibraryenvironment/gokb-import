@@ -1,55 +1,45 @@
 package ygor.integrators
 
-import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
-import de.hbznrw.ygor.readers.EzbReader
+import org.apache.commons.lang.StringUtils
 import ygor.Record
 import ygor.field.MappingsContainer
-import ygor.identifier.EissnIdentifier
-import ygor.identifier.PissnIdentifier
-import ygor.identifier.ZdbIdentifier
+import ygor.identifier.AbstractIdentifier
+
+import java.text.SimpleDateFormat
 
 class EzbIntegrationService extends ExternalIntegrationService{
 
-    def integrate(MultipleProcessingThread owner, DataContainer dataContainer,
-                  MappingsContainer mappingsContainer) {
-        Set<String> observedZdbIds = new HashSet<>()
-        Set<String> observedEissns = new HashSet<>()
-        Set<String> observedPissns = new HashSet<>()
+    EzbIntegrationService(MappingsContainer mappingsContainer){
+        super(mappingsContainer)
+    }
 
+
+    def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
+        String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
         // owner.setProgressTotal(1) TODO: value?
-        EzbReader reader = owner.ezbReader
+        for (Record record in dataContainer.records){
+            record.ezbIntegrationDate = processStart
+            Map<String, String> ezbMatch = getBestExistingMatch(owner, record)
+            if (!ezbMatch.isEmpty()){
+                integrateWithExisting(record, ezbMatch, mappingsContainer, MappingsContainer.EZB)
+            }
+        }
+    }
 
-        Map<String, String> readData = null
+
+    private Map<String, String> getBestExistingMatch(MultipleProcessingThread owner, Record record){
+        List<Map<String, String>> readData = new ArrayList<>()
         for (String key in owner.KEY_ORDER) {
-            if (key == KbartConnector.KBART_HEADER_ZDB_ID){
-                for (Map.Entry<ZdbIdentifier, Record> item in dataContainer.recordsPerZdbId) {
-                    if (item.key && !observedZdbIds.contains(item.value.zdbId)){
-                        readData = reader.readItemData(owner.zdbKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, mappingsContainer, MappingsContainer.EZB)
-                        addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
-                    }
-                }
-            }
-            else if (key == KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER){
-                for (Map.Entry<EissnIdentifier, Record> item in dataContainer.recordsPerEissn) {
-                    if (item.key && !observedEissns.contains(item.value.eissn)){
-                        readData = reader.readItemData(owner.eissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, mappingsContainer, MappingsContainer.EZB)
-                        addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
-                    }
-                }
-            }
-            else if (key == KbartConnector.KBART_HEADER_PRINT_IDENTIFIER){
-                for (Map.Entry<PissnIdentifier, Record> item in dataContainer.recordsPerPissn) {
-                    if (item.key && !observedPissns.contains(item.value.pissn)){
-                        readData = reader.readItemData(owner.pissnKeyMapping, item.key.identifier)
-                        integrateWithExisting(item.value, readData, mappingsContainer, MappingsContainer.EZB)
-                        addToObserved(item.value, observedZdbIds, observedEissns, observedPissns)
-                    }
+            AbstractIdentifier id = record."${key}"
+            if (id && !StringUtils.isEmpty(id.identifier)){
+                readData = owner.ezbReader.readItemData(owner.zdbKeyMapping, id.identifier)
+                if (!readData.isEmpty()){
+                    break
                 }
             }
         }
+        return getBestMatchingData(owner, record, readData, 0, MappingsContainer.EZB, "ezbKeys")
     }
 }

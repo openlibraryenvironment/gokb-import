@@ -4,10 +4,8 @@ import com.google.common.base.Throwables
 import de.hbznrw.ygor.bridges.EzbBridge
 import de.hbznrw.ygor.bridges.KbartBridge
 import de.hbznrw.ygor.bridges.ZdbBridge
-import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.Statistics
-import de.hbznrw.ygor.interfaces.ProcessorInterface
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
@@ -17,7 +15,6 @@ import ygor.Enrichment
 import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
-import ygor.field.MultiField
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
@@ -28,10 +25,8 @@ import ygor.integrators.ZdbIntegrationService
 @Log4j
 class MultipleProcessingThread extends Thread {
 
-    static final KEY_ORDER = [KbartConnector.KBART_HEADER_ZDB_ID,
-                              KbartConnector.KBART_HEADER_DOI_IDENTIFIER,
-                              KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER,
-                              KbartConnector.KBART_HEADER_PRINT_IDENTIFIER]
+    static final KEY_ORDER = ["zdbId", "doiId", "eissn", "pissn"]
+
     static final SOURCE_ORDER = [MappingsContainer.KBART,
                                  MappingsContainer.ZDB,
                                  MappingsContainer.EZB] // TODO
@@ -43,7 +38,6 @@ class MultipleProcessingThread extends Thread {
 
     // old member variables following; TODO use or delete
 
-    public ProcessorInterface processor
     public isRunning
 
     private Enrichment enrichment
@@ -64,7 +58,6 @@ class MultipleProcessingThread extends Thread {
 
     MultipleProcessingThread(Enrichment en, HashMap options) {
         enrichment = en
-        processor = new KbartProcessor()
         apiCalls  = options.get('options')
         delimiter = options.get('delimiter')
         quote = options.get('quote')
@@ -97,13 +90,13 @@ class MultipleProcessingThread extends Thread {
                     case KbartBridge.IDENTIFIER:
                         KbartReaderConfiguration conf =
                                 new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
-                        new KbartIntegrationService().integrate(this, enrichment.dataContainer, enrichment.mappingsContainer, conf)
+                        new KbartIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer, conf)
                         break
                     case EzbBridge.IDENTIFIER:
-                        new EzbIntegrationService().integrate(this, enrichment.dataContainer, enrichment.mappingsContainer)
+                        new EzbIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer)
                         break
                     case ZdbBridge.IDENTIFIER:
-                        new ZdbIntegrationService().integrate(this, enrichment.dataContainer, enrichment.mappingsContainer)
+                        new ZdbIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer)
                         break
                 }
             }
@@ -127,6 +120,7 @@ class MultipleProcessingThread extends Thread {
         }
 
         validate()
+        checkIDsUniqueness()
 
         processUiSettings()                              // set "medium"
 
@@ -139,19 +133,6 @@ class MultipleProcessingThread extends Thread {
         GokbExporter.removeEmptyIdentifiers(enrichment)  // e. g. empty identifiers, incomplete publisher_history, ...
         GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
 
-        enrichment.dataContainer.info.stash = processor.stash.values // TODO adapt the following
-        enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
-
-        def duplicateKeys = []
-        for (key in KEY_ORDER){
-            enrichment.dataContainer.info.stash."${key}".each { k, v ->
-                if (! processor.stash.getKeyByValue("${key}", v)) {
-                    duplicateKeys << v
-                }
-            }
-        }
-        enrichment.dataContainer.info.stash.duplicateKeyEntries = duplicateKeys.unique()
-
         enrichment.saveResult()
         enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     }
@@ -161,6 +142,11 @@ class MultipleProcessingThread extends Thread {
         for (Record record : enrichment.dataContainer.records) {
             record.validateMultifields(enrichment.dataContainer.info.namespace_title_id)
         }
+    }
+
+
+    private void checkIDsUniqueness(){
+        // TODO
     }
 
 

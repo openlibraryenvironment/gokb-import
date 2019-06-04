@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.readers
 
 import groovy.util.logging.Log4j
+import groovy.util.slurpersupport.GPathResult
 import ygor.field.FieldKeyMapping
 
 @Log4j
@@ -21,18 +22,22 @@ class EzbReader extends AbstractReader{
 
 
     @Override
-    Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
-        Map<String, String> result = new HashMap<>()
+    List<Map<String, String>> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
+        List<Map<String, String>> result = new ArrayList<>()
         try {
             String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKeys)
             log.info("query EZB: " + queryString)
             String text = new URL(queryString).getText()
             def records = new XmlSlurper().parseText(text).depthFirst().findAll {it.name() == 'title'}
-            if (records?.size() == 1){
-                String name = records.get(0).localText()[0]
-                String ezbId = records.get(0).parent().attributes().get("jourid")
-                result.put("jourid", ezbId)
-                result.put("title", name)
+            if (records) {
+                for (GPathResult record in records) {
+                    Map<String, String> recordMap = new HashMap<>()
+                    String name = records.get(0).localText()[0]
+                    String ezbId = records.get(0).parent().attributes().get("jourid")
+                    recordMap.put("jourid", ezbId)
+                    recordMap.put("title", name)
+                    result.add(recordMap)
+                }
             }
         }
         catch(Exception e){

@@ -12,8 +12,16 @@ import ygor.identifier.AbstractIdentifier
 
 class KbartIntegrationService {
 
+    private MappingsContainer mappingsContainer
+
+
+    KbartIntegrationService(MappingsContainer mappingsContainer){
+        this.mappingsContainer = mappingsContainer
+    }
+
+
     def integrate(MultipleProcessingThread owner, DataContainer data,
-                  MappingsContainer container, KbartReaderConfiguration kbartReaderConfiguration) {
+                  KbartReaderConfiguration kbartReaderConfiguration) {
 
         owner.setProgressTotal(1) // TODO
         KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
@@ -33,11 +41,11 @@ class KbartIntegrationService {
                     }
                 }
             }
-            Record record = new Record(identifiers, container)
+            Record record = new Record(identifiers, mappingsContainer)
 
             // fill record with all non-identifier fields
             item.each { key, value ->
-                def fieldKeyMapping = container.getMapping(key, MappingsContainer.KBART)
+                def fieldKeyMapping = mappingsContainer.getMapping(key, MappingsContainer.KBART)
                 if (fieldKeyMapping == null){
                     fieldKeyMapping = new FieldKeyMapping(false,
                             [(MappingsContainer.YGOR) : key,
