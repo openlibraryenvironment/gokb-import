@@ -51,4 +51,6 @@ class StatisticController {
                 currentView: 'statistic'
             ])
     }
+
+    static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
 }

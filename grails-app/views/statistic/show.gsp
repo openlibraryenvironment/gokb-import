@@ -312,7 +312,7 @@
 
             buildStats: function(json){
 
-                var processedEntries = parseInt(json.meta.stats.general["processed kbart entries"])
+                var processedEntries = parseInt(json.meta.stats.general[statisticController.PROCESSED_KBART_ENTRIES])
                 $('#statistics-substats .processed-kbart-entries > span').text(processedEntries)
 
                 var duplicateKeyEntries = json.meta.stats.general["duplicate key entries"].join(", ")

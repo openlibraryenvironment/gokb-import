@@ -9,7 +9,7 @@ import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
 import ygor.Enrichment
 import ygor.Record
-import ygor.field.MappingsContainer
+import ygor.StatisticController
 import ygor.field.MultiField
 
 class Statistics {
@@ -30,35 +30,26 @@ class Statistics {
 
     static ObjectNode getRecordsStatisticsBeforeParsing(Enrichment enrichment){
 
-        ObjectNode stats = new ObjectNode(NODE_FACTORY)
-        stats.set("general", new ObjectNode(NODE_FACTORY))
-        stats.set("tipps", new ObjectNode(NODE_FACTORY))
-        stats.set("titles", new ObjectNode(NODE_FACTORY))
+        enrichment.stats = new ObjectNode(NODE_FACTORY)
+        ObjectNode tipps = new ObjectNode(NODE_FACTORY)
+        ObjectNode titles = new ObjectNode(NODE_FACTORY)
+        ObjectNode general = new ObjectNode(NODE_FACTORY)
 
-        stats.set("tipps", new ObjectNode(NODE_FACTORY))
-        stats.get("tipps").set("coverage", new ObjectNode(NODE_FACTORY))
-        stats.get("tipps").set("title", new ObjectNode(NODE_FACTORY))
-        stats.get("tipps").set("title", new ObjectNode(NODE_FACTORY))
-        stats.get("tipps").get("title").set("identifiers", new ObjectNode(NODE_FACTORY))
+        tipps.set("tipps before cleanup", new TextNode(enrichment.dataContainer.tipps.size))
+        titles.set("titles before cleanUp", new TextNode(enrichment.dataContainer.titles.size))
 
-        stats.set("titles", new ObjectNode(NODE_FACTORY))
-        stats.get("titles").set("identifiers", new ObjectNode(NODE_FACTORY))
-        stats.get("titles").set("publisher_history", new ObjectNode(NODE_FACTORY))
-        stats.get("titles").set("historyEvents", new ObjectNode(NODE_FACTORY))
+        /*Statistics.processTipps(enrichment.dataContainer.records, stats)
+        Statistics.processTitles(enrichment.dataContainer.records, stats)*/
 
-        Statistics.processTipps(enrichment.dataContainer.records, stats)
-        // Statistics.processTitles(enrichment.dataContainer.records, stats)
+        general.put(StatisticController.PROCESSED_KBART_ENTRIES, enrichment.dataContainer.records.size())
 
-        stats.set("general", new ObjectNode(NODE_FACTORY))
-        stats.get("general").set("tipps before cleanUp", new TextNode(String.valueOf(enrichment.dataContainer.tipps.size())))
-        stats.get("general").set("titles before cleanUp", new TextNode(String.valueOf(enrichment.dataContainer.titles.size())))
+        /*general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries]
+        json.meta.stats.general << ["duplicate key entries":   json.meta.stash.duplicateKeyEntries]*/
 
-        /* TODO
-        json.meta.stats.general << ["processed kbart entries": json.meta.stash.processedKbartEntries]
-        json.meta.stats.general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries]
-        json.meta.stats.general << ["duplicate key entries":   json.meta.stash.duplicateKeyEntries] */
-
-        enrichment.stats = stats
+        enrichment.stats.set("tipps", tipps)
+        enrichment.stats.set("titles", titles)
+        enrichment.stats.set("general", general)
+        enrichment.stats
     }
     
     static Object getStatsBeforeParsing(Object json){
@@ -81,7 +72,7 @@ class Statistics {
         json.meta.stats.general << ["tipps before cleanUp":    json.package.tipps.size()]
         json.meta.stats.general << ["titles before cleanUp":   json.titles.size()]
 
-        json.meta.stats.general << ["processed kbart entries": json.meta.stash.processedKbartEntries]
+        json.meta.stats.general << [(StatisticController.PROCESSED_KBART_ENTRIES): json.meta.stash.processedKbartEntries]
         json.meta.stats.general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries]
         json.meta.stats.general << ["duplicate key entries":   json.meta.stash.duplicateKeyEntries]
 
@@ -558,4 +549,5 @@ class Statistics {
         List<Integer> storage = [0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[]]
         storage
     }
+
 }
