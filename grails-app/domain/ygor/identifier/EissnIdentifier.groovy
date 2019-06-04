@@ -4,8 +4,6 @@ import ygor.field.FieldKeyMapping
 
 class EissnIdentifier extends AbstractIdentifier{
 
-    FieldKeyMapping fieldKeyMapping
-
     static constraints = {
         fieldKeyMapping nullable : false
 
@@ -15,7 +13,7 @@ class EissnIdentifier extends AbstractIdentifier{
     }
 
     EissnIdentifier(String id, FieldKeyMapping fieldKeyMapping){
+        super(fieldKeyMapping)
         identifier = id
-        this.fieldKeyMapping = fieldKeyMapping
     }
 }
