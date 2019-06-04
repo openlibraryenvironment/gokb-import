@@ -31,6 +31,8 @@ class Record {
     PissnIdentifier pissn
     Map multiFields
     Map validation
+    String zdbIntegrationDate
+    String ezbIntegrationDate
 
 
     static hasMany = [multiFields : MultiField,
@@ -57,6 +59,8 @@ class Record {
         for (def ygorMapping in container.ygorMappings){
             multiFields.put(ygorMapping.key, new MultiField(ygorMapping.value))
         }
+        zdbIntegrationDate = null
+        ezbIntegrationDate = null
     }
 
     void addIdentifier(AbstractIdentifier identifier){
@@ -123,6 +127,12 @@ class Record {
         jsonGenerator.writeStringField("doiId", doiId?.identifier)
         jsonGenerator.writeStringField("eissn", eissn?.identifier)
         jsonGenerator.writeStringField("pissn", pissn?.identifier)
+        if (ezbIntegrationDate){
+            jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
+        }
+        if (zdbIntegrationDate){
+            jsonGenerator.writeStringField("zdbIntegrationDate", zdbIntegrationDate)
+        }
 
         jsonGenerator.writeFieldName("multiFields")
         jsonGenerator.writeStartArray()
@@ -148,6 +158,14 @@ class Record {
             ObjectNode nextNode = it.next()
             String ygorKey = JsonToolkit.fromJson(nextNode, "ygorKey")
             result.addMultiField(MultiField.fromJson(nextNode, mappings.getMapping(ygorKey, MappingsContainer.YGOR)))
+        }
+        String ezbIntegrationDate = JsonToolkit.fromJson(json, "ezbIntegrationDate")
+        if (ezbIntegrationDate){
+            this.ezbIntegrationDate = ezbIntegrationDate
+        }
+        String zdbIntegrationDate = JsonToolkit.fromJson(json, "zdbIntegrationDate")
+        if (zdbIntegrationDate){
+            this.zdbIntegrationDate = zdbIntegrationDate
         }
         result
     }
