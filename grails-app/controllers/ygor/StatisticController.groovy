@@ -53,4 +53,6 @@ class StatisticController {
     }
 
     static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
+    static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
+    static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
 }

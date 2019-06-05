@@ -315,12 +315,12 @@
                 var processedEntries = parseInt(json.meta.stats.general[statisticController.PROCESSED_KBART_ENTRIES])
                 $('#statistics-substats .processed-kbart-entries > span').text(processedEntries)
 
-                var duplicateKeyEntries = json.meta.stats.general["duplicate key entries"].join(", ")
+                var duplicateKeyEntries = json.meta.stats.general[statisticController.DUPLICATE_KEY_ENTRIES].join(", ")
                 if (duplicateKeyEntries) {
                     $('#statistics-substats .duplicate-key-entries > span').text(duplicateKeyEntries).addClass("bg-danger")
                 }
 
-                var ignoredEntries = json.meta.stats.general["ignored kbart entries"]
+                var ignoredEntries = json.meta.stats.general[statisticController.IGNORED_KBART_ENTRIES]
                 helper('#statistics-substats .ignored-kbart-entries > span', ignoredEntries.length)
 
                 var deltaTipps  = parseInt(json.meta.stats.general["tipps before cleanUp"]) - parseInt(json.meta.stats.general["tipps after cleanUp"])

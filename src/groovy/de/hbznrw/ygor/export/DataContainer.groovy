@@ -16,14 +16,14 @@ class DataContainer {
 
     static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
-    Meta       info    // TODO: use or delete
-    Package    pkg
-    ObjectNode packageHeader
+    Meta        info    // TODO: use or delete
+    Package     pkg
+    ObjectNode  packageHeader
+    Set<Record> records
+    ArrayNode   titles
+    ArrayNode   tipps
 
-    Set<Record> records = []
-    ArrayNode titles = new ArrayNode(NODE_FACTORY)
-    ArrayNode tipps = new ArrayNode(NODE_FACTORY)
-    
+
     DataContainer() {
         info = new Meta(
             file:   "TODO",
@@ -36,6 +36,10 @@ class DataContainer {
             namespace_title_id: ""
         )
         pkg = new Package()
+
+        records = []
+        titles = new ArrayNode(NODE_FACTORY)
+        tipps = new ArrayNode(NODE_FACTORY)
     }
 
 

@@ -38,52 +38,40 @@ class Statistics {
         tipps.set("tipps before cleanup", new TextNode(enrichment.dataContainer.tipps.size))
         titles.set("titles before cleanUp", new TextNode(enrichment.dataContainer.titles.size))
 
-        /*Statistics.processTipps(enrichment.dataContainer.records, stats)
-        Statistics.processTitles(enrichment.dataContainer.records, stats)*/
-
-        general.put(StatisticController.PROCESSED_KBART_ENTRIES, enrichment.dataContainer.records.size())
-
-        /*general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries]
-        json.meta.stats.general << ["duplicate key entries":   json.meta.stash.duplicateKeyEntries]*/
-
         enrichment.stats.set("tipps", tipps)
         enrichment.stats.set("titles", titles)
         enrichment.stats.set("general", general)
+        enrichment.stats.set("identifiers", new ObjectNode(NODE_FACTORY))
+
+        Statistics.evaluateTippNames(enrichment.dataContainer.records, enrichment.stats)
+        Statistics.evaluateUrls(enrichment.dataContainer.records, enrichment.stats)
+        Statistics.evaluateIdentifiers(enrichment.dataContainer.records, enrichment.stats)
+        Statistics.evaluateCoverage(enrichment.dataContainer.records, enrichment.stats)
+        Statistics.evaluatePublisherHistory(enrichment.dataContainer.records, enrichment.stats)
+        Statistics.evaluateHistoryEvents(enrichment.dataContainer.records, enrichment.stats)
+
+        general.put(StatisticController.PROCESSED_KBART_ENTRIES, enrichment.dataContainer.records.size())
+        general.put(StatisticController.IGNORED_KBART_ENTRIES, 0) // TODO
+        general.put(StatisticController.DUPLICATE_KEY_ENTRIES, 0) // TODO
+
         enrichment.stats
     }
     
-    static Object getStatsBeforeParsing(Object json){
+    static Object getStatsBeforeParsing(Object json){ // TODO move rest to getRecordsStatisticsBeforeParsing(Enrichment enrichment)
          
-        json.meta.stats             << ['general':[:]]
-        json.meta.stats             << ['tipps':[:]]
-        json.meta.stats             << ['titles':[:]]
-        
-        json.meta.stats.tipps       << ['coverage':[:]]
-        json.meta.stats.tipps       << ['title':[:]]
-        json.meta.stats.tipps.title << ['identifiers':[:]]
-        
-        json.meta.stats.titles      << ['identifiers':[:]]
-        json.meta.stats.titles      << ['publisher_history':[:]]
-        json.meta.stats.titles      << ['historyEvents':[:]]
-
-        // Statistics.processTipps(json)
-        // Statistics.processTitles(json)
-        
         json.meta.stats.general << ["tipps before cleanUp":    json.package.tipps.size()]
         json.meta.stats.general << ["titles before cleanUp":   json.titles.size()]
 
         json.meta.stats.general << [(StatisticController.PROCESSED_KBART_ENTRIES): json.meta.stash.processedKbartEntries]
-        json.meta.stats.general << ["ignored kbart entries":   json.meta.stash.ignoredKbartEntries]
-        json.meta.stats.general << ["duplicate key entries":   json.meta.stash.duplicateKeyEntries]
+        json.meta.stats.general << [(StatisticController.IGNORED_KBART_ENTRIES):   json.meta.stash.ignoredKbartEntries]
+        json.meta.stats.general << [(StatisticController.DUPLICATE_KEY_ENTRIES):   json.meta.stash.duplicateKeyEntries]
 
         json
     }
     
-    static Object processTipps(Set<Record> records, ObjectNode stats){
-
+    static Object evaluateTippNames(Set<Record> records, ObjectNode stats){ // TODO rename evaluateNames ?
         List<Integer> tippTitleName = Statistics.getStorage()
         records.each{record ->
-
             MultiField nameField = record.getMultiField("publicationTitle")
             String nameStatus = nameField.status
 
@@ -109,8 +97,9 @@ class Statistics {
         Statistics.format("name is not atomic", tippTitleName, Statistics.COUNT_2, Statistics.LIST_2, stats)
         Statistics.format("name is not valid",  tippTitleName, Statistics.COUNT_3, Statistics.LIST_3, stats)
         Statistics.format("name is missing",    tippTitleName, Statistics.COUNT_4, Statistics.LIST_4, stats)
+    }
 
-
+    static Object evaluateUrls(Set<Record> records, ObjectNode stats){
         List<Integer> tippUrls = Statistics.getStorage()
         records.each{record ->
             def urlField = record.getMultiField("titleUrl")
@@ -145,352 +134,227 @@ class Statistics {
         Statistics.format("url is missing",    tippUrls, Statistics.COUNT_4, Statistics.LIST_4, stats)
         Statistics.format("url is not matching against packageHeader.nominalPlattform",
             tippUrls, Statistics.COUNT_5, Statistics.LIST_5, stats)
+    }
 
 
-        HashMap<String, List<Integer>> tippIdentifiers = [:]
-        tippIdentifiers[TitleStruct.EISSN]    = Statistics.getStorage()
-        tippIdentifiers[ZdbBridge.IDENTIFIER] = Statistics.getStorage()
-        tippIdentifiers[TitleStruct.DOI]      = Statistics.getStorage()
-        
-        /*json.package.tipps.each{ tipp ->
-            
-            tipp.value.v.title.v.identifiers.each { ident ->
-                
-                def tmp   = tippIdentifiers["${ident.type.v}"]
-                
+    static Object evaluateIdentifiers(Set<Record> records, ObjectNode stats){
+        HashMap<String, List<Integer>> identifiers = [:]
+        identifiers[TitleStruct.EISSN]    = Statistics.getStorage()
+        identifiers[ZdbBridge.IDENTIFIER] = Statistics.getStorage()
+        identifiers[TitleStruct.DOI]      = Statistics.getStorage()
+
+        records.each{ record ->
+            record.getIdentifierFields().each { ident ->
+                def tmp = identifiers["${ident.getPrioValue()}"]
                 if(tmp) {
-                    if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
+                    if(ident.status.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
                         tmp[Statistics.COUNT_1]++
                     }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
+                    else if(ident.status.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
                         tmp[Statistics.COUNT_2]++
                         tmp[Statistics.LIST_2] << "${ident.value.org}"
-                        
-                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
+                        // Statistics.addMetaData(record, "tipp.title.identifier(${ident.type.v})", ident.value) TODO?
                     }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC.toString())) {
+                    else if(ident.status.equals(Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC.toString())) {
                         tmp[Statistics.COUNT_3]++
                         tmp[Statistics.LIST_3] << "${ident.value.org}"
-                            
-                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
+                        // Statistics.addMetaData(record, "tipp.title.identifier(${ident.type.v})", ident.value) TODO?
                     }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_MISSING.toString())) {
+                    else if(ident.status.equals(Status.VALIDATOR_IDENTIFIER_IS_MISSING.toString())) {
                         tmp[Statistics.COUNT_4]++
-                        
-                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
+                        // Statistics.addMetaData(record, "tipp.title.identifier(${ident.type.v})", ident.value) TODO?
                     }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
+                    else if(ident.status.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
                         tmp[Statistics.COUNT_5]++
-                        
-                            Statistics.addMetaData(tipp, "tipp.title.identifier(${ident.type.v})", ident.value)
+                        // Statistics.addMetaData(record, "tipp.title.identifier(${ident.type.v})", ident.value) TODO?
                     }
                 }
             }
         }
-        tippIdentifiers.each{ i ->
-            json.meta.stats.tipps.title.identifiers["${i.key.toUpperCase()} IS VALID"]        = i.value[Statistics.COUNT_1]
-            json.meta.stats.tipps.title.identifiers["${i.key.toUpperCase()} IS unkown state"] = i.value[Statistics.COUNT_5]
-            
-            Statistics.format("${i.key.toUpperCase()} is invalid",    i.value, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.tipps.title.identifiers)
-            Statistics.format("${i.key.toUpperCase()} is not atomic", i.value, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps.title.identifiers)
-            Statistics.format("${i.key.toUpperCase()} is missing",    i.value, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.tipps.title.identifiers)
-            
+        identifiers.each{ i ->
+            stats.identifiers["${i.key.toUpperCase()} IS VALID"]        = i.value[Statistics.COUNT_1]
+            stats.identifiers["${i.key.toUpperCase()} IS unkown state"] = i.value[Statistics.COUNT_5]
+            Statistics.format("${i.key.toUpperCase()} is invalid",    i.value, Statistics.COUNT_2, Statistics.LIST_2, stats.tipps.title.identifiers)
+            Statistics.format("${i.key.toUpperCase()} is not atomic", i.value, Statistics.COUNT_3, Statistics.LIST_3, stats.tipps.title.identifiers)
+            Statistics.format("${i.key.toUpperCase()} is missing",    i.value, Statistics.COUNT_4, Statistics.LIST_4, stats.tipps.title.identifiers)
         }
-  
-        // TODO invalid coverages
+    }
 
-        // tipp.coverage.dates
-        
+
+    static Object evaluateCoverage(Set<Record> records, ObjectNode stats){
+        // TODO invalid coverages
         List<Integer> coverages = Statistics.getStorage()
         List<Integer> covDates  = Statistics.getStorage()
-        
-        json.package.tipps.each{ tipp ->
-            tipp.value.v.each{ tippField ->
-                if(tippField.key.equals("coverage")) {
-                    tippField.value.m.each{ m ->
-                        if(m.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())){
-                            coverages[Statistics.COUNT_1]++
-                        }
-                        else if(m.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID.toString())){
-                            coverages[Statistics.COUNT_2]++
-                        }
-                        else if(m.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_UNDEF.toString())){
-                            coverages[Statistics.COUNT_3]++
-                        }
-                    }
-                    tippField.value.v.each{ covField ->
-                        def sd = covField.startDate
-                        def ed = covField.endDate
-                       
-                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
-                            covDates[Statistics.COUNT_1]++
-                        }
-                        
-                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
-                            covDates[Statistics.COUNT_2]++
-                            covDates[Statistics.LIST_2] << "${sd.org}"
-                            
-                                Statistics.addMetaData(tipp, 'tipp.coverage.startDate', sd)
-                        }
-                        if(ed?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
-                            covDates[Statistics.COUNT_2]++
-                            covDates[Statistics.LIST_2] << "${ed.org}"
-                            
-                                Statistics.addMetaData(tipp, 'tipp.coverage.endDate', ed)
-                        }
-                        if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
-                            covDates[Statistics.COUNT_3]++
-                            
-                                Statistics.addMetaData(tipp, 'tipp.coverage.startDate', sd)
-                        }
-                        if(ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
-                            covDates[Statistics.COUNT_3]++
-                            
-                                Statistics.addMetaData(tipp, 'tipp.coverage.endDate', ed)
-                        }
-                    }
-                }
+
+        records.each{ record ->
+            String coverageStatus = record.getValidation("coverage")
+            if (coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())){
+                coverages[Statistics.COUNT_1]++
+            }
+            else if(coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID.toString())){
+                coverages[Statistics.COUNT_2]++
+            }
+            else if(coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_UNDEF.toString())){
+                coverages[Statistics.COUNT_3]++
+            }
+
+            MultiField coverageStartDate = record.multiFields("dateFirstIssueOnline")
+            MultiField coverageEndDate = record.multiFields("dateLastIssueOnline")
+            // TODO iterate over multiple coverage entries
+            if (coverageStartDate.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) ||
+                    coverageEndDate.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
+                covDates[Statistics.COUNT_1]++
+            }
+            if (coverageStartDate.status.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
+                covDates[Statistics.COUNT_2]++
+                covDates[Statistics.LIST_2] << "${coverageStartDate.getPrioValue()}"
+                // Statistics.addMetaData(multiField, 'tipp.coverage.startDate', sd) TODO?
+            }
+            else if(coverageStartDate.status.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                covDates[Statistics.COUNT_3]++
+                // Statistics.addMetaData(multiField, 'tipp.coverage.startDate', sd) TODO?
+            }
+            if (coverageEndDate.status.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
+                covDates[Statistics.COUNT_2]++
+                covDates[Statistics.LIST_2] << "${coverageEndDate.getPrioValue()}"
+                // Statistics.addMetaData(multiField, 'tipp.coverage.endDate', sd) TODO?
+            }
+            else if(coverageEndDate.status.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+                covDates[Statistics.COUNT_3]++
+                // Statistics.addMetaData(multiField, 'tipp.coverage.endDate', ed) TODO?
             }
         }
-        
-        json.meta.stats.tipps.coverage << ["~ ARE VALID":              coverages[Statistics.COUNT_1]]
-        json.meta.stats.tipps.coverage << ["~ are invalid":            coverages[Statistics.COUNT_2]]
-        json.meta.stats.tipps.coverage << ["~ are in undefined state": coverages[Statistics.COUNT_3]]
-        
-        Statistics.format("VALID DATES FOUND",   covDates, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.tipps.coverage)
-        Statistics.format("invalid dates found", covDates, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.tipps.coverage)
-        Statistics.format("missing dates found", covDates, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.tipps.coverage)*/
-        
+        stats.tipps.coverage << ["~ ARE VALID":              coverages[Statistics.COUNT_1]]
+        stats.tipps.coverage << ["~ are invalid":            coverages[Statistics.COUNT_2]]
+        stats.tipps.coverage << ["~ are in undefined state": coverages[Statistics.COUNT_3]]
+        Statistics.format("VALID DATES FOUND",   covDates, Statistics.COUNT_1, Statistics.LIST_1, stats.tipps.coverage)
+        Statistics.format("invalid dates found", covDates, Statistics.COUNT_2, Statistics.LIST_2, stats.tipps.coverage)
+        Statistics.format("missing dates found", covDates, Statistics.COUNT_3, Statistics.LIST_3, stats.tipps.coverage)
         stats
     }
-    
-    static Object processTitles(Object json){
 
-        List<Integer> titleName = Statistics.getStorage()
-        
-        json.titles.each{ title ->
-            def name = title.value.v.name
-            
-            if(name?.m.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
-                titleName[Statistics.COUNT_1]++
-            }
-            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
-                titleName[Statistics.COUNT_2]++
-                titleName[Statistics.LIST_2] << "${name.org}"
-                
-                    Statistics.addMetaData(title, 'title.name', name)
-            }
-            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
-                titleName[Statistics.COUNT_3]++
-                titleName[Statistics.LIST_3] << "${name.org}"
-                 
-                    Statistics.addMetaData(title, 'title.name', name)
-            }
-            else if(name?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
-                titleName[Statistics.COUNT_4]++
-                
-                    Statistics.addMetaData(title, 'title.name', name)
-            }
-        }
-        
-        Statistics.format("NAME IS VALID",      titleName, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.titles)
-        Statistics.format("name is not atomic", titleName, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.titles)
-        Statistics.format("name is not valid",  titleName, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.titles)
-        Statistics.format("name is missing",    titleName, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.titles)
-        
-        // titles.identifiers
-        // titles.identifiers
-        
-        HashMap<String, List<Integer>> titleIdentifiers = [:]
-        
-        titleIdentifiers[TitleStruct.PISSN]    = Statistics.getStorage()
-        titleIdentifiers[TitleStruct.EISSN]    = Statistics.getStorage()
-        titleIdentifiers[ZdbBridge.IDENTIFIER] = Statistics.getStorage()
-        titleIdentifiers[EzbBridge.IDENTIFIER] = Statistics.getStorage()
-        titleIdentifiers[TitleStruct.DOI]      = Statistics.getStorage()
-        
-        json.titles.each{ title ->
-            title.value.v.identifiers.each { ident ->
-                def tmp = titleIdentifiers["${ident.type.v}"]
-                
-                if(tmp) {
-                    if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())) {
-                        tmp[Statistics.COUNT_1]++
-                    }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_INVALID.toString())) {
-                        tmp[Statistics.COUNT_2]++
-                        tmp[Statistics.LIST_2] << "${ident.value.org}"
-                        
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
-                    }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC.toString())) {
-                        tmp[Statistics.COUNT_3]++
-                        tmp[Statistics.LIST_3] << "${ident.value.org}"
-                            
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
-                    }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IS_MISSING.toString())) {
-                        tmp[Statistics.COUNT_4]++
-                        
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
-                    }
-                    else if(ident.value.m.equals(Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE.toString())) {
-                        tmp[Statistics.COUNT_5]++
-                        
-                            Statistics.addMetaData(title, "title.identifier(${ident.type.v})", ident.value)
-                    }
-                }
-            }
-        }
-        titleIdentifiers.each{ i ->
-            json.meta.stats.titles.identifiers["${i.key.toUpperCase()} IS VALID"]        = i.value[Statistics.COUNT_1]
-            json.meta.stats.titles.identifiers["${i.key.toUpperCase()} is unkown state"] = i.value[Statistics.COUNT_5]
-            
-            Statistics.format("${i.key.toUpperCase()} is invalid",    i.value, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.titles.identifiers)
-            Statistics.format("${i.key.toUpperCase()} is not atomic", i.value, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.titles.identifiers)
-            Statistics.format("${i.key.toUpperCase()} is missing",    i.value, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.titles.identifiers)
-        }
-        
-        // titles.publisher_history
-        // titles.publisher_history
-        
+
+    static Object evaluatePublisherHistory(Set<Record> records, ObjectNode stats){
         List<Integer> pubStruct   = Statistics.getStorage()
         List<Integer> pubHistName = Statistics.getStorage()
-        
-        json.titles.each{ title ->
-            title.value.v.publisher_history?.each { ph ->
-                
-                if(ph.m.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID.toString())){
-                    pubStruct[Statistics.COUNT_1]++
-                }
-                else if(ph.m.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID.toString())){
-                    pubStruct[Statistics.COUNT_2]++
-                }
-                else if(ph.m.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF.toString())){
-                    pubStruct[Statistics.COUNT_3]++
-                }
-                
-                def phName = ph.v.name
-
-                if(phName?.m.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
-                    pubHistName[Statistics.COUNT_1]++
-                }
-                if(phName?.m.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
-                    pubHistName[Statistics.COUNT_2]++
-                    pubHistName[Statistics.LIST_2] << "${phName.org}"
-                     
-                        Statistics.addMetaData(title, 'title.publisher_history.name', phName)
-                }
-                else if(phName?.m.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
-                    pubHistName[Statistics.COUNT_3]++
-                    pubHistName[Statistics.LIST_3] << "${phName.org}"
-                    
-                        Statistics.addMetaData(title, 'title.publisher_history.name', phName)
-                }
-                else if(phName?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
-                    pubHistName[Statistics.COUNT_4]++
-                     
-                        Statistics.addMetaData(title, 'title.publisher_history.name', phName)
-                }
-                else if(phName?.m.equals(Status.VALIDATOR_PUBLISHER_NOT_MATCHING.toString())) {
-                    pubHistName[Statistics.COUNT_5]++
-                    pubHistName[Statistics.LIST_5] << "${phName.org}"
-                    
-                        Statistics.addMetaData(title, 'title.publisher_history.name', phName)
-                }
+        // TODO: iterate over publisher history entries
+        records.each{ record ->
+            MultiField ph = record.multiFields.get("publisherHistory")
+            if(ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID.toString())){
+                pubStruct[Statistics.COUNT_1]++
+            }
+            else if(ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID.toString())){
+                pubStruct[Statistics.COUNT_2]++
+            }
+            else if(ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF.toString())){
+                pubStruct[Statistics.COUNT_3]++
+            }
+            MultiField phName = record.multiFields.get("publisherName")
+            if(phName?.status.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
+                pubHistName[Statistics.COUNT_1]++
+            }
+            if(phName?.status.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
+                pubHistName[Statistics.COUNT_2]++
+                pubHistName[Statistics.LIST_2] << "${phName.getPrioValue()}"
+                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+            }
+            else if(phName?.status.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
+                pubHistName[Statistics.COUNT_3]++
+                pubHistName[Statistics.LIST_3] << "${phName.getPrioValue()}"
+                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+            }
+            else if(phName?.status.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
+                pubHistName[Statistics.COUNT_4]++
+                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+            }
+            else if(phName?.status.equals(Status.VALIDATOR_PUBLISHER_NOT_MATCHING.toString())) {
+                pubHistName[Statistics.COUNT_5]++
+                pubHistName[Statistics.LIST_5] << "${phName.getPrioValue()}"
+                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
             }
         }
 
-        json.meta.stats.titles.publisher_history << ["~ ARE VALID":              pubStruct[Statistics.COUNT_1]]
-        json.meta.stats.titles.publisher_history << ["~ are invalid":            pubStruct[Statistics.COUNT_2]]
-        json.meta.stats.titles.publisher_history << ["~ are in undefined state": pubStruct[Statistics.COUNT_3]]
+        stats.titles.publisher_history << ["~ ARE VALID":              pubStruct[Statistics.COUNT_1]]
+        stats.titles.publisher_history << ["~ are invalid":            pubStruct[Statistics.COUNT_2]]
+        stats.titles.publisher_history << ["~ are in undefined state": pubStruct[Statistics.COUNT_3]]
         
-        Statistics.format("NAME IS VALID",      pubHistName, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.titles.publisher_history)
-        Statistics.format("name is not valid",  pubHistName, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.titles.publisher_history)
-        Statistics.format("name is not atomic", pubHistName, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.titles.publisher_history)
-        Statistics.format("name is missing",    pubHistName, Statistics.COUNT_4, Statistics.LIST_4, json.meta.stats.titles.publisher_history)
+        Statistics.format("NAME IS VALID",      pubHistName, Statistics.COUNT_1, Statistics.LIST_1, stats.titles.publisher_history)
+        Statistics.format("name is not valid",  pubHistName, Statistics.COUNT_2, Statistics.LIST_2, stats.titles.publisher_history)
+        Statistics.format("name is not atomic", pubHistName, Statistics.COUNT_3, Statistics.LIST_3, stats.titles.publisher_history)
+        Statistics.format("name is missing",    pubHistName, Statistics.COUNT_4, Statistics.LIST_4, stats.titles.publisher_history)
         
         Statistics.format("name is not matching against ONLD.jsonld",
-            pubHistName, Statistics.COUNT_5, Statistics.LIST_5, json.meta.stats.titles.publisher_history)
+            pubHistName, Statistics.COUNT_5, Statistics.LIST_5, stats.titles.publisher_history)
 
-        // TODO invalid history events
-        
-        // title.historyEvents
-        // title.historyEvents
-        
-        List<Integer> theHistoryEvents = Statistics.getStorage()
-        
-        json.titles.each{ title ->
-            title.value.v.historyEvents.each { he ->
-        
-                if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())){
-                    theHistoryEvents[Statistics.COUNT_1]++
-                }
-                else if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
-                    theHistoryEvents[Statistics.COUNT_2]++
-                }
-                else if(he?.m.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF.toString())){
-                    theHistoryEvents[Statistics.COUNT_3]++
-                }
-                
-            }
-        }
-        json.meta.stats.titles.historyEvents << ["~ ARE VALID":              theHistoryEvents[Statistics.COUNT_1]]
-        json.meta.stats.titles.historyEvents << ["~ are invalid":            theHistoryEvents[Statistics.COUNT_2]]
-        json.meta.stats.titles.historyEvents << ["~ are in undefined state": theHistoryEvents[Statistics.COUNT_3]]
 
-        // title.publisher_history.dates
-        // title.publisher_history.dates
-        
-        List<Integer> pubHistDates = Statistics.getStorage()
-        
+        // TODO: iterate over publisher history date entries
+        /* records.each{ record ->
+            record.multiFields.get
         json.titles.each{ title ->
             title.value.v.publisher_history.each { ph ->
-                                    
+
                 def sd = ph.v.startDate
                 def ed = ph.v.endDate
 
                 if(sd?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) || ed?.m.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
                     pubHistDates[Statistics.COUNT_1]++
                 }
-                
+
                 if(sd?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                     pubHistDates[Statistics.COUNT_2]++
                     pubHistDates[Statistics.LIST_2] << "${sd.org}"
-                    
-                        Statistics.addMetaData(title, 'title.publisher_history.startDate', sd)
+
+                    Statistics.addMetaData(title, 'title.publisher_history.startDate', sd)
                 }
                 if(ed?.m.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                     pubHistDates[Statistics.COUNT_2]++
                     pubHistDates[Statistics.LIST_2] << "${ed.org}"
-                    
-                        Statistics.addMetaData(title, 'title.publisher_history.endDate', ed)
+
+                    Statistics.addMetaData(title, 'title.publisher_history.endDate', ed)
                 }
                 if(sd?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
                     pubHistDates[Statistics.COUNT_3]++
-                    
-                        Statistics.addMetaData(title, 'title.publisher_history.startDate', sd)
+
+                    Statistics.addMetaData(title, 'title.publisher_history.startDate', sd)
                 }
                 if(ed?.m.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
                     pubHistDates[Statistics.COUNT_3]++
-                    
-                        Statistics.addMetaData(title, 'title.publisher_history.endDate', ed)
+
+                    Statistics.addMetaData(title, 'title.publisher_history.endDate', ed)
                 }
             }
         }
-        
-        Statistics.format("VALID DATES FOUND",   pubHistDates, Statistics.COUNT_1, Statistics.LIST_1, json.meta.stats.titles.publisher_history)
-        Statistics.format("invalid dates found", pubHistDates, Statistics.COUNT_2, Statistics.LIST_2, json.meta.stats.titles.publisher_history)
-        Statistics.format("missing dates found", pubHistDates, Statistics.COUNT_3, Statistics.LIST_3, json.meta.stats.titles.publisher_history)
-    
-        json
-    }
-    
-    static Object getStatsAfterCleanUp(Object json){
-        
-        // general
-        // see JsonTransformer.removeEmpty(Object json, boolean useValidator)
 
+        Statistics.format("VALID DATES FOUND",   pubHistDates, Statistics.COUNT_1, Statistics.LIST_1, stats.titles.publisher_history)
+        Statistics.format("invalid dates found", pubHistDates, Statistics.COUNT_2, Statistics.LIST_2, stats.titles.publisher_history)
+        Statistics.format("missing dates found", pubHistDates, Statistics.COUNT_3, Statistics.LIST_3, stats.titles.publisher_history)
+
+        json*/
+    }
+
+
+    static Object evaluateHistoryEvents(Set<Record> records, ObjectNode stats){
+        List<Integer> theHistoryEvents = Statistics.getStorage()
+        records.each{ record ->
+            // TODO iterate over history events
+            MultiField historyEvent = record.multiFields.get("historyEvents")
+            if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())){
+                theHistoryEvents[Statistics.COUNT_1]++
+            }
+            else if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
+                theHistoryEvents[Statistics.COUNT_2]++
+            }
+            else if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF.toString())){
+                theHistoryEvents[Statistics.COUNT_3]++
+            }
+        }
+        stats.titles.historyEvents << ["~ ARE VALID":              theHistoryEvents[Statistics.COUNT_1]]
+        stats.titles.historyEvents << ["~ are invalid":            theHistoryEvents[Statistics.COUNT_2]]
+        stats.titles.historyEvents << ["~ are in undefined state": theHistoryEvents[Statistics.COUNT_3]]
+    }
+
+    /* TODO ?
+    static Object getStatsAfterCleanUp(Object json){
         def nonEmptyTipps = 0
         def nonEmptyTitles = 0
 
@@ -505,14 +369,14 @@ class Statistics {
             }
         }
 
-        json.meta.stats.general << ["tipps after cleanUp":  nonEmptyTipps]
-        json.meta.stats.general << ["titles after cleanUp": nonEmptyTitles]
+        stats.general << ["tipps after cleanUp":  nonEmptyTipps]
+        stats.general << ["titles after cleanUp": nonEmptyTitles]
         
         json
-    }
+    }*/
+
 
     static format(String key, List data, int indexCount, int indexResult, ObjectNode target){
-        
         if(data[indexCount] > 0 && data[indexResult].minus("").size() > 0) {
             ArrayNode pair = new ArrayNode(NODE_FACTORY).add(data[indexCount]).add(data[indexResult])
             target.set(key, pair)
@@ -524,14 +388,13 @@ class Statistics {
         
     /**
      * Adding statistic data into json
-     * 
      * @param target
      * @param dom
      * @param obj
      * @return
      */
+    // TODO delete ?
     static addMetaData(Object target, String dom, Object obj){
-        
         obj.dom = dom
         if(!target.value.v._meta.data){
             target.value.v._meta << ['data':[]]
@@ -541,11 +404,9 @@ class Statistics {
     
     /**
      * List for storing data
-     * 
      * @return
      */
     static getStorage(){
-        
         List<Integer> storage = [0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[], 0,[]]
         storage
     }

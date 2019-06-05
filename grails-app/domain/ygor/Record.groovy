@@ -29,10 +29,10 @@ class Record {
     DoiIdentifier   doiId
     EissnIdentifier eissn
     PissnIdentifier pissn
-    Map multiFields
-    Map validation
-    String zdbIntegrationDate
-    String ezbIntegrationDate
+    Map             multiFields
+    Map             validation
+    String          zdbIntegrationDate
+    String          ezbIntegrationDate
 
 
     static hasMany = [multiFields : MultiField,
@@ -97,6 +97,19 @@ class Record {
     }
 
 
+    List<MultiField> getIdentifierFields(){
+        List<MultiField> result = []
+        if (multiFields.get("ezbId")) result.add(multiFields.get("ezbId"))
+        if (multiFields.get("onlineIdentifier")) result.add(multiFields.get("onlineIdentifier"))
+        if (multiFields.get("parentPublicationTitleId")) result.add(multiFields.get("parentPublicationTitleId"))
+        if (multiFields.get("precedingPublicationTitleId")) result.add(multiFields.get("precedingPublicationTitleId"))
+        if (multiFields.get("printIdentifier")) result.add(multiFields.get("printIdentifier"))
+        if (multiFields.get("titleId")) result.add(multiFields.get("titleId"))
+        if (multiFields.get("zdbId")) result.add(multiFields.get("zdbId"))
+        result
+    }
+
+
     void addValidation(String property, String status){
         validation.put(property, status)
     }
@@ -116,6 +129,11 @@ class Record {
 
     void validateMultifields(String namespace){
         multiFields.each{k,v -> v.validate(namespace)}
+    }
+
+
+    def getCoverage(){
+        false // TODO
     }
 
 
@@ -161,11 +179,11 @@ class Record {
         }
         String ezbIntegrationDate = JsonToolkit.fromJson(json, "ezbIntegrationDate")
         if (ezbIntegrationDate){
-            this.ezbIntegrationDate = ezbIntegrationDate
+            result.ezbIntegrationDate = ezbIntegrationDate
         }
         String zdbIntegrationDate = JsonToolkit.fromJson(json, "zdbIntegrationDate")
         if (zdbIntegrationDate){
-            this.zdbIntegrationDate = zdbIntegrationDate
+            result.zdbIntegrationDate = zdbIntegrationDate
         }
         result
     }
