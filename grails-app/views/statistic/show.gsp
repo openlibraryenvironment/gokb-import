@@ -9,51 +9,51 @@
 			</div>
 			<div id="statistics-filter" class="panel-body">
 				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC">IDENTIFIER_IS_NOT_ATOMIC 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC"><g:message code="statistic.show.filter.identifiernotatomic"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_IDENTIFIER_IS_MISSING">IDENTIFIER_IS_MISSING 
-					<span class="badge">0</span>
-					<span class="badge">0</span>
-				</button>
-				
-				<br /><br />
-				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_DATE_IS_INVALID">DATE_IS_INVALID 
-					<span class="badge">0</span>
-					<span class="badge">0</span>
-				</button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_DATE_IS_MISSING">DATE_IS_MISSING 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_IDENTIFIER_IS_MISSING"><g:message code="statistic.show.filter.identifiermissing"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
 				
 				<br /><br />
 				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_URL_IS_NOT_ATOMIC">URL_IS_NOT_ATOMIC 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_DATE_IS_INVALID"><g:message code="statistic.show.filter.dateinvalid"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_URL_IS_MISSING">URL_IS_MISSING 
-					<span class="badge">0</span>
-					<span class="badge">0</span>
-				</button>
-				
-				<br /><br />
-				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_PUBLISHER_NOT_MATCHING">PUBLISHER_NOT_MATCHING 
-					<span class="badge">0</span>
-					<span class="badge">0</span>
-				</button>
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING">STRING_IS_MISSING 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_DATE_IS_MISSING"><g:message code="statistic.show.filter.datemissing"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
 				
 				<br /><br />
 				
-				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_TIPPURL_NOT_MATCHING">TIPPURL_NOT_MATCHING 
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_URL_IS_NOT_ATOMIC"><g:message code="statistic.show.filter.urlnotatomic"/>
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_URL_IS_MISSING"><g:message code="statistic.show.filter.urlmissing"/>
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				
+				<br /><br />
+				
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_PUBLISHER_NOT_MATCHING"><g:message code="statistic.show.filter.publishernotmatching"/>
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-info" data-code="VALIDATOR_STRING_IS_MISSING"><g:message code="statistic.show.filter.stringmissing"/>
+					<span class="badge">0</span>
+					<span class="badge">0</span>
+				</button>
+				
+				<br /><br />
+				
+				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_TIPPURL_NOT_MATCHING"><g:message code="statistic.show.filter.tippurlnotmatching"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
