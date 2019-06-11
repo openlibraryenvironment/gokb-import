@@ -56,6 +56,7 @@ class Record {
             addIdentifier(id)
         }
         multiFields = [:]
+        validation = [:]
         for (def ygorMapping in container.ygorMappings){
             multiFields.put(ygorMapping.key, new MultiField(ygorMapping.value))
         }

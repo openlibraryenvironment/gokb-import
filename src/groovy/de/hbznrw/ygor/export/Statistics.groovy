@@ -172,11 +172,11 @@ class Statistics {
             }
         }
         identifiers.each{ i ->
-            stats.identifiers["${i.key.toUpperCase()} IS VALID"]        = i.value[Statistics.COUNT_1]
-            stats.identifiers["${i.key.toUpperCase()} IS unkown state"] = i.value[Statistics.COUNT_5]
-            Statistics.format("${i.key.toUpperCase()} is invalid",    i.value, Statistics.COUNT_2, Statistics.LIST_2, stats.tipps.title.identifiers)
-            Statistics.format("${i.key.toUpperCase()} is not atomic", i.value, Statistics.COUNT_3, Statistics.LIST_3, stats.tipps.title.identifiers)
-            Statistics.format("${i.key.toUpperCase()} is missing",    i.value, Statistics.COUNT_4, Statistics.LIST_4, stats.tipps.title.identifiers)
+            stats.get("identifiers").put("${i.key.toUpperCase()} IS VALID", i.value[Statistics.COUNT_1])
+            stats.get("identifiers").put("${i.key.toUpperCase()} IS unkown state", i.value[Statistics.COUNT_5])
+            Statistics.format("${i.key.toUpperCase()} is invalid",    i.value, Statistics.COUNT_2, Statistics.LIST_2, stats)
+            Statistics.format("${i.key.toUpperCase()} is not atomic", i.value, Statistics.COUNT_3, Statistics.LIST_3, stats)
+            Statistics.format("${i.key.toUpperCase()} is missing",    i.value, Statistics.COUNT_4, Statistics.LIST_4, stats)
         }
     }
 
@@ -198,8 +198,8 @@ class Statistics {
                 coverages[Statistics.COUNT_3]++
             }
 
-            MultiField coverageStartDate = record.multiFields("dateFirstIssueOnline")
-            MultiField coverageEndDate = record.multiFields("dateLastIssueOnline")
+            MultiField coverageStartDate = record.multiFields.get("dateFirstIssueOnline")
+            MultiField coverageEndDate = record.multiFields.get("dateLastIssueOnline")
             // TODO iterate over multiple coverage entries
             if (coverageStartDate.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) ||
                     coverageEndDate.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
@@ -224,12 +224,13 @@ class Statistics {
                 // Statistics.addMetaData(multiField, 'tipp.coverage.endDate', ed) TODO?
             }
         }
-        stats.tipps.coverage << ["~ ARE VALID":              coverages[Statistics.COUNT_1]]
-        stats.tipps.coverage << ["~ are invalid":            coverages[Statistics.COUNT_2]]
-        stats.tipps.coverage << ["~ are in undefined state": coverages[Statistics.COUNT_3]]
-        Statistics.format("VALID DATES FOUND",   covDates, Statistics.COUNT_1, Statistics.LIST_1, stats.tipps.coverage)
-        Statistics.format("invalid dates found", covDates, Statistics.COUNT_2, Statistics.LIST_2, stats.tipps.coverage)
-        Statistics.format("missing dates found", covDates, Statistics.COUNT_3, Statistics.LIST_3, stats.tipps.coverage)
+        stats.get("tipps").set("coverage", new ObjectNode(NODE_FACTORY))
+        stats.get("tipps").get("coverage").put("~ ARE VALID", coverages[Statistics.COUNT_1])
+        stats.get("tipps").get("coverage").put("~ are invalid", coverages[Statistics.COUNT_2])
+        stats.get("tipps").get("coverage").put("~ are in undefined state", coverages[Statistics.COUNT_3])
+        Statistics.format("VALID DATES FOUND",   covDates, Statistics.COUNT_1, Statistics.LIST_1, stats)
+        Statistics.format("invalid dates found", covDates, Statistics.COUNT_2, Statistics.LIST_2, stats)
+        Statistics.format("missing dates found", covDates, Statistics.COUNT_3, Statistics.LIST_3, stats)
         stats
     }
 
@@ -273,15 +274,15 @@ class Statistics {
                 // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
             }
         }
+        stats.get("titles").set("publisher_history", new ObjectNode(NODE_FACTORY))
+        stats.get("titles").get("publisher_history").put("~ ARE VALID", pubStruct[Statistics.COUNT_1])
+        stats.get("titles").get("publisher_history").put("~ are invalid", pubStruct[Statistics.COUNT_2])
+        stats.get("titles").get("publisher_history").put("~ are in undefined state", pubStruct[Statistics.COUNT_3])
 
-        stats.titles.publisher_history << ["~ ARE VALID":              pubStruct[Statistics.COUNT_1]]
-        stats.titles.publisher_history << ["~ are invalid":            pubStruct[Statistics.COUNT_2]]
-        stats.titles.publisher_history << ["~ are in undefined state": pubStruct[Statistics.COUNT_3]]
-        
-        Statistics.format("NAME IS VALID",      pubHistName, Statistics.COUNT_1, Statistics.LIST_1, stats.titles.publisher_history)
-        Statistics.format("name is not valid",  pubHistName, Statistics.COUNT_2, Statistics.LIST_2, stats.titles.publisher_history)
-        Statistics.format("name is not atomic", pubHistName, Statistics.COUNT_3, Statistics.LIST_3, stats.titles.publisher_history)
-        Statistics.format("name is missing",    pubHistName, Statistics.COUNT_4, Statistics.LIST_4, stats.titles.publisher_history)
+        Statistics.format("NAME IS VALID",      pubHistName, Statistics.COUNT_1, Statistics.LIST_1, stats)
+        Statistics.format("name is not valid",  pubHistName, Statistics.COUNT_2, Statistics.LIST_2, stats)
+        Statistics.format("name is not atomic", pubHistName, Statistics.COUNT_3, Statistics.LIST_3, stats)
+        Statistics.format("name is missing",    pubHistName, Statistics.COUNT_4, Statistics.LIST_4, stats)
         
         Statistics.format("name is not matching against ONLD.jsonld",
             pubHistName, Statistics.COUNT_5, Statistics.LIST_5, stats.titles.publisher_history)
@@ -348,9 +349,10 @@ class Statistics {
                 theHistoryEvents[Statistics.COUNT_3]++
             }
         }
-        stats.titles.historyEvents << ["~ ARE VALID":              theHistoryEvents[Statistics.COUNT_1]]
-        stats.titles.historyEvents << ["~ are invalid":            theHistoryEvents[Statistics.COUNT_2]]
-        stats.titles.historyEvents << ["~ are in undefined state": theHistoryEvents[Statistics.COUNT_3]]
+        stats.get("titles").set("historyEvents", new ObjectNode(NODE_FACTORY))
+        stats.get("titles").get("historyEvents").put("~ ARE VALID", theHistoryEvents[Statistics.COUNT_1])
+        stats.get("titles").get("historyEvents").put("~ are invalid", theHistoryEvents[Statistics.COUNT_2])
+        stats.get("titles").get("historyEvents").put("~ are in undefined state", theHistoryEvents[Statistics.COUNT_3])
     }
 
     /* TODO ?
@@ -378,8 +380,8 @@ class Statistics {
 
     static format(String key, List data, int indexCount, int indexResult, ObjectNode target){
         if(data[indexCount] > 0 && data[indexResult].minus("").size() > 0) {
-            ArrayNode pair = new ArrayNode(NODE_FACTORY).add(data[indexCount]).add(data[indexResult])
-            target.set(key, pair)
+            ArrayNode dataNode = toArrayNode(data[indexResult])
+            target.set(key, new ObjectNode(NODE_FACTORY).set(data[indexCount].toString(), dataNode))
         }
         else {
             target.put(key, data[indexCount])
@@ -411,4 +413,11 @@ class Statistics {
         storage
     }
 
+    static ArrayNode toArrayNode(List<Object> list){
+        ArrayNode result = new ArrayNode(NODE_FACTORY)
+        for (Object o in list){
+            result.add(o)
+        }
+        result
+    }
 }
