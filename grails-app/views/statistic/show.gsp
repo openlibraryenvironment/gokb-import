@@ -2,13 +2,33 @@
 
 <div class="row">
 
-	<div class="col-xs-8">	
+	<div class="col-xs-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Meta</h3>
+			</div>
+			<div id="statistics-meta" class="panel-body">
+				<p class="text-left">
+					<strong><g:message code="statistic.show.main.filename"/></strong>
+					${filename}<br/>
+					<strong><g:message code="statistic.show.main.creation"/></strong>
+					${date}<br/>
+					<strong><g:message code="statistic.show.main.ygorversion"/></strong>
+					${ygorVersion}<br/>
+					<strong><g:message code="statistic.show.main.hash"/></strong>
+					${sthash}
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Filter</h3>
 			</div>
 			<div id="statistics-filter" class="panel-body">
-				
+
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC"><g:message code="statistic.show.filter.identifiernotatomic"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
@@ -17,9 +37,9 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				
+
 				<br /><br />
-				
+
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_DATE_IS_INVALID"><g:message code="statistic.show.filter.dateinvalid"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
@@ -28,9 +48,9 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				
+
 				<br /><br />
-				
+
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-danger" data-code="VALIDATOR_URL_IS_NOT_ATOMIC"><g:message code="statistic.show.filter.urlnotatomic"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
@@ -39,9 +59,9 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				
+
 				<br /><br />
-				
+
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_PUBLISHER_NOT_MATCHING"><g:message code="statistic.show.filter.publishernotmatching"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
@@ -50,9 +70,9 @@
 					<span class="badge">0</span>
 					<span class="badge">0</span>
 				</button>
-				
+
 				<br /><br />
-				
+
 				<button type="button" class="btn btn-xs btn-default" data-class="btn-warning" data-code="VALIDATOR_TIPPURL_NOT_MATCHING"><g:message code="statistic.show.filter.tippurlnotmatching"/>
 					<span class="badge">0</span>
 					<span class="badge">0</span>
@@ -60,30 +80,7 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class="col-xs-4">	
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Meta</h3>
-			</div>
-			<div id="statistics-meta" class="panel-body">
-				<p class="text-right">
-					<strong><g:message code="statistic.show.main.filename" /></strong><br />
-					<span class="meta-file"></span>
-					<br />
-					<strong><g:message code="statistic.show.main.creation" /></strong><br />
-					<span class="meta-date"></span>
-					<br />
-					<strong><g:message code="statistic.show.main.ygorversion" /></strong><br />
-					<span class="meta-ygor"></span>
-					<br />
-					<strong><g:message code="statistic.show.main.hash" /></strong><br />
-					${sthash}
-				</p>
-			</div>
-		</div>
-	</div>
-	
+
 	<div class="col-xs-12" id="statistics-substats">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -275,9 +272,9 @@
 
 			buildMarkUp: function(json){
 
-				$('#statistics-meta .meta-file').text(json.meta.file)
-				$('#statistics-meta .meta-date').text(json.meta.date)
-				$('#statistics-meta .meta-ygor').text(json.meta.ygor)
+				$('#statistics-meta .meta-file').text(json.originalFileName)
+				$('#statistics-meta .meta-date').text(json.date)
+				$('#statistics-meta .meta-ygor').text(json.ygorVersion)
 
                 statisticsController.buildStats(json)
 

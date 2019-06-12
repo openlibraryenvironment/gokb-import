@@ -3,7 +3,6 @@ package ygor
 import de.hbznrw.ygor.tools.*
 import groovy.util.logging.Log4j
 import ygor.Enrichment.FileType
-import de.hbznrw.ygor.export.JsonTransformer
 
 @Log4j
 class StatisticController {
@@ -13,17 +12,18 @@ class StatisticController {
     static scope = "session"
         
     def index() {
-
         render(
             view:'index',
             model:[currentView:'statistic']
-            )
+        )
     }
     
     def show() {
-
         def sthash = (String) request.parameterMap['sthash'][0]
         def json = {}
+        String ygorVersion
+        String date
+        String filename
          
         log.info('reading file: ' + sthash)
         
@@ -31,9 +31,10 @@ class StatisticController {
             new File(grailsApplication.config.ygor.uploadLocation).eachDir() { dir ->
                 dir.eachFile() { file ->
                     if(file.getName() == sthash){
-                        def raw = JsonToolkit.parseFileToJson(file.getAbsolutePath())
-                        def tmp = JsonTransformer.getSimpleJSON(raw, FileType.JSON_OO_RAW, JsonTransformer.NO_PRETTY_PRINT)
-                        json = tmp.toString()
+                        json = JsonToolkit.parseFileToJson(file.getAbsolutePath())
+                        ygorVersion = json.getAt("ygorVersion")
+                        date = json.getAt("date")
+                        filename = json.getAt("originalFileName")
                     }
                 }
             }
@@ -48,8 +49,12 @@ class StatisticController {
             model:[
                 json:        json,
                 sthash:      sthash,
-                currentView: 'statistic'
-            ])
+                currentView: 'statistic',
+                ygorVersion: ygorVersion,
+                date:        date,
+                filename:    filename
+            ]
+        )
     }
 
     static final PROCESSED_KBART_ENTRIES = "processed kbart entries"

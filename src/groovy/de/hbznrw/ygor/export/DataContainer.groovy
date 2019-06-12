@@ -7,10 +7,6 @@ import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
 import ygor.Record
 import ygor.field.MappingsContainer
-import ygor.identifier.AbstractIdentifier
-import ygor.identifier.EissnIdentifier
-import ygor.identifier.PissnIdentifier
-import ygor.identifier.ZdbIdentifier
 
 class DataContainer {
 
@@ -26,9 +22,6 @@ class DataContainer {
 
     DataContainer() {
         info = new Meta(
-            file:   "TODO",
-            type:   "TODO",
-            ygor:   "TODO",
             date:   new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),
             api:    [],
             stats:  [:],
