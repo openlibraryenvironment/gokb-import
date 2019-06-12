@@ -22,13 +22,24 @@ class AbstractIdentifier {
 
     protected AbstractIdentifier(FieldKeyMapping fieldKeyMapping){
         this.fieldKeyMapping = fieldKeyMapping
-        kbartKey = fieldKeyMapping.kbartKeys.iterator().next()
-        zdbKey = fieldKeyMapping.zdbKeys.iterator().next()
-        ezbKey = fieldKeyMapping.ezbKeys.iterator().next()
+        kbartKey = getFirst(fieldKeyMapping.kbartKeys)
+        zdbKey = getFirst(fieldKeyMapping.zdbKeys)
+        ezbKey = getFirst(fieldKeyMapping.ezbKeys)
     }
 
     String toString(){
         return identifier
+    }
+
+
+    private String getFirst(Set<String> set){
+        Iterator it = set.iterator()
+        if (it.hasNext()){
+            return it.next()
+        }
+        else{
+            return null
+        }
     }
 
 
