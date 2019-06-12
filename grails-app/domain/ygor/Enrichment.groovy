@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.export.DataContainer
-import de.hbznrw.ygor.export.JsonTransformer
 import de.hbznrw.ygor.tools.*
 import com.fasterxml.jackson.databind.node.ObjectNode
 import groovy.json.JsonOutput
@@ -14,6 +13,8 @@ import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
+
+import java.time.LocalDateTime
 
 class Enrichment {
 
@@ -48,6 +49,8 @@ class Enrichment {
     String dataType
 
     File sessionFolder
+    String ygorVersion
+    String date
 
     def thread
     MappingsContainer mappingsContainer
@@ -62,25 +65,24 @@ class Enrichment {
         originName             = originalFilename.replaceAll(/\s+/,'_')
         originHash             = FileToolkit.getMD5Hash(originName + Math.random())
         originPathName         = this.sessionFolder.getPath() + File.separator + originHash
-        
+
         dataContainer          = new DataContainer()
-        
         setStatus(ProcessingState.UNTOUCHED)
     }
     
     def process(HashMap options) {    
         resultName        = FileToolkit.getDateTimePrefixedFileName(originName)
         resultHash        = FileToolkit.getMD5Hash(originName + Math.random())
-        resultPathName = sessionFolder.getPath() + File.separator + resultHash
-        dataType       = options.get('dataTyp')
+        resultPathName    = sessionFolder.getPath() + File.separator + resultHash
+        dataType          = options.get('dataTyp')
+        ygorVersion       = options.get('ygorVersion')
 
         dataContainer.info.file = originName
-        dataContainer.info.ygor = options.get('ygorVersion')
         dataContainer.info.type = options.get('ygorType')
 
         mappingsContainer = new MappingsContainer()
-        
-        thread         = new MultipleProcessingThread(this, options)
+        thread            = new MultipleProcessingThread(this, options)
+        date              = LocalDateTime.now().toString()
         thread.start()
     }
     
@@ -117,11 +119,6 @@ class Enrichment {
             case FileType.ORIGIN:
                 return new File(originPathName)
                 break
-            case FileType.JSON:
-                def file = new File(originPathName)
-                file.write(JsonTransformer.getSimpleJSON(dataContainer, FileType.JSON, JsonTransformer.USE_PRETTY_PRINT), "UTF-8")
-                return file
-                break
             case FileType.JSON_PACKAGE_ONLY:
                 ObjectNode result = GokbExporter.extractPackage(this)
                 def file = new File(originPathName)
@@ -145,6 +142,8 @@ class Enrichment {
         StringWriter result = new StringWriter()
         result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
         result.append("\"originalFileName\":\"").append(originName).append("\",")
+        result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
+        result.append("\"date\":\"").append(date).append("\",")
         result.append("\"configuration\":{")
         result.append("\"dataType\":\"").append(dataType).append("\",")
         result.append("\"mappingsContainer\":")
@@ -162,6 +161,8 @@ class Enrichment {
         String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
         String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
         def en = new Enrichment(new File(sessionFolder), originalFileName)
+        en.ygorVersion = JsonToolkit.fromJson(rootNode, "ygorVersion") // TODO compare with current version and abort?
+        en.date = JsonToolkit.fromJson(rootNode, "date")
         en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
         en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
         en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
