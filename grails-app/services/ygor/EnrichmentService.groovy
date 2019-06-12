@@ -200,9 +200,4 @@ class EnrichmentService {
         }
         sessionFolder
     }
-
-
-    Enrichment rawJsonToCurrentEnrichment(JsonNode rawJson){
-        return Enrichment.fromRawJson(rawJson)
-    }
 }

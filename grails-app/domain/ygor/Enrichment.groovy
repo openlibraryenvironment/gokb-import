@@ -172,6 +172,19 @@ class Enrichment {
     }
 
 
+    static Enrichment fromFile(def file){
+        String json = file.getInputStream()?.text
+        JsonNode rootNode = JSON_OBJECT_MAPPER.readTree(json)
+        Enrichment enrichment = Enrichment.fromRawJson(rootNode)
+        enrichment.setTitleMediumMapping()
+        enrichment.setTitleTypeMapping()
+        enrichment.setTippPlatformNameMapping()
+        enrichment.setTippPlatformUrlMapping()
+        enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+        enrichment
+    }
+
+
     FieldKeyMapping setTitleMediumMapping() {
         FieldKeyMapping mediumMapping = mappingsContainer.getMapping("medium", MappingsContainer.YGOR)
         if (dataType == 'ebooks') {

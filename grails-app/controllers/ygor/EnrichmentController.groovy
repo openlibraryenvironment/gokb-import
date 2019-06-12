@@ -1,7 +1,5 @@
 package ygor
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.Statistics
 import de.hbznrw.ygor.tools.JsonToolkit
@@ -10,7 +8,6 @@ import grails.converters.JSON
 class EnrichmentController {
 
     static scope = "session"
-    static ObjectMapper MAPPER = new ObjectMapper()
 
     EnrichmentService enrichmentService
     GokbService gokbService
@@ -120,14 +117,7 @@ class EnrichmentController {
 
     def uploadRawFile = {
         def file = request.getFile('uploadRawFile')
-        String json = file.getInputStream()?.text
-        JsonNode rootNode = MAPPER.readTree(json)
-        Enrichment enrichment = enrichmentService.rawJsonToCurrentEnrichment(rootNode)
-        enrichment.setTitleMediumMapping()
-        enrichment.setTitleTypeMapping()
-        enrichment.setTippPlatformNameMapping()
-        enrichment.setTippPlatformUrlMapping()
-        enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+        Enrichment enrichment = Enrichment.fromFile(file)
         request.session.enrichments << [(enrichment.originHash) : enrichment]
         if (null == request.session.lastUpdate){
             request.session.lastUpdate = [:]
