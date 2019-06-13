@@ -19,30 +19,30 @@ import java.time.LocalDateTime
 class Enrichment {
 
     static enum FileType {
-        ORIGIN, 
-        RESULT, 
-        JSON, 
-        JSON_PACKAGE_ONLY, 
+        ORIGIN,
+        RESULT,
+        JSON,
+        JSON_PACKAGE_ONLY,
         JSON_TITLES_ONLY,
         JSON_OO_RAW
     }
-    
+
     static enum ProcessingState {
         UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR
     }
 
     static ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper()
-    
+
     ProcessingState status
-    
+
     // frontend api stuff
     String apiMessage
     float  apiProgress = 0.0
-    
+
     String originName
     String originHash
     String originPathName
-    
+
     String resultName
     String resultHash
     String resultPathName
@@ -69,8 +69,8 @@ class Enrichment {
         dataContainer          = new DataContainer()
         setStatus(ProcessingState.UNTOUCHED)
     }
-    
-    def process(HashMap options) {    
+
+    def process(HashMap options) {
         resultName        = FileToolkit.getDateTimePrefixedFileName(originName)
         resultHash        = FileToolkit.getMD5Hash(originName + Math.random())
         resultPathName    = sessionFolder.getPath() + File.separator + resultHash
@@ -85,11 +85,11 @@ class Enrichment {
         date              = LocalDateTime.now().toString()
         thread.start()
     }
-    
+
     def setProgress(float progress) {
         this.apiProgress = progress
     }
-    
+
     float getProgress() {
         apiProgress
     }
@@ -97,24 +97,29 @@ class Enrichment {
     def setMessage(String message) {
         this.apiMessage = message
     }
-    
+
     String getMessage() {
         apiMessage
     }
-        
+
     def setStatusByCallback(ProcessingState status) {
         setStatus(status)
     }
-    
+
     def setStatus(ProcessingState status) {
         this.status = status
     }
-    
+
     ProcessingState getStatus() {
         status
     }
-    
+
+    void validateContainer(){
+        dataContainer.validateRecords()
+    }
+
     File getFile(FileType type) {
+        this.validateContainer()
         switch(type) {
             case FileType.ORIGIN:
                 return new File(originPathName)
@@ -144,6 +149,7 @@ class Enrichment {
         result.append("\"originalFileName\":\"").append(originName).append("\",")
         result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
         result.append("\"date\":\"").append(date).append("\",")
+        result.append("\"resultHash\":\"").append(resultHash).append("\",")
         result.append("\"configuration\":{")
         result.append("\"dataType\":\"").append(dataType).append("\",")
         result.append("\"mappingsContainer\":")
@@ -163,6 +169,7 @@ class Enrichment {
         def en = new Enrichment(new File(sessionFolder), originalFileName)
         en.ygorVersion = JsonToolkit.fromJson(rootNode, "ygorVersion") // TODO compare with current version and abort?
         en.date = JsonToolkit.fromJson(rootNode, "date")
+        en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
         en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
         en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
         en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
@@ -173,7 +180,7 @@ class Enrichment {
 
 
     static Enrichment fromFile(def file){
-        String json = file.getInputStream()?.text
+        String json = file.newInputStream()?.text
         JsonNode rootNode = JSON_OBJECT_MAPPER.readTree(json)
         Enrichment enrichment = Enrichment.fromRawJson(rootNode)
         enrichment.setTitleMediumMapping()
@@ -239,8 +246,4 @@ class Enrichment {
             record.addMultiField(titleMedium)
         }
     }
-
-
-
-
 }

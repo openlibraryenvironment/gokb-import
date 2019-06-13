@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.ygor.validators.RecordValidator
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
@@ -111,11 +113,29 @@ class Record {
     }
 
 
-    void addValidation(String property, String status){
+    boolean isValid(){
+        for (Status status in validation.values()){
+            if (status.toString().endsWith("IS_INVALID")){
+                return false
+            }
+            return true
+        }
+    }
+
+
+    void validate(String namespace){
+        this.validateMultifields(namespace)
+        RecordValidator.validateCoverage(this)
+        RecordValidator.validateHistoryEvent(this)
+        RecordValidator.validatePublisherHistory(this)
+    }
+
+
+    void addValidation(String property, Status status){
         validation.put(property, status)
     }
 
-    String getValidation(String property){
+    Status getValidation(String property){
         return validation.get(property)
     }
 
@@ -160,6 +180,22 @@ class Record {
         }
         jsonGenerator.writeEndArray()
         jsonGenerator.writeEndObject()
+    }
+
+
+    Map<String, String> asMultiFieldMap(){
+        Map<String, String> result = [:]
+        result.put("uid", uid)
+        if (ezbIntegrationDate){
+            result.put("ezbIntegrationDate", ezbIntegrationDate)
+        }
+        if (zdbIntegrationDate){
+            result.put("zdbIntegrationDate", zdbIntegrationDate)
+        }
+        for (def multiField in multiFields){
+            result.put(multiField.key, multiField.value.getPrioValue())
+        }
+        result
     }
 
 

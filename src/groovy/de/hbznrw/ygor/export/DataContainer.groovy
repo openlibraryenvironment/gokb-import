@@ -43,6 +43,13 @@ class DataContainer {
     }
 
 
+    void validateRecords(){
+        for (Record record in records){
+            record.validate(info.namespace_title_id)
+        }
+    }
+
+
     static DataContainer fromJson(ArrayNode dataContainerNode, MappingsContainer mappings){
         DataContainer result = new DataContainer()
         Iterator it = dataContainerNode.iterator()
