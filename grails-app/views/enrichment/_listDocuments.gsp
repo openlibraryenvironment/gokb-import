@@ -336,15 +336,15 @@
 					<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 
 						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-info"><g:message code="listDocuments.button.showstatistics" /></g:link>
-						
+
+						<g:actionSubmit action="downloadTitlesFile" value="${message(code:'listDocuments.button.downloadtitlesfile')}" class="btn btn-info"/>
 						<g:actionSubmit action="downloadPackageFile" value="${message(code:'listDocuments.button.downloadpackagefile')}" class="btn btn-info"/>
-	    				<g:actionSubmit action="downloadTitlesFile" value="${message(code:'listDocuments.button.downloadtitlesfile')}" class="btn btn-info"/>
-						
+
 		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
-									data-target="#credentialsModal"><g:message code="listDocuments.button.package" /></button>
 							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="titles"
 									data-target="#credentialsModal"><g:message code="listDocuments.button.titles" /></button>
+							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
+									data-target="#credentialsModal"><g:message code="listDocuments.button.package" /></button>
 							<div class="modal fade" id="credentialsModal" role="dialog">
 								<div class="modal-dialog">
 									<div class="modal-content">
