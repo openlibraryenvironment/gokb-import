@@ -7,7 +7,7 @@
 			<div class="panel-heading">
 				<h3 class="panel-title"><g:message code="statistic.show.records.invalid"/></h3>
 			</div>
-			<div id="statistics-data" class="panel-body">
+			<div class="statistics-data">
 				<table class="statistics-details">
 					<tr>
 						<th>Title</th>
@@ -16,6 +16,32 @@
 					</tr>
 					<g:set var="lineCounter" value="${0}" />
 					<g:each in="${invalidRecords}" var="record">
+						<tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+							<td class="statistics-cell"><a href="record.gsp">${record.publicationTitle}</a></td>
+							<td class="statistics-cell"><a href="record.gsp">${record.zdbId}</a></td>
+							<td class="statistics-cell"><a href="record.gsp">${record.eissn}</a></td>
+						</tr>
+						<g:set var="lineCounter" value="${lineCounter + 1}"/>
+					</g:each>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><g:message code="statistic.show.records.valid"/></h3>
+			</div>
+			<div class="statistics-data">
+				<table class="statistics-details">
+					<tr>
+						<th>Title</th>
+						<th>ZDB ID</th>
+						<th>eISSN</th>
+					</tr>
+					<g:set var="lineCounter" value="${0}" />
+					<g:each in="${validRecords}" var="record">
 						<tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
 							<td class="statistics-cell"><a href="record.gsp">${record.publicationTitle}</a></td>
 							<td class="statistics-cell"><a href="record.gsp">${record.zdbId}</a></td>

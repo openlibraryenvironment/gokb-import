@@ -21,6 +21,7 @@ class StatisticController {
         def sthash = (String) request.parameterMap['sthash'][0]
         def json = {}
         Set<Map<String, String>> invalidRecords = new HashSet<>()
+        Set<Map<String, String>> validRecords = new HashSet<>()
         String ygorVersion
         String date
         String filename
@@ -33,7 +34,10 @@ class StatisticController {
                     if(file.getName() == sthash){
                         Enrichment enrichment = Enrichment.fromFile(file)
                         for (Record record in enrichment.dataContainer.records){
-                            if (!record.isValid()){
+                            if (record.isValid()){
+                                validRecords.add(record.asMultiFieldMap())
+                            }
+                            else {
                                 invalidRecords.add(record.asMultiFieldMap())
                             }
                         }
@@ -59,7 +63,8 @@ class StatisticController {
                 ygorVersion: ygorVersion,
                 date:        date,
                 filename:    filename,
-                invalidRecords: invalidRecords
+                invalidRecords: invalidRecords,
+                validRecords:   validRecords
             ]
         )
     }

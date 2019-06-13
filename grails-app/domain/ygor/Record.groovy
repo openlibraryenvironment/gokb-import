@@ -118,8 +118,8 @@ class Record {
             if (status.toString().endsWith("IS_INVALID")){
                 return false
             }
-            return true
         }
+        return true
     }
 
 
