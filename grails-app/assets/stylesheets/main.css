@@ -55,7 +55,7 @@ body {
 }
 
 a:link, a:visited, a:hover {
-	color: #000;
+	color: #fff;
 }
 
 tr.even:hover a, tr.odd:hover a{
@@ -235,7 +235,6 @@ label {
 }
 
 input, select, textarea {
-	background-color: #fcfcfc;
 	border: 1px solid #cccccc;
 	font-size: 1em;
 	padding: 0.2em 0.4em;
