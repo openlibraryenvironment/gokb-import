@@ -2,7 +2,6 @@ package ygor
 
 import de.hbznrw.ygor.tools.*
 import groovy.util.logging.Log4j
-import ygor.Enrichment.FileType
 
 @Log4j
 class StatisticController {
@@ -21,6 +20,7 @@ class StatisticController {
     def show() {
         def sthash = (String) request.parameterMap['sthash'][0]
         def json = {}
+        Set<Map<String, String>> invalidRecords = new HashSet<>()
         String ygorVersion
         String date
         String filename
@@ -31,6 +31,12 @@ class StatisticController {
             new File(grailsApplication.config.ygor.uploadLocation).eachDir() { dir ->
                 dir.eachFile() { file ->
                     if(file.getName() == sthash){
+                        Enrichment enrichment = Enrichment.fromFile(file)
+                        for (Record record in enrichment.dataContainer.records){
+                            if (!record.isValid()){
+                                invalidRecords.add(record.asMultiFieldMap())
+                            }
+                        }
                         json = JsonToolkit.parseFileToJson(file.getAbsolutePath())
                         ygorVersion = json.getAt("ygorVersion")
                         date = json.getAt("date")
@@ -52,10 +58,12 @@ class StatisticController {
                 currentView: 'statistic',
                 ygorVersion: ygorVersion,
                 date:        date,
-                filename:    filename
+                filename:    filename,
+                invalidRecords: invalidRecords
             ]
         )
     }
+
 
     static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
     static final IGNORED_KBART_ENTRIES = "ignored kbart entries"

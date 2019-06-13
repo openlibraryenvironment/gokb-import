@@ -2,7 +2,6 @@ package ygor
 
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.Statistics
-import de.hbznrw.ygor.tools.JsonToolkit
 import grails.converters.JSON
 
 class EnrichmentController {
@@ -122,7 +121,7 @@ class EnrichmentController {
         if (null == request.session.lastUpdate){
             request.session.lastUpdate = [:]
         }
-        request.session.lastUpdate << [dataTyp : (JsonToolkit.fromJson(rootNode, "configuration.dataType"))]
+        request.session.lastUpdate << [dataTyp : enrichment.dataType]
 
         GokbExporter.extractTitles(enrichment)
         GokbExporter.extractTipps(enrichment)
