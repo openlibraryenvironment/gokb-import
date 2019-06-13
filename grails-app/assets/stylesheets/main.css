@@ -58,6 +58,10 @@ a:link, a:visited, a:hover {
 	color: #fff;
 }
 
+td.statistics-cell a:link {
+	color: #000;
+}
+
 tr.even:hover a, tr.odd:hover a{
 	color: #fff;
 }
