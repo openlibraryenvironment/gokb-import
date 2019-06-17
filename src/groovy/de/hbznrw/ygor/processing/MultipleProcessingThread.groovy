@@ -1,9 +1,6 @@
 package de.hbznrw.ygor.processing
 
 import com.google.common.base.Throwables
-import de.hbznrw.ygor.bridges.EzbBridge
-import de.hbznrw.ygor.bridges.KbartBridge
-import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.Statistics
 import de.hbznrw.ygor.readers.EzbReader
@@ -88,15 +85,15 @@ class MultipleProcessingThread extends Thread {
         try {
             apiCalls.each{ call ->
                 switch(call) {
-                    case KbartBridge.IDENTIFIER:
+                    case KbartReader.IDENTIFIER:
                         KbartReaderConfiguration conf =
                                 new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
                         new KbartIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer, conf)
                         break
-                    case EzbBridge.IDENTIFIER:
+                    case EzbReader.IDENTIFIER:
                         new EzbIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer)
                         break
-                    case ZdbBridge.IDENTIFIER:
+                    case ZdbReader.IDENTIFIER:
                         new ZdbIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer)
                         break
                 }

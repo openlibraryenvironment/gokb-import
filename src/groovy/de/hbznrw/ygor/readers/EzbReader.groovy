@@ -7,6 +7,8 @@ import ygor.field.FieldKeyMapping
 @Log4j
 class EzbReader extends AbstractReader{
 
+    static final IDENTIFIER = 'ezb'
+
     final static Map QUERY_IDS = [:]
     static{
         QUERY_IDS.put(de.hbznrw.ygor.connectors.KbartConnector.KBART_HEADER_ZDB_ID, "jq_type1=ZD&jq_term1=")

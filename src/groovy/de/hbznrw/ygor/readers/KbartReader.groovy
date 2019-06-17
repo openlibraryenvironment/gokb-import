@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.readers
 
-import de.hbznrw.ygor.processing.KbartProcessor
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.processing.YgorProcessingException
 import org.apache.commons.csv.CSVFormat
@@ -13,6 +12,8 @@ import ygor.field.FieldKeyMapping
 import java.nio.charset.Charset
 
 class KbartReader extends AbstractReader{
+
+    static final IDENTIFIER = 'kbart'
 
     private MultipleProcessingThread owner
 
@@ -42,7 +43,7 @@ class KbartReader extends AbstractReader{
 
     KbartReader(MultipleProcessingThread owner, String delimiter) {
         this.owner = owner
-        char delimiterChar = KbartProcessor.resolver.get(delimiter)
+        char delimiterChar = resolver.get(delimiter)
         csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar)
         csv = CSVParser.parse(new File(owner.kbartFile), Charset.defaultCharset(), csvFormat)
         csvHeader = csv.getHeaderMap().keySet() as ArrayList
@@ -187,5 +188,17 @@ class KbartReader extends AbstractReader{
         }
         return result
     }
+
+    static def resolver = [
+            'comma'         : ',',
+            'semicolon'     : ';',
+            'tab'           : '\t',
+            'doublequote'   : '"',
+            'singlequote'   : "'",
+            'nullquote'     : 'null',
+            'all'           : QuoteMode.ALL,
+            'nonnumeric'    : QuoteMode.NON_NUMERIC,
+            'none'          : QuoteMode.NONE
+    ]
 
 }
