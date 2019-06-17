@@ -31,60 +31,6 @@ class DataMapper {
     static final TIPP_IDS = [Query.ZDBID, Query.ZDB_EISSN, Query.KBART_EISSN, Query.KBART_DOI, Query.KBART_TITLE_ID,
                              Query.KBART_EISBN]
 
-    static Title getTitleFromRecord(Record record){
-        Title result = new Title()
-        // identifiers
-        result.identifiers << getIdentifierFromRecord(record, "zdbId", "zdb")
-        result.identifiers << getIdentifierFromRecord(record, "ezbId", "edb")
-        result.identifiers << getIdentifierFromRecord(record, "eissn", "eissn")
-        result.identifiers << getIdentifierFromRecord(record, "pissn", "issn")
-        // other fields
-        result.name = new Pod(record.getMultiField("publicationTitle")?.getPrioValue())
-        result.type = new Pod(record.getMultiField("publicationType")?.getPrioValue())
-        result.publishedFrom = new Pod(record.getMultiField("publishedFrom")?.getPrioValue())
-        result.publishedTo = new Pod(record.getMultiField("publishedTo")?.getPrioValue())
-        result.publisher_history << new Pod(record.getMultiField("publisherHistory")?.getPrioValue())
-        result
-    }
-
-    private static def getIdentifierFromRecord(Record record, String idField, String typeName){
-        def id = TitleStruct.getNewIdentifier()
-        id.value = new Pod(record.("${idField}"))
-        if (!id.value){
-            id.value = ""
-        }
-        id.type = new Pod(typeName)
-        id
-    }
-
-    static Tipp getTippFromRecord(Record record, PackageHeaderNominalPlatform platform){
-        TippTitle innerTitle = new TippTitle()
-        innerTitle.name = new Pod(record.getMultiField("publicationTitle")?.getPrioValue())
-        innerTitle.identifiers << getIdentifierFromRecord(record, "zdbId", "zdb")
-        innerTitle.identifiers << getIdentifierFromRecord(record, "ezbId", "edb")
-        innerTitle.identifiers << getIdentifierFromRecord(record, "eissn", "eissn")
-        innerTitle.identifiers << getIdentifierFromRecord(record, "pissn", "issn")
-
-        TippCoverage coverage = new TippCoverage()
-        coverage.coverageNote  = new Pod(record.getMultiField('notes').getPrioValue())
-        coverage.embargo       = new Pod(record.getMultiField('embargoInfo').getPrioValue())
-        coverage.endDate       = new Pod("")
-        coverage.endIssue      = new Pod("")
-        coverage.endVolume     = new Pod("")
-        coverage.startDate     = new Pod("")
-        coverage.startIssue    = new Pod("")
-        coverage.startVolume   = new Pod("")
-
-        Tipp result = new Tipp()
-        result.title = innerTitle
-        result.platform = TippPlatform.fromPackageHeaderNominalPlatform(platform)
-        result.accessStartDate = record.getMultiField("accessStartDate")?.getPrioValue()
-        result.accessEndDate = record.getMultiField("accessEndDate")?.getPrioValue()
-        result.url = record.getMultiField("titleUrl")?.getPrioValue()
-        result.coverage = coverage
-        result
-    }
-
     /**
      * Creating:
      * 
