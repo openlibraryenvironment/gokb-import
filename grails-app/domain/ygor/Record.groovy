@@ -2,21 +2,17 @@ package ygor
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.enums.Status
+import de.hbznrw.ygor.normalizers.EditionNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.RecordValidator
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
-import ygor.identifier.AbstractIdentifier
-import ygor.identifier.DoiIdentifier
-import ygor.identifier.EissnIdentifier
-import ygor.identifier.EzbIdentifier
-import ygor.identifier.PissnIdentifier
-import ygor.identifier.ZdbIdentifier
+import ygor.identifier.*
 
 class Record {
 
@@ -113,6 +109,14 @@ class Record {
     }
 
 
+    void normalize(){
+        EditionNormalizer.normalizeEditionNumber(this)
+        for (MultiField multiField in multiFields){
+            multiField.normalize()
+        }
+    }
+
+
     boolean isValid(){
         for (Status status in validation.values()){
             if (status.toString().endsWith("IS_INVALID")){
@@ -126,6 +130,7 @@ class Record {
     void validate(String namespace){
         this.validateMultifields(namespace)
         RecordValidator.validateCoverage(this)
+        RecordValidator.validateEdition(this)
         RecordValidator.validateHistoryEvent(this)
         RecordValidator.validatePublisherHistory(this)
     }

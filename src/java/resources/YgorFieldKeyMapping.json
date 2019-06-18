@@ -130,7 +130,7 @@
       "gokb" : ["$TITLE.defaultAccessURL"]
     },
     "order" : [""],
-    "type" : "String"
+    "type" : "URL"
   },
   {
     "ygor" : "doi",
@@ -144,6 +144,21 @@
     },
     "order" : ["kbart"],
     "type" : "String"
+  },
+  {
+    "ygor" : "editionNumber",
+    "in" : {
+      "kbart" : "monograph_edition",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : [
+        "$TITLE.editionNumber"
+      ]
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
   },
   {
     "ygor" : "editStatus",
@@ -208,22 +223,43 @@
     "type" : "String"
   },
   {
-    "ygor" : "historyEvents",
+    "ygor" : "historyEventName",
     "in" : {
       "kbart" : "",
-      "zdb" : [
-        "039E:c",
-        "039E:a, 039E:t",
-        "039E:C",
-        "039E:6"
-      ],
+      "zdb" : "039E:h",
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.name"]
     },
     "order" : ["zdb"],
     "type" : "String"
+  },
+  {
+    "ygor" : "historyEventPlace",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:6",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.place"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventDate",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:H",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.date"]
+    },
+    "order" : ["zdb"],
+    "type" : "Date"
   },
   {
     "ygor" : "imprint",
@@ -304,7 +340,6 @@
     "out" : {
       "gokb" : [
         "$TITLE.monographEdition",
-        "$TITLE.editionNumber",
         "$TITLE.editionDifferentiator",
         "$TITLE.editionStatement"
       ]
@@ -506,7 +541,7 @@
     "out" : {
       "gokb" : ["$TIPP.platform.primaryUrl"]
     },
-    "type" : "ID"
+    "type" : "URL"
   },
   {
     "ygor" : "precedingPublicationTitleId",
@@ -544,7 +579,7 @@
     "out" : {
       "gokb" : ["$TITLE.name", "$TIPP.title.name"]
     },
-    "order" : ["zdb","ezb","kbart"],
+    "order" : ["zdb","kbart","ezb"],
     "type" : "String"
   },
   {
@@ -587,32 +622,42 @@
     "type" : "EndDate"
   },
   {
-    "ygor" : "publisherHistory",
+    "ygor" : "publisherHistoryEndDate",
     "in" : {
       "kbart" : "",
-      "zdb" : [
-        "033A:n",
-        "033A:h"
-      ],
+      "zdb" : "033A:h",
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.endDate"]
     },
     "order" : ["zdb"],
-    "type" : "String"
+    "type" : "EndDate"
+  },
+  {
+    "ygor" : "publisherHistoryStartDate",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "033A:h",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.startDate"]
+    },
+    "order" : ["zdb"],
+    "type" : "StartDate"
   },
   {
     "ygor" : "publisherName",
     "in" : {
       "kbart" : "publisher_name",
-      "zdb" : "",
+      "zdb" : "033A:n",
       "ezb" : ""
     },
     "out" : {
       "gokb" : ["$TITLE.publisher_history.$ARRAY.name"]
     },
-    "order" : ["kbart"],
+    "order" : ["zdb", "kbart"],
     "type" : "String"
   },
   {
@@ -682,7 +727,8 @@
       "gokb" : ["$TIPP.url"]
     },
     "order" : ["ezb","kbart"],
-    "type" : "URL"
+    "type" : "URL",
+    "comment" : "The field name 'titleUrl' is misleading from the point of differentiating title vs. TIPP. In fact, it is a TIPP field."
   },
   {
     "ygor" : "zdbId",

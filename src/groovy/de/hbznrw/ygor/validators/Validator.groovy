@@ -1,9 +1,10 @@
 package de.hbznrw.ygor.validators
 
 import de.hbznrw.ygor.enums.*
-import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.normalizers.DateNormalizer
+import de.hbznrw.ygor.tools.UrlToolkit
 import org.apache.commons.lang.StringUtils
 import java.sql.Timestamp
 
@@ -27,10 +28,10 @@ class Validator {
             case "URL":
                 return isValidURL(value)
                 break
-            case "StartDate":
+            case DateNormalizer.START_DATE:
                 return isValidDate(value)
                 break
-            case "EndDate":
+            case DateNormalizer.END_DATE:
                 return isValidDate(value)
                 break
             case "Date":
@@ -133,7 +134,7 @@ class Validator {
                 return Status.VALIDATOR_IDENTIFIER_IS_INVALID
             }
         }
-        else if (identifierType.equals("inID_" + namespace) && namespace in DataMapper.IDENTIFIER_NAMESPACES) {
+        else if (identifierType.equals("inID_" + namespace)) {
             if (str) {
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             } else {
@@ -160,12 +161,17 @@ class Validator {
         else if(str.contains("|")){
             return Status.VALIDATOR_URL_IS_NOT_ATOMIC
         }
-        try {
-            def url = new URL(str)
-        } catch(Exception e) {
-            return Status.VALIDATOR_URL_IS_INVALID
+        def url = UrlToolkit.buildUrl(str)
+        if (!url){
+            url = UrlToolkit.buildUrl("https://".concat(str))
         }
-        return Status.VALIDATOR_URL_IS_VALID
+        if (!url){
+            url = UrlToolkit.buildUrl("http://".concat(str))
+        }
+        if (url){
+            return Status.VALIDATOR_URL_IS_VALID
+        }
+        return Status.VALIDATOR_URL_IS_INVALID
     }
     
     /**

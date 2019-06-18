@@ -1,6 +1,8 @@
 package de.hbznrw.ygor.format
 
-import de.hbznrw.ygor.export.Normalizer
+import de.hbznrw.ygor.normalizers.DateNormalizer
+import de.hbznrw.ygor.normalizers.NumberNormalizer
+import de.hbznrw.ygor.normalizers.StringNormalizer
 
 class GokbFormatter implements YgorFormatter{
 
@@ -11,27 +13,27 @@ class GokbFormatter implements YgorFormatter{
 
     @Override
     String formatStartDate(String date) {
-        return Normalizer.normDate(date, Normalizer.IS_START_DATE)
+        return DateNormalizer.normalizeDate(date, DateNormalizer.START_DATE)
     }
 
     @Override
     String formatEndDate(String date) {
-        return Normalizer.normDate(date, Normalizer.IS_END_DATE)
+        return DateNormalizer.normalizeDate(date, DateNormalizer.END_DATE)
     }
 
     @Override
     String formatId(String id) {
-        return Normalizer.normString(id)
+        return StringNormalizer.normalizeString(id)
     }
 
     @Override
     String formatNumber(String number) {
-        return Normalizer.normInteger(number)
+        return NumberNormalizer.normalizeInteger(number)
     }
 
     @Override
     String formatString(String string) {
-        return Normalizer.normString(string)
+        return StringNormalizer.normalizeString(string)
     }
 
     @Override

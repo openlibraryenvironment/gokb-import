@@ -2,8 +2,9 @@ package ygor.field
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
-import de.hbznrw.ygor.validators.Validator
+import de.hbznrw.ygor.normalizers.CommonNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.ygor.validators.Validator
 
 class MultiField {
 
@@ -12,6 +13,7 @@ class MultiField {
     Map fields = [:]
     String type                         // TODO: move to FieldKeyMapping (?)
     String status
+    String normalized
 
     static hasMany = [fields : Field]
 
@@ -43,6 +45,9 @@ class MultiField {
 
 
     String getPrioValue(){
+        if (normalized){
+            return normalized
+        }
         if (keyMapping == null){
             return fields.values().toArray()[0]
         }
@@ -58,6 +63,11 @@ class MultiField {
         }
         // no collected value --> return default value (if any)
         return keyMapping.val
+    }
+
+
+    void normalize(){
+        normalized = CommonNormalizer.normalize(getPrioValue(), type)
     }
 
 

@@ -2,6 +2,28 @@ package de.hbznrw.ygor.normalizers
 
 class CommonNormalizer {
 
+
+    static String normalize(String value, String type){
+        switch (type) {
+            case "String":
+                return StringNormalizer.normalizeString(value)
+            case "Number":
+                return NumberNormalizer.normalizeInteger(value)
+            case "ID":
+                return IdentifierNormalizer.normIdentifier(value)
+            case "URL":
+                return UrlNormalizer.normURL(value)
+            case DateNormalizer.START_DATE:
+                return DateNormalizer.normalizeDate(value, DateNormalizer.START_DATE)
+            case DateNormalizer.END_DATE:
+                return DateNormalizer.normalizeDate(value, DateNormalizer.END_DATE)
+            case "ISBN":
+                // return validateISBN(value) // TODO
+            default:
+                return StringNormalizer.normalizeString(value)
+        }
+    }
+
     static String removeText(String str){
         if(!str) {
             return str

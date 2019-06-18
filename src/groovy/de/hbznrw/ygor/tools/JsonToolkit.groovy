@@ -7,19 +7,16 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import com.fasterxml.jackson.databind.node.MissingNode
-import com.fasterxml.jackson.databind.node.NullNode
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.databind.node.*
 import de.hbznrw.ygor.export.DataContainer
+import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.format.YgorFormatter
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 import ygor.Record
 import ygor.field.MultiField
+
 import java.lang.reflect.Method
 
 class JsonToolkit {
@@ -165,7 +162,7 @@ class JsonToolkit {
     private static JsonNode getSubNode(ArrayList<String> keyPath, String value, String type, YgorFormatter formatter){
         assert keyPath.size() > 1
         if (keyPath.size() == 2){
-            return new TextNode(formatValue(type, value, formatter))
+            return new TextNode(GokbExporter.no)
         }
         if (keyPath[2].equals(ARRAY)){
             return new ArrayNode(NODE_FACTORY)
@@ -212,27 +209,6 @@ class JsonToolkit {
         if (obj instanceof TextNode && obj.toString() == "\"\"")
             return true
         return false
-    }
-
-
-    private static String formatValue(String type, String value, YgorFormatter formatter){
-        switch (type){
-            case "String":
-                return formatter.formatString(value)
-            case "StartDate":
-                return formatter.formatStartDate(value)
-            case "EndDate":
-                return formatter.formatEndDate(value)
-            case "Date":
-                return formatter.formatDate(value)
-            case "ID":
-                return formatter.formatId(value)
-            case "Number":
-                return formatter.formatNumber(value)
-            case "URL":
-                return formatter.formatUrl(value)
-            return value
-        }
     }
 
 

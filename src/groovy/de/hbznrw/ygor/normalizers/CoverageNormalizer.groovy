@@ -2,6 +2,8 @@ package de.hbznrw.ygor.normalizers
 
 class CoverageNormalizer {
 
+    // TODO: use
+
     /**
      *
      * "18.2005 - 27.2014"         -> "18" or "27"
@@ -19,10 +21,10 @@ class CoverageNormalizer {
             if (str.contains("-")){
                 def tmp = str.split("-")
 
-                if (dateType.equals("StartDate")){
+                if (dateType.equals(DateNormalizer.START_DATE)){
                     str = parseCoverageVolume(tmp[0])
                 }
-                else if (dateType.equals("EndDate")){
+                else if (dateType.equals(DateNormalizer.END_DATE)){
                     if (tmp.size() > 1){
                         str = parseCoverageVolume(tmp[1])
                     }

@@ -7,7 +7,6 @@ import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
-import de.hbznrw.ygor.validators.RecordValidator
 import groovy.util.logging.Log4j
 import ygor.Enrichment
 import ygor.Record
@@ -117,6 +116,7 @@ class MultipleProcessingThread extends Thread {
             return
         }
 
+        normalize()
         validate()
         checkIDsUniqueness()
 
@@ -136,12 +136,16 @@ class MultipleProcessingThread extends Thread {
     }
 
 
+    private void normalize(){
+        for (Record record : enrichment.dataContainer.records) {
+            record.normalize()
+        }
+    }
+
+
     private void validate(){
         for (Record record : enrichment.dataContainer.records) {
-            record.validateMultifields(enrichment.dataContainer.info.namespace_title_id)
-            RecordValidator.validateCoverage(record)
-            RecordValidator.validateHistoryEvent(record)
-            RecordValidator.validatePublisherHistory(record)
+            record.validate(enrichment.dataContainer.info.namespace_title_id)
         }
     }
 

@@ -68,25 +68,5 @@ class StructValidator {
         */
         return Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF
     }
-    
-    static isValidPublisherHistory(TitlePublisherHistory publisherHistory){
-        // startDate
-        // endDate
-        // status
-        // name
-        
-        if(false){
-            return Status.STRUCTVALIDATOR_REMOVE_FLAG
-        }
-        /*
-        if( publisherHistory.startDate.m == Status.VALIDATOR_DATE_IS_VALID &&
-            publisherHistory.endDate.m == Status.VALIDATOR_DATE_IS_VALID &&
-            publisherHistory.name.m == Status.VALIDATOR_STRING_IS_VALID){
- 
-            return Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID
-   
-        }
-        */
-        return Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF
-    }
+
 }

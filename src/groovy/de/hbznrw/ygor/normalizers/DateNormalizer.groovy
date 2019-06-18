@@ -1,13 +1,14 @@
 package de.hbznrw.ygor.normalizers
 
 
-import de.hbznrw.ygor.export.Normalizer
-
 import java.time.LocalDate
 
 class DateNormalizer {
 
-    static String normDate(String str, String dateType){
+    static final String START_DATE = "StartDate"
+    static final String END_DATE = "EndDate"
+
+    static String normalizeDate(String str, String dateType){
         if (!str){
             return str
         }
@@ -16,12 +17,12 @@ class DateNormalizer {
         // Take only start part or end part of "01.01.2000-31.12.2000"
         if (str.contains("-")){
             def tmp = str.split("-")
-            if (dateType.equals("StartDate")){
+            if (dateType.equals(START_DATE)){
                 if (tmp.size() > 1){
                     str = tmp[0]
                 }
             }
-            else if (dateType.equals("EndDate")){
+            else if (dateType.equals(END_DATE)){
                 if (tmp.size() > 1){
                     str = tmp[1]
                 }
@@ -41,10 +42,10 @@ class DateNormalizer {
                     def mm = String.format('%02d', m)
                     def dd = String.format('%02d', date.lengthOfMonth())
 
-                    if (dateType.equals(Normalizer.IS_START_DATE)){
+                    if (dateType.equals(START_DATE)){
                         str += ("-" + mm + "-01 00:00:00.000")
                     }
-                    else if (dateType.equals(Normalizer.IS_END_DATE)){
+                    else if (dateType.equals(END_DATE)){
                         str += ("-" + mm + "-" + dd + " 23:59:59.000")
                     }
                 }
@@ -53,10 +54,10 @@ class DateNormalizer {
                 }
             }
             else {
-                if (dateType.equals(Normalizer.IS_START_DATE)){
+                if (dateType.equals(START_DATE)){
                     str += "-01-01 00:00:00.000"
                 }
-                else if (dateType.equals(Normalizer.IS_END_DATE)){
+                else if (dateType.equals(END_DATE)){
                     str += "-12-31 23:59:59.000"
                 }
             }
@@ -81,7 +82,7 @@ class DateNormalizer {
         }
 
         // remove brackets and more
-        if (dateType.equals("StartDate")){
+        if (dateType.equals(START_DATE)){
             if (str.startsWith("[")){
                 str = str.replaceFirst("\\[", '')
             }
@@ -89,7 +90,7 @@ class DateNormalizer {
                 str = str.take(str.length() - 1)
             }
         }
-        else if (dateType.equals("EndDate")){
+        else if (dateType.equals(END_DATE)){
             if (str.endsWith("]")){
                 str = str.take(str.length() - 1)
             }
@@ -111,14 +112,14 @@ class DateNormalizer {
         if (matches001){
             def tmp1 = str.split(matches001[0][4])
 
-            if (dateType.equals("StartDate")){
+            if (dateType.equals(START_DATE)){
                 if (tmp1[0].contains(",")){
                     def tmp2 = tmp1[0].split(",")
                     return [tmp2[0], tmp2[1]]
                 }
                 return [tmp1[0], null]
             }
-            else if (dateType.equals("EndDate")){
+            else if (dateType.equals(END_DATE)){
                 if (tmp1[1].contains(",")){
                     def tmp2 = tmp1[1].split(",")
                     return [tmp2[0], tmp2[1]]
@@ -137,14 +138,14 @@ class DateNormalizer {
         if (matches002){
             def tmp1 = str.split(matches002[0][4])
 
-            if (dateType.equals("StartDate")){
+            if (dateType.equals(START_DATE)){
                 if (tmp1[0].contains(",")){
                     def tmp2 = tmp1[0].split(",")
                     return [tmp2[0], tmp2[1]]
                 }
                 return [tmp1[0], null]
             }
-            else if (dateType.equals("EndDate")){
+            else if (dateType.equals(END_DATE)){
                 if (tmp1[1].contains(",")){
                     def tmp2 = tmp1[1].split(",")
                     return [tmp1[0].take(2) + tmp2[0], tmp2[1]]
@@ -163,14 +164,14 @@ class DateNormalizer {
         if (matches003){
             def tmp1 = str.split(matches003[0][4])
 
-            if (dateType.equals("StartDate")){
+            if (dateType.equals(START_DATE)){
                 if (tmp1[0].contains(",")){
                     def tmp2 = tmp1[0].split(",")
                     return ['20' + tmp2[0], tmp2[1]]
                 }
                 return ['20' + tmp1[0], null]
             }
-            else if (dateType.equals("EndDate")){
+            else if (dateType.equals(END_DATE)){
                 if (tmp1[1].contains(",")){
                     def tmp2 = tmp1[1].split(",")
                     return ['20' + tmp2[0], tmp2[1]]

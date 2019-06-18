@@ -1,10 +1,11 @@
 package de.hbznrw.ygor.export
 
+import de.hbznrw.ygor.bridges.ZdbBridge
 import de.hbznrw.ygor.export.structure.TitleStruct
+import de.hbznrw.ygor.normalizers.*
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
-import de.hbznrw.ygor.bridges.*
 
 /**
  * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
@@ -43,7 +44,7 @@ class NormalizerSpec extends Specification {
             println "${raw} -> ${result}"
         
         then:
-            Normalizer.normString(raw) == result
+            StringNormalizer.normalizeString(raw) == result
         
         where:
             raw                                     | result
@@ -60,7 +61,7 @@ class NormalizerSpec extends Specification {
         println "${raw} -> ${result}"
 
         then:
-        Normalizer.normStringTitle(raw) == result
+        StringNormalizer.normalizeStringTitle(raw) == result
 
         where:
         raw                                     | result
@@ -78,7 +79,7 @@ class NormalizerSpec extends Specification {
             println "${raw} -> ${result}"
         
         then:
-            Normalizer.normString(raw) == result
+            StringNormalizer.normalizeString(raw) == result
         
         where:
             raw                                     | result
@@ -97,7 +98,7 @@ class NormalizerSpec extends Specification {
             println "${raw[0]}, ${raw[1]} -> ${result}"
         
         then:
-            Normalizer.normIdentifier(raw[0], raw[1], DataMapper.IDENTIFIER_NAMESPACES[0]) == result
+            IdentifierNormalizer.normIdentifier(raw[0], raw[1], DataMapper.IDENTIFIER_NAMESPACES[0]) == result
         
         where:
             raw                                 | result
@@ -126,20 +127,20 @@ class NormalizerSpec extends Specification {
         expect:
             println "${list1} -> ${result1}"
             println "${list2} -> ${result2}"
-            
-            Normalizer.normIdentifier(list1, TitleStruct.EISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result1
-            Normalizer.normIdentifier(list2, TitleStruct.PISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result2
+
+            IdentifierNormalizer.normIdentifier(list1, TitleStruct.EISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result1
+            IdentifierNormalizer.normIdentifier(list2, TitleStruct.PISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result2
     }   
     
     void "normDate(String str, Object dateType)"() {
         
         when:
-            println "${raw}, ${Normalizer.IS_START_DATE} -> ${resultStartDate}"
-            println "${raw}, ${Normalizer.IS_END_DATE} -> ${resultEndDate}"
+            println "${raw}, ${DateNormalizer.START_DATE} -> ${resultStartDate}"
+            println "${raw}, ${DateNormalizer.END_DATE} -> ${resultEndDate}"
             
         then:
-            Normalizer.normDate(raw, Normalizer.IS_START_DATE) == resultStartDate
-            Normalizer.normDate(raw, Normalizer.IS_END_DATE) == resultEndDate
+            DateNormalizer.normalizeDate(raw, DateNormalizer.START_DATE) == resultStartDate
+            DateNormalizer.normalizeDate(raw, DateNormalizer.END_DATE) == resultEndDate
         
         where:
             raw                                 | resultStartDate               | resultEndDate
@@ -187,24 +188,24 @@ class NormalizerSpec extends Specification {
         expect:
             println "${list1} -> START_DATE: ${resultStartDate1}"
             println "${list2} -> START_DATE: ${resultStartDate2}"
-            Normalizer.normDate(list1, Normalizer.IS_START_DATE) == resultStartDate1
-            Normalizer.normDate(list2, Normalizer.IS_START_DATE) == resultStartDate2
+            DateNormalizer.normalizeDate(list1, DateNormalizer.START_DATE) == resultStartDate1
+            DateNormalizer.normalizeDate(list2, DateNormalizer.START_DATE) == resultStartDate2
             
             println "${list1} -> END_DATE: ${resultEndDate1}"
             println "${list2} -> END_DATE: ${resultEndDate2}"
-            Normalizer.normDate(list1, Normalizer.IS_END_DATE)   == resultEndDate1
-            Normalizer.normDate(list2, Normalizer.IS_END_DATE)   == resultEndDate2
+            DateNormalizer.normalizeDate(list1, DateNormalizer.END_DATE)   == resultEndDate1
+            DateNormalizer.normalizeDate(list2, DateNormalizer.END_DATE)   == resultEndDate2
     }  
     
     void "normCoverageVolume(String str, Object dateType)"() {
         
         when:
-            println "${raw}, ${Normalizer.IS_START_DATE} -> ${resultStartVol}"
-            println "${raw}, ${Normalizer.IS_END_DATE} -> ${resultEndVol}"
+            println "${raw}, ${DateNormalizer.START_DATE} -> ${resultStartVol}"
+            println "${raw}, ${DateNormalizer.END_DATE} -> ${resultEndVol}"
             
         then:
-            Normalizer.normCoverageVolume(raw, Normalizer.IS_START_DATE) == resultStartVol
-            Normalizer.normCoverageVolume(raw, Normalizer.IS_END_DATE) == resultEndVol
+            CoverageNormalizer.normalizeCoverageVolume(raw, DateNormalizer.START_DATE) == resultStartVol
+            CoverageNormalizer.normalizeCoverageVolume(raw, DateNormalizer.END_DATE) == resultEndVol
         
         where:
             raw                                     | resultStartVol    | resultEndVol
@@ -225,7 +226,7 @@ class NormalizerSpec extends Specification {
             println "${raw} & ${onlyAuthority} -> ${result}"
             
         then:
-            Normalizer.normURL(raw, onlyAuthority) == result
+            UrlNormalizer.normURL(raw, onlyAuthority) == result
             
         where:
             raw                                             | onlyAuthority     | result
@@ -251,7 +252,7 @@ class NormalizerSpec extends Specification {
             println "${raw} & ${onlyAuthority} -> ${result}"
             
         then:
-            Normalizer.normURL(raw, onlyAuthority) == result
+            UrlNormalizer.normURL(raw, onlyAuthority) == result
             
         where:
         raw                                                                     | onlyAuthority | result
@@ -265,13 +266,13 @@ class NormalizerSpec extends Specification {
     void "parseDate(String str, Object dateType)"() {
         
         when:
-            println "${raw}, ${Normalizer.IS_START_DATE} -> ${resultStartDate}"
-            println "${raw}, ${Normalizer.IS_END_DATE} -> ${resultEndDate}"
+            println "${raw}, ${DateNormalizer.START_DATE} -> ${resultStartDate}"
+            println "${raw}, ${DateNormalizer.END_DATE} -> ${resultEndDate}"
         
 
         then:
-            Normalizer.parseDate(raw, Normalizer.IS_START_DATE) == resultStartDate
-            Normalizer.parseDate(raw, Normalizer.IS_END_DATE) == resultEndDate
+            DateNormalizer.parseDate(raw, DateNormalizer.START_DATE) == resultStartDate
+            DateNormalizer.parseDate(raw, DateNormalizer.END_DATE) == resultEndDate
     
         where:
             raw                                     | resultStartDate | resultEndDate
@@ -298,7 +299,7 @@ class NormalizerSpec extends Specification {
         
 
         then:
-            Normalizer.parseCoverageVolume(raw) == result
+            CoverageNormalizer.parseCoverageVolume(raw) == result
     
         where:
             raw                                     | result
