@@ -180,7 +180,7 @@ class Enrichment {
 
 
     static Enrichment fromFile(def file){
-        String json = file.newInputStream()?.text
+        String json = file.getInputStream()?.text
         JsonNode rootNode = JSON_OBJECT_MAPPER.readTree(json)
         Enrichment enrichment = Enrichment.fromRawJson(rootNode)
         enrichment.setTitleMediumMapping()
