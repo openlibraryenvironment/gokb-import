@@ -1,12 +1,13 @@
 package de.hbznrw.ygor.export
 
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import com.fasterxml.jackson.databind.node.ArrayNode
-import de.hbznrw.ygor.enums.*
+import de.hbznrw.ygor.bridges.ZdbBridge
+import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.export.structure.TitleStruct
-import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.normalizers.UrlNormalizer
 import ygor.Enrichment
 import ygor.Record
 import ygor.StatisticController
@@ -80,12 +81,12 @@ class Statistics {
             }
             else if(nameStatus?.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
                 tippTitleName[Statistics.COUNT_2]++
-                tippTitleName[Statistics.LIST_2] << "${nameField.getPrioValue()}"
+                tippTitleName[Statistics.LIST_2] << "${nameField?.getPrioValue()}"
                 // Statistics.addMetaData(record, 'tipp.title.name', nameStatus) TODO ?
             }
             else if(nameStatus?.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
                 tippTitleName[Statistics.COUNT_3]++
-                tippTitleName[Statistics.LIST_3] << "${nameField.getPrioValue()}"
+                tippTitleName[Statistics.LIST_3] << "${nameField?.getPrioValue()}"
                 // Statistics.addMetaData(record, 'tipp.title.name', nameStatus) TODO ?
             }
             else if(nameStatus?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
@@ -103,36 +104,39 @@ class Statistics {
         List<Integer> tippUrls = Statistics.getStorage()
         records.each{record ->
             def urlField = record.getMultiField("titleUrl")
-            String urlStatus = urlField.status
-
-            if(urlStatus.equals(Status.VALIDATOR_URL_IS_VALID.toString())) {
-                tippUrls[Statistics.COUNT_1]++
-            }
-            else if(urlStatus.equals(Status.VALIDATOR_URL_IS_INVALID.toString())) {
-                tippUrls[Statistics.COUNT_2]++
-                tippUrls[Statistics.LIST_2] << "${urlField.getPrioValue()}"
-                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
-            }
-            else if(urlStatus.equals(Status.VALIDATOR_URL_IS_NOT_ATOMIC.toString())) {
-                tippUrls[Statistics.COUNT_3]++
-                tippUrls[Statistics.LIST_3] << "${url.org}"
-                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
-            }
-            else if(urlStatus.equals(Status.VALIDATOR_URL_IS_MISSING.toString())) {
-                tippUrls[Statistics.COUNT_4]++
-                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
-            }
-            else if(urlStatus.equals(Status.VALIDATOR_TIPPURL_NOT_MATCHING.toString())) {
-                tippUrls[Statistics.COUNT_5]++
-                tippUrls[Statistics.LIST_5] << "${Normalizer.normString(urlField.getPrioValue())}"
-                // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
+            if (urlField) {
+                String urlStatus = urlField?.status
+                if (urlStatus){
+                    if (urlStatus.equals(Status.VALIDATOR_URL_IS_VALID.toString())) {
+                        tippUrls[Statistics.COUNT_1]++
+                    }
+                    else if (urlStatus.equals(Status.VALIDATOR_URL_IS_INVALID.toString())) {
+                        tippUrls[Statistics.COUNT_2]++
+                        tippUrls[Statistics.LIST_2] << "${urlField.getPrioValue()}"
+                        // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
+                    }
+                    else if (urlStatus.equals(Status.VALIDATOR_URL_IS_NOT_ATOMIC.toString())) {
+                        tippUrls[Statistics.COUNT_3]++
+                        tippUrls[Statistics.LIST_3] << "${url.org}"
+                        // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
+                    }
+                    else if (urlStatus.equals(Status.VALIDATOR_URL_IS_MISSING.toString())) {
+                        tippUrls[Statistics.COUNT_4]++
+                        // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
+                    }
+                    else if (urlStatus.equals(Status.VALIDATOR_TIPPURL_NOT_MATCHING.toString())) {
+                        tippUrls[Statistics.COUNT_5]++
+                        tippUrls[Statistics.LIST_5] << "${UrlNormalizer.normURL(urlField.getPrioValue(), false)}"
+                        // Statistics.addMetaData(record, 'tipp.url', url) TODO ?
+                    }
+                }
             }
         }
         Statistics.format("URL IS VALID",      tippUrls, Statistics.COUNT_1, Statistics.LIST_1, stats)
         Statistics.format("url is not valid",  tippUrls, Statistics.COUNT_2, Statistics.LIST_2, stats)
         Statistics.format("url is not atomic", tippUrls, Statistics.COUNT_3, Statistics.LIST_3, stats)
         Statistics.format("url is missing",    tippUrls, Statistics.COUNT_4, Statistics.LIST_4, stats)
-        Statistics.format("url is not matching against packageHeader.nominalPlattform",
+        Statistics.format("url is not matching against packageHeader.nominalPlatform",
             tippUrls, Statistics.COUNT_5, Statistics.LIST_5, stats)
     }
 
@@ -188,38 +192,40 @@ class Statistics {
 
         records.each{ record ->
             String coverageStatus = record.getValidation("coverage")
-            if (coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())){
-                coverages[Statistics.COUNT_1]++
-            }
-            else if(coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID.toString())){
-                coverages[Statistics.COUNT_2]++
-            }
-            else if(coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_UNDEF.toString())){
-                coverages[Statistics.COUNT_3]++
+            if (coverages) {
+                if (coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_VALID.toString())) {
+                    coverages[Statistics.COUNT_1]++
+                }
+                else if (coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID.toString())) {
+                    coverages[Statistics.COUNT_2]++
+                }
+                else if (coverageStatus.equals(Status.STRUCTVALIDATOR_COVERAGE_IS_UNDEF.toString())) {
+                    coverages[Statistics.COUNT_3]++
+                }
             }
 
             MultiField coverageStartDate = record.multiFields.get("dateFirstIssueOnline")
             MultiField coverageEndDate = record.multiFields.get("dateLastIssueOnline")
             // TODO iterate over multiple coverage entries
-            if (coverageStartDate.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) ||
-                    coverageEndDate.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
+            if (coverageStartDate?.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString()) ||
+                    coverageEndDate?.status.equals(Status.VALIDATOR_DATE_IS_VALID.toString())){
                 covDates[Statistics.COUNT_1]++
             }
-            if (coverageStartDate.status.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
+            if (coverageStartDate?.status.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                 covDates[Statistics.COUNT_2]++
                 covDates[Statistics.LIST_2] << "${coverageStartDate.getPrioValue()}"
                 // Statistics.addMetaData(multiField, 'tipp.coverage.startDate', sd) TODO?
             }
-            else if(coverageStartDate.status.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+            else if(coverageStartDate?.status.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
                 covDates[Statistics.COUNT_3]++
                 // Statistics.addMetaData(multiField, 'tipp.coverage.startDate', sd) TODO?
             }
-            if (coverageEndDate.status.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
+            if (coverageEndDate?.status.equals(Status.VALIDATOR_DATE_IS_INVALID.toString())){
                 covDates[Statistics.COUNT_2]++
                 covDates[Statistics.LIST_2] << "${coverageEndDate.getPrioValue()}"
                 // Statistics.addMetaData(multiField, 'tipp.coverage.endDate', sd) TODO?
             }
-            else if(coverageEndDate.status.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
+            else if(coverageEndDate?.status.equals(Status.VALIDATOR_DATE_IS_MISSING.toString())){
                 covDates[Statistics.COUNT_3]++
                 // Statistics.addMetaData(multiField, 'tipp.coverage.endDate', ed) TODO?
             }
@@ -241,37 +247,41 @@ class Statistics {
         // TODO: iterate over publisher history entries
         records.each{ record ->
             MultiField ph = record.multiFields.get("publisherHistory")
-            if(ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID.toString())){
-                pubStruct[Statistics.COUNT_1]++
-            }
-            else if(ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID.toString())){
-                pubStruct[Statistics.COUNT_2]++
-            }
-            else if(ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF.toString())){
-                pubStruct[Statistics.COUNT_3]++
+            if (ph) {
+                if (ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID.toString())) {
+                    pubStruct[Statistics.COUNT_1]++
+                }
+                else if (ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_INVALID.toString())) {
+                    pubStruct[Statistics.COUNT_2]++
+                }
+                else if (ph.status.equals(Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF.toString())) {
+                    pubStruct[Statistics.COUNT_3]++
+                }
             }
             MultiField phName = record.multiFields.get("publisherName")
-            if(phName?.status.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
-                pubHistName[Statistics.COUNT_1]++
-            }
-            if(phName?.status.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
-                pubHistName[Statistics.COUNT_2]++
-                pubHistName[Statistics.LIST_2] << "${phName.getPrioValue()}"
-                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
-            }
-            else if(phName?.status.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
-                pubHistName[Statistics.COUNT_3]++
-                pubHistName[Statistics.LIST_3] << "${phName.getPrioValue()}"
-                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
-            }
-            else if(phName?.status.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
-                pubHistName[Statistics.COUNT_4]++
-                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
-            }
-            else if(phName?.status.equals(Status.VALIDATOR_PUBLISHER_NOT_MATCHING.toString())) {
-                pubHistName[Statistics.COUNT_5]++
-                pubHistName[Statistics.LIST_5] << "${phName.getPrioValue()}"
-                // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+            if (phName) {
+                if (phName?.status.equals(Status.VALIDATOR_STRING_IS_VALID.toString())) {
+                    pubHistName[Statistics.COUNT_1]++
+                }
+                if (phName?.status.equals(Status.VALIDATOR_STRING_IS_INVALID.toString())) {
+                    pubHistName[Statistics.COUNT_2]++
+                    pubHistName[Statistics.LIST_2] << "${phName.getPrioValue()}"
+                    // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+                }
+                else if (phName?.status.equals(Status.VALIDATOR_STRING_IS_NOT_ATOMIC.toString())) {
+                    pubHistName[Statistics.COUNT_3]++
+                    pubHistName[Statistics.LIST_3] << "${phName.getPrioValue()}"
+                    // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+                }
+                else if (phName?.status.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
+                    pubHistName[Statistics.COUNT_4]++
+                    // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+                }
+                else if (phName?.status.equals(Status.VALIDATOR_PUBLISHER_NOT_MATCHING.toString())) {
+                    pubHistName[Statistics.COUNT_5]++
+                    pubHistName[Statistics.LIST_5] << "${phName.getPrioValue()}"
+                    // Statistics.addMetaData(record, 'title.publisher_history.name', phName) TODO?
+                }
             }
         }
         stats.get("titles").set("publisher_history", new ObjectNode(NODE_FACTORY))
@@ -339,14 +349,16 @@ class Statistics {
         records.each{ record ->
             // TODO iterate over history events
             MultiField historyEvent = record.multiFields.get("historyEvents")
-            if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())){
-                theHistoryEvents[Statistics.COUNT_1]++
-            }
-            else if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
-                theHistoryEvents[Statistics.COUNT_2]++
-            }
-            else if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF.toString())){
-                theHistoryEvents[Statistics.COUNT_3]++
+            if (historyEvent){
+                if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())){
+                    theHistoryEvents[Statistics.COUNT_1]++
+                }
+                else if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())){
+                    theHistoryEvents[Statistics.COUNT_2]++
+                }
+                else if(historyEvent.status.equals(Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF.toString())){
+                    theHistoryEvents[Statistics.COUNT_3]++
+                }
             }
         }
         stats.get("titles").set("historyEvents", new ObjectNode(NODE_FACTORY))
