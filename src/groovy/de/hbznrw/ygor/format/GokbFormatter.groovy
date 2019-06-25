@@ -23,7 +23,7 @@ class GokbFormatter implements YgorFormatter{
 
     @Override
     String formatId(String id) {
-        return StringNormalizer.normalizeString(id)
+        return StringNormalizer.normalizeString(id, false)
     }
 
     @Override

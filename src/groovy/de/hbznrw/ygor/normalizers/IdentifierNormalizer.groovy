@@ -1,12 +1,8 @@
 package de.hbznrw.ygor.normalizers
 
-import de.hbznrw.ygor.bridges.EzbBridge
-import de.hbznrw.ygor.bridges.ZdbBridge
-import de.hbznrw.ygor.export.structure.TitleStruct
+
 import groovy.util.logging.Log4j
-import ygor.identifier.DoiIdentifier
 import ygor.identifier.EissnIdentifier
-import ygor.identifier.PissnIdentifier
 
 import java.util.regex.Pattern
 
@@ -14,28 +10,30 @@ import java.util.regex.Pattern
 class IdentifierNormalizer {
 
 
-    static String normIdentifier(String str, Class type, String namespace){
+    static String normIdentifier(String str, String type, String namespace){
         if (!str){
             return str
         }
-        str = StringNormalizer.normalizeString(str)
+        str = StringNormalizer.normalizeString(str, false)
 
-        if (!type.equals(DoiIdentifier.class) && !type.equals(EissnIdentifier.class) && !type.equals(PissnIdentifier.class)){
+        if (!(type in ["titleId", "onlineIdentifier", "printIdentifier"])){
             str = str.replaceAll(/[\/-]+/, "")
         }
-        if (type.equals(EissnIdentifier.class) || type.equals(PissnIdentifier.class)){
+        if (type in ["eissn", "pissn"]){
             if (str.length() == 8){
                 str = new StringBuilder(str).insert(4, "-").toString()
             }
         }
-        else if (type.equals(ZdbBridge.IDENTIFIER)){
-            str = new StringBuilder(str).insert(Math.abs(str.length()-1).toInteger(), "-").toString();
+        else if (type.equals("zdbId")){
+            str = new StringBuilder(str.replaceAll("x", "X")).insert(Math.abs(str.length()-1).toInteger(), "-").toString()
         }
-        else if (type.equals(EzbBridge.IDENTIFIER)){
+        else if (type.equals("ezbId")){
             // TODO
         }
-        else if (type.equals(TitleStruct.DOI)){
-            str = Pattern.compile("^https?://(dx\\.)?doi.org/").matcher(str).replaceAll("")
+        else if (type.equals("titleId")){
+            if (namespace.equals("doi")) {
+                str = Pattern.compile("^https?://(dx\\.)?doi.org/").matcher(str).replaceAll("")
+            }
         }
         else if (type.equals("inID_" + namespace)){
             str = namespace ? str : ''

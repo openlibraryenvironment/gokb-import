@@ -15,8 +15,7 @@ class EditionNormalizer {
         // needs extra normalization, as it extracts a number from text
 
         MultiField editionNumber = record.getMultiField("editionNumber")
-        List<String> asNumbers = NumberNormalizer.extractNumbers(editionNumber.getPrioValue())
         // re-set first number for now
-        editionNumber.addField("kbart", "editionNumber", asNumbers.first())
+        editionNumber.addField("kbart", "editionNumber", editionNumber.getPrioValue())
     }
 }

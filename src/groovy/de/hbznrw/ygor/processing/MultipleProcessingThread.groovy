@@ -138,7 +138,7 @@ class MultipleProcessingThread extends Thread {
 
     private void normalize(){
         for (Record record : enrichment.dataContainer.records) {
-            record.normalize()
+            record.normalize(enrichment.dataContainer.info.namespace_title_id)
         }
     }
 

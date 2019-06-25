@@ -109,10 +109,10 @@ class Record {
     }
 
 
-    void normalize(){
+    void normalize(String namespace){
         EditionNormalizer.normalizeEditionNumber(this)
-        for (MultiField multiField in multiFields){
-            multiField.normalize()
+        for (MultiField multiField in multiFields.values()){
+            multiField.normalize(namespace)
         }
     }
 
@@ -130,7 +130,6 @@ class Record {
     void validate(String namespace){
         this.validateMultifields(namespace)
         RecordValidator.validateCoverage(this)
-        RecordValidator.validateEdition(this)
         RecordValidator.validateHistoryEvent(this)
         RecordValidator.validatePublisherHistory(this)
     }

@@ -44,7 +44,7 @@ class NormalizerSpec extends Specification {
             println "${raw} -> ${result}"
         
         then:
-            StringNormalizer.normalizeString(raw) == result
+            StringNormalizer.normalizeString(raw, false) == result
         
         where:
             raw                                     | result
@@ -79,7 +79,7 @@ class NormalizerSpec extends Specification {
             println "${raw} -> ${result}"
         
         then:
-            StringNormalizer.normalizeString(raw) == result
+            StringNormalizer.normalizeString(raw, false) == result
         
         where:
             raw                                     | result

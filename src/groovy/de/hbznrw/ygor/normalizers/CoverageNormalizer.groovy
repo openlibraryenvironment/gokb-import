@@ -15,7 +15,7 @@ class CoverageNormalizer {
      * @return
      */
     static String normalizeCoverageVolume(String str, String dateType){
-        str = StringNormalizer.normalizeString(str)
+        str = StringNormalizer.normalizeString(str, false)
 
         if (str){
             if (str.contains("-")){

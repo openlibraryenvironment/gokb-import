@@ -66,8 +66,8 @@ class MultiField {
     }
 
 
-    void normalize(){
-        normalized = CommonNormalizer.normalize(getPrioValue(), type)
+    void normalize(String namespace){
+        normalized = CommonNormalizer.normalize(this, type, namespace)
     }
 
 

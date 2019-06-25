@@ -12,7 +12,7 @@ class DateNormalizer {
         if (!str){
             return str
         }
-        str = StringNormalizer.normalizeString(str)
+        str = StringNormalizer.normalizeString(str, false)
 
         // Take only start part or end part of "01.01.2000-31.12.2000"
         if (str.contains("-")){

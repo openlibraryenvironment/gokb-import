@@ -162,7 +162,7 @@ class JsonToolkit {
     private static JsonNode getSubNode(ArrayList<String> keyPath, String value, String type, YgorFormatter formatter){
         assert keyPath.size() > 1
         if (keyPath.size() == 2){
-            return new TextNode(GokbExporter.no)
+            return new TextNode(value)
         }
         if (keyPath[2].equals(ARRAY)){
             return new ArrayNode(NODE_FACTORY)

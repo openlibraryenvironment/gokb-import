@@ -1,18 +1,22 @@
 package de.hbznrw.ygor.normalizers
 
+import ygor.field.MultiField
+
 class CommonNormalizer {
 
 
-    static String normalize(String value, String type){
+    static String normalize(MultiField field, String type, String namespace){
+        String value = field.getPrioValue()
         switch (type) {
             case "String":
-                return StringNormalizer.normalizeString(value)
+                return StringNormalizer.normalizeString(value, false)
             case "Number":
                 return NumberNormalizer.normalizeInteger(value)
             case "ID":
-                return IdentifierNormalizer.normIdentifier(value)
+                // String subType = field. TODO
+                return IdentifierNormalizer.normIdentifier(value, field.keyMapping.ygorKey, namespace)
             case "URL":
-                return UrlNormalizer.normURL(value)
+                return UrlNormalizer.normURL(value, false)
             case DateNormalizer.START_DATE:
                 return DateNormalizer.normalizeDate(value, DateNormalizer.START_DATE)
             case DateNormalizer.END_DATE:
@@ -20,7 +24,7 @@ class CommonNormalizer {
             case "ISBN":
                 // return validateISBN(value) // TODO
             default:
-                return StringNormalizer.normalizeString(value)
+                return StringNormalizer.normalizeString(value, false)
         }
     }
 
