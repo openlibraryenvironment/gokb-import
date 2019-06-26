@@ -223,32 +223,6 @@
     "type" : "String"
   },
   {
-    "ygor" : "historyEventName",
-    "in" : {
-      "kbart" : "",
-      "zdb" : "039E:h",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.name"]
-    },
-    "order" : ["zdb"],
-    "type" : "String"
-  },
-  {
-    "ygor" : "historyEventPlace",
-    "in" : {
-      "kbart" : "",
-      "zdb" : "039E:6",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.place"]
-    },
-    "order" : ["zdb"],
-    "type" : "String"
-  },
-  {
     "ygor" : "historyEventDate",
     "in" : {
       "kbart" : "",
@@ -260,6 +234,71 @@
     },
     "order" : ["zdb"],
     "type" : "Date"
+  },
+  {
+    "ygor" : "historyEventIdentifier",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:0",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.zdbId"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventRelationType",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:b",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.relationType"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventPredecessor",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:f",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.predecessor"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventPredecessorOrSuccessor",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:z",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.predecessorOrSuccessor"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventSuccessor",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:s",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.successor"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
   },
   {
     "ygor" : "imprint",
