@@ -10,6 +10,7 @@ import de.hbznrw.ygor.tools.*
 import com.fasterxml.jackson.databind.node.ObjectNode
 import groovy.json.JsonOutput
 import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.runtime.InvokerInvocationException
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -180,7 +181,13 @@ class Enrichment {
 
 
     static Enrichment fromFile(def file){
-        String json = file.getInputStream()?.text
+        String json
+        try {
+            json = file.getInputStream()?.text
+        }
+        catch (MissingMethodException | InvokerInvocationException e){
+            json = file.newInputStream()?.text
+        }
         JsonNode rootNode = JSON_OBJECT_MAPPER.readTree(json)
         Enrichment enrichment = Enrichment.fromRawJson(rootNode)
         enrichment.setTitleMediumMapping()
