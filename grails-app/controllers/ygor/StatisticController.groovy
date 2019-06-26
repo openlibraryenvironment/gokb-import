@@ -18,7 +18,7 @@ class StatisticController {
     }
     
     def show() {
-        def sthash = (String) request.parameterMap['sthash'][0]
+        String sthash = (String) request.parameterMap['sthash'][0]
         def json = {}
         Set<Map<String, String>> invalidRecords = new HashSet<>()
         Set<Map<String, String>> validRecords = new HashSet<>()
@@ -29,24 +29,23 @@ class StatisticController {
         log.info('reading file: ' + sthash)
         
         try {
-            new File(grailsApplication.config.ygor.uploadLocation).eachDir() { dir ->
-                dir.eachFile() { file ->
-                    if(file.getName() == sthash){
-                        Enrichment enrichment = Enrichment.fromFile(file)
-                        for (Record record in enrichment.dataContainer.records){
-                            if (record.isValid()){
-                                validRecords.add(record.asMultiFieldMap())
-                            }
-                            else {
-                                invalidRecords.add(record.asMultiFieldMap())
-                            }
-                        }
-                        json = JsonToolkit.parseFileToJson(file.getAbsolutePath())
-                        ygorVersion = json.getAt("ygorVersion")
-                        date = json.getAt("date")
-                        filename = json.getAt("originalFileName")
+            Enrichment enrichment = getEnrichmentFromFile(sthash)
+            if (enrichment){
+                for (Record record in enrichment.dataContainer.records){
+                    if (record.isValid()){
+                        validRecords.add(record.asMultiFieldMap())
+                    }
+                    else {
+                        invalidRecords.add(record.asMultiFieldMap())
                     }
                 }
+                json = JsonToolkit.parseFileToJson(file.getAbsolutePath())
+                ygorVersion = json.getAt("ygorVersion")
+                date = json.getAt("date")
+                filename = json.getAt("originalFileName")
+            }
+            else{
+                throw new EmptyStackException()
             }
         }
         catch(Exception e){
@@ -67,6 +66,27 @@ class StatisticController {
                 validRecords:   validRecords
             ]
         )
+    }
+
+
+    def edit(){
+        Enrichment enrichment = getEnrichmentFromFile((String) request.parameterMap['sthash'][0])
+        Record record = enrichment.dataContainer.getRecord(params.id)
+        [record: record]
+    }
+
+
+    private Enrichment getEnrichmentFromFile(String sthash){
+        Enrichment enrichment = null
+        File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
+        uploadLocation.eachDir() { dir ->
+            dir.eachFile() { file ->
+                if (file.getName() == sthash) {
+                    enrichment = Enrichment.fromFile(file)
+                }
+            }
+        }
+        return enrichment
     }
 
 

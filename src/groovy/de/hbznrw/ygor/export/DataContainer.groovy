@@ -36,10 +36,20 @@ class DataContainer {
     }
 
 
-    def putRecord(Record record){
+    def addRecord(Record record){
         if (record.zdbId || record.pissn || record .eissn){
             records.add(record)
         }
+    }
+
+
+    Record getRecord(String uid){
+        for (Record record in records){
+            if (uid.equals(record.uid)){
+                return record
+            }
+        }
+        return null
     }
 
 

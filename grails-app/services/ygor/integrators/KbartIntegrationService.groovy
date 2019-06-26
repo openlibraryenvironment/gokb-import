@@ -57,7 +57,7 @@ class KbartIntegrationService {
                 multiField.addField(MappingsContainer.KBART, key, value)
                 record.addMultiField(multiField)
             }
-            data.putRecord(record)
+            data.addRecord(record)
             item = reader.readItemData(null, null)
         }
     }
