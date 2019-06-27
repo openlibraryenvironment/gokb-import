@@ -9,7 +9,13 @@ class StatisticController {
     def grailsApplication
     
     static scope = "session"
-        
+    static FileFilter DIRECTORY_FILTER = new FileFilter() {
+        @Override
+        boolean accept(File file) {
+            return file.isDirectory();
+        }
+    }
+
     def index() {
         render(
             view:'index',
@@ -77,16 +83,15 @@ class StatisticController {
 
 
     private Enrichment getEnrichmentFromFile(String sthash){
-        Enrichment enrichment = null
         File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
-        uploadLocation.eachDir() { dir ->
-            dir.eachFile() { file ->
+        for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
+            for (def file in dir.listFiles()){
                 if (file.getName() == sthash) {
-                    enrichment = Enrichment.fromFile(file)
+                    return Enrichment.fromFile(file)
                 }
             }
         }
-        return enrichment
+        return null
     }
 
 
