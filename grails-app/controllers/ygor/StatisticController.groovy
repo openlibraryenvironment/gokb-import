@@ -1,6 +1,6 @@
 package ygor
 
-import de.hbznrw.ygor.tools.*
+
 import groovy.util.logging.Log4j
 
 @Log4j
@@ -25,7 +25,6 @@ class StatisticController {
     
     def show() {
         String sthash = (String) request.parameterMap['sthash'][0]
-        def json = {}
         Set<Map<String, String>> invalidRecords = new HashSet<>()
         Set<Map<String, String>> validRecords = new HashSet<>()
         String ygorVersion
@@ -45,10 +44,9 @@ class StatisticController {
                         invalidRecords.add(record.asMultiFieldMap())
                     }
                 }
-                json = JsonToolkit.parseFileToJson(file.getAbsolutePath())
-                ygorVersion = json.getAt("ygorVersion")
-                date = json.getAt("date")
-                filename = json.getAt("originalFileName")
+                ygorVersion = enrichment.ygorVersion
+                date = enrichment.date
+                filename = enrichment.originName
             }
             else{
                 throw new EmptyStackException()
@@ -62,7 +60,6 @@ class StatisticController {
         render(
             view:'show',
             model:[
-                json:        json,
                 sthash:      sthash,
                 currentView: 'statistic',
                 ygorVersion: ygorVersion,
@@ -93,7 +90,6 @@ class StatisticController {
         }
         return null
     }
-
 
     static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
     static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
