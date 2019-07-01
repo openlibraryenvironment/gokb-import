@@ -82,6 +82,7 @@ class MultipleProcessingThread extends Thread {
         enrichment.setStatus(Enrichment.ProcessingState.WORKING)
         log.info('Starting MultipleProcessingThread run...')
         try {
+            // TODO: make sure, Kbart file is processed first
             apiCalls.each{ call ->
                 switch(call) {
                     case KbartReader.IDENTIFIER:

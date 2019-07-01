@@ -20,10 +20,12 @@ class EzbIntegrationService extends ExternalIntegrationService{
         String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
         // owner.setProgressTotal(1) TODO: value?
         for (Record record in dataContainer.records){
-            record.ezbIntegrationDate = processStart
-            Map<String, String> ezbMatch = getBestExistingMatch(owner, record)
-            if (!ezbMatch.isEmpty()){
-                integrateWithExisting(record, ezbMatch, mappingsContainer, MappingsContainer.EZB)
+            if (isApiCallMedium(record)){
+                record.ezbIntegrationDate = processStart
+                Map<String, String> ezbMatch = getBestExistingMatch(owner, record)
+                if (!ezbMatch.isEmpty()) {
+                    integrateWithExisting(record, ezbMatch, mappingsContainer, MappingsContainer.EZB)
+                }
             }
         }
     }
