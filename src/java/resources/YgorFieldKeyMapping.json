@@ -305,10 +305,7 @@
     "out" : {
       "gokb" : ["$TITLE.imprint"]
     },
-    "type" : "String",
-    "value" : {
-      "fixed" : ""
-    }
+    "type" : "String"
   },
   {
     "ygor" : "issuer",
