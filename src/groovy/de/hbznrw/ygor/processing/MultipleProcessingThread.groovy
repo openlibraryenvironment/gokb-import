@@ -122,13 +122,9 @@ class MultipleProcessingThread extends Thread {
 
         processUiSettings()                              // set "medium"
 
-        GokbExporter.extractTitles(enrichment)           // to enrichment.dataContainer.titles
-        GokbExporter.extractTipps(enrichment)            // to enrichment.dataContainer.tipps
-
         Statistics.getRecordsStatisticsBeforeParsing(enrichment)
                                                          // to enrichment.stats
 
-        GokbExporter.removeEmptyIdentifiers(enrichment)  // e. g. empty identifiers, incomplete publisher_history, ...
         GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
 
         enrichment.saveResult()

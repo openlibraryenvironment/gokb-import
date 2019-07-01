@@ -1,6 +1,5 @@
 package ygor
 
-import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.validators.Validator
 import de.hbznrw.ygor.export.structure.Pod
 
@@ -36,7 +35,7 @@ class EnrichmentService {
 
 
     File getFile(Enrichment enrichment, Enrichment.FileType type) {
-        enrichment.getFile(type)
+        enrichment.getAsFile(type)
     }
 
 

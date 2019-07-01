@@ -12,7 +12,7 @@ class StatisticController {
     static FileFilter DIRECTORY_FILTER = new FileFilter() {
         @Override
         boolean accept(File file) {
-            return file.isDirectory();
+            return file.isDirectory()
         }
     }
 
@@ -60,11 +60,11 @@ class StatisticController {
         render(
             view:'show',
             model:[
-                sthash:      sthash,
-                currentView: 'statistic',
-                ygorVersion: ygorVersion,
-                date:        date,
-                filename:    filename,
+                sthash:         sthash,
+                currentView:    'statistic',
+                ygorVersion:    ygorVersion,
+                date:           date,
+                filename:       filename,
                 invalidRecords: invalidRecords,
                 validRecords:   validRecords
             ]

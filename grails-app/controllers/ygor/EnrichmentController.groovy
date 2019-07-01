@@ -126,7 +126,6 @@ class EnrichmentController {
         GokbExporter.extractTitles(enrichment)
         GokbExporter.extractTipps(enrichment)
         Statistics.getRecordsStatisticsBeforeParsing(enrichment)
-        GokbExporter.removeEmptyIdentifiers(enrichment)
         enrichment.saveResult()
         // GokbExporter.extractPackageHeader(enrichment)
 

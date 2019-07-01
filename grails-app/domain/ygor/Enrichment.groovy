@@ -119,28 +119,15 @@ class Enrichment {
         dataContainer.validateRecords()
     }
 
-    File getFile(FileType type) {
-        this.validateContainer()
-        switch(type) {
-            case FileType.ORIGIN:
-                return new File(originPathName)
-                break
-            case FileType.JSON_PACKAGE_ONLY:
-                ObjectNode result = GokbExporter.extractPackage(this)
-                def file = new File(originPathName)
-                file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
-                return file
-                break
-            case FileType.JSON_TITLES_ONLY:
-                ArrayNode result = GokbExporter.extractTitles(this)
-                def file = new File(originPathName)
-                file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
-                return file
-                break
-            case FileType.JSON_OO_RAW:
-                return new File(resultPathName)
-                break
+
+    File getAsFile(FileType type){
+        // by now, the only export file type is for GOKb, so call GOKbExporter
+
+        if (type.equals(FileType.JSON_OO_RAW)){
+            return GokbExporter.getFile(this, type, resultPathName)
         }
+        // else
+        return GokbExporter.getFile(this, type, originPathName)
     }
 
 

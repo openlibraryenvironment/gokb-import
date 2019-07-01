@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.export
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -8,12 +10,40 @@ import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import ygor.Enrichment
+import ygor.Enrichment.FileType
 
 @Log4j
 class GokbExporter {
 
-    static GokbFormatter formatter = new GokbFormatter()
+    static ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper()
+    static GokbFormatter FORMATTER = new GokbFormatter()
     static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
+
+    static File getFile(Enrichment enrichment, FileType type, String path){
+        enrichment.validateContainer()
+        switch(type){
+            case FileType.ORIGIN:
+                return new File(path)
+                break
+            case FileType.JSON_PACKAGE_ONLY:
+                ObjectNode result = GokbExporter.extractPackage(enrichment)
+                def file = new File(path)
+                file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+                return file
+                break
+            case FileType.JSON_TITLES_ONLY:
+                ArrayNode result = GokbExporter.extractTitles(enrichment)
+                def file = new File(path)
+                file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+                return file
+                break
+            case FileType.JSON_OO_RAW:
+                return new File(path)
+                break
+        }
+        return null
+    }
+
 
     static ObjectNode extractPackage(Enrichment enrichment){
         ObjectNode pkg = new ObjectNode(NODE_FACTORY)
@@ -25,43 +55,50 @@ class GokbExporter {
     }
 
 
-    static ArrayNode extractTitles(Enrichment enrichment) {
+    static ArrayNode extractTitles(Enrichment enrichment){
         log.debug("extracting titles ...")
         ArrayNode titles = new ArrayNode(NODE_FACTORY)
         for (def record in enrichment.dataContainer.records){
-            titles.add(JsonToolkit.getTitleJsonFromRecord("gokb", record, formatter))
+            titles.add(JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER))
         }
-        enrichment.dataContainer.titles = titles
+        titles = removeEmptyFields(titles)
+        enrichment.dataContainer.titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
         log.debug("extracting titles finished")
         titles
     }
 
 
-    static ArrayNode extractTipps(Enrichment enrichment) {
+    static ArrayNode extractTipps(Enrichment enrichment){
         log.debug("extracting tipps ...")
         ArrayNode tipps = new ArrayNode(NODE_FACTORY)
         for (def record in enrichment.dataContainer.records){
-            tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, formatter))
+            tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
         }
-        enrichment.dataContainer.tipps = tipps
+        tipps = removeEmptyFields(tipps)
+        enrichment.dataContainer.tipps = removeEmptyIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY)
         log.debug("extracting tipps finished")
         tipps
     }
 
 
-    static void removeEmptyIdentifiers(Enrichment enrichment){
+    static ArrayNode removeEmptyIdentifiers(ArrayNode arrayNode, FileType type){
         log.debug("removing invalid fields ...")
-        for (def title in enrichment.dataContainer.titles){
-            removeEmptyIds(title.identifiers)
+        if (type.equals(FileType.JSON_TITLES_ONLY)){
+            for (def title in arrayNode.elements()){
+                removeEmptyIds(title.identifiers)
+            }
         }
-        for (def tipp in enrichment.dataContainer.pkg.tipps){
-            removeEmptyIds(tipp.title.identifiers)
+        else if (type.equals(FileType.JSON_PACKAGE_ONLY)){
+            for (def tipp in arrayNode.elements()){
+                removeEmptyIds(tipp.title.identifiers)
+            }
         }
         log.debug("removing invalid fields finished")
+        arrayNode
     }
 
 
-    static ObjectNode extractPackageHeader(Enrichment enrichment) {
+    static ObjectNode extractPackageHeader(Enrichment enrichment){
         // this currently parses the old package header
         // TODO: refactor
         log.debug("parsing package header ...")
@@ -108,11 +145,14 @@ class GokbExporter {
 
 
     static private void removeEmptyIds(ArrayNode identifiers){
-        def iter = identifiers.iterator()
         def count = 0
         def idsToBeRemoved = []
-        while (iter.hasNext()){
-            if (iter.next().value.toString() == "\"\""){
+        for (ObjectNode idNode in identifiers.elements()){
+            if (idNode.elements().size() == 1 && idNode.get("type") != null){
+                // identifier has "type" only ==> remove
+                idsToBeRemoved << count
+            }
+            else if (idNode.elements().size() > 1 && idNode.get("value").asText().trim() == "\"\""){
                 idsToBeRemoved << count
             }
             count++
@@ -120,5 +160,44 @@ class GokbExporter {
         for (int i=idsToBeRemoved.size()-1; i>-1; i--){
             identifiers.remove(idsToBeRemoved[i])
         }
+    }
+
+
+    // adapted from: https://technicaldifficulties.io/2018/04/26/using-jackson-to-remove-empty-json-fields/ -thx Stacie!
+    static ObjectNode removeEmptyFields(final ObjectNode jsonNode){
+        ObjectNode result = new ObjectMapper().createObjectNode()
+        for (def entry in jsonNode.fields()){
+            String key = entry.getKey()
+            JsonNode value = entry.getValue()
+            if (value instanceof ObjectNode){
+                Map<String, ObjectNode> map = new HashMap<String, ObjectNode>()
+                map.put(key, removeEmptyFields((ObjectNode)value))
+                result.setAll(map)
+            }
+            else if (value instanceof ArrayNode){
+                result.set(key, removeEmptyFields((ArrayNode)value))
+            }
+            else if (value.asText() != null && !value.asText().isEmpty()){
+                result.set(key, value)
+            }
+        }
+        return result
+    }
+
+
+    static ArrayNode removeEmptyFields(ArrayNode array){
+        ArrayNode result = new ObjectMapper().createArrayNode()
+        for (JsonNode value in array.elements()){
+            if (value instanceof ArrayNode){
+                result.add(removeEmptyFields((ArrayNode)(value)))
+            }
+            else if (value instanceof ObjectNode){
+                result.add(removeEmptyFields((ObjectNode)(value)))
+            }
+            else if (value != null && !value.textValue().isEmpty()){
+                result.add(value)
+            }
+        }
+        return result
     }
 }
