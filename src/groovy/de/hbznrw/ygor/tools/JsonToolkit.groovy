@@ -1,63 +1,28 @@
 package de.hbznrw.ygor.tools
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.annotation.PropertyAccessor
+
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.*
-import de.hbznrw.ygor.export.DataContainer
-import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.format.YgorFormatter
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 import ygor.Record
 import ygor.field.MultiField
 
 import java.lang.reflect.Method
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class JsonToolkit {
 
     private static ObjectMapper MAPPER = new ObjectMapper()
     private static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
-    private static JsonFactory FACTORY = new JsonFactory()
     final private static String ARRAY = "\$ARRAY"
     final private static String COUNT = "\$COUNT"
+    final private static Pattern FIXED_PATTERN = Pattern.compile("\\{fixed=(.*)}")
 
-
-    static Object parseFileToJson(String filename) {
-        
-        def file        = new File(filename)
-        def jsonSlurper = new JsonSlurper()
-        def json        = jsonSlurper.parseText(file.getText())
-        
-        json
-    }
-    
-    static String parseDataToJson(DataContainer dc) {
-        
-        def writer      = new StringWriter()
-        def jsonBuilder = new groovy.json.StreamingJsonBuilder(writer)
-
-        // dc.titles = removeMetaClass(dc.titles)
-
-        ObjectMapper mapper = new ObjectMapper()
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
-        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-        String jsonString = mapper.writeValueAsString(dc.titles)
-        JsonOutput.prettyPrint(jsonString)
-
-        jsonBuilder {
-            'titles'  dc.titles
-            'tipps'   dc.tipps
-        }
-        
-        JsonOutput.prettyPrint(writer.toString())
-    }
 
     private static def removeMetaClass(def dataStructure){
         System.out.println(dataStructure?.class)
@@ -162,6 +127,10 @@ class JsonToolkit {
     private static JsonNode getSubNode(ArrayList<String> keyPath, String value, String type, YgorFormatter formatter){
         assert keyPath.size() > 1
         if (keyPath.size() == 2){
+            Matcher fixedMatcher = FIXED_PATTERN.matcher(value)
+            if (fixedMatcher.matches()){
+                value = fixedMatcher.group(1)
+            }
             return new TextNode(value)
         }
         if (keyPath[2].equals(ARRAY)){
