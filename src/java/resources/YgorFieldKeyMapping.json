@@ -230,7 +230,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.date"]
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.date"]
     },
     "order" : ["zdb"],
     "type" : "Date"
@@ -243,7 +243,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.zdbId"]
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.zdbId"]
     },
     "order" : ["zdb"],
     "type" : "String"
@@ -256,7 +256,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.relationType"]
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.relationType"]
     },
     "order" : ["zdb"],
     "type" : "String"
@@ -269,7 +269,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.predecessor"]
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessor"]
     },
     "order" : ["zdb"],
     "type" : "String"
@@ -282,7 +282,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.predecessorOrSuccessor"]
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessorOrSuccessor"]
     },
     "order" : ["zdb"],
     "type" : "String"
@@ -295,7 +295,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.successor"]
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.successor"]
     },
     "order" : ["zdb"],
     "type" : "String"
@@ -665,7 +665,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.endDate"]
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.endDate"]
     },
     "order" : ["zdb"],
     "type" : "EndDate"
@@ -678,7 +678,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.startDate"]
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.startDate"]
     },
     "order" : ["zdb"],
     "type" : "StartDate"
@@ -691,7 +691,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.name"]
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.name"]
     },
     "order" : ["zdb", "kbart"],
     "type" : "String"
