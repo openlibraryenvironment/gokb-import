@@ -177,8 +177,13 @@ class GokbExporter {
             else if (value instanceof ArrayNode){
                 result.set(key, removeEmptyFields((ArrayNode)value))
             }
-            else if (value.asText() != null && !value.asText().isEmpty()){
-                result.set(key, value)
+            else if (value.asText() != null){
+                if (value.asText().equals(" ")){
+                    result.put(key, "")
+                }
+                else if (!value.asText().isEmpty()){
+                    result.set(key, value)
+                }
             }
         }
         return result
@@ -194,8 +199,13 @@ class GokbExporter {
             else if (value instanceof ObjectNode){
                 result.add(removeEmptyFields((ObjectNode)(value)))
             }
-            else if (value != null && !value.textValue().isEmpty()){
-                result.add(value)
+            else if (value.asText() != null){
+                if (value.asText().equals(" ")){
+                    result.add("")
+                }
+                else if (!value.asText().isEmpty()){
+                    result.add(value)
+                }
             }
         }
         return result

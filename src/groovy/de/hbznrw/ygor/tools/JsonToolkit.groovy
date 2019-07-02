@@ -76,7 +76,7 @@ class JsonToolkit {
                 def value = multiField.getPrioValue()
                 ArrayList concatKey = Arrays.asList(typeFilter)
                 concatKey.addAll(multiField.fields.values().iterator().next().key)
-                upsertIntoJsonNode(result, concatKey, value, multiField.type, formatter)
+                upsertIntoJsonNode(result, concatKey, value, multiField.type, formatter, false)
             }
             else{
                 Set qualifiedKeys = multiField.keyMapping."${target}"
@@ -85,7 +85,8 @@ class JsonToolkit {
                     if (splitKey.size() > 1 && splitKey[0].equals(typeFilter)){
                         // JsonNode node = getJsonNodeFromSplitString(ARRAY, splittedKey[1..splittedKey.size()-1], multiField.getPrioValue())
                         def value = multiField.getPrioValue()
-                        upsertIntoJsonNode(result, splitKey, value, multiField.type, formatter)
+                        upsertIntoJsonNode(result, splitKey, value, multiField.type, formatter,
+                                multiField.keyMapping.keepIfEmpty)
                     }
                 }
             }
@@ -95,7 +96,7 @@ class JsonToolkit {
 
 
     private static void upsertIntoJsonNode(JsonNode root, ArrayList<String> keyPath, String value, String type,
-                                           YgorFormatter formatter){
+                                           YgorFormatter formatter, boolean keepIfEmpty){
         assert keyPath.size() > 1
         if (keyPath.size() == 2 && keyPath[1].startsWith("(")){
             ObjectNode multiLeaf = buildMultiLeaf(keyPath, value)
@@ -103,33 +104,36 @@ class JsonToolkit {
         }
         else{
             if (keyPath.get(1).equals(ARRAY)){
-                upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, formatter)
+                upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
             }
             else if (keyPath.get(1).equals(COUNT)){
                 // TODO until now, only 1 element in array is supported ==> implement count
                 if (root.size() == 0){
                     root.add(new ObjectNode(NODE_FACTORY))
                 }
-                upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, formatter)
+                upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
             }
             else {
-                JsonNode subNode = getSubNode(keyPath, value, type, formatter)
+                JsonNode subNode = getSubNode(keyPath, value, keepIfEmpty)
                 subNode = putAddNode(keyPath, root, subNode)
                 if (keyPath.size() > 2) {
                     // root is not final leaf --> iterate
-                    upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value, type, formatter)
+                    upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
                 }
             }
         }
     }
 
 
-    private static JsonNode getSubNode(ArrayList<String> keyPath, String value, String type, YgorFormatter formatter){
+    private static JsonNode getSubNode(ArrayList<String> keyPath, String value, boolean keepIfEmpty){
         assert keyPath.size() > 1
         if (keyPath.size() == 2){
             Matcher fixedMatcher = FIXED_PATTERN.matcher(value)
             if (fixedMatcher.matches()){
                 value = fixedMatcher.group(1)
+            }
+            if (value.equals("") && keepIfEmpty){
+                value = " " // this is obviously a hack without any harm. Correct implementation seems expensive.
             }
             return new TextNode(value)
         }

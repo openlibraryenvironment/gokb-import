@@ -16,6 +16,7 @@ class FieldKeyMapping {
     Set gokb
     String val = ""
     boolean valIsFix
+    boolean keepIfEmpty
     List sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
 
     static constraints = {
@@ -101,6 +102,9 @@ class FieldKeyMapping {
                     else{
                         val = mapping.value
                     }
+                    break
+                case "keepIfEmpty":
+                    keepIfEmpty = Boolean.valueOf(mapping.value)
                     break
                 case "default":
                     val = mapping.value
