@@ -2,12 +2,11 @@ package ygor
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
+import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.MultipleProcessingThread
-import de.hbznrw.ygor.export.DataContainer
-import de.hbznrw.ygor.tools.*
-import com.fasterxml.jackson.databind.node.ObjectNode
+import de.hbznrw.ygor.tools.FileToolkit
+import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.json.JsonOutput
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.InvokerInvocationException

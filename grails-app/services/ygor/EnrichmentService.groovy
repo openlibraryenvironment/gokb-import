@@ -41,7 +41,7 @@ class EnrichmentService {
 
     void deleteFileAndFormat(Enrichment enrichment) {
         if(enrichment) {
-            def origin = enrichment.getFile(Enrichment.FileType.ORIGIN)
+            def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN)
             if(origin)
                 origin.delete()
             getSessionEnrichments()?.remove("${enrichment.originHash}")
@@ -133,7 +133,7 @@ class EnrichmentService {
 
     List sendFile(Enrichment enrichment, Object fileType, def user, def pwd) {
         def result = []
-        def json = enrichment.getFile(fileType)
+        def json = enrichment.getAsFile(fileType)
         result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
         result
     }
