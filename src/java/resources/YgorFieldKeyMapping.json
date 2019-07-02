@@ -665,7 +665,8 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.endDate"]
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.endDate"],
+      "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
     "type" : "EndDate"
@@ -678,7 +679,8 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.startDate"]
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.startDate"],
+      "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
     "type" : "StartDate"
