@@ -37,7 +37,7 @@ class Enrichment {
 
     // frontend api stuff
     String apiMessage
-    float  apiProgress = 0.0
+    double apiProgress = 0.0
 
     String originName
     String originHash
@@ -86,11 +86,11 @@ class Enrichment {
         thread.start()
     }
 
-    def setProgress(float progress) {
+    def setProgress(double progress) {
         this.apiProgress = progress
     }
 
-    float getProgress() {
+    double getProgress() {
         apiProgress
     }
 

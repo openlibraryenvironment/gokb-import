@@ -22,12 +22,9 @@ class KbartIntegrationService {
 
     def integrate(MultipleProcessingThread owner, DataContainer data,
                   KbartReaderConfiguration kbartReaderConfiguration) {
-
-        owner.setProgressTotal(1) // TODO
         KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
         List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.pissnKeyMapping, owner.eissnKeyMapping]
         List<AbstractIdentifier> identifiers
-
         Map<String, String> item = reader.readItemData(null, null)
         while (item != null) {
             // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
@@ -58,6 +55,7 @@ class KbartIntegrationService {
                 record.addMultiField(multiField)
             }
             data.addRecord(record)
+            owner.increaseProgress()
             item = reader.readItemData(null, null)
         }
     }

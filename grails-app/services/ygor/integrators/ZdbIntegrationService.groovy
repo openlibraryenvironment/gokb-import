@@ -19,7 +19,6 @@ class ZdbIntegrationService extends ExternalIntegrationService{
 
     def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
         String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
-        // owner.setProgressTotal(1) TODO: value?
         for (Record record in dataContainer.records){
             if (isApiCallMedium(record)){
                 record.zdbIntegrationDate = processStart
@@ -28,6 +27,7 @@ class ZdbIntegrationService extends ExternalIntegrationService{
                     integrateWithExisting(record, zdbMatch, mappingsContainer, MappingsContainer.ZDB)
                 }
             }
+            owner.increaseProgress()
         }
     }
 

@@ -46,14 +46,15 @@ class MultipleProcessingThread extends Thread {
     private platform
     private kbartFile
 
-    private int progressTotal   = 0
-    private int progressCurrent
+    private int progressTotal = 0
+    private double progressCurrent = 0.0
+    private double progressIncrement
 
     private KbartReader kbartReader
     private ZdbReader zdbReader
     private EzbReader ezbReader
 
-    MultipleProcessingThread(Enrichment en, HashMap options) {
+    MultipleProcessingThread(Enrichment en, HashMap options){
         enrichment = en
         apiCalls  = options.get('options')
         delimiter = options.get('delimiter')
@@ -74,9 +75,9 @@ class MultipleProcessingThread extends Thread {
     }
 
     @Override
-    void run() {
+    void run(){
         isRunning = true
-        progressCurrent = 0
+        progressCurrent = 0.0
         if(null == enrichment.originPathName)
             System.exit(0)
         enrichment.setStatus(Enrichment.ProcessingState.WORKING)
@@ -84,11 +85,13 @@ class MultipleProcessingThread extends Thread {
         try {
             // TODO: make sure, Kbart file is processed first
             apiCalls.each{ call ->
-                switch(call) {
+                switch(call){
                     case KbartReader.IDENTIFIER:
                         KbartReaderConfiguration conf =
                                 new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
-                        new KbartIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer, conf)
+                        KbartIntegrationService kbartIntegrationService = new KbartIntegrationService(enrichment.mappingsContainer)
+                        calculateProgressIncrement()
+                        kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)
                         break
                     case EzbReader.IDENTIFIER:
                         new EzbIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer)
@@ -100,7 +103,7 @@ class MultipleProcessingThread extends Thread {
             }
             log.info('Done MultipleProcessingThread run.')
         }
-        catch(YgorProcessingException e) { // TODO Throw it in ...IntegrationService and / or ...Reader
+        catch(YgorProcessingException e){ // TODO Throw it in ...IntegrationService and / or ...Reader
             enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
             enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length() + 2))
             log.error(e.getMessage())
@@ -108,7 +111,7 @@ class MultipleProcessingThread extends Thread {
             log.info('Aborted MultipleProcessingThread run.')
             return
         }
-        catch(Exception e) {
+        catch(Exception e){
             enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
             log.error(e.getMessage())
             log.info('Aborted MultipleProcessingThread run.')
@@ -134,14 +137,14 @@ class MultipleProcessingThread extends Thread {
 
 
     private void normalize(){
-        for (Record record : enrichment.dataContainer.records) {
+        for (Record record : enrichment.dataContainer.records){
             record.normalize(enrichment.dataContainer.info.namespace_title_id)
         }
     }
 
 
     private void validate(){
-        for (Record record : enrichment.dataContainer.records) {
+        for (Record record : enrichment.dataContainer.records){
             record.validate(enrichment.dataContainer.info.namespace_title_id)
         }
     }
@@ -164,23 +167,53 @@ class MultipleProcessingThread extends Thread {
     }
 
 
-    void setProgressTotal(int i) {
-        progressTotal = i
+    private void calculateProgressIncrement(){
+        double lines = (double) (countLines(kbartFile)-1)
+        if (lines > 0){
+            progressIncrement = 100.0 / lines / (double) apiCalls.size()
+            // division by 3 for number of tasks (Kbart, ZDB, EZB)
+        }
+        else {
+            progressIncrement = 1 // dummy assignment
+        }
     }
 
 
-    void increaseProgress() {
-        progressCurrent++
-        enrichment.setProgress((progressCurrent / progressTotal) * 100)
+    private static int countLines(String filename) throws IOException {
+        InputStream is = new BufferedInputStream(new FileInputStream(filename))
+        try {
+            byte[] c = new byte[1024]
+            int readChars = is.read(c)
+            if (readChars == -1) return 0
+            int count = 0
+            while (readChars == 1024){
+                for (int i=0; i<1024;){
+                    if (c[i++] == '\n') ++count
+                }
+                readChars = is.read(c)
+            }
+            while (readChars != -1){
+                System.out.println(readChars)
+                for (int i=0; i<readChars; ++i){
+                    if (c[i] == '\n') ++count
+                }
+                readChars = is.read(c)
+            }
+            return count == 0 ? 1 : count
+        }
+        finally {
+            is.close()
+        }
     }
 
 
-    int getApiCallsSize() {
-        return apiCalls.size()
+    void increaseProgress(){
+        progressCurrent += progressIncrement
+        enrichment.setProgress(progressCurrent)
     }
 
 
-    Enrichment getEnrichment() {
+    Enrichment getEnrichment(){
         enrichment
     }
 }
