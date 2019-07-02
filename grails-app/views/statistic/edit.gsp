@@ -19,10 +19,10 @@
                     <g:each in="${record.multiFields}" var="multiField">
                         <g:if test="${multiField?.value?.getPrioValue()}">
                             <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell"><a href="record.gsp">${multiField.key}</a></td>
-                                <td class="statistics-cell"><a href="record.gsp">${multiField.value.getPrioValue()}</a></td>
-                                <td class="statistics-cell"><a href="record.gsp">${multiField.value.getPrioSource()}</a></td>
-                                <td class="statistics-cell"><a href="record.gsp">${multiField.value.status}</a></td>
+                                <td class="statistics-cell">${multiField.key}</td>
+                                <td class="statistics-cell">${multiField.value.getPrioValue()}</td>
+                                <td class="statistics-cell">${multiField.value.getPrioSource()}</td>
+                                <td class="statistics-cell">${multiField.value.status}</td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
                         </g:if>
