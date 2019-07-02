@@ -684,6 +684,16 @@
     "type" : "StartDate"
   },
   {
+    "ygor" : "publisherHistoryStatus",
+    "out" : {
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.status"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Active"
+    }
+  },
+  {
     "ygor" : "publisherName",
     "in" : {
       "kbart" : "publisher_name",
