@@ -12,6 +12,7 @@
                     <tr>
                         <th><g:message code="statistic.edit.field"/></th>
                         <th><g:message code="statistic.edit.value"/></th>
+                        <th><g:message code="statistic.edit.source"/></th>
                         <th><g:message code="statistic.edit.status"/></th>
                     </tr>
                     <g:set var="lineCounter" value="${0}" />
@@ -20,6 +21,7 @@
                             <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell"><a href="record.gsp">${multiField.key}</a></td>
                                 <td class="statistics-cell"><a href="record.gsp">${multiField.value.getPrioValue()}</a></td>
+                                <td class="statistics-cell"><a href="record.gsp">${multiField.value.getPrioSource()}</a></td>
                                 <td class="statistics-cell"><a href="record.gsp">${multiField.value.status}</a></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>

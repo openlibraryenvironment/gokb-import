@@ -66,6 +66,25 @@ class MultiField {
     }
 
 
+    String getPrioSource(){
+        if (keyMapping == null){
+            return "kbart"
+        }
+        if (keyMapping.valIsFix){
+            return "default"
+        }
+        // no fixed value --> search for collected values
+        for (source in keyMapping.sourcePrio){
+            def field = fields.get(source)
+            if (field != null){
+                return source
+            }
+        }
+        // no collected value --> return default value (if any)
+        return "default"
+    }
+
+
     void normalize(String namespace){
         normalized = CommonNormalizer.normalize(this, type, namespace)
     }
