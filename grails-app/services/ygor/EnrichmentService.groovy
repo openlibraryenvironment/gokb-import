@@ -134,7 +134,13 @@ class EnrichmentService {
     List sendFile(Enrichment enrichment, Object fileType, def user, def pwd) {
         def result = []
         def json = enrichment.getAsFile(fileType)
-        result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
+        def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
+                  grailsApplication.config.gokbApi.xrPackageUri :
+                  (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?
+                   grailsApplication.config.gokbApi.xrTitleUri :
+                   null
+                  )
+        result << exportFileToGOKb(enrichment, json, uri, user, pwd)
         result
     }
 
