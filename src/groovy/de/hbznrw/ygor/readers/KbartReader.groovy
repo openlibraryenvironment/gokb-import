@@ -95,7 +95,6 @@ class KbartReader extends AbstractReader{
 
     CSVRecord getNext() {
         if (iterator.hasNext()) {
-            owner.increaseProgress()
             return iterator.next()
         }
         null
