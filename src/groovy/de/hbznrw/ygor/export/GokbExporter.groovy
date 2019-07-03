@@ -170,12 +170,18 @@ class GokbExporter {
             String key = entry.getKey()
             JsonNode value = entry.getValue()
             if (value instanceof ObjectNode){
-                Map<String, ObjectNode> map = new HashMap<String, ObjectNode>()
-                map.put(key, removeEmptyFields((ObjectNode)value))
-                result.setAll(map)
+                JsonNode subNode = removeEmptyFields((ObjectNode)value)
+                if (subNode.size() > 0) {
+                    Map<String, ObjectNode> map = new HashMap<String, ObjectNode>()
+                    map.put(key, subNode)
+                    result.setAll(map)
+                }
             }
             else if (value instanceof ArrayNode){
-                result.set(key, removeEmptyFields((ArrayNode)value))
+                JsonNode subNode = removeEmptyFields((ArrayNode) value)
+                if (subNode.size() > 0){
+                    result.set(key, subNode)
+                }
             }
             else if (value.asText() != null){
                 if (value.asText().equals(" ")){
@@ -194,10 +200,16 @@ class GokbExporter {
         ArrayNode result = new ObjectMapper().createArrayNode()
         for (JsonNode value in array.elements()){
             if (value instanceof ArrayNode){
-                result.add(removeEmptyFields((ArrayNode)(value)))
+                JsonNode subNode = removeEmptyFields((ArrayNode)(value))
+                if (subNode.size() > 0){
+                    result.add(subNode)
+                }
             }
             else if (value instanceof ObjectNode){
-                result.add(removeEmptyFields((ObjectNode)(value)))
+                JsonNode subNode = removeEmptyFields((ObjectNode) (value))
+                if (subNode.size() > 0){
+                    result.add(removeEmptyFields((ObjectNode) (value)))
+                }
             }
             else if (value.asText() != null){
                 if (value.asText().equals(" ")){
