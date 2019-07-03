@@ -89,7 +89,7 @@ class Statistics {
                 tippTitleName[Statistics.LIST_3] << "${nameField?.getPrioValue()}"
                 // Statistics.addMetaData(record, 'tipp.title.name', nameStatus) TODO ?
             }
-            else if(nameStatus?.m.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
+            else if(nameStatus?.equals(Status.VALIDATOR_STRING_IS_MISSING.toString())) {
                 tippTitleName[Statistics.COUNT_4]++
                 // Statistics.addMetaData(record, 'tipp.title.name', nameStatus) TODO ?
             }
