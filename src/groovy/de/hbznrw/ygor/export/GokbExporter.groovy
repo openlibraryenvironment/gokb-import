@@ -109,15 +109,8 @@ class GokbExporter {
                               "listStatus", "nominalProvider", "paymentType", "scope", "userListVerifier"] ){
             result.put("${field}", packageHeader."${field}".v)
         }
-        String name = packageHeader.name.v.v
-        ArrayNode variantNames = getArrayNode(packageHeader, "variantNames")
-        if (variantNames.size() > 0){
-            String varName = variantNames.get(0).asText()
-            if (!StringUtils.isEmpty(varName)) {
-                name = name.concat(": ").concat(varName)
-            }
-        }
-        result.put("name", name)
+
+        setIsil(packageHeader, result)
 
         def nominalPlatform = new ObjectNode(NODE_FACTORY)
         nominalPlatform.put("name", packageHeader.nominalPlatform.name)
@@ -125,7 +118,6 @@ class GokbExporter {
         result.set("nominalPlatform", nominalPlatform)
 
         result.set("curatoryGroups", getArrayNode(packageHeader, "curatoryGroups"))
-        result.set("variantNames", variantNames)
         result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
         def source = new ObjectNode(NODE_FACTORY)
@@ -140,6 +132,20 @@ class GokbExporter {
         enrichment.dataContainer.packageHeader = result
         log.debug("parsing package header finished")
         result
+    }
+
+
+    private static void setIsil(packageHeader, ObjectNode result) {
+        String isil = packageHeader.isil.v
+        if (!StringUtils.isEmpty(isil)) {
+            def isilNode = new ObjectNode(NODE_FACTORY)
+            isilNode.put("type", "isil")
+            isilNode.put("value", isil)
+            def idsArray = new ArrayNode(NODE_FACTORY)
+            idsArray.add(isilNode)
+            result.set("identifiers", idsArray)
+        }
+        result.put("name", packageHeader.name.v.v)
     }
 
 

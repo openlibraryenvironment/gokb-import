@@ -22,5 +22,5 @@ class PackageHeader {
     
     def additionalProperties = [] // TODO
     ArrayList curatoryGroups = []
-    ArrayList variantNames   = []
+    Pod isil             = new Pod("")
 }

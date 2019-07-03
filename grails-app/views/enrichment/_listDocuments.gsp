@@ -96,11 +96,11 @@
 							
 								<div class="input-group">
 									<span class="input-group-addon"><g:message code="listDocuments.key.isil" /></span>
-									<g:if test="${session.lastUpdate?.parameterMap?.pkgVariantName}">
-										<g:textField name="pkgVariantName" size="48" value="${session.lastUpdate.parameterMap.pkgVariantName[0]}" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgIsil}">
+										<g:textField name="pkgIsil" size="48" value="${session.lastUpdate.parameterMap.pkgIsil[0]}" class="form-control" />
 									</g:if>
 									<g:else>
-										<g:textField name="pkgVariantName" size="48" value="" class="form-control" />
+										<g:textField name="pkgIsil" size="48" value="" class="form-control" />
 									</g:else>
 								</div>
 								
