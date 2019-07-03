@@ -24,6 +24,9 @@
 				<p class="lead"><g:message code="index.versionhistory" /></p>
 
 				<dl>
+					<br /><dt>0.73 </dt><br />
+
+					<dd>- <g:message code="version.073.1" /></dd>
 					<br /><dt>0.72 </dt><br />
 
 					<dd>- <g:message code="version.072.1" /></dd>
