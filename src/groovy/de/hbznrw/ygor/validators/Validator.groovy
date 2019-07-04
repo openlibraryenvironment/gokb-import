@@ -6,11 +6,15 @@ import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.tools.UrlToolkit
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.validator.routines.UrlValidator
+
 import java.sql.Timestamp
 
 // checks if given value meets the requirements
 
 class Validator {
+
+    static UrlValidator URL_VALIDATOR = new UrlValidator(["http","https"] as String[])
 
     static validate(String type, String value, String... additionalParameters){
         switch (type) {
@@ -155,20 +159,13 @@ class Validator {
      * @return
      */
     static isValidURL(String str) {
-        if(!str || str.trim().equals("")){
+        if (StringUtils.isEmpty(str)){
             return Status.VALIDATOR_URL_IS_MISSING
         }
         else if(str.contains("|")){
             return Status.VALIDATOR_URL_IS_NOT_ATOMIC
         }
-        def url = UrlToolkit.buildUrl(str)
-        if (!url){
-            url = UrlToolkit.buildUrl("https://".concat(str))
-        }
-        if (!url){
-            url = UrlToolkit.buildUrl("http://".concat(str))
-        }
-        if (url){
+        if (URL_VALIDATOR.isValid(str)){
             return Status.VALIDATOR_URL_IS_VALID
         }
         return Status.VALIDATOR_URL_IS_INVALID

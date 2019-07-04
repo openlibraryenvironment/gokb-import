@@ -32,8 +32,8 @@ class AbstractIdentifier {
     }
 
 
-    private String getFirst(Set<String> set){
-        Iterator it = set.iterator()
+    private String getFirst(List<String> list){
+        Iterator it = list.iterator()
         if (it.hasNext()){
             return it.next()
         }
@@ -41,6 +41,5 @@ class AbstractIdentifier {
             return null
         }
     }
-
 
 }

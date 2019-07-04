@@ -118,10 +118,10 @@ class Record {
 
 
     boolean isValid(){
-        for (Status status in validation.values()){
-            if (status.toString().endsWith("IS_INVALID")){
-                return false
-            }
+        // validate tipp.titleUrl
+        MultiField urlMultiField = multiFields.get("titleUrl")
+        if (urlMultiField == null || urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()){
+            return false
         }
         return true
     }
@@ -152,7 +152,7 @@ class Record {
         multiFields.get(ygorFieldKey)
     }
 
-    void validateMultifields(String namespace){
+    private void validateMultifields(String namespace){
         multiFields.each{k,v -> v.validate(namespace)}
     }
 
