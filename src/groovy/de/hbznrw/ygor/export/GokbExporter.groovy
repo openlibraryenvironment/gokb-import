@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.format.GokbFormatter
 import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
@@ -59,7 +60,9 @@ class GokbExporter {
         log.debug("extracting titles ...")
         ArrayNode titles = new ArrayNode(NODE_FACTORY)
         for (def record in enrichment.dataContainer.records){
-            titles.add(JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER))
+            ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+            appendValue(title, "name", "subTitle", ": ", true)
+            titles.add(title)
         }
         titles = removeEmptyFields(titles)
         enrichment.dataContainer.titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
@@ -132,6 +135,27 @@ class GokbExporter {
         enrichment.dataContainer.packageHeader = result
         log.debug("parsing package header finished")
         result
+    }
+
+
+    private static void appendValue(ObjectNode node,
+                                    String targetField,
+                                    String appendixField,
+                                    String delimiter,
+                                    boolean removeFromAppendixField){
+        String appendixValue = node.path(appendixField).asText()
+        if (!StringUtils.isEmpty(appendixValue)){
+            String stubValue = node.path(targetField).asText()
+            if (!StringUtils.isEmpty(stubValue)){
+                stubValue = stubValue.concat(delimiter)
+            }
+            stubValue = stubValue.concat(appendixValue)
+            node.set(targetField, new TextNode(stubValue))
+            if (removeFromAppendixField){
+                node.set(appendixField, new TextNode(""))
+            }
+        }
+
     }
 
 
