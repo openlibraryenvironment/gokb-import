@@ -17,9 +17,9 @@
 					<g:set var="lineCounter" value="${0}" />
 					<g:each in="${invalidRecords}" var="record">
 						<tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-							<td class="statistics-cell"><a href="record.gsp">${record.publicationTitle}</a></td>
-							<td class="statistics-cell"><a href="record.gsp">${record.zdbId}</a></td>
-							<td class="statistics-cell"><a href="record.gsp">${record.eissn}</a></td>
+							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.publicationTitle}</g:link><br/></td>
+							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.zdbId}</g:link><br/></td>
+							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.eissn}</g:link><br/></td>
 						</tr>
 						<g:set var="lineCounter" value="${lineCounter + 1}"/>
 					</g:each>
@@ -44,8 +44,8 @@
 					<g:each in="${validRecords}" var="record">
 						<tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
 							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.publicationTitle}</g:link><br/></td>
-							<td class="statistics-cell"><a href="record.gsp">${record.zdbId}</a></td>
-							<td class="statistics-cell"><a href="record.gsp">${record.eissn}</a></td>
+							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.zdbId}</g:link><br/></td>
+							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.eissn}</g:link><br/></td>
 						</tr>
 						<g:set var="lineCounter" value="${lineCounter + 1}"/>
 					</g:each>
