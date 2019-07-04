@@ -609,13 +609,26 @@
     "ygor" : "publicationTitle",
     "in" : {
       "kbart" : "publication_title",
-      "zdb" : ["025@:a", "021A:a"],
+      "zdb" : ["021A:a"],
       "ezb" : "title"
     },
     "out" : {
       "gokb" : ["$TITLE.name", "$TIPP.title.name"]
     },
     "order" : ["zdb","kbart","ezb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "publicationSubTitle",
+    "in" : {
+      "kbart" : "",
+      "zdb" : ["021C:a", "021C:r", "025@:a"],
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
+    },
+    "order" : ["zdb"],
     "type" : "String"
   },
   {
