@@ -30,10 +30,10 @@
                 </table>
             </div>
         </div>
-        <ul class="list-group content-list">
+        <!-- <ul class="list-group content-list">
             <input type="submit" value="${message(code:'statistic.edit.cancel')}" class="btn btn-warning"/>
             <input type="submit" value="${message(code:'statistic.edit.save')}" class="btn btn-success"/>
-        </ul>
+        </ul> -->
     </div>
 
 </div>
