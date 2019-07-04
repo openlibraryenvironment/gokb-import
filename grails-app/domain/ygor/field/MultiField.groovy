@@ -22,7 +22,7 @@ class MultiField {
 
 
     MultiField(FieldKeyMapping fieldKeyMapping){
-        if (fieldKeyMapping != null) {
+        if (fieldKeyMapping != null){
             this.ygorFieldKey = fieldKeyMapping.ygorKey
             this.type = fieldKeyMapping.type
             keyMapping = fieldKeyMapping
@@ -35,9 +35,14 @@ class MultiField {
             fields.put(source, new Field(source, key, value))
         }
         else{
-            for (mappedKey in keyMapping.get(source)) {
-                if (key == mappedKey) {
+            for (mappedKey in keyMapping.get(source)){
+                if (key == mappedKey){
                     fields.put(source, new Field(source, mappedKey, value))
+                    break
+                }
+                // else: is there already a value with a higher prio?
+                if (fields.get(source) != null){
+                    break
                 }
             }
         }

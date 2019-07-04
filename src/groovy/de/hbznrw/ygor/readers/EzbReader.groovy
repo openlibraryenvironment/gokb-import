@@ -57,7 +57,7 @@ class EzbReader extends AbstractReader{
 
 
 
-    private String getAPIQuery(String identifier, Set<String> queryIdentifier) {
+    private String getAPIQuery(String identifier, List<String> queryIdentifier) {
         return REQUEST_URL +
                 "&" + FORMAT_IDENTIFIER +
                 "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier

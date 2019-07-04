@@ -9,9 +9,9 @@ class FieldKeyMapping {
 
     final static ObjectMapper MAPPER = new ObjectMapper()
     String ygorKey
-    Set kbartKeys = new HashSet()
-    Set zdbKeys = new HashSet()
-    Set ezbKeys = new HashSet()
+    List kbartKeys = new ArrayList()
+    List zdbKeys = new ArrayList()
+    List ezbKeys = new ArrayList()
     String type
     Set gokb
     String val = ""
@@ -36,52 +36,37 @@ class FieldKeyMapping {
     }
 
     FieldKeyMapping(boolean dontUseDefaultConstructor, def mappings){
-        if (mappings == null || !(mappings instanceof Map<?, ?>)) {
+        if (mappings == null || !(mappings instanceof Map<?, ?>)){
             throw IllegalArgumentException("Illegal mapping argument given for FieldKeyMapping configuration: "
                     .concat(mappings))
         }
         parseMapping(mappings)
     }
 
-    private void parseMapping(Map<?, ?> mappings) {
-        for (mapping in mappings) {
+    private void parseMapping(Map<?, ?> mappings){
+        for (mapping in mappings){
             switch (mapping.key){
                 case MappingsContainer.YGOR:
                     ygorKey = mapping.value
                     break
                 case MappingsContainer.KBART:
-                    if (mapping.value instanceof Collection<?>) {
-                        kbartKeys.addAll(mapping.value)
-                    }
-                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
-                        kbartKeys.add(mapping.value)
-                    }
+                    putToKeys(mapping.value, kbartKeys)
                     break
                 case MappingsContainer.ZDB:
-                    if (mapping.value instanceof Collection<?>) {
-                        zdbKeys.addAll(mapping.value)
-                    }
-                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
-                        zdbKeys.add(mapping.value)
-                    }
+                    putToKeys(mapping.value, zdbKeys)
                     break
                 case MappingsContainer.EZB:
-                    if (mapping.value instanceof Collection<?>) {
-                        ezbKeys.addAll(mapping.value)
-                    }
-                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
-                        ezbKeys.add(mapping.value)
-                    }
+                    putToKeys(mapping.value, ezbKeys)
                     break
                 case MappingsContainer.TYPE:
                     type = mapping.value
                     break
                 case MappingsContainer.GOKB:
                     gokb = new HashSet<>()
-                    if (mapping.value instanceof Collection<?>) {
+                    if (mapping.value instanceof Collection<?>){
                         gokb.addAll(mapping.value)
                     }
-                    else if (!StringUtils.isEmpty(mapping.value.toString())) {
+                    else if (!StringUtils.isEmpty(mapping.value.toString())){
                         gokb.add(mapping.value)
                     }
                     break
@@ -117,6 +102,16 @@ class FieldKeyMapping {
     }
 
 
+    private void putToKeys(def value, Collection keys){
+        if (value instanceof Collection<?>){
+            keys.addAll(value)
+        }
+        else if (!StringUtils.isEmpty(value.toString())){
+            keys.add(value)
+        }
+    }
+
+
     /**
      * @param source One of {MappingsContainer.@value YGOR}, { MappingsContainer.@value KBART},
      * {MappingsContainer.@value ZDB}, {MappingsContainer.@value EZB} or
@@ -142,7 +137,7 @@ class FieldKeyMapping {
     }
 
 
-    void setSourcePrio(List<String> sourcePrio) {
+    void setSourcePrio(List<String> sourcePrio){
         if (!sourcePrio || sourcePrio.size() != MappingsContainer.DEFAULT_SOURCE_PRIO.size()){
             throw IllegalArgumentException("Illegal static list of sources given for MultiField configuration: "
                     .concat(sourcePrio))
