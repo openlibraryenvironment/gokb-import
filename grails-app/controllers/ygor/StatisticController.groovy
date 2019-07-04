@@ -35,8 +35,10 @@ class StatisticController {
         
         try {
             Enrichment enrichment = getEnrichmentFromFile(sthash)
+            String namespace = enrichment.dataContainer.info.namespace_title_id
             if (enrichment){
                 for (Record record in enrichment.dataContainer.records){
+                    record.validate(namespace)
                     if (record.isValid()){
                         validRecords.add(record.asMultiFieldMap())
                     }
