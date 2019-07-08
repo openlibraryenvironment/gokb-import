@@ -241,31 +241,84 @@ class EnrichmentController {
 
 
     def sendPackageFile = {
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
+        def response = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
                 params.gokbUsername, params.gokbPassword)
-        status.each{ st ->
-            if(st.get('info'))
-                flash.info = st.get('info')
-            if(st.get('warning'))
-                flash.warning = st.get('warning')
-            if(st.get('error'))
-                flash.error = st.get('error')
+
+        flash.info = []
+        flash.warning = []
+        flash.error = []
+
+        if (response.JSON) {
+
+            if (response.info[0] != null) {
+                if (response.info[0].result == 'ERROR') {
+                    flash.warning = [response.info[0].message]
+                }
+                else {
+                    flash.info = response.info[0].message
+                }
+                flash.error = []
+
+                response.info[0].errors?.each { e ->
+                    flash.error.add(e.message)
+                }
+            }
+
+            if (response.warning[0] != null) {
+                log.debug("${response.warning[0]}")
+                flash.warning = [response.warning[0].message]
+
+                response.warning[0].errors.each { e ->
+                    flash.warning.add(e.message)
+                }
+            }
+
+            if (response.error[0] != null) {
+                log.warn("ERROR: ${response.error}")
+                flash.error = [response.error[0].message]
+
+                response.error.errors?.each { e ->
+                    flash.error.add(e.message)
+                }
+            }
         }
+        else {
+            flash.error = "There was an error authenticating with GOKb!"
+        }
+
         process()
     }
 
 
     def sendTitlesFile = {
-        def status = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY,
+        def response = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY,
                 params.gokbUsername, params.gokbPassword)
-        status.each{ st ->
-            if(st.get('info'))
-                flash.info = st.get('info')
-            if(st.get('warning'))
-                flash.warning = st.get('warning')
-            if(st.get('error'))
-                flash.error = st.get('error')
+
+        flash.info = []
+        flash.warning = []
+        flash.error = []
+        def total = 0
+        def errors = 0
+
+        log.debug("sendTitlesFile response: ${response}")
+
+
+        if (response.info) {
+            log.debug("json class: ${response.info.class}")
+            def info_objects = response.info.results
+
+            info_objects[0].each { robj ->
+                log.debug("robj: ${robj}")
+                if (robj.result == 'ERROR') {
+                    flash.error.add(robj.message)
+                    errors++
+                }
+                total++
+            }
+
+            flash.info = "Total: ${total}, Errors: ${errors}"
         }
+
         process()
     }
 
@@ -300,28 +353,28 @@ class EnrichmentController {
 
     // get Platform suggestions for typeahead
     def suggestPlatform = {
-      log.debug("Getting platform suggestions..")
-      def result = [:]
-      def platforms = gokbService.getPlatformMap(params.q)
-      result.items = platforms.records
-      render result as JSON
+        log.debug("Getting platform suggestions..")
+        def result = [:]
+        def platforms = gokbService.getPlatformMap(params.q)
+        result.items = platforms.records
+        render result as JSON
     }
 
 
     // get Org suggestions for typeahead
     def suggestProvider = {
-      log.debug("Getting provider suggestions..")
-      def result = [:]
-      def providers = gokbService.getProviderMap(params.q)
-      result.items = providers.records
-      render result as JSON
+        log.debug("Getting provider suggestions..")
+        def result = [:]
+        def providers = gokbService.getProviderMap(params.q)
+        result.items = providers.records
+        render result as JSON
     }
 
 
     def gokbNameSpaces = {
-      log.debug("Getting namespaces of connected GOKb instance..")
-      def result = [:]
-      result.items = gokbService.getNamespaces()
-      render result as JSON
+        log.debug("Getting namespaces of connected GOKb instance..")
+        def result = [:]
+        result.items = gokbService.getNamespaces()
+        render result as JSON
     }
 }
