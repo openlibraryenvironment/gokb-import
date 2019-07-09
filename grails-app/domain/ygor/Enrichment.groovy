@@ -42,6 +42,7 @@ class Enrichment {
     String originName
     String originHash
     String originPathName
+    String packageName
 
     String resultName
     String resultHash
@@ -137,6 +138,8 @@ class Enrichment {
         result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
         result.append("\"date\":\"").append(date).append("\",")
         result.append("\"resultHash\":\"").append(resultHash).append("\",")
+        String pn = packageName ? packageName : dataContainer.packageHeader.name.asText()
+        result.append("\"packageName\":\"").append(pn).append("\",")
         result.append("\"configuration\":{")
         result.append("\"dataType\":\"").append(dataType).append("\",")
         result.append("\"mappingsContainer\":")
@@ -162,6 +165,7 @@ class Enrichment {
         en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
         en.dataContainer = DataContainer.fromJson(rootNode.path("data"), en.mappingsContainer)
         en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
+        en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
         return en
     }
 

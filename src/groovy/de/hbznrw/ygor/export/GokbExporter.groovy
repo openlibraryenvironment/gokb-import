@@ -117,8 +117,13 @@ class GokbExporter {
                               "listStatus", "nominalProvider", "paymentType", "scope", "userListVerifier"] ){
             result.put("${field}", packageHeader."${field}".v)
         }
-
         setIsil(packageHeader, result)
+        if (enrichment.packageName){
+            result.put("name", enrichment.packageName)
+        }
+        else{
+            result.put("name", packageHeader.name.v.v)
+        }
 
         def nominalPlatform = new ObjectNode(NODE_FACTORY)
         nominalPlatform.put("name", packageHeader.nominalPlatform.name)
@@ -174,7 +179,6 @@ class GokbExporter {
             idsArray.add(isilNode)
             result.set("identifiers", idsArray)
         }
-        result.put("name", packageHeader.name.v.v)
     }
 
 

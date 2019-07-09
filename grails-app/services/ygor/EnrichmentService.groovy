@@ -59,8 +59,9 @@ class EnrichmentService {
 
     void prepareFile(Enrichment enrichment, Map pm){
         def ph = enrichment.dataContainer.pkg.packageHeader
-        ph.v.name.v          = new Pod(pm['pkgTitle'][0])
-        ph.v.isil            = new Pod(pm['pkgIsil'][0])
+        ph.v.name.v            = new Pod(pm['pkgTitle'][0])
+        enrichment.packageName = pm['pkgTitle'][0]
+        ph.v.isil              = new Pod(pm['pkgIsil'][0])
         if("" != pm['pkgCuratoryGroup1'][0].trim()){
             ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
         }
