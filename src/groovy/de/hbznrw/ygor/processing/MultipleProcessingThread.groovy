@@ -46,7 +46,6 @@ class MultipleProcessingThread extends Thread {
     private platform
     private kbartFile
 
-    private int progressTotal = 0
     private double progressCurrent = 0.0
     private double progressIncrement
 
@@ -130,7 +129,6 @@ class MultipleProcessingThread extends Thread {
                                                          // to enrichment.stats
 
         GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
-
         enrichment.saveResult()
         enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     }

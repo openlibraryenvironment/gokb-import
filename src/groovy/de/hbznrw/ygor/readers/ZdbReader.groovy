@@ -62,7 +62,6 @@ class ZdbReader extends AbstractReader{
     }
 
 
-
     private String getAPIQuery(String identifier, List<String> queryIdentifier) {
         return REQUEST_URL +
                 "&recordSchema=" + FORMAT_IDENTIFIER +

@@ -1,6 +1,5 @@
 package ygor
 
-import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.Statistics
 import grails.converters.JSON
 
@@ -102,10 +101,10 @@ class EnrichmentController {
             flash.warning = null
             flash.error = message(code: 'error.noValidFile')
             render(view: 'process',
-                    model: [
-                            enrichments: enrichmentService.getSessionEnrichments(),
-                            currentView: 'process'
-                    ]
+                model: [
+                    enrichments: enrichmentService.getSessionEnrichments(),
+                    currentView: 'process'
+                ]
             )
             return
         }
@@ -122,12 +121,8 @@ class EnrichmentController {
             request.session.lastUpdate = [:]
         }
         request.session.lastUpdate << [dataTyp : enrichment.dataType]
-
-        GokbExporter.extractTitles(enrichment)
-        GokbExporter.extractTipps(enrichment)
         Statistics.getRecordsStatisticsBeforeParsing(enrichment)
         enrichment.saveResult()
-        // GokbExporter.extractPackageHeader(enrichment)
 
         render(
             view: 'process',
