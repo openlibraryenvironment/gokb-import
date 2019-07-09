@@ -12,6 +12,7 @@ import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import ygor.Enrichment
 import ygor.Enrichment.FileType
+import ygor.Record
 
 @Log4j
 class GokbExporter {
@@ -59,10 +60,12 @@ class GokbExporter {
     static ArrayNode extractTitles(Enrichment enrichment){
         log.debug("extracting titles ...")
         ArrayNode titles = new ArrayNode(NODE_FACTORY)
-        for (def record in enrichment.dataContainer.records){
-            ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
-            appendValue(title, "name", "subTitle", ": ", true)
-            titles.add(title)
+        for (Record record in enrichment.dataContainer.records){
+            if (record.isValid()){
+                ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+                appendValue(title, "name", "subTitle", ": ", true)
+                titles.add(title)
+            }
         }
         titles = removeEmptyFields(titles)
         enrichment.dataContainer.titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
@@ -74,8 +77,10 @@ class GokbExporter {
     static ArrayNode extractTipps(Enrichment enrichment){
         log.debug("extracting tipps ...")
         ArrayNode tipps = new ArrayNode(NODE_FACTORY)
-        for (def record in enrichment.dataContainer.records){
-            tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
+        for (Record record in enrichment.dataContainer.records){
+            if (record.isValid()){
+                tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
+            }
         }
         tipps = removeEmptyFields(tipps)
         enrichment.dataContainer.tipps = removeEmptyIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY)
