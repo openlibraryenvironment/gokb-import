@@ -81,7 +81,7 @@
 			
 			<g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
 			
-				<div class="col-xs-8">	
+				<div class="col-xs-8">
 					<blockquote>
 						<p>${e.value.getMessage()}</p>
 					</blockquote>
@@ -91,6 +91,6 @@
 					
 		</g:each>
 		
-	</g:if>	
+	</g:if>
 		
-</div><!-- .row -->	
+</div><!-- .row -->
