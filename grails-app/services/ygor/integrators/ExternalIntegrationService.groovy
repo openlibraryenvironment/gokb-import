@@ -75,6 +75,7 @@ class ExternalIntegrationService {
             }
         }
         // else
+        // is reached if no single "best" match could be determined
         return new HashMap<String, String>()
     }
 

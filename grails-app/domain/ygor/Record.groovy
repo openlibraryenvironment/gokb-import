@@ -119,6 +119,10 @@ class Record {
 
     boolean isValid(){
         // validate tipp.titleUrl
+        if (!zdbIntegrationDate){
+            // has not been matched in ZDB API
+            return false
+        }
         MultiField urlMultiField = multiFields.get("titleUrl")
         if (urlMultiField == null || urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()){
             return false

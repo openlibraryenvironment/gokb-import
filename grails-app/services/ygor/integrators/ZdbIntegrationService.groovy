@@ -21,9 +21,9 @@ class ZdbIntegrationService extends ExternalIntegrationService{
         String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
         for (Record record in dataContainer.records){
             if (isApiCallMedium(record)){
-                record.zdbIntegrationDate = processStart
                 Map<String, String> zdbMatch = getBestExistingMatch(owner, record)
                 if (zdbMatch){
+                    record.zdbIntegrationDate = processStart
                     integrateWithExisting(record, zdbMatch, mappingsContainer, MappingsContainer.ZDB)
                 }
             }
@@ -43,6 +43,6 @@ class ZdbIntegrationService extends ExternalIntegrationService{
                 }
             }
         }
-        return getBestMatchingData(owner, record, readData, 0, MappingsContainer.ZDB, "zdbKeys")
+        Map<String, String> matches = getBestMatchingData(owner, record, readData, 0, MappingsContainer.ZDB, "zdbKeys")
     }
 }
