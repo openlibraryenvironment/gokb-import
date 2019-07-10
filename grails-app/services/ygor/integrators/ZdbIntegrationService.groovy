@@ -2,6 +2,7 @@ package ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.readers.EzbReader
 import org.apache.commons.lang.StringUtils
 import ygor.Record
 import ygor.field.FieldKeyMapping
@@ -21,7 +22,7 @@ class ZdbIntegrationService extends ExternalIntegrationService{
         String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
         for (Record record in dataContainer.records){
             if (isApiCallMedium(record)){
-                Map<String, String> zdbMatch = getBestExistingMatch(owner, record)
+                Map<String, String> zdbMatch = getBestMatch(owner, record)
                 if (zdbMatch){
                     record.zdbIntegrationDate = processStart
                     integrateWithExisting(record, zdbMatch, mappingsContainer, MappingsContainer.ZDB)
@@ -32,17 +33,21 @@ class ZdbIntegrationService extends ExternalIntegrationService{
     }
 
 
-    private Map<String, String> getBestExistingMatch(MultipleProcessingThread owner, Record record){
+    private Map<String, String> getBestMatch(MultipleProcessingThread owner, Record record){
         List<Map<String, String>> readData = new ArrayList<>()
-        for (String key in owner.KEY_ORDER) {
+        for (String key in owner.KEY_ORDER){
             AbstractIdentifier id = record."${key}"
             if (id && !StringUtils.isEmpty(id.identifier)){
-                readData = owner.zdbReader.readItemData(owner.zdbKeyMapping, id.identifier)
+                FieldKeyMapping mapping = mappingsContainer.getMapping(key, MappingsContainer.YGOR)
+                if (mapping == null){
+                    continue
+                }
+                readData = owner.zdbReader.readItemData(mapping, id.identifier)
                 if (!readData.isEmpty()){
                     break
                 }
             }
         }
-        Map<String, String> matches = getBestMatchingData(owner, record, readData, 0, MappingsContainer.ZDB, "zdbKeys")
+        return filterBestMatch(owner, record, readData, 0, MappingsContainer.ZDB, "zdbKeys")
     }
 }

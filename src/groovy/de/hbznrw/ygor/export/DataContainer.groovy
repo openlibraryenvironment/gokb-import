@@ -37,7 +37,7 @@ class DataContainer {
 
 
     def addRecord(Record record){
-        if (record.zdbId || record.pissn || record .eissn){
+        if (record.zdbId || record.printIdentifier || record.onlineIdentifier){
             records.add(record)
         }
     }

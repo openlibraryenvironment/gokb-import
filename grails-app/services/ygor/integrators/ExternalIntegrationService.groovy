@@ -43,9 +43,9 @@ class ExternalIntegrationService {
      * @return the Map<String, String> matching best to the given Record.
      * Return an empty Map<String, String> if no singular best match could be determined.
      */
-    protected Map<String, String> getBestMatchingData(MultipleProcessingThread owner, Record record,
-                                                     List<Map<String, String>> readData, int keyOrderCount,
-                                                     String containerProperty, String keyMappingProperty){
+    protected Map<String, String> filterBestMatch(MultipleProcessingThread owner, Record record,
+                                                  List<Map<String, String>> readData, int keyOrderCount,
+                                                  String containerProperty, String keyMappingProperty){
         if (readData.size() == 1){
             return readData.get(0)
         }
@@ -67,7 +67,7 @@ class ExternalIntegrationService {
                 }
             }
             if (narrowedResult.size() > 0){
-                return getBestMatchingData(owner, record, narrowedResult, keyOrderCount+1,
+                return filterBestMatch(owner, record, narrowedResult, keyOrderCount+1,
                                            containerProperty, keyMappingProperty)
             }
             if (narrowedResult.size() == 0){

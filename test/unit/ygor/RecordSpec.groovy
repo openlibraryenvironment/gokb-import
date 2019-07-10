@@ -1,10 +1,7 @@
 package ygor
 
 import grails.test.mixin.TestFor
-import grails.test.mixin.TestMixin
-import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
-import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
@@ -37,8 +34,8 @@ class RecordSpec extends Specification {
             mf.getPrioValue() == null
         }
         and: "the record's identifiers match the given ones"
-        record.eissn.identifier == "12345678"
+        record.onlineIdentifier.identifier == "12345678"
         record.zdbId.identifier == "12345"
-        record.pissn == null
+        record.printIdentifier == null
     }
 }

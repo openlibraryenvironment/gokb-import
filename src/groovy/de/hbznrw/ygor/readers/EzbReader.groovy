@@ -11,9 +11,9 @@ class EzbReader extends AbstractReader{
 
     final static Map QUERY_IDS = [:]
     static{
-        QUERY_IDS.put(de.hbznrw.ygor.connectors.KbartConnector.KBART_HEADER_ZDB_ID, "jq_type1=ZD&jq_term1=")
-        QUERY_IDS.put(de.hbznrw.ygor.connectors.KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER, "jq_type1=IS&jq_term1=")
-        QUERY_IDS.put(de.hbznrw.ygor.connectors.KbartConnector.KBART_HEADER_PRINT_IDENTIFIER, "jq_type1=IS&jq_term1=")
+        QUERY_IDS.put("zdb_id", "jq_type1=ZD&jq_term1=")
+        QUERY_IDS.put("online_identifier", "jq_type1=IS&jq_term1=")
+        QUERY_IDS.put("print_identifier", "jq_type1=IS&jq_term1=")
     }
     final static String REQUEST_URL         = "http://rzblx1.uni-regensburg.de/ezeit/searchres.phtml?bibid=HBZ"
     final static String FORMAT_IDENTIFIER   = "xmloutput=1&xmlv=3"

@@ -22,18 +22,13 @@ import ygor.integrators.ZdbIntegrationService
 @Log4j
 class MultipleProcessingThread extends Thread {
 
-    static final KEY_ORDER = ["zdbId", "doiId", "eissn", "pissn"]
+    static final KEY_ORDER = ["zdbId", "onlineIdentifier" /*, "printIdentifier" */]
 
-    static final SOURCE_ORDER = [MappingsContainer.KBART,
-                                 MappingsContainer.ZDB,
-                                 MappingsContainer.EZB] // TODO
     public identifierByKey = [:]
 
     FieldKeyMapping zdbKeyMapping
     FieldKeyMapping pissnKeyMapping
     FieldKeyMapping eissnKeyMapping
-
-    // old member variables following; TODO use or delete
 
     public isRunning
 

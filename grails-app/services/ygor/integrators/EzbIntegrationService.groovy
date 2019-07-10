@@ -20,7 +20,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
         String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
         for (Record record in dataContainer.records){
             if (isApiCallMedium(record)){
-                Map<String, String> ezbMatch = getBestExistingMatch(owner, record)
+                Map<String, String> ezbMatch = getBestMatch(owner, record)
                 if (!ezbMatch.isEmpty()) {
                     record.ezbIntegrationDate = processStart
                     integrateWithExisting(record, ezbMatch, mappingsContainer, MappingsContainer.EZB)
@@ -31,7 +31,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
     }
 
 
-    private Map<String, String> getBestExistingMatch(MultipleProcessingThread owner, Record record){
+    private Map<String, String> getBestMatch(MultipleProcessingThread owner, Record record){
         List<Map<String, String>> readData = new ArrayList<>()
         for (String key in owner.KEY_ORDER) {
             AbstractIdentifier id = record."${key}"
@@ -42,6 +42,6 @@ class EzbIntegrationService extends ExternalIntegrationService{
                 }
             }
         }
-        return getBestMatchingData(owner, record, readData, 0, MappingsContainer.EZB, "ezbKeys")
+        return filterBestMatch(owner, record, readData, 0, MappingsContainer.EZB, "ezbKeys")
     }
 }
