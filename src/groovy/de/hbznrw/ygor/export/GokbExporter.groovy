@@ -68,7 +68,10 @@ class GokbExporter {
             }
         }
         titles = removeEmptyFields(titles)
-        enrichment.dataContainer.titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
+        titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
+        titles = postProcessTitleIdentifiers(titles, FileType.JSON_TITLES_ONLY,
+                                             enrichment.dataContainer.info.namespace_title_id)
+        enrichment.dataContainer.titles = titles
         log.debug("extracting titles finished")
         titles
     }
@@ -83,9 +86,29 @@ class GokbExporter {
             }
         }
         tipps = removeEmptyFields(tipps)
-        enrichment.dataContainer.tipps = removeEmptyIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY)
+        tipps = removeEmptyIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY)
+        tipps = postProcessTitleIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY,
+                                            enrichment.dataContainer.info.namespace_title_id)
+        enrichment.dataContainer.tipps = tipps
         log.debug("extracting tipps finished")
         tipps
+    }
+
+
+    static ArrayNode postProcessTitleIdentifiers(ArrayNode arrayNode, FileType type, String namespace){
+        log.debug("postprocessing title ids ...")
+        if (type.equals(FileType.JSON_TITLES_ONLY)){
+            for (def title in arrayNode.elements()){
+                postProcessTitleId(title.identifiers, namespace)
+            }
+        }
+        else if (type.equals(FileType.JSON_PACKAGE_ONLY)){
+            for (def tipp in arrayNode.elements()){
+                postProcessTitleId(tipp.title.identifiers, namespace)
+            }
+        }
+        log.debug("postprocessing title ids finished")
+        arrayNode
     }
 
 
@@ -240,6 +263,42 @@ class GokbExporter {
             }
         }
         return result
+    }
+
+
+    static private void postProcessTitleId(ArrayNode identifiers, String namespace){
+        int count = 0
+        ObjectNode titleIdNode = null
+        for (ObjectNode idNode in identifiers){
+            if (idNode.get("type").asText().equals("titleId")){
+                titleIdNode = idNode
+                break
+            }
+            else{
+                count++
+            }
+        }
+        if (titleIdNode == null){
+            // There is no titleId node --> nothing to do
+            return
+        }
+        // remove title id node if value is a copy another identifier node value
+        for (int i=0; i<identifiers.size(); i++){
+            if (i != count &&
+                    identifiers.get(i).get("value").asText().equals(titleIdNode.get("value").asText())){
+                identifiers.remove(count)
+                return
+            }
+        }
+        if (StringUtils.isEmpty(namespace)){
+            // namespace has not been selected -->
+            // just remove titleId node from identifiers
+            identifiers.remove(count)
+            return
+        }
+        // set identifier type
+        titleIdNode.remove("type")
+        titleIdNode.set("type", new TextNode(namespace))
     }
 
 

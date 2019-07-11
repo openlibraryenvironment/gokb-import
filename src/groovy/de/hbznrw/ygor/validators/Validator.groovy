@@ -104,7 +104,7 @@ class Validator {
         if (str.contains("|")) {
             return Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC
         }
-        if (identifierType.equals(TitleStruct.EISSN) || identifierType.equals(TitleStruct.PISSN)) {
+        if (identifierType in ["onlineIdentifier", "printIdentifier"]) {
             if (str.matches("\\d{4}-\\d{4}")){
                 return Status.VALIDATOR_IDENTIFIER_IS_VALID
             }
