@@ -139,12 +139,16 @@ class GokbService {
         def json = queryElasticsearch(nsUrl)
         if (json?.info?.result){
             json.info.result.each { r ->
-              result.add([id: r.value, text: r.value, cat: r.category])
+                if (!(r.value in ["issn", "eissn"])){
+                    result.add([id: r.value, text: r.value, cat: r.category])
+                }
             }
         }
         if (json?.warning?.result){
             json.warning.result.each { r ->
-              result.add([id: r.value, text: r.value, cat: r.category])
+                if (!(r.value in ["issn", "eissn"])){
+                    result.add([id: r.value, text: r.value, cat: r.category])
+                }
             }
         }
       }
