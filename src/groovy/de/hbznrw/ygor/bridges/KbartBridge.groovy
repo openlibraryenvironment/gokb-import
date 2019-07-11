@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.bridges
 
-import de.hbznrw.ygor.export.DataMapper
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.connectors.*
 import de.hbznrw.ygor.enums.Query

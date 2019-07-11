@@ -13,7 +13,7 @@ class MultiField {
     Map fields = [:]
     String type                         // TODO: move to FieldKeyMapping (?)
     String status
-    String normalized
+    String normalized = null
 
     static hasMany = [fields : Field]
 
@@ -50,7 +50,7 @@ class MultiField {
 
 
     String getPrioValue(){
-        if (normalized){
+        if (normalized != null){
             return normalized
         }
         if (keyMapping == null){
@@ -109,6 +109,7 @@ class MultiField {
         jsonGenerator.writeStartObject()
         jsonGenerator.writeStringField("ygorKey", ygorFieldKey)
         jsonGenerator.writeStringField("status", status)
+        jsonGenerator.writeStringField("normalized", normalized)
 
         jsonGenerator.writeFieldName("fields")
         jsonGenerator.writeStartArray()
@@ -126,6 +127,7 @@ class MultiField {
             result.ygorFieldKey = JsonToolkit.fromJson(json, "ygorKey")
         }
         result.status = JsonToolkit.fromJson(json, "status")
+        result.normalized = JsonToolkit.fromJson(json, "normalized")
         Iterator it = json.path("fields").iterator()
         while (it.hasNext()){
             JsonNode fieldNode = it.next()
