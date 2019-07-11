@@ -8,6 +8,8 @@ class CommonNormalizer {
     static String normalize(MultiField field, String type, String namespace){
         String value = field.getPrioValue()
         switch (type) {
+            case "Title":
+                return StringNormalizer.normalizeString(value, true)
             case "String":
                 return StringNormalizer.normalizeString(value, false)
             case "Number":
