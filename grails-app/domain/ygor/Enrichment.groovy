@@ -142,6 +142,7 @@ class Enrichment {
         result.append("\"packageName\":\"").append(pn).append("\",")
         result.append("\"configuration\":{")
         result.append("\"dataType\":\"").append(dataType).append("\",")
+        result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
         result.append("\"mappingsContainer\":")
         result.append(JsonToolkit.toJson(mappingsContainer))
         result.append("},\"data\":")
@@ -164,6 +165,7 @@ class Enrichment {
         en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
         en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
         en.dataContainer = DataContainer.fromJson(rootNode.path("data"), en.mappingsContainer)
+        en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
         en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
         en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
         return en
