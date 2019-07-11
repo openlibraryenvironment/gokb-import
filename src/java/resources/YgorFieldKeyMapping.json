@@ -616,7 +616,7 @@
       "gokb" : ["$TITLE.name", "$TIPP.title.name"]
     },
     "order" : ["zdb","kbart","ezb"],
-    "type" : "String"
+    "type" : "Title"
   },
   {
     "ygor" : "publicationSubTitle",
@@ -629,7 +629,7 @@
       "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
     },
     "order" : ["zdb"],
-    "type" : "String"
+    "type" : "Title"
   },
   {
     "ygor" : "publicationType",
