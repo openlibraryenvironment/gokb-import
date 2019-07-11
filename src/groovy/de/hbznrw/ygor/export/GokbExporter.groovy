@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.format.GokbFormatter
+import de.hbznrw.ygor.normalizers.DoiNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
@@ -299,6 +300,9 @@ class GokbExporter {
         // set identifier type
         titleIdNode.remove("type")
         titleIdNode.set("type", new TextNode(namespace))
+        // normalize value
+        TextNode oldValue = titleIdNode.remove("value")
+        titleIdNode.set("value", new TextNode(DoiNormalizer.normalizeDoi(oldValue.asText())))
     }
 
 
