@@ -18,6 +18,9 @@ class Validator {
 
     static validate(String type, String value, String... additionalParameters){
         switch (type) {
+            case "Title":
+                return isValidString(value)
+                break
             case "String":
                 return isValidString(value)
                 break
