@@ -79,34 +79,40 @@ class EnrichmentController {
             // the file form is unpopulated but the previously selected file in unchanged
             file = request.session.lastUpdate.file
         }
-        def foDelimiter = request.parameterMap['formatDelimiter'][0]
-        def foQuote = null // = request.parameterMap['formatQuote'][0]
-        def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
-        def dataTyp = request.parameterMap['dataTyp'][0]
+        String encoding = UniversalDetector.detectCharset(file.getInputStream())
+        if (encoding != "UTF-8") {
+            def foDelimiter = request.parameterMap['formatDelimiter'][0]
+            def foQuote = null // = request.parameterMap['formatQuote'][0]
+            def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
+            def dataTyp = request.parameterMap['dataTyp'][0]
 
-        if (!request.session.lastUpdate) {
-            request.session.lastUpdate = [:]
-        }
-        request.session.lastUpdate.file = file
-        request.session.lastUpdate.foDelimiter = foDelimiter
-        request.session.lastUpdate.foQuote = foQuote
-        request.session.lastUpdate.foQuoteMode = foQuoteMode
-        request.session.lastUpdate.dataTyp = dataTyp
+            if (!request.session.lastUpdate) {
+                request.session.lastUpdate = [:]
+            }
+            request.session.lastUpdate.file = file
+            request.session.lastUpdate.foDelimiter = foDelimiter
+            request.session.lastUpdate.foQuote = foQuote
+            request.session.lastUpdate.foQuoteMode = foQuoteMode
+            request.session.lastUpdate.dataTyp = dataTyp
 
-        if (file.empty) {
-            flash.info = null
-            flash.warning = null
+            if (file.empty) {
+                flash.info = null
+                flash.warning = null
+                flash.error = message(code: 'error.noValidFile')
+                render(view: 'process',
+                        model: [
+                                enrichments: enrichmentService.getSessionEnrichments(),
+                                currentView: 'process'
+                        ]
+                )
+                return
+            }
+            enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
+            redirect(action: 'process')
+        } else {
             flash.error = message(code: 'error.noValidFile')
-            render(view: 'process',
-                    model: [
-                            enrichments: enrichmentService.getSessionEnrichments(),
-                            currentView: 'process'
-                    ]
-            )
             return
         }
-        enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
-        redirect(action: 'process')
     }
 
 
