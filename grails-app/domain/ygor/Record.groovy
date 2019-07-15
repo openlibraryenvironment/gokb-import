@@ -31,6 +31,8 @@ class Record {
     Map             validation
     String          zdbIntegrationDate
     String          ezbIntegrationDate
+    String          zdbIntegrationUrl
+    String          ezbIntegrationUrl
 
 
     static hasMany = [multiFields : MultiField,
