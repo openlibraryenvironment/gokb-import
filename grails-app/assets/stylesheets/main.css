@@ -54,8 +54,12 @@ body {
 	height: 100%;
 }
 
-a:link, a:visited, a:hover {
+a:link, a:hover {
 	color: #fff;
+}
+
+a:visited {
+	color: #609;
 }
 
 td.statistics-cell a:link {
