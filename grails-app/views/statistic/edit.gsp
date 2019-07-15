@@ -5,7 +5,7 @@
     <div class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><g:message code="statistic.edit.record"/></h3>
+                <h3 class="panel-title"><g:message code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}</h3>
             </div>
             <div class="statistics-data">
                 <table class="statistics-details">
