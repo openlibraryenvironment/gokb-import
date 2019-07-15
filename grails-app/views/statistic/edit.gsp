@@ -22,7 +22,7 @@
                                 <td class="statistics-cell">${multiField.key}</td>
                                 <td class="statistics-cell">${multiField.value.getPrioValue()}</td>
                                 <td class="statistics-cell">${multiField.value.getPrioSource()}</td>
-                                <td class="statistics-cell">${multiField.value.status}</td>
+                                <td class="statistics-cell"><g:message code="${multiField.value.status}"/></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
                         </g:if>
