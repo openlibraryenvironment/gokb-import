@@ -12,8 +12,6 @@ import ygor.Record
 import ygor.field.MultiField
 
 import java.lang.reflect.Method
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 class JsonToolkit {
 
@@ -21,7 +19,6 @@ class JsonToolkit {
     private static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
     final private static String ARRAY = "\$ARRAY"
     final private static String COUNT = "\$COUNT"
-    final private static Pattern FIXED_PATTERN = Pattern.compile("\\{fixed=(.*)}")
 
 
     private static def removeMetaClass(def dataStructure){
@@ -128,10 +125,7 @@ class JsonToolkit {
     private static JsonNode getSubNode(ArrayList<String> keyPath, String value, boolean keepIfEmpty){
         assert keyPath.size() > 1
         if (keyPath.size() == 2){
-            Matcher fixedMatcher = FIXED_PATTERN.matcher(value)
-            if (fixedMatcher.matches()){
-                value = fixedMatcher.group(1)
-            }
+            value = MultiField.extractFixedValue(value)
             if (value.equals("") && keepIfEmpty){
                 value = " " // this is obviously a hack without any harm. Correct implementation seems expensive.
             }

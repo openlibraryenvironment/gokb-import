@@ -6,6 +6,9 @@ import de.hbznrw.ygor.normalizers.CommonNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.Validator
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 class MultiField {
 
     String ygorFieldKey
@@ -16,6 +19,8 @@ class MultiField {
     String normalized = null
 
     static hasMany = [fields : Field]
+
+    final private static Pattern FIXED_PATTERN = Pattern.compile("\\{fixed=(.*)}")
 
     static constraints = {
     }
@@ -57,7 +62,7 @@ class MultiField {
             return fields.values().toArray()[0]
         }
         if (keyMapping.valIsFix){
-            return keyMapping.val
+            return extractFixedValue(keyMapping.val)
         }
         // no fixed value --> search for collected values
         for (source in keyMapping.sourcePrio){
@@ -137,5 +142,14 @@ class MultiField {
             result.addField(source, key, value)
         }
         result
+    }
+
+
+    static String extractFixedValue(String value){
+        Matcher fixedMatcher = FIXED_PATTERN.matcher(value)
+        if (fixedMatcher.matches()){
+            value = fixedMatcher.group(1)
+        }
+        value
     }
 }
