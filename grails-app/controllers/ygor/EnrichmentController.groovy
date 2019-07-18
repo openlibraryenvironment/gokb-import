@@ -1,6 +1,7 @@
 package ygor
 
 import grails.converters.JSON
+import org.mozilla.universalchardet.UniversalDetector
 
 class EnrichmentController {
 
@@ -80,7 +81,7 @@ class EnrichmentController {
             file = request.session.lastUpdate.file
         }
         String encoding = UniversalDetector.detectCharset(file.getInputStream())
-        if (encoding != "UTF-8") {
+        if (encoding == "UTF-8") {
             def foDelimiter = request.parameterMap['formatDelimiter'][0]
             def foQuote = null // = request.parameterMap['formatQuote'][0]
             def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
@@ -110,8 +111,8 @@ class EnrichmentController {
             enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
             redirect(action: 'process')
         } else {
-            flash.error = message(code: 'error.noValidFile')
-            return
+            flash.error = message(code: 'error.noUtf8Encoding') //+ encoding!=null?" but: "+encoding:""
+            redirect(action: 'process')
         }
     }
 
