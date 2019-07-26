@@ -8,6 +8,8 @@ import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
 
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -174,10 +176,49 @@ class Normalizer {
             return str
             
         str = Normalizer.normString(str)
-        
+
+        def other_formats = [
+              "yyyy-MM-dd' 'HH:mm:ss.SSS",
+              "yyyy-MM-dd'T'HH:mm:ss'Z'",
+              "dd.MM.yyyy"
+          ]
+
+        if (str ==~ /^\d{4}-\d{2}-\d{2}$/) {
+          try {
+            LocalDate ldt = LocalDate.parse(str)
+
+            if (dateType.equals(Normalizer.IS_START_DATE)) {
+              str += " 00:00:00.000"
+            }
+            else if (dateType.equals(Normalizer.IS_END_DATE)) {
+              str += " 23:59:59.000"
+            }
+
+            return str
+          }
+          catch (Exception e) {}
+        }
+        else if (str ==~ /^\d{2}.\d{2}.\d{4}$/) {
+
+            try {
+              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+              LocalDate ldt = LocalDate.parse(str, formatter)
+
+              if (dateType.equals(Normalizer.IS_START_DATE)) {
+                str =  ldt.toString() + " 00:00:00.000"
+              }
+              else if (dateType.equals(Normalizer.IS_END_DATE)) {
+                str = ldt.toString() + " 23:59:59.000"
+              }
+
+              return str
+            }
+            catch (Exception e) {}
+        }
+
         if(str.contains("-")){
             def tmp = str.split("-")
-            
+
             if(dateType.equals(Normalizer.IS_START_DATE)){
                 if(tmp.size() > 1){
                     str = tmp[0]
@@ -187,9 +228,9 @@ class Normalizer {
                 if(tmp.size() > 1){
                     str = tmp[1]
                 }
-            }  
+            }
         }
-        
+
         def strList = parseDate(str, dateType)
         
         if(4 == strList[0].size()) {
