@@ -77,11 +77,13 @@ class EnrichmentController {
         def file = request.getFile('uploadFile')
         if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
             request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename) {
+            log.debug("Using file from session ..")
             // the file form is unpopulated but the previously selected file in unchanged
             file = request.session.lastUpdate.file
         }
         String encoding = UniversalDetector.detectCharset(file.getInputStream())
-        if (encoding == "UTF-8") {
+        log.debug("Detected encoding ${encoding}")
+        if (!encoding || encoding == "UTF-8") {
             def foDelimiter = request.parameterMap['formatDelimiter'][0]
             def foQuote = null // = request.parameterMap['formatQuote'][0]
             def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
