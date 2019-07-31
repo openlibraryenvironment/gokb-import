@@ -196,7 +196,9 @@ class Normalizer {
 
             return str
           }
-          catch (Exception e) {}
+          catch (Exception e) {
+            log.warn("Could not parse date ${str} from pattern 'yyyy-MM-dd'")
+          }
         }
         else if (str ==~ /^\d{2}.\d{2}.\d{4}$/) {
 
@@ -213,7 +215,29 @@ class Normalizer {
 
               return str
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+              log.warn("Could not parse date ${str} from pattern 'dd.MM.yyyy'")
+            }
+        }
+        else if (str ==~ /^\d{4}-\d{2}$/) {
+          try {
+            def full_date = str
+            if (dateType.equals(Normalizer.IS_START_DATE)) {
+              full_date += "-01"
+              str = full_date + " 00:00:00.000"
+            }
+            else if (dateType.equals(Normalizer.IS_END_DATE)) {
+              def dateParts = str.split("-")
+              LocalDate tmp_date = LocalDate.of(Integer.parseInt(dateParts[0]), Integer.parseInt(dateParts[1]), 1)
+              full_date += "-${String.format('%02d',tmp_date.lengthOfMonth())}"
+              str = full_date + " 23:59:59.000"
+            }
+
+            return str
+          }
+          catch (Exception e) {
+            log.warn("Could not parse date ${str} from pattern 'yyyy-MM'")
+          }
         }
 
         if(str.contains("-")){
