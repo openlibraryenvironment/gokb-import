@@ -133,7 +133,7 @@ class JsonTransformer {
 
         def plt = [
           'name': json.package.packageHeader.nominalPlatform.name,
-          'primaryUrl': json.package.packageHeader.nominalPlatform.primaryUrl
+          'primaryUrl': json.package.packageHeader.nominalPlatform.url
         ]
 
         json.package.packageHeader.nominalPlatform = plt
