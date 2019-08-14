@@ -55,7 +55,9 @@ class EnrichmentService {
         def ph = enrichment.dataContainer.pkg.packageHeader
         
         ph.v.name.v          = new Pod(pm['pkgTitle'][0])
-        ph.v.variantNames   << new Pod(pm['pkgVariantName'][0])
+        if ("" != pm['pkgVariantName'][0].trim()) {
+            ph.v.variantNames << new Pod(pm['pkgVariantName'][0])
+        }
         if("" != pm['pkgCuratoryGroup1'][0].trim()){
             ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
         }

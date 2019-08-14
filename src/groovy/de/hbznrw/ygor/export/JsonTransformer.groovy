@@ -167,16 +167,10 @@ class JsonTransformer {
     
     static Object parseVariantNames(Object json) {
         log.debug("parseVariantNames()")
-        
-        def variantNamesContainer = new ArrayList()
+
         json.package.packageHeader.variantNames.eachWithIndex{ vn, i ->
-            if (vn.v != "" && vn.v != null)
-                variantNamesContainer.add(vn.v)
+            json.package.packageHeader.variantNames[i] = vn.v
         }
-        if (variantNamesContainer.size()>0)
-            json.package.packageHeader.variantNames = variantNamesContainer.toArray()
-        else
-            json.package.packageHeader.variantNames = null
 
         json
     }
