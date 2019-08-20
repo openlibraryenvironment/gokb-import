@@ -95,12 +95,25 @@ class EnrichmentService {
       log.debug("Got platforms: ${platforms}")
 
       platforms.each {
+        log.debug("Handling platform ${it}..")
+
         if (it.name == qterm && it.status == "Current" && it.oid == platformID) {
           if(pkgNomPlatform) {
             log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
           }else{
             log.debug("Setze ${it.name} als nominalPlatform.")
             pkgNomPlatform = it
+          }
+        }
+        else {
+          if (it.name != qterm) {
+            log.debug("No name match: ${it.name} - ${qterm}")
+          }
+          if(it.status != "Current") {
+            log.debug("Wrong status: ${it.status}")
+          }
+          if (it.oid != platformID) {
+            log.debug("No OID match: ${it.oid} - ${platformID}")
           }
         }
       }

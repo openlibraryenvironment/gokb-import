@@ -500,9 +500,7 @@ class DataMapper {
             }
             // store non matching
             if(!match){
-                ph.v.name.org = pubName
-                ph.v.name.v   = ''
-                ph.v.name.m   = Status.VALIDATOR_PUBLISHER_NOT_MATCHING
+                ph.v.name.v   = pubName
             }
         }
     }

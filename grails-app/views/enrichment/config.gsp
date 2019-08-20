@@ -4,7 +4,6 @@
 <div class="row">
 
 	<div class="col-xs-10 col-xs-offset-1">
-		<g:render template="../logo" />
 	</div>
 				
 	<div id="config-view" class="col-xs-10 col-xs-offset-1">

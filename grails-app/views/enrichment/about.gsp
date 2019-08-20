@@ -2,7 +2,6 @@
 
 <div class="row">
 	<div class="col-xs-10 col-xs-offset-1">
-		<g:render template="../logo" />
 	</div>
 	
 	<div class="col-xs-10 col-xs-offset-1">
@@ -22,7 +21,7 @@
 		<p>
 			<em><g:message code="about.version" /> <g:meta name="app.version"/></em> <br/>
 			<em><g:message code="about.grails" /> <g:meta name="app.grails.version"/></em> <br/>
-			<em><g:message code="about.gokb" />: ${grailsApplication.config.gokbApi.baseUri}</em>
+			<em><g:message code="about.gokb" />: <a href="${grailsApplication.config.gokbApi.baseUri}">${grailsApplication.config.gokbApi.baseUri}</a></em>
 			<br/><br/>
 
 			<em> <g:if test="${grailsApplication.metadata['repository.revision.number']}">
