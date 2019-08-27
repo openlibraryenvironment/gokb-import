@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.grails.io.support.ClassPathResource
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
@@ -26,8 +27,7 @@ class MappingsContainer {
     final public static DEFAULT_SOURCE_PRIO = [ZDB, KBART, EZB]
 
     final private static JsonSlurper SLURPY = new JsonSlurper()
-    private static String DEFAULT_MAPPINGS_FILE =
-            Paths.get("src/java/resources/YgorFieldKeyMapping.json").toAbsolutePath().toString()
+    private static String DEFAULT_MAPPINGS_FILE ="resources/YgorFieldKeyMapping.json"
     private String mappingsFile
 
     Map<String, FieldKeyMapping> ygorMappings
@@ -57,7 +57,8 @@ class MappingsContainer {
         kbartMappings = [:]
         zdbMappings = [:]
         ezbMappings = [:]
-        readMappingsFile(new File(mappingsFile))
+        //readMappingsFile(new File(mappingsFile))
+        readMappingsFile(new ClassPathResource(mappingsFile).file)
     }
 
 
