@@ -17,7 +17,7 @@
 			  	<li class="list-group-item"><g:message code="processInfo.workflow.enrichment" /></li>
 			  	<li class="list-group-item"><g:message code="processInfo.workflow.transmission" /></li>
 			</ul>
-		</div>	
+		</div>
 
 	</g:if>
 

@@ -1,10 +1,11 @@
-package de.hbznrw.ygor.export
+package de.hbznrw.ygor.validators
 
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.export.structure.TippCoverage
 import de.hbznrw.ygor.export.structure.TitleHistoryEvent
 import de.hbznrw.ygor.export.structure.TitlePublisherHistory
 
+// TODO: delete (has moved to RecordValidator)
 class StructValidator {
     
     static isValidCoverage(TippCoverage coverage){
@@ -67,25 +68,5 @@ class StructValidator {
         */
         return Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF
     }
-    
-    static isValidPublisherHistory(TitlePublisherHistory publisherHistory){
-        // startDate
-        // endDate
-        // status
-        // name
-        
-        if(false){
-            return Status.STRUCTVALIDATOR_REMOVE_FLAG
-        }
-        /*
-        if( publisherHistory.startDate.m == Status.VALIDATOR_DATE_IS_VALID &&
-            publisherHistory.endDate.m == Status.VALIDATOR_DATE_IS_VALID &&
-            publisherHistory.name.m == Status.VALIDATOR_STRING_IS_VALID){
- 
-            return Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_VALID
-   
-        }
-        */
-        return Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF
-    }
+
 }

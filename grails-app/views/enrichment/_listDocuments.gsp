@@ -96,11 +96,11 @@
 							
 								<div class="input-group">
 									<span class="input-group-addon"><g:message code="listDocuments.key.isil" /></span>
-									<g:if test="${session.lastUpdate?.parameterMap?.pkgVariantName}">
-										<g:textField name="pkgVariantName" size="48" value="${session.lastUpdate.parameterMap.pkgVariantName[0]}" class="form-control" />
+									<g:if test="${session.lastUpdate?.parameterMap?.pkgIsil}">
+										<g:textField name="pkgIsil" size="48" value="${session.lastUpdate.parameterMap.pkgIsil[0]}" class="form-control" />
 									</g:if>
 									<g:else>
-										<g:textField name="pkgVariantName" size="48" value="" class="form-control" />
+										<g:textField name="pkgIsil" size="48" value="" class="form-control" />
 									</g:else>
 								</div>
 								
@@ -336,15 +336,15 @@
 					<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 
 						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-info"><g:message code="listDocuments.button.showstatistics" /></g:link>
-						
+
+						<g:actionSubmit action="downloadTitlesFile" value="${message(code:'listDocuments.button.downloadtitlesfile')}" class="btn btn-info"/>
 						<g:actionSubmit action="downloadPackageFile" value="${message(code:'listDocuments.button.downloadpackagefile')}" class="btn btn-info"/>
-	    				<g:actionSubmit action="downloadTitlesFile" value="${message(code:'listDocuments.button.downloadtitlesfile')}" class="btn btn-info"/>
-						
+
 		    			<g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
-									data-target="#credentialsModal"><g:message code="listDocuments.button.package" /></button>
 							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="titles"
 									data-target="#credentialsModal"><g:message code="listDocuments.button.titles" /></button>
+							<button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
+									data-target="#credentialsModal"><g:message code="listDocuments.button.package" /></button>
 							<div class="modal fade" id="credentialsModal" role="dialog">
 								<div class="modal-dialog">
 									<div class="modal-content">
@@ -366,7 +366,7 @@
 													<button type="button" class="btn btn-default" data-dismiss="modal"><g:message code="listDocuments.button.cancel" /></button>
 													<g:actionSubmit action="" value="${message(code:'listDocuments.button.send')}" class="btn btn-success"
 																	name="cred-modal-btn-send" data-toggle="tooltip"
-																	data-placement="top" title="JavaScript erforderlich" />
+																	data-placement="top" title="JavaScript ${message(code:'technical.required')}." />
 												</div>
 											</g:form>
 										</div>
@@ -395,7 +395,6 @@
 		    			<g:if test="${grailsApplication.config.ygor.enableDebugDownload}">
 		    				</li>
 			    			<li class="list-group-item">
-			    				<g:actionSubmit action="downloadDebugFile" value="${message(code:'listDocuments.button.downloadDebugFile')}" class="btn"/>
 			    				<g:actionSubmit action="downloadRawFile" value="${message(code:'listDocuments.button.downloadRawFile')}" class="btn"/>
 		    			</g:if>
 

@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.export.Statistics
 import grails.converters.JSON
 import org.mozilla.universalchardet.UniversalDetector
 
@@ -10,14 +11,13 @@ class EnrichmentController {
     EnrichmentService enrichmentService
     GokbService gokbService
 
-
     def index = { 
         redirect(action:'process')   
     }
 
 
     def process = {
-        def gokb_ns = gokbService.getNamespaces()
+        def gokb_ns = gokbService.getNamespaceList()
         render(
             view:'process',
             model:[
@@ -77,7 +77,6 @@ class EnrichmentController {
         def file = request.getFile('uploadFile')
         if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
             request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename) {
-            log.debug("Using file from session ..")
             // the file form is unpopulated but the previously selected file in unchanged
             file = request.session.lastUpdate.file
         }
@@ -85,9 +84,11 @@ class EnrichmentController {
         log.debug("Detected encoding ${encoding}")
         if (!encoding || encoding == "UTF-8") {
             def foDelimiter = request.parameterMap['formatDelimiter'][0]
-            def foQuote = null // = request.parameterMap['formatQuote'][0]
-            def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
-            def dataTyp = request.parameterMap['dataTyp'][0]
+
+            def foQuote     = null              // = request.parameterMap['formatQuote'][0]
+            def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
+            def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
+            def dataTyp     = request.parameterMap['dataTyp'][0]
 
             if (!request.session.lastUpdate) {
                 request.session.lastUpdate = [:]
@@ -96,6 +97,7 @@ class EnrichmentController {
             request.session.lastUpdate.foDelimiter = foDelimiter
             request.session.lastUpdate.foQuote = foQuote
             request.session.lastUpdate.foQuoteMode = foQuoteMode
+            request.session.lastUpdate.recordSeparator = recordSeparator
             request.session.lastUpdate.dataTyp = dataTyp
 
             if (file.empty) {
@@ -103,10 +105,10 @@ class EnrichmentController {
                 flash.warning = null
                 flash.error = message(code: 'error.noValidFile')
                 render(view: 'process',
-                        model: [
-                                enrichments: enrichmentService.getSessionEnrichments(),
-                                currentView: 'process'
-                        ]
+                    model: [
+                        enrichments: enrichmentService.getSessionEnrichments(),
+                        currentView: 'process'
+                    ]
                 )
                 return
             }
@@ -116,6 +118,28 @@ class EnrichmentController {
             flash.error = message(code: 'error.noUtf8Encoding') //+ encoding!=null?" but: "+encoding:""
             redirect(action: 'process')
         }
+    }
+
+
+    def uploadRawFile = {
+        def file = request.getFile('uploadRawFile')
+        Enrichment enrichment = Enrichment.fromFile(file)
+        request.session.enrichments << [(enrichment.originHash) : enrichment]
+        if (null == request.session.lastUpdate){
+            request.session.lastUpdate = [:]
+        }
+        request.session.lastUpdate << [dataTyp : enrichment.dataType]
+        Statistics.getRecordsStatisticsBeforeParsing(enrichment)
+        enrichment.saveResult()
+
+        render(
+            view: 'process',
+            model: [
+                    enrichments: enrichment,
+                    currentView: 'process'
+            ]
+        )
+        redirect(action: 'process')
     }
 
 
@@ -225,18 +249,6 @@ class EnrichmentController {
     }
 
 
-    def downloadDebugFile = {
-        def en = getCurrentEnrichment()
-        if(en){
-            def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_DEBUG)
-            render(file:result, fileName:"${en.resultName}.debug.json")
-        }
-        else {
-            noValidEnrichment()
-        }
-    }
-
-
     def downloadRawFile = {
         def en = getCurrentEnrichment()
         if(en){
@@ -250,85 +262,79 @@ class EnrichmentController {
 
 
     def sendPackageFile = {
-        def response = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_PACKAGE_ONLY,
-                params.gokbUsername, params.gokbPassword)
+        def en = getCurrentEnrichment()
+        if(en) {
+            def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY,
+                    params.gokbUsername, params.gokbPassword)
+            flash.info = []
+            flash.warning = []
+            flash.error = []
 
-        flash.info = []
-        flash.warning = []
-        flash.error = []
+            if (response.JSON) {
+                if (response.info[0] != null) {
+                    if (response.info[0].result == 'ERROR') {
+                        flash.warning = [response.info[0].message]
+                    } else {
+                        flash.info = response.info[0].message
+                    }
+                    flash.error = []
 
-        if (response.JSON) {
-
-            if (response.info[0] != null) {
-                if (response.info[0].result == 'ERROR') {
-                    flash.warning = [response.info[0].message]
+                    response.info[0].errors?.each { e ->
+                        flash.error.add(e.message)
+                    }
                 }
-                else {
-                    flash.info = response.info[0].message
+                if (response.warning[0] != null) {
+                    log.debug("${response.warning[0]}")
+                    flash.warning = [response.warning[0].message]
+
+                    response.warning[0].errors.each { e ->
+                        flash.warning.add(e.message)
+                    }
                 }
-                flash.error = []
+                if (response.error[0] != null) {
+                    log.warn("ERROR: ${response.error}")
+                    flash.error = [response.error[0].message]
 
-                response.info[0].errors?.each { e ->
-                    flash.error.add(e.message)
-                }
-            }
-
-            if (response.warning[0] != null) {
-                log.debug("${response.warning[0]}")
-                flash.warning = [response.warning[0].message]
-
-                response.warning[0].errors.each { e ->
-                    flash.warning.add(e.message)
-                }
-            }
-
-            if (response.error[0] != null) {
-                log.warn("ERROR: ${response.error}")
-                flash.error = [response.error[0].message]
-
-                response.error.errors?.each { e ->
-                    flash.error.add(e.message)
+                    response.error.errors?.each { e ->
+                        flash.error.add(e.message)
+                    }
                 }
             }
         }
         else {
             flash.error = "There was an error authenticating with GOKb!"
         }
-
         process()
     }
 
 
     def sendTitlesFile = {
-        def response = enrichmentService.sendFile(currentEnrichment, Enrichment.FileType.JSON_TITLES_ONLY,
-                params.gokbUsername, params.gokbPassword)
+        def en = getCurrentEnrichment()
+        if(en) {
+            def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_TITLES_ONLY,
+                    params.gokbUsername, params.gokbPassword)
+            flash.info = []
+            flash.warning = []
+            flash.error = []
+            def total = 0
+            def errors = 0
+            log.debug("sendTitlesFile response: ${response}")
 
-        flash.info = []
-        flash.warning = []
-        flash.error = []
-        def total = 0
-        def errors = 0
-
-        log.debug("sendTitlesFile response: ${response}")
-
-
-        if (response.info) {
-            log.debug("json class: ${response.info.class}")
-            def info_objects = response.info.results
-
-            info_objects[0].each { robj ->
-                log.debug("robj: ${robj}")
-                if (robj.result == 'ERROR') {
-                    flash.error.add(robj.message)
-                    errors++
+            if (response.info) {
+                log.debug("json class: ${response.info.class}")
+                def info_objects = response.info.results
+                info_objects[0].each { robj ->
+                    log.debug("robj: ${robj}")
+                    if (robj.result == 'ERROR') {
+                        flash.error.add(robj.message)
+                        errors++
+                    }
+                    total++
                 }
-                total++
+                flash.info = "Total: ${total}, Errors: ${errors}"
             }
-
-            flash.info = "Total: ${total}, Errors: ${errors}"
+            process()
         }
-
-        process()
     }
 
 
@@ -342,7 +348,12 @@ class EnrichmentController {
 
     Enrichment getCurrentEnrichment() {
         def hash = (String) request.parameterMap['originHash'][0]
-        enrichmentService.getSessionEnrichments().get("${hash}")
+        def enrichments = enrichmentService.getSessionEnrichments()
+        Enrichment result = enrichments[hash]
+        if (null == result){
+            result = enrichments.get("${hash}")
+        }
+        result
     }
 
 
@@ -383,7 +394,7 @@ class EnrichmentController {
     def gokbNameSpaces = {
         log.debug("Getting namespaces of connected GOKb instance..")
         def result = [:]
-        result.items = gokbService.getNamespaces()
+        result.items = gokbService.getNamespaceList()
         render result as JSON
     }
 }

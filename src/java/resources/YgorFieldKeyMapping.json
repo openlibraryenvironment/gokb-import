@@ -1,0 +1,807 @@
+[
+  {
+    "ygor" : "accessEndDate",
+    "in" : {
+      "kbart" : "access_end_date",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.accessEndDate"]
+    },
+    "order" : ["kbart"],
+    "type" : "EndDate"
+  },
+  {
+    "ygor" : "accessStartDate",
+    "in" : {
+      "kbart" : "access_start_date",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.accessStartDate"]
+    },
+    "order" : ["kbart"],
+    "type" : "StartDate"
+  },
+  {
+    "ygor" : "accessType",
+    "in" : {
+      "kbart" : "access_type",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "continuingSeries",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.continuingSeries"]
+    },
+    "order" : [""],
+    "type" : "String"
+  },
+  {
+    "ygor" : "coverageDepth",
+    "in" : {
+      "kbart" : "coverage_depth",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageDepth"]
+    },
+    "order" : ["kbart"],
+    "type" : "String",
+    "value" : {
+      "fixed" : "Fulltext"
+    }
+  },
+  {
+    "ygor" : "dateFirstIssueOnline",
+    "in" : {
+      "kbart" : "date_first_issue_online",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startDate"]
+    },
+    "order" : ["kbart"],
+    "type" : "StartDate"
+  },
+  {
+    "ygor" : "dateLastIssueOnline",
+    "in" : {
+      "kbart" : "date_last_issue_online",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endDate"]
+    },
+    "order" : ["kbart"],
+    "type" : "EndDate"
+  },
+  {
+    "ygor" : "dateMonographPublishedOnline",
+    "in" : {
+      "kbart" : "date_monograph_published_online",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.dateFirstOnline"]
+    },
+    "order" : ["kbart"],
+    "type" : "StartDate"
+  },
+  {
+    "ygor" : "dateMonographPublishedPrint",
+    "in" : {
+      "kbart" : "date_monograph_published_print",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.dateFirstInPrint"]
+    },
+    "order" : ["kbart"],
+    "type" : "StartDate"
+  },
+  {
+    "ygor" : "defaultAccessURL",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.defaultAccessURL"]
+    },
+    "order" : [""],
+    "type" : "URL"
+  },
+  {
+    "ygor" : "doi",
+    "in" : {
+      "kbart" : "doi_identifier",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:doi,value)", "$TIPP.title.identifiers.$ARRAY.(type:doi,value)"]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "editionNumber",
+    "in" : {
+      "kbart" : "monograph_edition",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : [
+        "$TITLE.editionNumber"
+      ]
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "editStatus",
+    "out" : {
+      "gokb" : ["$TITLE.editStatus"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "In Progress"
+    }
+  },
+  {
+    "ygor" : "embargoInfo",
+    "in" : {
+      "kbart" : "embargo_info",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.embargo"]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "ezbId",
+    "in" : {
+      "kbart" : "ezb_id",
+      "zdb" : "",
+      "ezb" : "jourid"
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:ezb,value)", "$TIPP.title.identifiers.$ARRAY.(type:ezb,value)"]
+    },
+    "order" : ["ezb", "kbart"],
+    "type" : "ID"
+  },
+  {
+    "ygor" : "firstAuthor",
+    "in" : {
+      "kbart" : "first_author",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.firstAuthor"]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "firstEditor",
+    "in" : {
+      "kbart" : "first_editor",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.firstEditor"]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventDate",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:H",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.date"]
+    },
+    "order" : ["zdb"],
+    "type" : "Date"
+  },
+  {
+    "ygor" : "historyEventIdentifier",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:0",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.zdbId"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventRelationType",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:b",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.relationType"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventPredecessor",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:f",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessor"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventPredecessorOrSuccessor",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:z",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessorOrSuccessor"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "historyEventSuccessor",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:s",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.successor"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "imprint",
+    "out" : {
+      "gokb" : ["$TITLE.imprint"]
+    },
+    "type" : "String"
+  },
+  {
+    "ygor" : "issuer",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.issuer"]
+    },
+    "order" : [""],
+    "type" : "String"
+  },
+  {
+    "ygor" : "listpriceEur",
+    "in" : {
+      "kbart" : "listprice_eur",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "listpriceGbp",
+    "in" : {
+      "kbart" : "listprice_gbp",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "listpriceUsd",
+    "in" : {
+      "kbart" : "listprice_usd",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "medium",
+    "out" : {
+      "gokb" : ["$TITLE.medium"]
+    },
+    "type" : "String"
+  },
+  {
+    "ygor" : "monographEdition",
+    "in" : {
+      "kbart" : "monograph_edition",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : [
+        "$TITLE.monographEdition",
+        "$TITLE.editionDifferentiator",
+        "$TITLE.editionStatement"
+      ]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "monographVolume",
+    "in" : {
+      "kbart" : "monograph_volume",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.monographVolume", "$TITLE.volumeNumber"]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "notes",
+    "in" : {
+      "kbart" : "notes",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageNote"]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "numFirstIssueOnline",
+    "in" : {
+      "kbart" : "num_first_issue_online",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "numFirstVolOnline",
+    "in" : {
+      "kbart" : "num_first_vol_online",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "numLastIssueOnline",
+    "in" : {
+      "kbart" : "num_last_issue_online",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "numLastVolOnline",
+    "in" : {
+      "kbart" : "num_last_vol_online",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
+    },
+    "order" : ["kbart"],
+    "type" : "Number"
+  },
+  {
+    "ygor" : "oaApcEur",
+    "in" : {
+      "kbart" : "oa_apc_eur",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "oaApcGbp",
+    "in" : {
+      "kbart" : "oa_apc_gbp",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "oaApcUsd",
+    "in" : {
+      "kbart" : "oa_apc_usd",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "oaGold",
+    "in" : {
+      "kbart" : "oa_gold",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "oaHybrid",
+    "in" : {
+      "kbart" : "oa_hybrid",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "oaStatus",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.OAStatus"]
+    },
+    "order" : [],
+    "type" : "String"
+  },
+  {
+    "ygor" : "onlineIdentifier",
+    "in" : {
+      "kbart" : "online_identifier",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:eissn,value)", "$TIPP.title.identifiers.$ARRAY.(type:eissn,value)"]
+    },
+    "order" : ["kbart"],
+    "type" : "ID"
+  },
+  {
+    "ygor" : "parentPublicationTitleId",
+    "in" : {
+      "kbart" : "parent_publication_title_id",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "ID"
+  },
+  {
+    "ygor" : "platformName",
+    "out" : {
+      "gokb" : ["$TIPP.platform.name"]
+    },
+    "type" : "ID"
+  },
+  {
+    "ygor" : "platformUrl",
+    "out" : {
+      "gokb" : ["$TIPP.platform.primaryUrl"]
+    },
+    "type" : "URL"
+  },
+  {
+    "ygor" : "precedingPublicationTitleId",
+    "in" : {
+      "kbart" : "preceding_publication_title_id",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : []
+    },
+    "order" : ["kbart"],
+    "type" : "ID"
+  },
+  {
+    "ygor" : "printIdentifier",
+    "in" : {
+      "kbart" : "print_identifier",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:issn,value)", "$TIPP.title.identifiers.$ARRAY.(type:issn,value)"]
+    },
+    "order" : ["kbart"],
+    "type" : "ID"
+  },
+  {
+    "ygor" : "publicationTitle",
+    "in" : {
+      "kbart" : "publication_title",
+      "zdb" : ["021A:a"],
+      "ezb" : "title"
+    },
+    "out" : {
+      "gokb" : ["$TITLE.name", "$TIPP.title.name"]
+    },
+    "order" : ["zdb","kbart","ezb"],
+    "type" : "Title"
+  },
+  {
+    "ygor" : "publicationSubTitle",
+    "in" : {
+      "kbart" : "",
+      "zdb" : ["021C:a", "021C:r", "025@:a"],
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
+    },
+    "order" : ["zdb"],
+    "type" : "Title"
+  },
+  {
+    "ygor" : "publicationType",
+    "in" : {
+      "kbart" : "publication_type",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.type", "$TIPP.title.type"]
+    },
+    "order" : ["kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "publishedFrom",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "011@:a",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.publishedFrom"]
+    },
+    "order" : ["zdb"],
+    "type" : "StartDate"
+  },
+  {
+    "ygor" : "publishedTo",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "011@:b",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.publishedTo"]
+    },
+    "order" : ["zdb"],
+    "type" : "EndDate"
+  },
+  {
+    "ygor" : "publisherHistoryEndDate",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "033A:h",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.endDate"],
+      "keepIfEmpty" : "true"
+    },
+    "order" : ["zdb"],
+    "type" : "EndDate"
+  },
+  {
+    "ygor" : "publisherHistoryStartDate",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "033A:h",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.startDate"],
+      "keepIfEmpty" : "true"
+    },
+    "order" : ["zdb"],
+    "type" : "StartDate"
+  },
+  {
+    "ygor" : "publisherHistoryStatus",
+    "out" : {
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.status"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Active"
+    }
+  },
+  {
+    "ygor" : "publisherName",
+    "in" : {
+      "kbart" : "publisher_name",
+      "zdb" : "033A:n",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.name"]
+    },
+    "order" : ["zdb", "kbart"],
+    "type" : "String"
+  },
+  {
+    "ygor" : "shortcode",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.shortcode"]
+    },
+    "order" : [""],
+    "type" : "String"
+  },
+  {
+    "ygor" : "tippMedium",
+    "out" : {
+      "gokb" : ["$TIPP.medium"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Electronic"
+    }
+  },
+  {
+    "ygor" : "tippStatus",
+    "out" : {
+      "gokb" : ["$TIPP.status"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Current"
+    }
+  },
+  {
+    "ygor" : "titleId",
+    "in" : {
+      "kbart" : "title_id",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:titleId,value)", "$TIPP.title.identifiers.$ARRAY.(type:titleId,value)"]
+    },
+    "order" : ["kbart"],
+    "type" : "ID"
+  },
+  {
+    "ygor" : "titleStatus",
+    "out" : {
+      "gokb" : ["$TITLE.status"]
+    },
+    "type" : "String",
+    "value" : {
+      "fixed" : "Current"
+    }
+  },
+  {
+    "ygor" : "titleUrl",
+    "in" : {
+      "kbart" : "title_url",
+      "zdb" : "",
+      "ezb" : "detail_link"
+    },
+    "out" : {
+      "gokb" : ["$TIPP.url"]
+    },
+    "order" : ["ezb","kbart"],
+    "type" : "URL",
+    "comment" : "The field name 'titleUrl' is misleading from the point of differentiating title vs. TIPP. In fact, it is a TIPP field."
+  },
+  {
+    "ygor" : "zdbId",
+    "in" : {
+      "kbart" : "zdb_id",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:zdb,value)", "$TIPP.title.identifiers.$ARRAY.(type:zdb,value)"]
+    },
+    "order" : ["kbart"],
+    "type" : "ID"
+  }
+]

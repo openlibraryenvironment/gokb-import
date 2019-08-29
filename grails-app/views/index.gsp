@@ -24,6 +24,33 @@
 				<p class="lead"><g:message code="index.versionhistory" /></p>
 
 				<dl>
+					<br /><dt>0.78 </dt><br />
+
+					<dd>- <g:message code="version.078.1" /></dd>
+					<br /><dt>0.77 </dt><br />
+
+					<dd>- <g:message code="version.077.1" /></dd>
+					<br /><dt>0.76 </dt><br />
+
+					<dd>- <g:message code="version.076.1" /></dd>
+					<br /><dt>0.75 </dt><br />
+
+					<dd>- <g:message code="version.075.1" /></dd>
+					<br /><dt>0.74 </dt><br />
+
+					<dd>- <g:message code="version.074.1" /></dd>
+					<br /><dt>0.73 </dt><br />
+
+					<dd>- <g:message code="version.073.1" /></dd>
+					<br /><dt>0.72 </dt><br />
+
+					<dd>- <g:message code="version.072.1" /></dd>
+					<br /><dt>0.71 </dt><br />
+
+					<dd>- <g:message code="version.071.1" /></dd>
+					<br /><dt>0.70 </dt><br />
+
+					<dd>- <g:message code="version.070.1" /></dd>
 					<br /><dt>0.60 </dt><br />
 
 					<dd>- <g:message code="version.060.1" /></dd>

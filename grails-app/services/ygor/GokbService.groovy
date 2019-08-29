@@ -3,84 +3,54 @@ package ygor
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 
-import java.sql.Connection
-import java.sql.Driver
-import java.sql.ResultSet
-
 class GokbService {
     
     def grailsApplication
     
-    Map getPlatformMap(def qterm = null, def suggest = true) {
-        
+    Map getPlatformMap(def qterm = null, def suggest = true){
         log.info("getting platform map from gokb ..")
-        
         def result = [:]
-        
         try {
             String esQuery = qterm ? URLEncoder.encode(qterm) : ""
-
-
             def json = null
-
-            if(suggest) {
+            if(suggest){
               json = geElasticsearchSuggests(esQuery, "Platform", null) // 10000 is maximum value allowed by now
-            }else {
+            }
+            else {
               json = geElasticsearchFindings(esQuery, "Platform", null, 10)
             }
-
             result.records = []
             result.map = [:]
 
-            if (json?.info?.records) {
-
+            if (json?.info?.records){
                 json.info.records.each { r ->
                   result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})": ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
-            if (json?.warning?.records) {
-
+            if (json?.warning?.records){
                 json.warning.records.each { r ->
                   result.records.add([id: r.name , text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})": ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
                   result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl?: 'no URL!')
                 }
             }
-
-            // TODO:
-            // - add URL to records returned by GOKb query API
-            // - then fill map with [<name> - <uri> : <uri>] (as done with resultSet up to now)
-            // - remove resultSet and associated query
-            // - "copy" changes to provider query
-
-//             while(resultSet.next()) {
-//                 if (resultSet.getString('kbc_name')) {
-//                     if (resultSet.getString('plat_primary_url')) {
-//                         map.put(resultSet.getString('kbc_name').concat(" - ").concat(resultSet.getString('plat_primary_url')),
-//                                 resultSet.getString('plat_primary_url'))
-//                     }
-//                     else {
-//                         map.put(resultSet.getString('kbc_name'), null)
-//                     }
-//                 }
-//             }
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             log.error(e.getMessage())
         }
-        
         if(result.map?.size() == 0)
             result.map = getPackageHeaderNominalPlatformPreset()
         result
     }
 
 
-    Map geElasticsearchSuggests(final String query, final String type, final String role) {
+    Map geElasticsearchSuggests(final String query, final String type, final String role){
         String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), query, type, role, null)
         queryElasticsearch(url)
     }
 
     Map geElasticsearchFindings(final String query, final String type,
-                                final String role, final Integer max) {
+                                final String role, final Integer max){
         String url = buildUri(grailsApplication.config.gokbApi.xrFindUriStub.toString(), query, type, role, max)
         queryElasticsearch(url)
     }
@@ -89,7 +59,7 @@ class GokbService {
         log.info("querying: " + url)
         def http = new HTTPBuilder(url)
 //         http.auth.basic user, pwd
-        http.request(Method.GET) { req ->
+        http.request(Method.GET){ req ->
             headers.'User-Agent' = 'ygor'
             response.success = { resp, html ->
                 log.info("server response: ${resp.statusLine}")
@@ -109,9 +79,9 @@ class GokbService {
         }
     }
 
-    private String buildUri(final String stub, final String query, final String type, final String role, final Integer max, String category = null) {
+    private String buildUri(final String stub, final String query, final String type, final String role, final Integer max, String category = null){
         String url = stub + "?"
-        if (query) {
+        if (query){
             url += "q=" + query + "&"
         }
         if (type){
@@ -130,78 +100,68 @@ class GokbService {
     }
 
 
-    Map getProviderMap(def qterm = null) {
-
+    Map getProviderMap(def qterm = null){
         log.info("getting provider map from gokb ..")
-
         def result = [:]
-
         try {
             String esQuery = qterm ? URLEncoder.encode(qterm) : ""
             def json = geElasticsearchSuggests(esQuery, "Org", null) // 10000 is maximum value allowed by now
-
             result.records = []
             result.map = [:]
-
-            if (json?.info?.records) {
-
+            if (json?.info?.records){
                 json.info.records.each { r ->
                   result.records.add([id: r.name, text: r.name.concat(r.status ? " (${r.status})": ""), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }
-            if (json?.warning?.records) {
-
+            if (json?.warning?.records){
                 json.warning.records.each { r ->
                   result.records.add([id: r.name, text: r.name.concat(r.status ? " (${r.status})": ""), status: r.status, oid: r.id, name: r.name])
                   result.map.put(r.name, r.name)
                 }
             }
-
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             log.error(e.getMessage())
         }
-
         result
     }
 
-    def getNamespaces() {
 
+    def getNamespaceList(){
       String nsBase = grailsApplication.config.gokbApi.baseUri.toString() + "api/namespaces"
       String nsCategory = grailsApplication.config.gokbApi.namespaceCategory ?: null
       String nsUrl = buildUri(nsBase, null, null, null, null, nsCategory)
       def result = [[id: 'doi', text:'doi']]
 
       log.debug("Retrieving namespaces via: ${nsUrl}")
-
       try {
         def json = queryElasticsearch(nsUrl)
-
-        if (json?.info?.result) {
-
+        if (json?.info?.result){
             json.info.result.each { r ->
-              result.add([id: r.value, text: r.value, cat: r.category])
+                if (!(r.value in ["issn", "eissn"])){
+                    result.add([id: r.value, text: r.value, cat: r.category])
+                }
             }
         }
-        if (json?.warning?.result) {
-
+        if (json?.warning?.result){
             json.warning.result.each { r ->
-              result.add([id: r.value, text: r.value, cat: r.category])
+                if (!(r.value in ["issn", "eissn"])){
+                    result.add([id: r.value, text: r.value, cat: r.category])
+                }
             }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e){
             log.error(e.getMessage())
       }
-
       result
     }
 
     // --- fallback
     
-    Map getPackageHeaderNominalPlatformPreset() {
-
+    Map getPackageHeaderNominalPlatformPreset(){
         log.warn("fallback: using static platform map")
-        
         return [
             "ACM Digital Library" : "http://dl.acm.org/",
             "ACS Publications" : "http://pubs.acs.org/",

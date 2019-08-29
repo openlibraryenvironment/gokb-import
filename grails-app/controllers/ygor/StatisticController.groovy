@@ -1,9 +1,7 @@
 package ygor
 
-import de.hbznrw.ygor.tools.*
+
 import groovy.util.logging.Log4j
-import ygor.Enrichment.FileType
-import de.hbznrw.ygor.export.JsonTransformer
 
 @Log4j
 class StatisticController {
@@ -11,31 +9,49 @@ class StatisticController {
     def grailsApplication
     
     static scope = "session"
-        
-    def index() {
+    static FileFilter DIRECTORY_FILTER = new FileFilter() {
+        @Override
+        boolean accept(File file) {
+            return file.isDirectory()
+        }
+    }
 
+    def index() {
         render(
             view:'index',
             model:[currentView:'statistic']
-            )
+        )
     }
     
     def show() {
-
-        def sthash = (String) request.parameterMap['sthash'][0]
-        def json = {}
+        String sthash = (String) request.parameterMap['sthash'][0]
+        Set<Map<String, String>> invalidRecords = new HashSet<>()
+        Set<Map<String, String>> validRecords = new HashSet<>()
+        String ygorVersion
+        String date
+        String filename
          
         log.info('reading file: ' + sthash)
         
         try {
-            new File(grailsApplication.config.ygor.uploadLocation).eachDir() { dir ->
-                dir.eachFile() { file ->
-                    if(file.getName() == sthash){
-                        def raw = JsonToolkit.parseFileToJson(file.getAbsolutePath())
-                        def tmp = JsonTransformer.getSimpleJSON(raw, FileType.JSON_DEBUG, JsonTransformer.NO_PRETTY_PRINT)
-                        json = tmp.toString()
+            Enrichment enrichment = getEnrichmentFromFile(sthash)
+            String namespace = enrichment.dataContainer.info.namespace_title_id
+            if (enrichment){
+                for (Record record in enrichment.dataContainer.records){
+                    record.validate(namespace)
+                    if (record.isValid()){
+                        validRecords.add(record.asMultiFieldMap())
+                    }
+                    else {
+                        invalidRecords.add(record.asMultiFieldMap())
                     }
                 }
+                ygorVersion = enrichment.ygorVersion
+                date = enrichment.date
+                filename = enrichment.originName
+            }
+            else{
+                throw new EmptyStackException()
             }
         }
         catch(Exception e){
@@ -46,9 +62,38 @@ class StatisticController {
         render(
             view:'show',
             model:[
-                json:        json,
-                sthash:      sthash,
-                currentView: 'statistic'
-            ])
+                sthash:         sthash,
+                currentView:    'statistic',
+                ygorVersion:    ygorVersion,
+                date:           date,
+                filename:       filename,
+                invalidRecords: invalidRecords,
+                validRecords:   validRecords
+            ]
+        )
     }
+
+
+    def edit(){
+        Enrichment enrichment = getEnrichmentFromFile((String) request.parameterMap['sthash'][0])
+        Record record = enrichment.dataContainer.getRecord(params.id)
+        [record: record]
+    }
+
+
+    private Enrichment getEnrichmentFromFile(String sthash){
+        File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
+        for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
+            for (def file in dir.listFiles()){
+                if (file.getName() == sthash) {
+                    return Enrichment.fromFile(file)
+                }
+            }
+        }
+        return null
+    }
+
+    static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
+    static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
+    static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
 }

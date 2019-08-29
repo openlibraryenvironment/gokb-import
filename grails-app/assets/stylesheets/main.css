@@ -11,11 +11,6 @@ h1, h2, h3, h4, h5, h6 {
 /* BASE LAYOUT */
 
 html {
-	background-color: #ddd;
-	background-image: -moz-linear-gradient(center top, #aaa, #ddd);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #aaa), color-stop(1, #ddd));
-	background-image: linear-gradient(top, #aaa, #ddd);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr = '#aaaaaa', EndColorStr = '#dddddd');
 	background-repeat: no-repeat;
 	height: 100%;
 	/* change the box model to exclude the padding from the calculation of 100% height (IE8+) */
@@ -40,11 +35,6 @@ body {
 	background: #ffffff;
 	color: #333333;
 	margin: 0 auto;
-	max-width: 960px;
-	overflow-x: hidden; /* prevents box-shadow causing a horizontal scrollbar in firefox when viewport < 960px wide */
-	   -moz-box-shadow: 0 0 0.3em #255b17;
-	-webkit-box-shadow: 0 0 0.3em #255b17;
-	        box-shadow: 0 0 0.3em #255b17;
 }
 
 #grailsLogo {
@@ -64,8 +54,20 @@ body {
 	height: 100%;
 }
 
-a:link, a:visited, a:hover {
-	color: #48802c;
+a:link, a:hover {
+	color: #fff;
+}
+
+a:visited {
+	color: #609;
+}
+
+td.statistics-cell a:link {
+	color: #000;
+}
+
+tr.even:hover a, tr.odd:hover a{
+	color: #fff;
 }
 
 a:hover, a:active {
@@ -135,11 +137,6 @@ img {
 /* NAVIGATION MENU */
 
 .nav {
-	background-color: #efefef;
-	padding: 0.5em 0.75em;
-	   -moz-box-shadow: 0 0 3px 1px #aaaaaa;
-	-webkit-box-shadow: 0 0 3px 1px #aaaaaa;
-	        box-shadow: 0 0 3px 1px #aaaaaa;
 	zoom: 1;
 }
 
@@ -246,7 +243,6 @@ label {
 }
 
 input, select, textarea {
-	background-color: #fcfcfc;
 	border: 1px solid #cccccc;
 	font-size: 1em;
 	padding: 0.2em 0.4em;
@@ -399,7 +395,6 @@ input:invalid:focus, select:invalid:focus, textarea:invalid:focus {
 /* TABLES */
 
 table {
-	border-top: 1px solid #DFDFDF;
 	border-collapse: collapse;
 	width: 100%;
 	margin-bottom: 1em;
@@ -409,31 +404,16 @@ tr {
 	border: 0;
 }
 
-tr>td:first-child, tr>th:first-child {
-	padding-left: 1.25em;
-}
-
-tr>td:last-child, tr>th:last-child {
-	padding-right: 1.25em;
-}
-
 td, th {
 	line-height: 1.5em;
-	padding: 0.5em 0.6em;
 	text-align: left;
 	vertical-align: top;
 }
 
 th {
-	background-color: #efefef;
-	background-image: -moz-linear-gradient(top, #ffffff, #eaeaea);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(1, #eaeaea));
-	    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr = '#ffffff', EndColorStr = '#eaeaea');
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#eaeaea')";
-	color: #666666;
+	color: #004678;
 	font-weight: bold;
 	line-height: 1.7em;
-	padding: 0.2em 0.6em;
 }
 
 thead th {
@@ -473,10 +453,6 @@ th.desc a {
 
 .even {
 	background: #ffffff;
-}
-
-th:hover, tr:hover {
-	background: #E1F2B6;
 }
 
 /* PAGINATION */
@@ -598,4 +574,26 @@ a.skip {
 a.skip:focus, a.skip:active {
 	position: relative;
 	left: 0px;
+}
+
+
+table.statistics-details {
+	border-collapse: separate;
+}
+
+td.statistics-cell {
+	padding: 0px 5px 0px 0px;
+}
+
+tr.even:hover, tr.odd:hover {
+	background: #004678;
+	color: #fff;
+}
+
+td a {
+	display: block;
+}
+
+.statistics-data {
+	padding: 15px 15px 0px 15px;
 }

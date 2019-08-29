@@ -40,12 +40,6 @@
 				<tr>
 					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
-					<td>packageHeader.variantNames</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
-					<td></td>
 					<td>packageHeader.curatoryGroups</td>
 					<td>GOKb Curatory Group</td>
 				</tr>
@@ -194,12 +188,6 @@
 				<td></td>
 				<td>packageHeader.nominalPlatform</td>
 				<td>GOKb Plattform</td>
-			</tr>
-			<tr>
-				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
-				<td></td>
-				<td>packageHeader.variantNames</td>
-				<td></td>
 			</tr>
 			<tr>
 				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
