@@ -44,12 +44,12 @@ class Statistics {
         enrichment.stats.set("general", general)
         enrichment.stats.set("identifiers", new ObjectNode(NODE_FACTORY))
 
-        Statistics.evaluateTippNames(enrichment.dataContainer.records, enrichment.stats)
-        Statistics.evaluateUrls(enrichment.dataContainer.records, enrichment.stats)
-        Statistics.evaluateIdentifiers(enrichment.dataContainer.records, enrichment.stats)
-        Statistics.evaluateCoverage(enrichment.dataContainer.records, enrichment.stats)
-        Statistics.evaluatePublisherHistory(enrichment.dataContainer.records, enrichment.stats)
-        Statistics.evaluateHistoryEvents(enrichment.dataContainer.records, enrichment.stats)
+        Statistics.evaluateTippNames(enrichment.dataContainer.records.values(), enrichment.stats)
+        Statistics.evaluateUrls(enrichment.dataContainer.records.values(), enrichment.stats)
+        Statistics.evaluateIdentifiers(enrichment.dataContainer.records.values(), enrichment.stats)
+        Statistics.evaluateCoverage(enrichment.dataContainer.records.values(), enrichment.stats)
+        Statistics.evaluatePublisherHistory(enrichment.dataContainer.records.values(), enrichment.stats)
+        Statistics.evaluateHistoryEvents(enrichment.dataContainer.records.values(), enrichment.stats)
 
         general.put(StatisticController.PROCESSED_KBART_ENTRIES, enrichment.dataContainer.records.size())
         general.put(StatisticController.IGNORED_KBART_ENTRIES, 0) // TODO
@@ -70,7 +70,7 @@ class Statistics {
         json
     }
     
-    static Object evaluateTippNames(Set<Record> records, ObjectNode stats){ // TODO rename evaluateNames ?
+    static Object evaluateTippNames(Collection<Record> records, ObjectNode stats){ // TODO rename evaluateNames ?
         List<Integer> tippTitleName = Statistics.getStorage()
         records.each{record ->
             MultiField nameField = record.getMultiField("publicationTitle")
@@ -100,7 +100,7 @@ class Statistics {
         Statistics.format("name is missing",    tippTitleName, Statistics.COUNT_4, Statistics.LIST_4, stats)
     }
 
-    static Object evaluateUrls(Set<Record> records, ObjectNode stats){
+    static Object evaluateUrls(Collection<Record> records, ObjectNode stats){
         List<Integer> tippUrls = Statistics.getStorage()
         records.each{record ->
             def urlField = record.getMultiField("titleUrl")
@@ -141,7 +141,7 @@ class Statistics {
     }
 
 
-    static Object evaluateIdentifiers(Set<Record> records, ObjectNode stats){
+    static Object evaluateIdentifiers(Collection<Record> records, ObjectNode stats){
         HashMap<String, List<Integer>> identifiers = [:]
         identifiers[TitleStruct.EISSN]    = Statistics.getStorage()
         identifiers[ZdbBridge.IDENTIFIER] = Statistics.getStorage()
@@ -185,7 +185,7 @@ class Statistics {
     }
 
 
-    static Object evaluateCoverage(Set<Record> records, ObjectNode stats){
+    static Object evaluateCoverage(Collection<Record> records, ObjectNode stats){
         // TODO invalid coverages
         List<Integer> coverages = Statistics.getStorage()
         List<Integer> covDates  = Statistics.getStorage()
@@ -241,7 +241,7 @@ class Statistics {
     }
 
 
-    static Object evaluatePublisherHistory(Set<Record> records, ObjectNode stats){
+    static Object evaluatePublisherHistory(Collection<Record> records, ObjectNode stats){
         List<Integer> pubStruct   = Statistics.getStorage()
         List<Integer> pubHistName = Statistics.getStorage()
         // TODO: iterate over publisher history entries
@@ -344,7 +344,7 @@ class Statistics {
     }
 
 
-    static Object evaluateHistoryEvents(Set<Record> records, ObjectNode stats){
+    static Object evaluateHistoryEvents(Collection<Record> records, ObjectNode stats){
         List<Integer> theHistoryEvents = Statistics.getStorage()
         records.each{ record ->
             // TODO iterate over history events

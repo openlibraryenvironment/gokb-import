@@ -61,7 +61,7 @@ class GokbExporter {
     static ArrayNode extractTitles(Enrichment enrichment){
         log.debug("extracting titles ...")
         ArrayNode titles = new ArrayNode(NODE_FACTORY)
-        for (Record record in enrichment.dataContainer.records){
+        for (Record record in enrichment.dataContainer.records.values()){
             if (record.isValid()){
                 ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
                 appendValue(title, "name", "subTitle", ": ", true)
@@ -81,7 +81,7 @@ class GokbExporter {
     static ArrayNode extractTipps(Enrichment enrichment){
         log.debug("extracting tipps ...")
         ArrayNode tipps = new ArrayNode(NODE_FACTORY)
-        for (Record record in enrichment.dataContainer.records){
+        for (Record record in enrichment.dataContainer.records.values()){
             if (record.isValid()){
                 tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
             }

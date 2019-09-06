@@ -15,7 +15,7 @@ class DataContainer {
     Meta        info    // TODO: use or delete
     Package     pkg
     ObjectNode  packageHeader
-    Set<Record> records
+    Map<String, Record> records
     ArrayNode   titles
     ArrayNode   tipps
 
@@ -30,7 +30,7 @@ class DataContainer {
         )
         pkg = new Package()
 
-        records = []
+        records = [:]
         titles = new ArrayNode(NODE_FACTORY)
         tipps = new ArrayNode(NODE_FACTORY)
     }
@@ -38,23 +38,18 @@ class DataContainer {
 
     def addRecord(Record record){
         if (record.zdbId || record.printIdentifier || record.onlineIdentifier){
-            records.add(record)
+            records.put(record.uid, record)
         }
     }
 
 
     Record getRecord(String uid){
-        for (Record record in records){
-            if (uid.equals(record.uid)){
-                return record
-            }
-        }
-        return null
+        return records.get(uid);
     }
 
 
     void validateRecords(){
-        for (Record record in records){
+        for (Record record in records.values()){
             record.validate(info.namespace_title_id)
         }
     }
@@ -64,7 +59,8 @@ class DataContainer {
         DataContainer result = new DataContainer()
         Iterator it = dataContainerNode.iterator()
         while (it.hasNext()){
-            result.records << Record.fromJson(it.next(), mappings)
+            Record rec = Record.fromJson(it.next(), mappings)
+            result.records.put(rec.uid, rec)
         }
         result
     }

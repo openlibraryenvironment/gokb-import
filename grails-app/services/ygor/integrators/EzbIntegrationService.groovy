@@ -18,7 +18,7 @@ class EzbIntegrationService extends ExternalIntegrationService{
 
     def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
         String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
-        for (Record record in dataContainer.records){
+        for (Record record in dataContainer.records.values()){
             if (isApiCallMedium(record)){
                 Map<String, String> ezbMatch = getBestMatch(owner, record)
                 if (!ezbMatch.isEmpty()) {

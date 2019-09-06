@@ -146,7 +146,7 @@ class Enrichment {
         result.append("\"mappingsContainer\":")
         result.append(JsonToolkit.toJson(mappingsContainer))
         result.append("},\"data\":")
-        result.append(JsonToolkit.toJson(dataContainer.records))
+        result.append(JsonToolkit.toJson(dataContainer.records.values()))
         result.append("}")
         File file = new File(resultPathName)
         file.getParentFile().mkdirs()
@@ -241,7 +241,7 @@ class Enrichment {
 
     void enrollMappingToRecords(FieldKeyMapping mapping){
         MultiField titleMedium = new MultiField(mapping)
-        for (Record record in dataContainer.records) {
+        for (Record record in dataContainer.records.values()) {
             record.addMultiField(titleMedium)
         }
     }

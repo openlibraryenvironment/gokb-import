@@ -20,7 +20,7 @@ class ZdbIntegrationService extends ExternalIntegrationService{
 
     def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
         String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
-        for (Record record in dataContainer.records){
+        for (Record record in dataContainer.records.values()){
             if (isApiCallMedium(record)){
                 Map<String, String> zdbMatch = getBestMatch(owner, record)
                 if (zdbMatch){

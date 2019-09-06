@@ -130,14 +130,14 @@ class MultipleProcessingThread extends Thread {
 
 
     private void normalize(){
-        for (Record record : enrichment.dataContainer.records){
+        for (Record record : enrichment.dataContainer.records.values()){
             record.normalize(enrichment.dataContainer.info.namespace_title_id)
         }
     }
 
 
     private void validate(){
-        for (Record record : enrichment.dataContainer.records){
+        for (Record record : enrichment.dataContainer.records.values()){
             record.validate(enrichment.dataContainer.info.namespace_title_id)
         }
     }

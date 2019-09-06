@@ -11,6 +11,7 @@
 				<table class="statistics-details">
 					<tr>
 						<th>Title</th>
+                        <th>Validierung</th>
 						<th>ZDB ID</th>
 						<th>eISSN</th>
 					</tr>
@@ -18,8 +19,9 @@
 					<g:each in="${invalidRecords}" var="record">
 						<tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
 							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.publicationTitle}</g:link><br/></td>
-							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.zdbId}</g:link><br/></td>
-							<td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.eissn}</g:link><br/></td>
+                            <td class="statistics-cell"><g:each in="${record.validationMessages}" var="message">${message}<br/></g:each></td>
+                            <td class="statistics-cell">${record.zdbId}<br/></td>
+							<td class="statistics-cell">${record.eissn}<br/></td>
 						</tr>
 						<g:set var="lineCounter" value="${lineCounter + 1}"/>
 					</g:each>

@@ -33,10 +33,12 @@ class Record {
     String          ezbIntegrationDate
     String          zdbIntegrationUrl
     String          ezbIntegrationUrl
+    List<String>    validationMessages = new ArrayList<String>();
 
 
     static hasMany = [multiFields : MultiField,
-                      validation : String]
+                      validation : String,
+                      validationMessages : String]
 
     static constraints = {
     }
@@ -123,10 +125,16 @@ class Record {
         // validate tipp.titleUrl
         if (!zdbIntegrationDate){
             // has not been matched in ZDB API
+            validationMessages.add("kein passender Eintrag in ZDB gefunden")
             return false
         }
         MultiField urlMultiField = multiFields.get("titleUrl")
-        if (urlMultiField == null || urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()){
+        if (urlMultiField == null){
+          validationMessages.add("keine Titel-Url vorhanden")
+          return false
+        }
+        if (urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()){
+            validationMessages.add("Titel-URL nicht valide")
             return false
         }
         return true
@@ -162,11 +170,9 @@ class Record {
         multiFields.each{k,v -> v.validate(namespace)}
     }
 
-
     def getCoverage(){
         false // TODO
     }
-
 
     String asJson(JsonGenerator jsonGenerator){
         jsonGenerator.writeStartObject()

@@ -37,13 +37,14 @@ class StatisticController {
             Enrichment enrichment = getEnrichmentFromFile(sthash)
             String namespace = enrichment.dataContainer.info.namespace_title_id
             if (enrichment){
-                for (Record record in enrichment.dataContainer.records){
+                for (Record record in enrichment.dataContainer.records.values()){
                     record.validate(namespace)
+                    def multiFieldMap = record.asMultiFieldMap()
                     if (record.isValid()){
-                        validRecords.add(record.asMultiFieldMap())
+                        validRecords.add(multiFieldMap)
                     }
                     else {
-                        invalidRecords.add(record.asMultiFieldMap())
+                        invalidRecords.add(multiFieldMap)
                     }
                 }
                 ygorVersion = enrichment.ygorVersion
