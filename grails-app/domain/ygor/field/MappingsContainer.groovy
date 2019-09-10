@@ -2,7 +2,6 @@ package ygor.field
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
 import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
@@ -10,8 +9,6 @@ import org.codehaus.groovy.grails.io.support.ClassPathResource
 import ygor.identifier.EissnIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
-
-import java.nio.file.Paths
 
 @Log4j
 class MappingsContainer {

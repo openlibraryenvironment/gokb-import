@@ -121,17 +121,20 @@ class Record {
     }
 
 
-    boolean isValid(){
+    boolean isValid(String typ){
         // validate tipp.titleUrl
-        if (!zdbIntegrationDate){
-            // has not been matched in ZDB API
-            validationMessages.add("kein passender Eintrag in ZDB gefunden")
-            return false
+        if (typ.toLowerCase() != "ebooks") {
+            // eBooks werden nicht gegen die ZDB geprüft und haben darum auch keine ZDB Daten
+            if (!zdbIntegrationDate) {
+                // has not been matched in ZDB API
+                validationMessages.add("kein passender Eintrag in ZDB gefunden")
+                return false
+            }
         }
         MultiField urlMultiField = multiFields.get("titleUrl")
         if (urlMultiField == null){
-          validationMessages.add("keine Titel-Url vorhanden")
-          return false
+            validationMessages.add("keine Titel-Url vorhanden")
+            return false
         }
         if (urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()){
             validationMessages.add("Titel-URL nicht valide")

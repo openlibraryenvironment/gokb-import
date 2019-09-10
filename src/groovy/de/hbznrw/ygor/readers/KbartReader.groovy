@@ -44,8 +44,11 @@ class KbartReader extends AbstractReader{
     KbartReader(MultipleProcessingThread owner, String delimiter) {
         this.owner = owner
         char delimiterChar = resolver.get(delimiter)
-        csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar)
-        csv = CSVParser.parse(new File(owner.kbartFile), Charset.defaultCharset(), csvFormat)
+        csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar).withIgnoreSurroundingSpaces()
+        String fileData = new File(owner.kbartFile).getText();
+        // remove the BOM from the Data
+        fileData.replace('\uFEFF', '')
+        csv = CSVParser.parse(fileData, csvFormat)
         csvHeader = csv.getHeaderMap().keySet() as ArrayList
         checkHeader(csvHeader)
         iterator = csv.iterator()
@@ -169,13 +172,13 @@ class KbartReader extends AbstractReader{
     }
 
 
-    private ArrayList<String> splitLine(String line){
+    private List<String> spitLine(String line){
         def result = new ArrayList<String>()
         if (StringUtils.isEmpty(line)){
             return result
         }
         String delimiter = KbartReaderConfiguration.resolve(owner.delimiter)
-        int i
+        /*int i
         while (line.length() > 0){
             i = line.indexOf(delimiter)
             if (i == -1){
@@ -184,8 +187,8 @@ class KbartReader extends AbstractReader{
             }
             result.add(line.substring(0, i))
             line = line.substring(i + delimiter.length())
-        }
-        return result
+        }*/
+        return line.tokenize(owner.delimiter).asList()
     }
 
     static def resolver = [
