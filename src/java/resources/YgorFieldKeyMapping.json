@@ -600,7 +600,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:issn,value)", "$TIPP.title.identifiers.$ARRAY.(type:issn,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:isbn,value)", "$TIPP.title.identifiers.$ARRAY.(type:isbn,value)"]
     },
     "order" : ["kbart"],
     "type" : "ID"
