@@ -25,22 +25,22 @@ class StatisticController {
     
     def show() {
         String sthash = (String) request.parameterMap['sthash'][0]
-        Set<Map<String, String>> invalidRecords = new HashSet<>()
-        Set<Map<String, String>> validRecords = new HashSet<>()
+        List<Map<String, String>> invalidRecords = new ArrayList<Map<String,String>>()
+        List<Map<String, String>> validRecords = new ArrayList<Map<String,String>>()
         String ygorVersion
         String date
         String filename
-         
+        Enrichment enrichment
         log.info('reading file: ' + sthash)
         
         try {
-            Enrichment enrichment = getEnrichmentFromFile(sthash)
+            enrichment = getEnrichmentFromFile(sthash)
             String namespace = enrichment.dataContainer.info.namespace_title_id
             if (enrichment){
                 for (Record record in enrichment.dataContainer.records.values()){
                     record.validate(namespace)
                     def multiFieldMap = record.asMultiFieldMap()
-                    if (record.isValid()){
+                    if (record.isValid(enrichment.dataType)){
                         validRecords.add(multiFieldMap)
                     }
                     else {
@@ -68,6 +68,7 @@ class StatisticController {
                 ygorVersion:    ygorVersion,
                 date:           date,
                 filename:       filename,
+                dataType:       enrichment?.dataType,
                 invalidRecords: invalidRecords,
                 validRecords:   validRecords
             ]
