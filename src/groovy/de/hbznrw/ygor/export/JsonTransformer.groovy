@@ -107,6 +107,19 @@ class JsonTransformer {
         if(json.package.packageHeader.name) {
             json.package.packageHeader.name = json.package.packageHeader.name.v.v
         }
+
+        if(json.meta.isil) {
+            json.package.packageHeader.identifiers = [[type: 'isil', 'value': json.meta.isil]]
+        }
+
+        if(json.meta.pkgType) {
+            if(json.meta.pkgType == 'ebooks') {
+                json.package.packageHeader.contentType = "Book"
+            }
+            if(json.meta.pkgType == 'journals') {
+                json.package.packageHeader.contentType = "Journal"
+            }
+        }
         
         json  
     }
@@ -426,11 +439,12 @@ class JsonTransformer {
                     
                     // only valid entries
                     if(useValidator){
-                        if(from.title.m == Status.VALIDATOR_STRING_IS_VALID.toString()){
+                        if(from.title.m == Status.VALIDATOR_STRING_IS_VALID.toString() && to.title.v.length() > 0){
                             from.title = from.title.v
                         }
                         else {
                             from.title = ""
+                            he.m = Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString()
                         }
                     }
                     else {
@@ -455,11 +469,12 @@ class JsonTransformer {
                     
                     // only valid entries
                     if(useValidator){
-                        if(to.title.m == Status.VALIDATOR_STRING_IS_VALID.toString()){
+                        if(to.title.m == Status.VALIDATOR_STRING_IS_VALID.toString() && to.title.v.length() > 0){
                             to.title = to.title.v
                         }
                         else {
                             to.title = ""
+                            he.m = Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString()
                         }
                     }
                     else {
@@ -478,8 +493,12 @@ class JsonTransformer {
                     //if(he.m == Status.STRUCTVALIDATOR_HISTORYEVENT_IS_VALID.toString())
                     // TODO remove if struct validator is implemented
                     // workaround
-                    if(he.m != Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString())
+                    if(he.m != Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString()) {
                         theHistoryEvents << he.v
+                    }
+                    else {
+                      log.debug("Skipping invalid historyEvent: ${he.v}")
+                    }
                 }
                 else {
                     theHistoryEvents << he.v

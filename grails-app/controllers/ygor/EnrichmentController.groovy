@@ -257,7 +257,7 @@ class EnrichmentController {
         flash.warning = []
         flash.error = []
 
-        if (response.JSON) {
+        if (response?.JSON) {
 
             if (response.info[0] != null) {
                 if (response.info[0].result == 'ERROR') {

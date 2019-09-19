@@ -88,7 +88,7 @@
 										<g:textField name="pkgTitle" size="48" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" />
 									</g:if>
 									<g:else>
-										<g:textField name="pkgTitle" size="48" value="Munchhausen Verlag : hbz : 1999" class="form-control" />
+										<g:textField name="pkgTitle" size="48" placeholder="Munchhausen Verlag : hbz : 1999" class="form-control" />
 									</g:else>
 								</div>
 								

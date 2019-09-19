@@ -10,7 +10,7 @@ class FixedValues {
     
     static String packageHeader_global        = "Consortium"
     
-    static String packageHeader_listStatus    = "Checked"
+    static String packageHeader_listStatus    = "In Progress"
     
     
     static String tipp_medium     = "Electronic"

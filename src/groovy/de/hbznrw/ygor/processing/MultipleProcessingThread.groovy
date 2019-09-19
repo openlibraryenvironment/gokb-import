@@ -91,6 +91,7 @@ class MultipleProcessingThread extends Thread {
 		
         enrichment.dataContainer.info.stash = processor.stash.values
         enrichment.dataContainer.info.stash.processedKbartEntries = processor.getCount()
+        enrichment.dataContainer.info.pkgType = refactorThis.get('dataTyp')
 
         def duplicateKeys = []
         for (key in KEY_ORDER){

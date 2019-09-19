@@ -19,7 +19,8 @@ class DataContainer {
             api:    [],
             stats:  [:],
             stash:  [:],
-            namespace_title_id: ""
+            namespace_title_id: "",
+            isil:   ""
         )
         pkg      = new Package()
         titles   = [:]

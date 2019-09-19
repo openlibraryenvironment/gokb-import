@@ -57,6 +57,7 @@ class EnrichmentService {
         ph.v.name.v          = new Pod(pm['pkgTitle'][0])
         if ("" != pm['pkgVariantName'][0].trim()) {
             ph.v.variantNames << new Pod(pm['pkgVariantName'][0])
+            enrichment.dataContainer.info.isil = pm['pkgVariantName'][0]
         }
         if("" != pm['pkgCuratoryGroup1'][0].trim()){
             ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
@@ -136,14 +137,18 @@ class EnrichmentService {
         def json
         
         if(fileType == Enrichment.FileType.JSON_PACKAGE_ONLY){
-            json = enrichment.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
-            
-            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
+            json = enrichment?.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY) ?: null
+
+            if (json) {
+              result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
+            }
         }
         else if(fileType == Enrichment.FileType.JSON_TITLES_ONLY){
-            json = enrichment.getFile(Enrichment.FileType.JSON_TITLES_ONLY)
-            
-            result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrTitleUri, user, pwd)
+            json = enrichment?.getFile(Enrichment.FileType.JSON_TITLES_ONLY) ?: null
+
+            if (json) {
+              result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrTitleUri, user, pwd)
+            }
         }
 
         result
@@ -159,6 +164,7 @@ class EnrichmentService {
         
         http.request(Method.POST, ContentType.JSON) { req ->
             headers.'User-Agent' = 'ygor'
+            headers.'Connection' = 'close'
 
             body = json.getText()
             response.success = { resp, html ->
