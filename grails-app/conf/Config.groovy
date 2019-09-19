@@ -104,6 +104,7 @@ environments {
             xrPackageUri     = 'http://localhost:8080/gokb/integration/crossReferencePackage'
             xrSuggestUriStub = 'http://localhost:8080/gokb/api/suggest'
             xrFindUriStub    = 'http://localhost:8080/gokb/api/find'
+            namespaceCategory= 'ttl_prv'
             user             = ''
             pwd              = ''
         }
@@ -128,6 +129,7 @@ environments {
             xrPackageUri     = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
             xrSuggestUriStub = 'http://phaeton.hbz-nrw.de/gokb/api/suggest'
             xrFindUriStub    = 'http://phaeton.hbz-nrw.de/gokb/api/find'
+            namespaceCategory= 'ttl_prv'
             user             = ''
             pwd              = ''
         }

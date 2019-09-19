@@ -5,14 +5,13 @@
 	<div class="col-xs-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><g:message code="statistic.show.records.invalid"/></h3>
+				<h3 class="panel-title">${invalidRecords.size}<g:message code="statistic.show.records.invalid"/></h3>
 			</div>
 			<div class="statistics-data">
 				<table class="statistics-details">
                     <g:if test="${dataType.toLowerCase() != 'ebooks'}">
                         <tr>
                             <th>Title</th>
-                            <th>Validierung</th>
                             <th>ZDB ID</th>
                             <th>eISSN</th>
                         </tr>
@@ -20,7 +19,6 @@
                         <g:each in="${invalidRecords}" var="record">
                             <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.publicationTitle}</g:link><br/></td>
-                                <td class="statistics-cell"><g:each in="${record.validationMessages}" var="message">${message}<br/></g:each></td>
                                 <td class="statistics-cell">${record.zdbId}<br/></td>
                                 <td class="statistics-cell">${record.onlineIdentifier}<br/></td>
                             </tr>
@@ -30,14 +28,12 @@
                     <g:else>
                         <tr>
                             <th>Title</th>
-                            <th>Validierung</th>
                             <th>eISBN</th>
                         </tr>
                         <g:set var="lineCounter" value="${0}" />
                         <g:each in="${invalidRecords}" var="record">
                             <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.uid}">${record.publicationTitle}</g:link><br/></td>
-                                <td class="statistics-cell"><g:each in="${record.validationMessages}" var="message">${message}<br/></g:each></td>
                                 <td class="statistics-cell">${record.printIdentifier}<br/></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -51,7 +47,7 @@
 	<div class="col-xs-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><g:message code="statistic.show.records.valid"/></h3>
+				<h3 class="panel-title">${validRecords.size}<g:message code="statistic.show.records.valid"/></h3>
 			</div>
 			<div class="statistics-data">
 				<table class="statistics-details">
