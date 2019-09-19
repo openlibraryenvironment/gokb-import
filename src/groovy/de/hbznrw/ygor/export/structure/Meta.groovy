@@ -10,4 +10,6 @@ class Meta {
     HashMap   stats
     HashMap   stash
     String    namespace_title_id
+    String    isil
+    String    pkgType
 }
