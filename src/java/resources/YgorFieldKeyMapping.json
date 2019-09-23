@@ -795,13 +795,13 @@
     "ygor" : "zdbId",
     "in" : {
       "kbart" : "zdb_id",
-      "zdb" : "",
+      "zdb" : "006Z:0",
       "ezb" : ""
     },
     "out" : {
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:zdb,value)", "$TIPP.title.identifiers.$ARRAY.(type:zdb,value)"]
     },
-    "order" : ["kbart"],
+    "order" : ["zdb","kbart"],
     "type" : "ID"
   }
 ]

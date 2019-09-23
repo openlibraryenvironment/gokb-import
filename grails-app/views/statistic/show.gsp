@@ -5,7 +5,7 @@
 	<div class="col-xs-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">${invalidRecords.size}<g:message code="statistic.show.records.invalid"/></h3>
+				<h3 class="panel-title">${invalidRecords.size} <g:message code="statistic.show.records.invalid"/></h3>
 			</div>
 			<div class="statistics-data">
 				<table class="statistics-details">
@@ -47,7 +47,7 @@
 	<div class="col-xs-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">${validRecords.size}<g:message code="statistic.show.records.valid"/></h3>
+				<h3 class="panel-title">${validRecords.size} <g:message code="statistic.show.records.valid"/></h3>
 			</div>
 			<div class="statistics-data">
 				<table class="statistics-details">
