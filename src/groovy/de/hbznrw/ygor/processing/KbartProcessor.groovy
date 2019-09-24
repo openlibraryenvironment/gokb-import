@@ -309,7 +309,7 @@ class KbartProcessor extends AbstractProcessor {
     title._meta.api << api
     tipp._meta.api << api
 
-    title
+    return title
   }
 
   Stash getStash() {

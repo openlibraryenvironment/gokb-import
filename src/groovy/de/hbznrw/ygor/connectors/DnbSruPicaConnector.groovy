@@ -70,8 +70,9 @@ class DnbSruPicaConnector extends AbstractConnector {
         picaRecords = []
         response = SLURPER.parseText(new URL(q).getText())
         def records = response.children().find { it.name() == "records" }.childNodes()
-        while (records.hasNext()) picaRecords << records.next()
-        picaRecords
+        picaRecords.addAll(records)
+
+        return picaRecords
     }
 
     @Override
