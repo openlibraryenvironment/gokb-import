@@ -46,6 +46,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
       this.connector.kbartKeys.add('first_editor')
       this.connector.kbartKeys.add('first_author')
 
+      this.tasks = this.tasks.plus(Query.KBART_TITLE)
       this.tasks = this.tasks.plus(Query.KBART_PUBLISHER)
       this.tasks = this.tasks.plus(Query.KBART_EISBN)
       this.tasks = this.tasks.plus(Query.KBART_PISBN)

@@ -100,11 +100,11 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 
     DataContainer container = master.enrichment.dataContainer
 
-		master.enrichment.dataContainer.titles.each { key, value ->
+		container.titles.each { key, value ->
 			DataMapper.mapHistoryEvents(container, value.v, stash)
 			DataMapper.mapOrganisations(orgMap, value.v)
 		}
-		master.enrichment.dataContainer.pkg.tipps.each { key, value ->
+		container.pkg.tipps.each { key, value ->
 			DataMapper.mapPlatform(value.v, container)
 		}
 	}
