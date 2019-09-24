@@ -181,10 +181,7 @@ class KbartProcessor extends AbstractProcessor {
 
 
   private void addKey(String keyType, def value) {
-//    def existing = keysPerKeyType.get(keyType)
-//    existing << value
-//    keysPerKeyType.put(keyType, existing)
-    keysPerKeyType.put(keyType, value)
+    keysPerKeyType.get(keyType) << value
   }
 
 
