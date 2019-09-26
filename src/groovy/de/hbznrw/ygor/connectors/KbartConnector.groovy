@@ -141,7 +141,7 @@ class KbartConnector extends AbstractConnector {
 
     private Envelope getTippCoverageAsFatEnvelope() {
         // fixing german specialties before further processing
-        def coverageDepthValue = getValue('coverage_depth')
+        def coverageDepthValue = getValue('coverage_depth').toString().trim()
         if ("volltext".equalsIgnoreCase(coverageDepthValue))
             coverageDepthValue = "Fulltext"
         getEnvelopeWithComplexMessage([

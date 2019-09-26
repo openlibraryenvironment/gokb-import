@@ -22,7 +22,7 @@ import ygor.integrators.ZdbIntegrationService
 @Log4j
 class MultipleProcessingThread extends Thread {
 
-    static final KEY_ORDER = ["zdbId", "onlineIdentifier" /*, "printIdentifier" */]
+    static final KEY_ORDER = ["zdbId", "onlineIdentifier" , "printIdentifier" ]
 
     public identifierByKey = [:]
 
@@ -78,7 +78,7 @@ class MultipleProcessingThread extends Thread {
         log.info('Starting MultipleProcessingThread run...')
         try {
             // TODO: make sure, Kbart file is processed first
-            apiCalls.each{ call ->
+            for (String call : apiCalls) {
                 switch(call){
                     case KbartReader.IDENTIFIER:
                         KbartReaderConfiguration conf =
