@@ -149,9 +149,6 @@ class KbartReader extends AbstractReader {
 
 
   private CSVParser getCSVParserFromReader(Reader reader) {
-    // Skip BOM
-    reader.mark(1)
-    if (reader.read() != 0xFEFF) reader.reset()
     new CSVParser(reader, csvFormat)
   }
 
@@ -177,26 +174,6 @@ class KbartReader extends AbstractReader {
     csvFormat = csvFormat.withAllowMissingColumnNames(true)
     csvFormat = csvFormat.withIgnoreHeaderCase(true)
     this
-  }
-
-
-  private List<String> spitLine(String line) {
-    def result = new ArrayList<String>()
-    if (StringUtils.isEmpty(line)) {
-      return result
-    }
-    String delimiter = KbartReaderConfiguration.resolve(owner.delimiter)
-    /*int i
-    while (line.length() > 0){
-        i = line.indexOf(delimiter)
-        if (i == -1){
-            result.add(line)
-            break
-        }
-        result.add(line.substring(0, i))
-        line = line.substring(i + delimiter.length())
-    }*/
-    return line.tokenize(owner.delimiter).asList()
   }
 
   static def resolver = [
