@@ -101,6 +101,10 @@ class KbartReader extends AbstractReader {
       resultMap.put(csvHeader.get(i), splitItem[i])
     }
     lastItemReturned = item
+    // Fix coverage_depth = Volltext
+    if (resultMap.get("coverage_depth").equalsIgnoreCase("volltext")) {
+      resultMap.put("coverage_depth", "fulltext")
+    }
     resultMap
   }
 
