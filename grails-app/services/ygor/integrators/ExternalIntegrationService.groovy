@@ -28,10 +28,10 @@ class ExternalIntegrationService {
       if (mapping) {
         MultiField multiField = item.getMultiField(mapping.ygorKey)
         if (multiField == null) {
-          multiField = new MultiField(mapping) multiField = new MultiField(mapping)
+          multiField = new MultiField(mapping)
           item.addMultiField(multiField)
         }
-          multiField.addField(source, date.key, date.value)
+        multiField.addField(source, date.key, date.value)
       }
     }
   }
@@ -75,13 +75,10 @@ class ExternalIntegrationService {
     return new HashMap<String, String>()
   }
 
-
   // The record needs to be processed in external APIs if and only if it is a journal, or if no value for
   // the medium type is given, meaning that API processing is default.
   protected boolean isApiCallMedium(Record record) {
     String medium = record.multiFields.get(mediumTypeKey).getPrioValue()
-    String publicationType = record.multiFields.get("publicationType").getPrioValue()
     return (medium.equals("Journal") || StringUtils.isEmpty(medium))
   }
-
 }

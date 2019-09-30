@@ -140,10 +140,6 @@ class KbartConnector extends AbstractConnector {
     }
 
     private Envelope getTippCoverageAsFatEnvelope() {
-        // fixing german specialties before further processing
-        def coverageDepthValue = getValue('coverage_depth').toString().trim()
-        if ("volltext".equalsIgnoreCase(coverageDepthValue))
-            coverageDepthValue = "Fulltext"
         getEnvelopeWithComplexMessage([
             'startDate':        ([] << getValue('date_first_issue_online')),
             'endDate':          ([] << getValue('date_last_issue_online')),
@@ -152,7 +148,7 @@ class KbartConnector extends AbstractConnector {
             'startVolume':      ([] << getValue('num_first_vol_online')),
             'endVolume':        ([] << getValue('num_last_vol_online')),
             'coverageNote':     ([] << getValue('notes')),
-            'coverageDepth':    ([] << coverageDepthValue),
+            'coverageDepth':    ([] << getValue('coverageDepth')),
             'embargo':          ([] << getValue('embargo_info'))
         ])
     }
