@@ -184,9 +184,7 @@ class DataMapper {
 
                     DataSetter.setDate(histEvent.date, Normalizer.IS_START_DATE, e.messages['date'])
 
-                    if (e.messages['material'][i]?.startsWith('O')) {
-                      title.historyEvents << new Pod(histEvent)
-                    }
+                    title.historyEvents << new Pod(histEvent)
                 }
             }
         }
@@ -502,9 +500,7 @@ class DataMapper {
             }
             // store non matching
             if(!match){
-                ph.v.name.org = pubName
-                ph.v.name.v   = ''
-                ph.v.name.m   = Status.VALIDATOR_PUBLISHER_NOT_MATCHING
+                ph.v.name.v   = pubName
             }
         }
     }

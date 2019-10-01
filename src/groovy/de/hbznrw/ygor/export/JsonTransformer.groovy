@@ -444,7 +444,6 @@ class JsonTransformer {
                         }
                         else {
                             from.title = ""
-                            he.m = Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString()
                         }
                     }
                     else {
@@ -474,7 +473,6 @@ class JsonTransformer {
                         }
                         else {
                             to.title = ""
-                            he.m = Status.STRUCTVALIDATOR_HISTORYEVENT_IS_INVALID.toString()
                         }
                     }
                     else {
