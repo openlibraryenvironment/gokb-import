@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.bridges
 
+import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.DataMapper
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import groovy.util.logging.Log4j
@@ -54,9 +55,15 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 		def stash = processor.getStash()
 		log.info("stash: " + stash)
 
-		MultipleProcessingThread.KEY_ORDER.each { keyType ->
-			stash.get(keyType).each { uid, key ->
+    DataContainer container = master.enrichment.dataContainer;
 
+
+//		MultipleProcessingThread.KEY_ORDER.each { keyType ->
+//			stash.get(keyType).each { uid, key ->
+    for (String keyType: MultipleProcessingThread.KEY_ORDER) {
+      for (Map.Entry value : stash.get(keyType)) {
+        def uid=value.key
+        def key=value.value
 				if (!master.isRunning) {
 					log.info('Aborted by user action.')
 					return
@@ -64,18 +71,22 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 
 				increaseProgress()
 
-				def pollStatus = connector.poll(key, stash.getKeyType(uid),
-						DefaultGroovyMethods.getAt(stash.values.kbart.get(uid), "${'publication_title'}"))
+        def pubTitle=DefaultGroovyMethods.getAt(stash.values.kbart.get(uid), "${'publication_title'}")
+				def pollStatus = connector.poll(key, stash.getKeyType(uid), pubTitle)
 
 				// fallback for empty api response
 				if (pollStatus == AbstractEnvelope.STATUS_NO_RESPONSE) {
 					log.info("AbstractEnvelope.STATUS_NO_RESPONSE @ " + key)
-					processor.processEntry(master.enrichment.dataContainer, uid, key, null)
+					processor.processEntry(container, uid, key)
 				}
 
-				connector.getPicaRecords().eachWithIndex { pr, i ->
-					processor.processEntry(master.enrichment.dataContainer, uid, key, pr)
-				}
+//				connector.getPicaRecords().eachWithIndex { pr, i ->
+//					processor.processEntry(master.enrichment.dataContainer, uid, key, pr)
+//				}
+        // pretty much the same as above closure, but in Java
+        for (Object pica : connector.getPicaRecords()){
+          processor.processEntry(container, uid, key, pica);
+        }
 			}
 		}
 	}
@@ -87,12 +98,14 @@ class ZdbBridge extends AbstractBridge implements BridgeInterface {
 		def stash  = processor.getStash()
 		def orgMap = DataMapper.getOrganisationMap()
 
-		master.enrichment.dataContainer.titles.each { key, value ->
-			DataMapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
+    DataContainer container = master.enrichment.dataContainer
+
+		container.titles.each { key, value ->
+			DataMapper.mapHistoryEvents(container, value.v, stash)
 			DataMapper.mapOrganisations(orgMap, value.v)
 		}
-		master.enrichment.dataContainer.pkg.tipps.each { key, value ->
-			DataMapper.mapPlatform(value.v, master.enrichment.dataContainer)
+		container.pkg.tipps.each { key, value ->
+			DataMapper.mapPlatform(value.v, container)
 		}
 	}
 }
