@@ -23,5 +23,6 @@ class PackageHeader {
     
     def additionalProperties = [] // TODO
     ArrayList curatoryGroups = []
+    ArrayList identifiers    = []
     ArrayList variantNames   = []
 }

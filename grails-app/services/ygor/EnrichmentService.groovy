@@ -56,7 +56,7 @@ class EnrichmentService {
         
         ph.v.name.v          = new Pod(pm['pkgTitle'][0])
         if ("" != pm['pkgVariantName'][0].trim()) {
-            ph.v.identifiers = [[ 'type':'isil', 'value': pm['pkgVariantName'][0] ]]
+            ph.v.identifiers << ['type':'isil', 'value': pm['pkgVariantName'][0] ]
         }
         if("" != pm['pkgCuratoryGroup1'][0].trim()){
             ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
