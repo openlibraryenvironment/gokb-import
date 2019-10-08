@@ -70,8 +70,9 @@ class DnbSruPicaConnector extends AbstractConnector {
         picaRecords = []
         response = SLURPER.parseText(new URL(q).getText())
         def records = response.children().find { it.name() == "records" }.childNodes()
-        while (records.hasNext()) picaRecords << records.next()
-        picaRecords
+        picaRecords.addAll(records)
+
+        return picaRecords
     }
 
     @Override
@@ -276,6 +277,7 @@ class DnbSruPicaConnector extends AbstractConnector {
         getAllChildrenById(record.children(), '039E').each { df ->
 
             def b = getFirstChildById(df.children(), "b") // s=später, f=früher
+            def g = getFirstChildById(df.children(), "g") // Materialcode, O = Online, A = Druckwerk
             def Y = getFirstChildById(df.children(), "Y") // default (Y/D)
             def D = getFirstChildById(df.children(), "D") // falls in der ZDB ein übergeordneter Titel existiert (Y/D)
             def g = getFirstChildById(df.children(), "g") // Materialcode, O = Online, A = Druckwerk
@@ -283,12 +285,13 @@ class DnbSruPicaConnector extends AbstractConnector {
             def C = getFirstChildById(df.children(), "C") // ID-Typ
             def f0 = getFirstChildById(df.children(), "0")
 
-            resultType            <<  (b ? b.text() : null)
-            resultTitle           <<  (D ? D.text().minus('@') : (Y ? Y.text().minus('@') : null))
-            resultIdentifierType  <<  (C ? C.text() : 'zdb') // default
-            resultIdentifierValue <<  (f0 ? f0.text() : null)
-            resultDate            <<  (H ? H.text() : null)
-            resultMaterial        <<  (g ? g.text() : null)
+            if ( g?.text().startsWith('O') ) {
+              resultType            <<  (b ? b.text() : null)
+              resultTitle           <<  (D ? D.text().minus('@') : (Y ? Y.text().minus('@') : null))
+              resultIdentifierType  <<  (C ? C.text() : 'zdb') // default
+              resultIdentifierValue <<  (f0 ? f0.text() : null)
+              resultDate            <<  (H ? H.text() : null)
+            }
         }
 
         // zdbdb
@@ -302,7 +305,6 @@ class DnbSruPicaConnector extends AbstractConnector {
                 'type':            resultType,
                 'name':            resultTitle,
                 'title':           resultTitle,
-                'material':        resultMaterial,
                 'identifierType':  resultIdentifierType,
                 'identifierValue': resultIdentifierValue,
                 'date':            resultDate

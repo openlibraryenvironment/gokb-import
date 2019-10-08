@@ -439,7 +439,7 @@ class JsonTransformer {
                     
                     // only valid entries
                     if(useValidator){
-                        if(from.title.m == Status.VALIDATOR_STRING_IS_VALID.toString() && to.title.v.length() > 0){
+                        if(from.title.m == Status.VALIDATOR_STRING_IS_VALID.toString() && from.title.v.length() > 0){
                             from.title = from.title.v
                         }
                         else {

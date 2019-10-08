@@ -46,6 +46,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
       this.connector.kbartKeys.add('first_editor')
       this.connector.kbartKeys.add('first_author')
 
+      this.tasks = this.tasks.plus(Query.KBART_TITLE)
       this.tasks = this.tasks.plus(Query.KBART_PUBLISHER)
       this.tasks = this.tasks.plus(Query.KBART_EISBN)
       this.tasks = this.tasks.plus(Query.KBART_PISBN)
@@ -84,7 +85,10 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
 
     def stash = processor.getStash()
 
-    stash.get(this.stashIndex).each { uid, fields ->
+//    stash.get(this.stashIndex).each { uid, fields ->
+    for (def value: stash.get(stashIndex)){
+      def uid = value.key
+      def fields = value.value
 
       if (!master.isRunning) {
         log.info('Aborted by user action.')
@@ -107,7 +111,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
     log.info("finish()")
 
     def stash = processor.getStash()
-    def orgMap = DataMapper.getOrganisationMap()
+//    def orgMap = DataMapper.getOrganisationMap()
 
 //        master.enrichment.dataContainer.titles.each { key, value ->
 //            DataMapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)
