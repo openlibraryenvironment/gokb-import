@@ -277,7 +277,6 @@ class DnbSruPicaConnector extends AbstractConnector {
         getAllChildrenById(record.children(), '039E').each { df ->
 
             def b = getFirstChildById(df.children(), "b") // s=später, f=früher
-            def g = getFirstChildById(df.children(), "g") // Materialcode, O = Online, A = Druckwerk
             def Y = getFirstChildById(df.children(), "Y") // default (Y/D)
             def D = getFirstChildById(df.children(), "D") // falls in der ZDB ein übergeordneter Titel existiert (Y/D)
             def g = getFirstChildById(df.children(), "g") // Materialcode, O = Online, A = Druckwerk
