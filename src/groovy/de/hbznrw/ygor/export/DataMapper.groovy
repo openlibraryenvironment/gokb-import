@@ -184,9 +184,7 @@ class DataMapper {
 
                     DataSetter.setDate(histEvent.date, Normalizer.IS_START_DATE, e.messages['date'])
 
-                    if (e.messages['material'][i]?.startsWith('O')) {
-                      title.historyEvents << new Pod(histEvent)
-                    }
+                    title.historyEvents << new Pod(histEvent)
                 }
             }
         }
