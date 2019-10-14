@@ -22,21 +22,21 @@ class KbartReader extends AbstractReader {
   private CSVRecord lastItemReturned
 
   static MANDATORY_KBART_KEYS = [
-    'date_first_issue_online',
-    'date_last_issue_online',
-    'num_first_vol_online',
-    'num_last_vol_online',
-    'num_first_issue_online',
-    'num_last_issue_online',
-    'title_url',
-    'embargo_info',
-    'coverage_depth',
-    'notes'
+      'date_first_issue_online',
+      'date_last_issue_online',
+      'num_first_vol_online',
+      'num_last_vol_online',
+      'num_first_issue_online',
+      'num_last_issue_online',
+      'title_url',
+      'embargo_info',
+      'coverage_depth',
+      'notes'
   ]
 
   static ALIASES = [
-    'notes' : ['coverage_notes'],
-    'zdb_id': ['zdb-id', 'ZDB_ID', 'ZDB-ID']
+      'notes' : ['coverage_notes'],
+      'zdb_id': ['zdb-id', 'ZDB_ID', 'ZDB-ID']
   ]
 
   KbartReader(MultipleProcessingThread owner, String delimiter) {
@@ -181,15 +181,15 @@ class KbartReader extends AbstractReader {
   }
 
   static def resolver = [
-    'comma'      : ',',
-    'semicolon'  : ';',
-    'tab'        : '\t',
-    'doublequote': '"',
-    'singlequote': "'",
-    'nullquote'  : 'null',
-    'all'        : QuoteMode.ALL,
-    'nonnumeric' : QuoteMode.NON_NUMERIC,
-    'none'       : QuoteMode.NONE
+      'comma'      : ',',
+      'semicolon'  : ';',
+      'tab'        : '\t',
+      'doublequote': '"',
+      'singlequote': "'",
+      'nullquote'  : 'null',
+      'all'        : QuoteMode.ALL,
+      'nonnumeric' : QuoteMode.NON_NUMERIC,
+      'none'       : QuoteMode.NONE
   ]
 
 }

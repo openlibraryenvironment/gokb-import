@@ -15,31 +15,31 @@ import ygor.integrators.KbartIntegrationService
  */
 @TestFor(KbartIntegrationService)
 @TestMixin(ServiceUnitTestMixin)
-class KbartIntegrationServiceSpec /*extends HibernateSpec implements ServiceUnitTest<KbartIntegrationService>*/{
+class KbartIntegrationServiceSpec /*extends HibernateSpec implements ServiceUnitTest<KbartIntegrationService>*/ {
 
-    String kbartFileSimple
-    DataContainer data
-    MappingsContainer container
-    KbartReaderConfiguration configuration
+  String kbartFileSimple
+  DataContainer data
+  MappingsContainer container
+  KbartReaderConfiguration configuration
 
-    def setup() {
-        kbartFileSimple = "test/resources/KbartIntegrationServiceSpec.kbartFileSimple.csv"
-        data = new DataContainer()
-        container = new MappingsContainer()
-        configuration = new KbartReaderConfiguration("comma", null, null, null)
-        true
-    }
+  def setup() {
+    kbartFileSimple = "test/resources/KbartIntegrationServiceSpec.kbartFileSimple.csv"
+    data = new DataContainer()
+    container = new MappingsContainer()
+    configuration = new KbartReaderConfiguration("comma", null, null, null)
+    true
+  }
 
-    def cleanup() {
-        true
-    }
+  def cleanup() {
+    true
+  }
 
-    void "test integrate simple"() {
-        setup()
-        // KbartIntegrationService.integrate(kbartFileSimple, data, container, configuration) TODO arguments
-        expect:
-            data.getRecordsPerEissn() == 1 // TODO this is a dummy assert
-            data.getRecordsPerPissn() == 1 // TODO this is a dummy assert
-            data.getRecordsPerZdbId() == 1 // TODO this is a dummy assert
-    }
+  void "test integrate simple"() {
+    setup()
+    // KbartIntegrationService.integrate(kbartFileSimple, data, container, configuration) TODO arguments
+    expect:
+    data.getRecordsPerEissn() == 1 // TODO this is a dummy assert
+    data.getRecordsPerPissn() == 1 // TODO this is a dummy assert
+    data.getRecordsPerZdbId() == 1 // TODO this is a dummy assert
+  }
 }

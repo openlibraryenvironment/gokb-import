@@ -9,11 +9,11 @@ import spock.lang.Specification
 @TestFor(EnrichmentController)
 class EnrichmentControllerSpec extends Specification {
 
-    def setup() {
-        true
-    }
+  def setup() {
+    true
+  }
 
-    def cleanup() {
-        true
-    }
+  def cleanup() {
+    true
+  }
 }

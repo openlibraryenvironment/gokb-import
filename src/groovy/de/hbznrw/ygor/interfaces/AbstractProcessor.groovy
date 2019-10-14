@@ -12,14 +12,14 @@ import groovy.util.logging.Log4j
 @Log4j
 abstract class AbstractProcessor implements ProcessorInterface {
 
-	protected BridgeInterface bridge
-	
-	//
+  protected BridgeInterface bridge
 
-	AbstractProcessor(BridgeInterface bridge) {
-		this.bridge = bridge
-	}
-    AbstractProcessor()
-    {   
-    }
+  //
+
+  AbstractProcessor(BridgeInterface bridge) {
+    this.bridge = bridge
+  }
+
+  AbstractProcessor() {
+  }
 }

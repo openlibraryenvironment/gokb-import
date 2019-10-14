@@ -65,7 +65,7 @@ class ZdbReader extends AbstractReader {
 
   private String getAPIQuery(String identifier, List<String> queryIdentifier) {
     return REQUEST_URL +
-      "&recordSchema=" + FORMAT_IDENTIFIER +
-      "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier + QUERY_ONLY_JOURNALS
+        "&recordSchema=" + FORMAT_IDENTIFIER +
+        "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier + QUERY_ONLY_JOURNALS
   }
 }
