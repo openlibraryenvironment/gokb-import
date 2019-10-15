@@ -20,7 +20,7 @@
                         <g:if test="${multiField?.value?.getPrioValue()}">
                             <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">${multiField.key}</td>
-                                <td class="statistics-cell">${multiField.value.getPrioValue()}</td>
+                                <td contenteditable="true" class="statistics-cell">${multiField.value.getPrioValue()}</td>
                                 <td class="statistics-cell">${multiField.value.getPrioSource()}</td>
                                 <td class="statistics-cell"><g:message code="${multiField.value.status}"/></td>
                             </tr>
@@ -37,3 +37,52 @@
     </div>
 
 </div>
+
+<script>
+    var valueFields = document.querySelectorAll('[contenteditable]');
+    valueFields.forEach((valueField) => {
+        valueField.addEventListener('keydown', function (event) {
+            let target = event.target,
+                input = target.nodeName != 'INPUT' && target.nodeName != 'TEXTAREA',
+                data = {};
+
+            if (input) {
+                if (event.which == 27 /* that is "escape" */) {
+                    // restore unedited state
+                    document.execCommand('undo');
+                    target.blur();
+                }
+                else if (event.which == 13 /* that is "enter" */) {
+                    // save
+                    data[target.getAttribute('data-name')] = target.innerHTML;
+                    // send update
+                    jQuery.ajax({
+                        type:   'POST',
+                        url:    '${grailsApplication.config.grails.app.context}/statistic/update',
+                        data:   {value: 'updated frontendly'},
+                        success:function(data){
+                            console.log("successly");
+                            data = jQuery.parseJSON(data);
+                            console.log(data);
+                            const status = data.status;
+                            if(status == 'FINISHED') {
+                                window.location = '${grailsApplication.config.grails.app.context}/statistic/edit';
+                            }
+                            if(status == 'ERROR') {
+                                window.location = '${grailsApplication.config.grails.app.context}/statistic/edit';
+                            }
+
+                        },
+                        error:function(XMLHttpRequest, textStatus, errorThrown){
+                            // clearInterval(ygorDocumentStatus$ {e.key});
+                            console.log("errorly");
+                        }
+                    });
+
+                    target.blur();
+                    event.preventDefault();
+                }
+            }
+        }, true);
+    });
+</script>

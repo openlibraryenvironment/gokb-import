@@ -81,6 +81,12 @@ class StatisticController {
   }
 
 
+  def update() {
+    def data = params.value
+    return data
+  }
+
+
   private Enrichment getEnrichmentFromFile(String sthash) {
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)) {
@@ -92,6 +98,7 @@ class StatisticController {
     }
     return null
   }
+
 
   static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
   static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
