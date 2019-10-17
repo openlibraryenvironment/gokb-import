@@ -581,7 +581,7 @@ table.statistics-details {
 	border-collapse: separate;
 }
 
-td.statistics-cell {
+td.statistics-cell-key, td.statistics-cell-value, td.statistics-cell-source, td.statistics-cell-status {
 	padding: 0px 5px 0px 0px;
 }
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.normalizers.CommonNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.Validator
+import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -17,10 +18,12 @@ class MultiField {
   String type                         // TODO: move to FieldKeyMapping (?)
   String status
   String normalized = null
+  String revised = null
 
   static hasMany = [fields: Field]
 
   final private static Pattern FIXED_PATTERN = Pattern.compile("\\{fixed=(.*)}")
+  final private static def g = new ValidationTagLib()
 
   static constraints = {
   }
@@ -54,6 +57,9 @@ class MultiField {
 
 
   String getPrioValue() {
+    if (revised != null) {
+      return revised
+    }
     if (normalized != null) {
       return normalized
     }
@@ -76,11 +82,14 @@ class MultiField {
 
 
   String getPrioSource() {
+    if (revised != null){
+      return g.message(code: 'record.source.revised')
+    }
     if (keyMapping == null) {
-      return "kbart"
+      return "KBART"
     }
     if (keyMapping.valIsFix) {
-      return "default"
+      return g.message(code:'record.source.default')
     }
     // no fixed value --> search for collected values
     for (source in keyMapping.sourcePrio) {
@@ -90,7 +99,7 @@ class MultiField {
       }
     }
     // no collected value --> return default value (if any)
-    return "default"
+    return g.message(code:'record.source.default')
   }
 
 

@@ -1,12 +1,14 @@
 package ygor
 
-
 import groovy.util.logging.Log4j
+import ygor.field.MultiField
 
 @Log4j
 class StatisticController {
 
   def grailsApplication
+  Map<String, Map<String, String>> invalidRecords
+  Map<String, Map<String, String>> validRecords
 
   static scope = "session"
   static FileFilter DIRECTORY_FILTER = new FileFilter() {
@@ -25,8 +27,8 @@ class StatisticController {
 
   def show() {
     String sthash = (String) request.parameterMap['sthash'][0]
-    List<Map<String, String>> invalidRecords = new ArrayList<Map<String, String>>()
-    List<Map<String, String>> validRecords = new ArrayList<Map<String, String>>()
+    invalidRecords = new HashMap<>()
+    validRecords = new HashMap<>()
     String ygorVersion
     String date
     String filename
@@ -41,9 +43,9 @@ class StatisticController {
           record.validate(namespace)
           def multiFieldMap = record.asMultiFieldMap()
           if (record.isValid(enrichment.dataType)) {
-            validRecords.add(multiFieldMap)
+            validRecords.put(multiFieldMap.get("uid"), multiFieldMap)
           } else {
-            invalidRecords.add(multiFieldMap)
+            invalidRecords.put(multiFieldMap.get("uid"), multiFieldMap)
           }
         }
         ygorVersion = enrichment.ygorVersion
@@ -75,15 +77,58 @@ class StatisticController {
 
 
   def edit() {
-    Enrichment enrichment = getEnrichmentFromFile((String) request.parameterMap['sthash'][0])
+    String sthash = request.parameterMap['sthash'][0]
+    Enrichment enrichment = getEnrichmentFromFile(sthash)
     Record record = enrichment.dataContainer.getRecord(params.id)
-    [record: record]
+    [
+        sthash: sthash,
+        record: record
+    ]
   }
 
 
   def update() {
-    def data = params.value
-    return data
+    def sthash = params.sthash
+    def value = params.value
+    def key = params.key
+    def uid = params.uid
+    Record record
+
+    try {
+      Enrichment enrichment = getEnrichmentFromFile(sthash)
+      String namespace = enrichment.dataContainer.info.namespace_title_id
+      if (enrichment) {
+        record = enrichment.dataContainer.records.get(uid)
+        MultiField multiField = record.multiFields.get(key)
+        multiField.revised = value.trim()
+        record.validate(namespace)
+        classifyRecord(record, enrichment)
+      }
+      else {
+        throw new EmptyStackException()
+      }
+    }
+    catch (Exception e) {
+      log.error(e.getMessage())
+      log.error(e.getStackTrace())
+    }
+    [
+      currentView   : 'edit',
+      record        : record,
+      sthash        : sthash
+    ]
+  }
+
+  private void classifyRecord(Record record, Enrichment enrichment) {
+    def multiFieldMap = record.asMultiFieldMap()
+    if (record.isValid(enrichment.dataType)) {
+      validRecords.put(multiFieldMap.get("uid"), multiFieldMap)
+      invalidRecords.remove(multiFieldMap.get("uid"))
+    }
+    else {
+      invalidRecords.put(multiFieldMap.get("uid"), multiFieldMap)
+      validRecords.remove(multiFieldMap.get("uid"))
+    }
   }
 
 
