@@ -1,5 +1,6 @@
 package ygor
 
+import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -31,8 +32,8 @@ class Record {
   Map validation
   String zdbIntegrationDate
   String ezbIntegrationDate
-  String zdbIntegrationUrl
-  String ezbIntegrationUrl
+  String zdbIntegrationUrl    // TODO
+  String ezbIntegrationUrl    // TODO
   List<String> validationMessages = new ArrayList<String>();
 
 
@@ -194,6 +195,25 @@ class Record {
     }
     jsonGenerator.writeEndArray()
     jsonGenerator.writeEndObject()
+  }
+
+
+  String asStatisticsJson() {
+    Writer writer = new StringWriter()
+    JsonGenerator jsonGenerator = new JsonFactory().createGenerator(writer)
+    jsonGenerator.writeStartObject()
+    jsonGenerator.writeStringField("uid", uid)
+    for (MultiField mf in multiFields.values()) {
+      jsonGenerator.writeFieldName(mf.ygorFieldKey)
+      jsonGenerator.writeStartObject()
+      jsonGenerator.writeStringField("value", mf.getPrioValue())
+      jsonGenerator.writeStringField("source", mf.getPrioSource())
+      jsonGenerator.writeStringField("status", mf.status)
+      jsonGenerator.writeEndObject()
+    }
+    jsonGenerator.writeEndObject()
+    jsonGenerator.close()
+    writer.toString()
   }
 
 

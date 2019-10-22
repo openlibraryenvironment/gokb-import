@@ -1,6 +1,8 @@
 package ygor
 
+import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
+import net.sf.json.JSON
 import ygor.field.MultiField
 
 @Log4j
@@ -112,11 +114,10 @@ class StatisticController {
       log.error(e.getMessage())
       log.error(e.getStackTrace())
     }
-    [
-      currentView   : 'edit',
-      record        : record,
-      sthash        : sthash
-    ]
+    render (groovy.json.JsonOutput.toJson ([
+        record        : record.asStatisticsJson(),
+        sthash        : sthash
+    ]))
   }
 
   private void classifyRecord(Record record, Enrichment enrichment) {

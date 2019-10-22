@@ -37,6 +37,7 @@
 </div>
 
 <script>
+    const validationMessages = getValidationMessageMap();
     var tableRowIndex;
     var keys    = document.querySelectorAll('.statistics-cell-key'),
         values  = document.querySelectorAll('.statistics-cell-value'),
@@ -63,8 +64,11 @@
                     const rowKey = keys.item(tableRowIndex).innerHTML;
                     const value = target.innerHTML;
                     jQuery.ajax({
-                        type: 'POST',
+                        method : "POST",
                         url: '${grailsApplication.config.grails.app.context}/statistic/update',
+                        dataType : "json",
+                        timeout : 60000,
+                        async: true,
                         data: {
                             key: rowKey,
                             value: value,
@@ -72,13 +76,16 @@
                             sthash: '${sthash}'
                         },
                         success: function(data) {
-                            var json = jQuery.parseJSON(data);
-                            // const row = rows.item(rowKey);
-                            // window.location = '${grailsApplication.config.grails.app.context}/statistic/edit';
+                            const recordJson = JSON.parse(data.record)
+                            const sourceField = valueField.nextElementSibling;
+                            sourceField.innerHTML = recordJson[rowKey]["source"];
+                            const statusField = sourceField.nextElementSibling;
+                            statusField.innerHTML = getValidationMessage(validationMessages, recordJson[rowKey]["status"]);
                         },
                         error: function (deXMLHttpRequest, textStatus, errorThrown) {
-                            console.log("ERROR - Could not update statistics table, failing Ajax request.");
-                            console.log(data)
+                            console.error("ERROR - Could not update statistics table, failing Ajax request.");
+                            console.error(textStatus + " : " + errorThrown);
+                            console.error(data);
                         }
                     });
                     target.blur();
@@ -87,4 +94,39 @@
             }
         }, true);
     });
+
+    
+    // TODO is possible to iterate over all messages starting with "VALIDATOR_" - do this
+    function getValidationMessageMap(){
+        const vms = new Object();
+        vms["VALIDATOR_DATE_IS_INVALID"] = "${g.message(code:"VALIDATOR_DATE_IS_INVALID")}";
+        vms["VALIDATOR_DATE_IS_MISSING"] = "${g.message(code:"VALIDATOR_DATE_IS_MISSING")}";
+        vms["VALIDATOR_DATE_IS_VALID"] = "${g.message(code:"VALIDATOR_DATE_IS_VALID")}";
+        vms["VALIDATOR_IDENTIFIER_IS_INVALID"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_INVALID")}";
+        vms["VALIDATOR_IDENTIFIER_IS_MISSING"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_MISSING")}";
+        vms["VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC")}";
+        vms["VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE")}";
+        vms["VALIDATOR_IDENTIFIER_IS_VALID"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_VALID")}";
+        vms["VALIDATOR_NUMBER_IS_INVALID"] = "${g.message(code:"VALIDATOR_NUMBER_IS_INVALID")}";
+        vms["VALIDATOR_NUMBER_IS_MISSING"] = "${g.message(code:"VALIDATOR_NUMBER_IS_MISSING")}";
+        vms["VALIDATOR_NUMBER_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_NUMBER_IS_NOT_ATOMIC")}";
+        vms["VALIDATOR_NUMBER_IS_VALID"] = "${g.message(code:"VALIDATOR_NUMBER_IS_VALID")}";
+        vms["VALIDATOR_STRING_IS_INVALID"] = "${g.message(code:"VALIDATOR_STRING_IS_INVALID")}";
+        vms["VALIDATOR_STRING_IS_MISSING"] = "${g.message(code:"VALIDATOR_STRING_IS_MISSING")}";
+        vms["VALIDATOR_STRING_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_STRING_IS_NOT_ATOMIC")}";
+        vms["VALIDATOR_STRING_IS_VALID"] = "${g.message(code:"VALIDATOR_STRING_IS_VALID")}";
+        vms["VALIDATOR_URL_IS_INVALID"] = "${g.message(code:"VALIDATOR_URL_IS_INVALID")}";
+        vms["VALIDATOR_URL_IS_MISSING"] = "${g.message(code:"VALIDATOR_URL_IS_MISSING")}";
+        vms["VALIDATOR_URL_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_URL_IS_NOT_ATOMIC")}";
+        vms["VALIDATOR_URL_IS_VALID"] = "${g.message(code:"VALIDATOR_URL_IS_VALID")}";
+        vms["UNDEFINED"] = "${g.message(code:"UNDEFINED")}";
+        return vms;
+    }
+
+
+    function getValidationMessage(vms, key){
+        return (vms[key] != null) ? vms[key] : key;
+    }
+
+
 </script>
