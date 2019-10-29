@@ -6,10 +6,6 @@ import ygor.field.MultiField
 @Log4j
 class StatisticController {
 
-  def grailsApplication
-  Map<String, Map<String, String>> invalidRecords
-  Map<String, Map<String, String>> validRecords
-
   static scope = "session"
   static FileFilter DIRECTORY_FILTER = new FileFilter() {
     @Override
@@ -18,6 +14,10 @@ class StatisticController {
     }
   }
 
+  def grailsApplication
+  Map<String, Enrichment> enrichments = new HashMap<>()
+  Map<String, Map<String, Map<String, String>>> validRecords = new HashMap<>()
+  Map<String, Map<String, Map<String, String>>> invalidRecords = new HashMap<>()
 
   def index() {
     render(
@@ -28,30 +28,17 @@ class StatisticController {
 
   def show() {
     String sthash = (String) request.parameterMap['sthash'][0]
-    invalidRecords = new HashMap<>()
-    validRecords = new HashMap<>()
     String ygorVersion
     String date
     String filename
-    Enrichment enrichment
     log.info('reading file: ' + sthash)
-
+    Enrichment enrichment = getEnrichment(sthash)
     try {
-      enrichment = getEnrichment(sthash)
-      String namespace = enrichment.dataContainer.info.namespace_title_id
       if (enrichment) {
-        for (Record record in enrichment.dataContainer.records.values()) {
-          record.validate(namespace)
-          def multiFieldMap = record.asMultiFieldMap()
-          if (record.isValid(enrichment.dataType)) {
-            validRecords.put(multiFieldMap.get("uid"), multiFieldMap)
-          } else {
-            invalidRecords.put(multiFieldMap.get("uid"), multiFieldMap)
-          }
-        }
         ygorVersion = enrichment.ygorVersion
         date = enrichment.date
         filename = enrichment.originName
+        classifyAllRecords(sthash)
       }
       else {
         throw new EmptyStackException()
@@ -71,8 +58,8 @@ class StatisticController {
             date          : date,
             filename      : filename,
             dataType      : enrichment?.dataType,
-            invalidRecords: invalidRecords,
-            validRecords  : validRecords
+            validRecords  : validRecords[sthash],
+            invalidRecords: invalidRecords[sthash]
         ]
     )
   }
@@ -85,14 +72,14 @@ class StatisticController {
     Record record = enrichment.dataContainer.getRecord(params['record.uid'])
     classifyRecord(record, enrichment)
     render(
-      view: 'show',
-      model: [
-        sthash        : sthash,
-        currentView   : 'statistic',
-        dataType      : enrichment?.dataType,
-        invalidRecords: invalidRecords,
-        validRecords  : validRecords
-      ]
+        view: 'show',
+        model: [
+            sthash        : sthash,
+            currentView   : 'statistic',
+            dataType      : enrichment?.dataType,
+            validRecords  : validRecords[sthash],
+            invalidRecords: invalidRecords[sthash]
+        ]
     )
   }
 
@@ -107,14 +94,14 @@ class StatisticController {
     }
     classifyRecord(record, enrichment)
     render(
-      view: 'show',
-      model: [
-        sthash        : sthash,
-        currentView   : 'statistic',
-        dataType      : enrichment?.dataType,
-        invalidRecords: invalidRecords,
-        validRecords  : validRecords
-      ]
+        view: 'show',
+        model: [
+            sthash        : sthash,
+            currentView   : 'statistic',
+            dataType      : enrichment?.dataType,
+            invalidRecords: invalidRecords[sthash],
+            validRecords  : validRecords[sthash]
+        ]
     )
   }
 
@@ -164,26 +151,53 @@ class StatisticController {
   private void classifyRecord(Record record, Enrichment enrichment) {
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid(enrichment.dataType)) {
-      validRecords.put(multiFieldMap.get("uid"), multiFieldMap)
-      invalidRecords.remove(multiFieldMap.get("uid"))
+      validRecords[params['sthash']].put(multiFieldMap.get("uid"), multiFieldMap)
+      invalidRecords[params['sthash']].remove(multiFieldMap.get("uid"))
     }
     else {
-      invalidRecords.put(multiFieldMap.get("uid"), multiFieldMap)
-      validRecords.remove(multiFieldMap.get("uid"))
+      invalidRecords[params['sthash']].put(multiFieldMap.get("uid"), multiFieldMap)
+      validRecords[params['sthash']].remove(multiFieldMap.get("uid"))
     }
   }
 
 
   private Enrichment getEnrichment(String sthash) {
+    // get enrichment if existing
+    if (null != enrichments.get(sthash)){
+      return enrichments.get(sthash)
+    }
+    // get new Enrichment
+    invalidRecords[sthash] = new HashMap<>()
+    validRecords[sthash] = new HashMap<>()
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)) {
       for (def file in dir.listFiles()) {
         if (file.getName() == sthash) {
-          return Enrichment.fromFile(file)
+          Enrichment enrichment = Enrichment.fromFile(file)
+          enrichments.put(sthash, enrichment)
+          return
         }
       }
     }
     return null
+  }
+
+
+  private void classifyAllRecords(String sthash){
+    Enrichment enrichment = getEnrichment(sthash)
+    if (enrichment == null){
+      return
+    }
+    String namespace = enrichment.dataContainer.info.namespace_title_id
+    for (Record record in enrichment.dataContainer.records.values()) {
+      record.validate(namespace)
+      def multiFieldMap = record.asMultiFieldMap()
+      if (record.isValid(enrichment.dataType)) {
+        validRecords[sthash].put(multiFieldMap.get("uid"), multiFieldMap)
+      } else {
+        invalidRecords[sthash].put(multiFieldMap.get("uid"), multiFieldMap)
+      }
+    }
   }
 
 
