@@ -1,8 +1,6 @@
 package ygor
 
-import de.hbznrw.ygor.tools.JsonToolkit
 import groovy.util.logging.Log4j
-import net.sf.json.JSON
 import ygor.field.MultiField
 
 @Log4j
@@ -19,6 +17,7 @@ class StatisticController {
       return file.isDirectory()
     }
   }
+
 
   def index() {
     render(
@@ -38,7 +37,7 @@ class StatisticController {
     log.info('reading file: ' + sthash)
 
     try {
-      enrichment = getEnrichmentFromFile(sthash)
+      enrichment = getEnrichment(sthash)
       String namespace = enrichment.dataContainer.info.namespace_title_id
       if (enrichment) {
         for (Record record in enrichment.dataContainer.records.values()) {
@@ -53,7 +52,8 @@ class StatisticController {
         ygorVersion = enrichment.ygorVersion
         date = enrichment.date
         filename = enrichment.originName
-      } else {
+      }
+      else {
         throw new EmptyStackException()
       }
     }
@@ -78,9 +78,50 @@ class StatisticController {
   }
 
 
+  def cancel() {
+    // restore record from dataContainer
+    String sthash = params['sthash']
+    Enrichment enrichment = getEnrichment(sthash)
+    Record record = enrichment.dataContainer.getRecord(params['record.uid'])
+    classifyRecord(record, enrichment)
+    render(
+      view: 'show',
+      model: [
+        sthash        : sthash,
+        currentView   : 'statistic',
+        dataType      : enrichment?.dataType,
+        invalidRecords: invalidRecords,
+        validRecords  : validRecords
+      ]
+    )
+  }
+
+
+  def save() {
+    // write record into dataContainer
+    String sthash = params['sthash']
+    Enrichment enrichment = getEnrichment(sthash)
+    Record record = enrichment.dataContainer.records[params['record.uid']]
+    for (def field in params['fieldschanged']){
+      record.multiFields.get(field.key).revised = field.value
+    }
+    classifyRecord(record, enrichment)
+    render(
+      view: 'show',
+      model: [
+        sthash        : sthash,
+        currentView   : 'statistic',
+        dataType      : enrichment?.dataType,
+        invalidRecords: invalidRecords,
+        validRecords  : validRecords
+      ]
+    )
+  }
+
+
   def edit() {
     String sthash = request.parameterMap['sthash'][0]
-    Enrichment enrichment = getEnrichmentFromFile(sthash)
+    Enrichment enrichment = getEnrichment(sthash)
     Record record = enrichment.dataContainer.getRecord(params.id)
     [
         sthash: sthash,
@@ -97,14 +138,13 @@ class StatisticController {
     Record record
 
     try {
-      Enrichment enrichment = getEnrichmentFromFile(sthash)
+      Enrichment enrichment = getEnrichment(sthash)
       String namespace = enrichment.dataContainer.info.namespace_title_id
       if (enrichment) {
         record = enrichment.dataContainer.records.get(uid)
         MultiField multiField = record.multiFields.get(key)
         multiField.revised = value.trim()
         record.validate(namespace)
-        classifyRecord(record, enrichment)
       }
       else {
         throw new EmptyStackException()
@@ -120,6 +160,7 @@ class StatisticController {
     ]))
   }
 
+
   private void classifyRecord(Record record, Enrichment enrichment) {
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid(enrichment.dataType)) {
@@ -133,7 +174,7 @@ class StatisticController {
   }
 
 
-  private Enrichment getEnrichmentFromFile(String sthash) {
+  private Enrichment getEnrichment(String sthash) {
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)) {
       for (def file in dir.listFiles()) {

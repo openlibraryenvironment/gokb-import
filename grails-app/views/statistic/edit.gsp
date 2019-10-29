@@ -1,38 +1,46 @@
+<%@ page import="de.hbznrw.ygor.tools.JsonToolkit; grails.converters.JSON" %>
 <meta name="layout" content="enrichment">
 
 <div class="row">
     <div class="col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><g:message code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}</h3>
+        <g:form>
+            <input type="hidden" name="sthash" value="${sthash}"/>
+            <input type="hidden" name="record.uid" value="${record.uid}"/>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><g:message code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}</h3>
+                </div>
+                <div class="statistics-data">
+                    <table class="statistics-details">
+                        <tr>
+                            <th><g:message code="statistic.edit.field"/></th>
+                            <th><g:message code="statistic.edit.value"/></th>
+                            <th><g:message code="statistic.edit.source"/></th>
+                            <th><g:message code="statistic.edit.status"/></th>
+                        </tr>
+                        <g:set var="lineCounter" value="${0}" />
+                        <g:each in="${record.multiFields}" var="multiField">
+                            <g:if test="${multiField?.value?.getPrioValue()}">
+                                <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                                    <td class="statistics-cell-key">${multiField.key}</td>
+                                    <td class="statistics-cell-value" contenteditable="true">${multiField.value.getPrioValue()}</td>
+                                    <td class="statistics-cell-source">${multiField.value.getPrioSource()}</td>
+                                    <td class="statistics-cell-status"><g:message code="${multiField.value.status}"/></td>
+                                </tr>
+                                <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                            </g:if>
+                        </g:each>
+                    </table>
+                </div>
             </div>
-            <div class="statistics-data">
-                <table class="statistics-details">
-                    <tr>
-                        <th><g:message code="statistic.edit.field"/></th>
-                        <th><g:message code="statistic.edit.value"/></th>
-                        <th><g:message code="statistic.edit.source"/></th>
-                        <th><g:message code="statistic.edit.status"/></th>
-                    </tr>
-                    <g:set var="lineCounter" value="${0}" />
-                    <g:each in="${record.multiFields}" var="multiField">
-                        <g:if test="${multiField?.value?.getPrioValue()}">
-                            <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell-key">${multiField.key}</td>
-                                <td class="statistics-cell-value" contenteditable="true">${multiField.value.getPrioValue()}</td>
-                                <td class="statistics-cell-source">${multiField.value.getPrioSource()}</td>
-                                <td class="statistics-cell-status"><g:message code="${multiField.value.status}"/></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:if>
-                    </g:each>
-                </table>
-            </div>
-        </div>
-        <!-- <ul class="list-group content-list">
-            <input type="submit" value="${message(code:'statistic.edit.cancel')}" class="btn btn-warning"/>
-            <input type="submit" value="${message(code:'statistic.edit.save')}" class="btn btn-success"/>
-        </ul> -->
+            <g:link controller="statistic" action="cancel" params="[sthash:sthash]" id="${record.uid}">
+                <g:actionSubmit action="cancel" value="${message(code:'statistic.edit.cancel')}" class="btn btn-default"/>
+            </g:link>
+            <g:link controller="statistic" action="save" params='[sthash:sthash, record:record.uid]' id="commitchanges">
+                <g:actionSubmit action="save" value="${message(code:'statistic.edit.save')}" class="btn btn-success"
+                                onclick="changesToHiddenInputFields()" id="saveChanges"/>
+            </g:link>
+        </g:form>
     </div>
 </div>
 
@@ -41,10 +49,7 @@
     var tableRowIndex;
     var keys    = document.querySelectorAll('.statistics-cell-key'),
         values  = document.querySelectorAll('.statistics-cell-value'),
-        rows = [].filter.call(document.querySelectorAll("tr"), function(row) {
-            return row.getElementsByClassName('statistics-cell-key').length != 0;
-        });
-        // rows only contains data entries
+        sources = document.querySelectorAll('.statistics-cell-source');
 
     values.forEach((valueField) => {
         valueField.addEventListener('keydown', function (event) {
@@ -57,7 +62,7 @@
                     document.execCommand('undo');
                     target.blur();
                 }
-                else if (event.which == 13 /* that is "enter" */) {
+                else if (event.which == 13 || event.which == 9 /* that is "enter" or "tab" */) {
                     // save && send update
                     var valuesArray = Array.prototype.slice.call(values);
                     tableRowIndex = valuesArray.indexOf(valueField);
@@ -95,7 +100,16 @@
         }, true);
     });
 
-    
+
+    function changesToHiddenInputFields(){
+        for (let i=0; i<keys.length; i++){
+            if (sources[i].innerHTML == "${g.message(code:"record.source.revised")}"){
+                keys[i].parentElement.appendChild(createHiddenField(keys[i].innerHTML, values[i].innerHTML));
+            }
+        }
+    }
+
+
     // TODO is possible to iterate over all messages starting with "VALIDATOR_" - do this
     function getValidationMessageMap(){
         const vms = new Object();
@@ -126,6 +140,15 @@
 
     function getValidationMessage(vms, key){
         return (vms[key] != null) ? vms[key] : key;
+    }
+
+
+    function createHiddenField(name, value){
+        let input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "fieldschanged." + name);
+        input.setAttribute("value", value);
+        return input;
     }
 
 
