@@ -16,6 +16,7 @@ class PackageHeader {
   Pod paymentType = new Pod("")
   Pod scope = new Pod("")
   Pod userListVerifier = new Pod("")
+  Pod contentType = new Pod("")
 
   Pod source = new Pod(PackageStruct.getNewPackageHeaderSource())
   PackageHeaderNominalPlatform nominalPlatform = PackageStruct.getNewPackageHeaderNominalPlatform()

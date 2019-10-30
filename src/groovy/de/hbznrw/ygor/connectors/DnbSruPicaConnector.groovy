@@ -275,17 +275,20 @@ class DnbSruPicaConnector extends AbstractConnector {
     getAllChildrenById(record.children(), '039E').each { df ->
 
       def b = getFirstChildById(df.children(), "b") // s=später, f=früher
+      def g = getFirstChildById(df.children(), "g") // Materialcode, O = Online, A = Druckwerk
       def Y = getFirstChildById(df.children(), "Y") // default (Y/D)
       def D = getFirstChildById(df.children(), "D") // falls in der ZDB ein übergeordneter Titel existiert (Y/D)
       def H = getFirstChildById(df.children(), "H")
       def C = getFirstChildById(df.children(), "C") // ID-Typ
       def f0 = getFirstChildById(df.children(), "0")
 
-      resultType << (b ? b.text() : null)
-      resultTitle << (D ? D.text().minus('@') : (Y ? Y.text().minus('@') : null))
-      resultIdentifierType << (C ? C.text() : 'zdb') // default
-      resultIdentifierValue << (f0 ? f0.text() : null)
-      resultDate << (H ? H.text() : null)
+      if ( g?.text().startsWith('O') ) {
+        resultType << (b ? b.text() : null)
+        resultTitle << (D ? D.text().minus('@') : (Y ? Y.text().minus('@') : null))
+        resultIdentifierType << (C ? C.text() : 'zdb') // default
+        resultIdentifierValue << (f0 ? f0.text() : null)
+        resultDate << (H ? H.text() : null)
+      }
     }
 
     // zdbdb
@@ -297,8 +300,8 @@ class DnbSruPicaConnector extends AbstractConnector {
 
     result << getEnvelopeWithComplexMessage([
         'type'           : resultType,
-        'name'           : resultTitle.minus('@'),
-        'title'          : resultTitle.minus('@'),
+        'name'           : resultTitle,
+        'title'          : resultTitle,
         'identifierType' : resultIdentifierType,
         'identifierValue': resultIdentifierValue,
         'date'           : resultDate
