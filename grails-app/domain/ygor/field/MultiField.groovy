@@ -113,6 +113,22 @@ class MultiField {
   }
 
 
+  boolean isCriticallyInvalid(){
+    if (status.endsWith("_INVALID")){ // TODO dummy criterion, to be specified
+      return true
+    }
+    return false
+  }
+
+
+  boolean isNonCriticallyInvalid(){
+    if (status.endsWith("_MISSING")){ // TODO dummy criterion, to be specified
+      return true
+    }
+    return false
+  }
+
+
   String toString() {
     this.getClass().getName().concat(": ").concat(ygorFieldKey).concat(", fields: ").concat(fields.toString())
   }

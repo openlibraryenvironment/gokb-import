@@ -21,7 +21,22 @@
                         <g:set var="lineCounter" value="${0}" />
                         <g:each in="${record.multiFields}" var="multiField">
                             <g:if test="${multiField?.value?.getPrioValue()}">
-                                <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                                <g:if test="${multiField.value.isCriticallyInvalid()}">
+                                    <g:set var="status" value="critical"/>
+                                </g:if>
+                                <g:elseif test="${multiField.value.isNonCriticallyInvalid()}">
+                                    <g:set var="status" value="noncritical"/>
+                                </g:elseif>
+                                <g:else>
+                                    <g:set var="status" value="valid"/>
+                                </g:else>
+                                <g:if test="${(lineCounter % 2) == 0}">
+                                    <g:set var="status" value="${status}-even-hover"/>
+                                </g:if>
+                                <g:else>
+                                    <g:set var="status" value="${status}-odd-hover"/>
+                                </g:else>
+                                <tr class="${status}">
                                     <td class="statistics-cell-key">${multiField.key}</td>
                                     <td class="statistics-cell-value" contenteditable="true">${multiField.value.getPrioValue()}</td>
                                     <td class="statistics-cell-source">${multiField.value.getPrioSource()}</td>
@@ -86,6 +101,7 @@
                             sourceField.innerHTML = recordJson[rowKey]["source"];
                             const statusField = sourceField.nextElementSibling;
                             statusField.innerHTML = getValidationMessage(validationMessages, recordJson[rowKey]["status"]);
+                            window.location.reload(true);
                         },
                         error: function (deXMLHttpRequest, textStatus, errorThrown) {
                             console.error("ERROR - Could not update statistics table, failing Ajax request.");

@@ -590,6 +590,36 @@ tr.even:hover, tr.odd:hover {
 	color: #fff;
 }
 
+tr.critical-even-hover {
+	background: #bd4b4b;
+	color: #fff;
+}
+
+tr.critical-odd-hover {
+	background: #bd4b4b;
+	color: #fff;
+}
+
+tr.noncritical-even-hover {
+	background: #fdffe8;
+	color: #000;
+}
+
+tr.noncritical-odd-hover {
+	background: #f8fcc5;
+	color: #000;
+}
+
+tr.valid-even-hover {
+	background: #f0fff3;
+	color: #000;
+}
+
+tr.valid-odd-hover {
+	background: #e1f7e6;
+	color: #000;
+}
+
 td a {
 	display: block;
 }
