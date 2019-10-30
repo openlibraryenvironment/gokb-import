@@ -15,7 +15,7 @@ import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.*
 
-class Record {
+class Record{
 
   static ObjectMapper MAPPER = new ObjectMapper()
   static {
@@ -34,7 +34,6 @@ class Record {
   String ezbIntegrationDate
   String zdbIntegrationUrl    // TODO
   String ezbIntegrationUrl    // TODO
-  List<String> validationMessages = new ArrayList<String>();
 
 
   static hasMany = [multiFields       : MultiField,
@@ -51,7 +50,8 @@ class Record {
   Record(List<AbstractIdentifier> ids, MappingsContainer container, String uid) {
     if (null == uid) {
       this.uid = UUID.randomUUID().toString()
-    } else {
+    }
+    else {
       this.uid = uid
     }
     for (id in ids) {
@@ -72,22 +72,26 @@ class Record {
         throw new IllegalArgumentException("ZDB id ${identifier} already set to ${zdbId} for record")
       }
       zdbId = identifier
-    } else if (identifier instanceof EzbIdentifier) {
+    }
+    else if (identifier instanceof EzbIdentifier) {
       if (ezbId && identifier.identifier != ezbId.identifier) {
         throw new IllegalArgumentException("EZB id ${identifier} already set to ${ezbId} for record")
       }
       ezbId = identifier
-    } else if (identifier instanceof DoiIdentifier) {
+    }
+    else if (identifier instanceof DoiIdentifier) {
       if (doiId && identifier.identifier != doiId.identifier) {
         throw new IllegalArgumentException("DOI ${identifier} already set to ${doiId} for record")
       }
       doiId = identifier
-    } else if (identifier instanceof EissnIdentifier) {
+    }
+    else if (identifier instanceof EissnIdentifier) {
       if (onlineIdentifier && identifier.identifier != onlineIdentifier.identifier) {
         throw new IllegalArgumentException("EISSN ${dentifier} already set to ${onlineIdentifier} for record")
       }
       onlineIdentifier = identifier
-    } else if (identifier instanceof PissnIdentifier) {
+    }
+    else if (identifier instanceof PissnIdentifier) {
       if (printIdentifier && identifier.identifier != printIdentifier.identifier) {
         throw new IllegalArgumentException("PISSN ${identifier} already set to ${printIdentifier} for record")
       }
@@ -117,24 +121,27 @@ class Record {
   }
 
 
-  boolean isValid(String typ) {
-    // validate tipp.titleUrl
-    if (typ.toLowerCase() != "ebooks") {
-      // eBooks werden nicht gegen die ZDB geprüft und haben darum auch keine ZDB Daten
+  boolean isValid(String type) {
+    // check ZDB api match for non-ebooks
+    if (type.toLowerCase() != "ebooks") {
       if (!zdbIntegrationDate) {
         // has not been matched in ZDB API
-        validationMessages.add("kein passender Eintrag in ZDB gefunden")
         return false
       }
     }
+    // validate tipp.titleUrl
     MultiField urlMultiField = multiFields.get("titleUrl")
     if (urlMultiField == null) {
-      validationMessages.add("keine Titel-Url vorhanden")
       return false
     }
     if (urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()) {
-      validationMessages.add("Titel-URL nicht valide")
       return false
+    }
+    // check multifields for critical errors
+    for (MultiField multiField in multiFields.values()){
+      if (multiField.isCriticallyInvalid()){
+        return false
+      }
     }
     return true
   }
