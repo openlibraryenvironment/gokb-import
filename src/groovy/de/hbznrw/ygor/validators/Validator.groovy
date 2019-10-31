@@ -24,6 +24,9 @@ class Validator {
       case "String":
         return isValidString(value)
         break
+      case "Abbreviation":
+        return isValidAbbreviation(value)
+        break
       case "Number":
         return isValidNumber(value)
         break
@@ -66,6 +69,24 @@ class Validator {
       }
     } else if (str.contains("|")) {
       return Status.VALIDATOR_STRING_IS_NOT_ATOMIC
+    }
+    return Status.VALIDATOR_STRING_IS_VALID
+  }
+
+  /**
+   *
+   * @param abbreviation
+   * @return
+   */
+  static isValidAbbreviation(String abbreviation) {
+    if (StringUtils.isEmpty(abbreviation)) {
+      return Status.VALIDATOR_STRING_IS_MISSING
+    }
+    if (abbreviation.contains("|")) {
+      return Status.VALIDATOR_STRING_IS_NOT_ATOMIC
+    }
+    if (abbreviation.length() > 1) {
+      return Status.VALIDATOR_STRING_IS_INVALID
     }
     return Status.VALIDATOR_STRING_IS_VALID
   }

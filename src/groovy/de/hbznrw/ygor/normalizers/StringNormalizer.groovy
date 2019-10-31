@@ -12,6 +12,11 @@ class StringNormalizer {
   }
 
 
+  static String normalizeAbbreviation(String orgValue) {
+    return CommonNormalizer.removeSpaces(orgValue)
+  }
+
+
   /**
    * Removes special chars. So far: removes "@" occuring after " " and in front of word character.
    * Returns null if null given.
