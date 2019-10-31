@@ -175,7 +175,7 @@ class StatisticController {
         if (file.getName() == sthash) {
           Enrichment enrichment = Enrichment.fromFile(file)
           enrichments.put(sthash, enrichment)
-          return
+          return enrichment
         }
       }
     }
