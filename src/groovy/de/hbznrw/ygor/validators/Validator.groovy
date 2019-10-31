@@ -192,8 +192,12 @@ class Validator {
     if (!str || str.trim().equals("")) {
       return Status.VALIDATOR_DATE_IS_MISSING
     }
+    // also accept "YYYY" or "YYYY-MM-DD" or "YYYY/MM/DD"
+    if (str.matches("[\\d]{4}([-/][\\d]{2}[-/][\\d]{2})?")){
+      return Status.VALIDATOR_DATE_IS_VALID
+    }
     try {
-      def check = Timestamp.valueOf(str)
+      Timestamp.valueOf(str)
       return Status.VALIDATOR_DATE_IS_VALID
     }
     catch (Exception e) {
