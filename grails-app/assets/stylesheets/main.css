@@ -627,3 +627,24 @@ td a {
 .statistics-data {
 	padding: 15px 15px 0px 15px;
 }
+
+
+.panel-heading-invalid {
+	color: #ffffff;
+	background-color: #d9534f;
+	border-color: #d43f3a;
+	padding: 10px 15px;
+	border-bottom: 1px solid transparent;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.panel-heading-valid {
+	color: #ffffff;
+	background-color: #5cb85c;
+	border-color: #4cae4c;
+	padding: 10px 15px;
+	border-bottom: 1px solid transparent;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
