@@ -2,47 +2,39 @@
 
 <div class="row">
 
-	<div class="col-xs-12">
+    <g:set var="displayZDB" value="${dataType == null || dataType.toLowerCase() != 'ebooks'}"/>
+
+    <div class="col-xs-12">
 		<div class="panel panel-default">
 			<div class="panel-heading-invalid">
 				<h3 class="panel-title">${invalidRecords.size} <g:message code="statistic.show.records.invalid"/></h3>
 			</div>
 			<div class="statistics-data">
 				<table class="statistics-details">
-                    <g:if test="${dataType == null || dataType.toLowerCase() != 'ebooks'}">
-                        <tr>
-                            <th>Title</th>
+                    <tr>
+                        <th>Title</th>
+                        <g:if test="${displayZDB}">
                             <th>ZDB ID</th>
-                            <th>eISSN</th>
+                        </g:if>
+                        <th>eISSN</th>
+                    </tr>
+                    <g:set var="lineCounter" value="${0}" />
+                    <g:each in="${invalidRecords}" var="record">
+                        <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                            <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]"
+                                                                id="${record.key}">${record.value.publicationTitle}</g:link></td>
+                        <g:if test="${displayZDB}">
+                            <td class="statistics-cell">${record.value.zdbId}<br/></td>
+                        </g:if>
+                        <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
                         </tr>
-                        <g:set var="lineCounter" value="${0}" />
-                        <g:each in="${invalidRecords}" var="record">
-                            <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.key}">${record.value.publicationTitle}</g:link><br/></td>
-                                <td class="statistics-cell">${record.value.zdbId}<br/></td>
-                                <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:each>
-                    </g:if>
-                    <g:else>
-                        <tr>
-                            <th>Title</th>
-                            <th>eISBN</th>
-                        </tr>
-                        <g:set var="lineCounter" value="${0}" />
-                        <g:each in="${invalidRecords}" var="record">
-                            <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.key}">${record.value.publicationTitle}</g:link><br/></td>
-                                <td class="statistics-cell">${record.value.printIdentifier}<br/></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:each>
-                    </g:else>
+                        <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                    </g:each>
 				</table>
 			</div>
 		</div>
 	</div>
+
 
 	<div class="col-xs-12">
 		<div class="panel panel-default">
@@ -51,38 +43,25 @@
 			</div>
 			<div class="statistics-data">
 				<table class="statistics-details">
-                    <g:if test="${dataType == null || dataType.toLowerCase() != 'ebooks'}">
-                        <tr>
-                            <th>Title</th>
+                    <tr>
+                        <th>Title</th>
+                        <g:if test="${displayZDB}">
                             <th>ZDB ID</th>
-                            <th>eISSN</th>
-                        </tr>
-                        <g:set var="lineCounter" value="${0}" />
-                        <g:each in="${validRecords}" var="record">
-                            <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]"
-                                                                    id="${record.key}">${record.value.publicationTitle}</g:link><br/></td>
+                        </g:if>
+                        <th>eISSN</th>
+                    </tr>
+                    <g:set var="lineCounter" value="${0}" />
+                    <g:each in="${validRecords}" var="record">
+                        <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                            <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]"
+                                                                id="${record.key}">${record.value.publicationTitle}</g:link></td>
+                            <g:if test="${displayZDB}">
                                 <td class="statistics-cell">${record.value.zdbId}<br/></td>
-                                <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:each>
-                    </g:if>
-                    <g:else>
-                        <tr>
-                            <th>Title</th>
-                            <th>eISBN</th>
+                            </g:if>
+                            <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
                         </tr>
-                        <g:set var="lineCounter" value="${0}" />
-                        <g:each in="${validRecords}" var="record">
-                            <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]"
-                                                                    id="${record.key}">${record.value.publicationTitle}</g:link><br/></td>
-                                <td class="statistics-cell">${record.value.printIdentifier}<br/></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:each>
-                    </g:else>
+                        <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                    </g:each>
 				</table>
 			</div>
 		</div>
