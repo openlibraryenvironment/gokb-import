@@ -100,7 +100,7 @@ class KbartBridge extends AbstractBridge implements BridgeInterface {
     log.info("finish()")
 
     def stash = processor.getStash()
-    def orgMap = DataMapper.getOrganisationMap()
+//     def orgMap = DataMapper.getOrganisationMap()
 
 //        master.enrichment.dataContainer.titles.each { key, value ->
 //            DataMapper.mapHistoryEvents(master.enrichment.dataContainer, value.v, stash)

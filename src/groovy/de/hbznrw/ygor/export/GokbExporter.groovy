@@ -151,6 +151,14 @@ class GokbExporter {
     nominalPlatform.put("primaryUrl", packageHeader.nominalPlatform.url)
     result.set("nominalPlatform", nominalPlatform)
 
+    if (enrichment.dataType == 'ebooks') {
+      result.put("contentType", "Book")
+    } else if (enrichment.dataType == 'journals') {
+      result.put("contentType", "Journal")
+    } else if (enrichment.dataType == 'database') {
+      result.put("contentType", "Database")
+    }
+
     result.set("curatoryGroups", getArrayNode(packageHeader, "curatoryGroups"))
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
