@@ -21,7 +21,8 @@ class DateNormalizer {
         if (tmp.size() > 1) {
           str = tmp[0]
         }
-      } else if (dateType.equals(END_DATE)) {
+      }
+      else if (dateType.equals(END_DATE)) {
         if (tmp.size() > 1) {
           str = tmp[1]
         }
@@ -42,21 +43,26 @@ class DateNormalizer {
           def dd = String.format('%02d', date.lengthOfMonth())
 
           if (dateType.equals(START_DATE)) {
-            str += ("-" + mm + "-01 00:00:00.000")
-          } else if (dateType.equals(END_DATE)) {
-            str += ("-" + mm + "-" + dd + " 23:59:59.000")
+            str += ("-" + mm + "-01" /* + " 00:00:00.000" */ )
           }
-        } else {
+          else if (dateType.equals(END_DATE)) {
+            str += ("-" + mm + "-" + dd /* + " 23:59:59.000" */ )
+          }
+        }
+        else {
           str = ''
         }
-      } else {
+      }
+      /* else {
         if (dateType.equals(START_DATE)) {
           str += "-01-01 00:00:00.000"
-        } else if (dateType.equals(END_DATE)) {
+        }
+        else if (dateType.equals(END_DATE)) {
           str += "-12-31 23:59:59.000"
         }
-      }
-    } else {
+      }*/
+    }
+    else {
       str = ''
     }
     str
@@ -83,7 +89,8 @@ class DateNormalizer {
       if (str.endsWith("-")) {
         str = str.take(str.length() - 1)
       }
-    } else if (dateType.equals(END_DATE)) {
+    }
+    else if (dateType.equals(END_DATE)) {
       if (str.endsWith("]")) {
         str = str.take(str.length() - 1)
       }
@@ -111,7 +118,8 @@ class DateNormalizer {
           return [tmp2[0], tmp2[1]]
         }
         return [tmp1[0], null]
-      } else if (dateType.equals(END_DATE)) {
+      }
+      else if (dateType.equals(END_DATE)) {
         if (tmp1[1].contains(",")) {
           def tmp2 = tmp1[1].split(",")
           return [tmp2[0], tmp2[1]]
@@ -136,7 +144,8 @@ class DateNormalizer {
           return [tmp2[0], tmp2[1]]
         }
         return [tmp1[0], null]
-      } else if (dateType.equals(END_DATE)) {
+      }
+      else if (dateType.equals(END_DATE)) {
         if (tmp1[1].contains(",")) {
           def tmp2 = tmp1[1].split(",")
           return [tmp1[0].take(2) + tmp2[0], tmp2[1]]
@@ -161,7 +170,8 @@ class DateNormalizer {
           return ['20' + tmp2[0], tmp2[1]]
         }
         return ['20' + tmp1[0], null]
-      } else if (dateType.equals(END_DATE)) {
+      }
+      else if (dateType.equals(END_DATE)) {
         if (tmp1[1].contains(",")) {
           def tmp2 = tmp1[1].split(",")
           return ['20' + tmp2[0], tmp2[1]]
