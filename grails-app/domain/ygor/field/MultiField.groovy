@@ -114,12 +114,12 @@ class MultiField {
 
 
   boolean isCriticallyInvalid(){
-    return status.endsWith("_INVALID")  // TODO dummy criterion, to be specified
+    return status?.endsWith("_INVALID")  // TODO dummy criterion, to be specified
   }
 
 
   boolean isNonCriticallyInvalid(){
-    return status.endsWith("_MISSING")  // TODO dummy criterion, to be specified
+    return status?.endsWith("_MISSING")  // TODO dummy criterion, to be specified
   }
 
 

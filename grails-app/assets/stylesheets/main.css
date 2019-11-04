@@ -639,12 +639,12 @@ tr.critical-odd-hover {
 }
 
 tr.noncritical-even-hover {
-	background: #fdffe8;
+	background: #ffffff;
 	color: #000;
 }
 
 tr.noncritical-odd-hover {
-	background: #f8fcc5;
+	background: #f7f7f7;
 	color: #000;
 }
 
