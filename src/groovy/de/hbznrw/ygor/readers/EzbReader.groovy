@@ -24,10 +24,9 @@ class EzbReader extends AbstractReader {
 
 
   @Override
-  List<Map<String, String>> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
+  List<Map<String, String>> readItemData(String queryString) {
     List<Map<String, String>> result = new ArrayList<>()
     try {
-      String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKeys)
       log.info("query EZB: " + queryString)
       String text = new URL(queryString).getText()
       def records = new XmlSlurper().parseText(text).depthFirst().findAll { it.name() == 'title' }
@@ -56,7 +55,7 @@ class EzbReader extends AbstractReader {
   }
 
 
-  private String getAPIQuery(String identifier, List<String> queryIdentifier) {
+  static String getAPIQuery(String identifier, List<String> queryIdentifier) {
     return REQUEST_URL +
         "&" + FORMAT_IDENTIFIER +
         "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier

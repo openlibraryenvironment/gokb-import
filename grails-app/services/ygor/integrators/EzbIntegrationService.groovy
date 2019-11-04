@@ -2,6 +2,7 @@ package ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.readers.EzbReader
 import org.apache.commons.lang.StringUtils
 import ygor.Record
 import ygor.field.MappingsContainer
@@ -36,8 +37,10 @@ class EzbIntegrationService extends ExternalIntegrationService {
     for (String key in owner.KEY_ORDER) {
       AbstractIdentifier id = record."${key}"
       if (id && !StringUtils.isEmpty(id.identifier)) {
-        readData = owner.ezbReader.readItemData(owner.zdbKeyMapping, id.identifier)
+        String queryString = EzbReader.getAPIQuery(id.identifier, owner.zdbKeyMapping.kbartKeys)
+        readData = owner.ezbReader.readItemData(queryString)
         if (!readData.isEmpty()) {
+          record.ezbIntegrationUrl = queryString
           break
         }
       }

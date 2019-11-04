@@ -9,15 +9,15 @@ class FieldKeyMapping {
 
   final static ObjectMapper MAPPER = new ObjectMapper()
   String ygorKey
-  List kbartKeys = new ArrayList()
-  List zdbKeys = new ArrayList()
-  List ezbKeys = new ArrayList()
+  List<String> kbartKeys = new ArrayList()
+  List<String> zdbKeys = new ArrayList()
+  List<String> ezbKeys = new ArrayList()
   String type
-  Set gokb
+  Set<String> gokb
   String val = ""
   boolean valIsFix
   boolean keepIfEmpty
-  List sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
+  List<String> sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
 
   static constraints = {
     ygorKey nullable: false

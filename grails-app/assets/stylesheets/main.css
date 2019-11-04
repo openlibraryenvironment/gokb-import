@@ -58,8 +58,46 @@ a:link, a:hover {
 	color: #fff;
 }
 
+a.link-icon{
+	height:14px;
+	padding-left:14px;
+	padding-right:14px;
+	margin-right:21px;
+}
+
+a.link-icon:before{
+	content: '';
+	background:url('https://image.flaticon.com/icons/svg/25/25284.svg');
+	background-size:cover;
+	position:absolute;
+	width:14px;
+	height:14px;
+	margin-left:-14px;
+	margin-top:3px;
+}
+
+a.link-icon-header{
+	height:14px;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+a.link-icon-header:before{
+	content: '';
+	background:url('https://image.flaticon.com/icons/svg/25/25284.svg');
+	background-size:cover;
+	position:absolute;
+	width:18px;
+	height:18px;
+	margin-top:-2px;
+}
+
 a:visited {
 	color: #609;
+}
+
+td.statistics-cell{
+	white-space: nowrap;
 }
 
 td.statistics-cell a:link {

@@ -1,6 +1,8 @@
 <%@ page import="de.hbznrw.ygor.tools.JsonToolkit; grails.converters.JSON" %>
 <meta name="layout" content="enrichment">
 
+<g:set var="displayZDB" value="${dataType == null || dataType.toLowerCase() != 'ebooks'}"/>
+
 <div class="row">
     <div class="col-xs-12">
         <g:form>
@@ -8,7 +10,12 @@
             <input type="hidden" name="record.uid" value="${record.uid}"/>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><g:message code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}</h3>
+                    <h3 class="panel-title">
+                        <g:message code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}
+                        <g:if test="${displayZDB}">
+                            <a href="${record.zdbIntegrationUrl}" class="link-icon-header"></a>
+                        </g:if>
+                    </h3>
                 </div>
                 <div class="statistics-data">
                     <table class="statistics-details">

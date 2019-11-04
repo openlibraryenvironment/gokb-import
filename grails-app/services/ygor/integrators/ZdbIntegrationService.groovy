@@ -2,6 +2,7 @@ package ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.readers.ZdbReader
 import org.apache.commons.lang.StringUtils
 import ygor.Record
 import ygor.field.FieldKeyMapping
@@ -52,8 +53,10 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         if (mapping == null) {
           continue
         }
-        readData = owner.zdbReader.readItemData(mapping, id.identifier)
+        String queryString = ZdbReader.getAPIQuery(id.identifier, mapping.kbartKeys)
+        readData = owner.zdbReader.readItemData(queryString)
         if (!readData.isEmpty()) {
+          record.zdbIntegrationUrl = queryString
           break
         }
       }

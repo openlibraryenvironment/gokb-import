@@ -32,8 +32,8 @@ class Record{
   Map validation
   String zdbIntegrationDate
   String ezbIntegrationDate
-  String zdbIntegrationUrl    // TODO
-  String ezbIntegrationUrl    // TODO
+  String zdbIntegrationUrl
+  String ezbIntegrationUrl
 
 
   static hasMany = [multiFields       : MultiField,
@@ -64,6 +64,8 @@ class Record{
     }
     zdbIntegrationDate = null
     ezbIntegrationDate = null
+    zdbIntegrationUrl = null
+    ezbIntegrationUrl = null
   }
 
   void addIdentifier(AbstractIdentifier identifier) {
@@ -191,10 +193,15 @@ class Record{
     if (ezbIntegrationDate) {
       jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
     }
+    if (ezbIntegrationUrl) {
+      jsonGenerator.writeStringField("ezbIntegrationUrl", ezbIntegrationUrl)
+    }
     if (zdbIntegrationDate) {
       jsonGenerator.writeStringField("zdbIntegrationDate", zdbIntegrationDate)
     }
-
+    if (zdbIntegrationUrl) {
+      jsonGenerator.writeStringField("zdbIntegrationUrl", zdbIntegrationUrl)
+    }
     jsonGenerator.writeFieldName("multiFields")
     jsonGenerator.writeStartArray()
     for (MultiField mf in multiFields.values()) {
@@ -230,8 +237,14 @@ class Record{
     if (ezbIntegrationDate) {
       result.put("ezbIntegrationDate", ezbIntegrationDate)
     }
+    if (ezbIntegrationUrl) {
+      result.put("ezbIntegrationUrl", ezbIntegrationUrl)
+    }
     if (zdbIntegrationDate) {
       result.put("zdbIntegrationDate", zdbIntegrationDate)
+    }
+    if (zdbIntegrationUrl) {
+      result.put("zdbIntegrationUrl", zdbIntegrationUrl)
     }
     for (def multiField in multiFields) {
       result.put(multiField.key, multiField.value.getPrioValue())
@@ -259,9 +272,17 @@ class Record{
     if (ezbIntegrationDate) {
       result.ezbIntegrationDate = ezbIntegrationDate
     }
+    String ezbIntegrationUrl = JsonToolkit.fromJson(json, "ezbIntegrationUrl")
+    if (ezbIntegrationUrl) {
+      result.ezbIntegrationUrl = ezbIntegrationUrl
+    }
     String zdbIntegrationDate = JsonToolkit.fromJson(json, "zdbIntegrationDate")
     if (zdbIntegrationDate) {
       result.zdbIntegrationDate = zdbIntegrationDate
+    }
+    String zdbIntegrationUrl = JsonToolkit.fromJson(json, "zdbIntegrationUrl")
+    if (zdbIntegrationUrl) {
+      result.zdbIntegrationUrl = zdbIntegrationUrl
     }
     result
   }

@@ -2,6 +2,7 @@ package de.hbznrw.ygor.readers
 
 import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
+import ygor.Record
 import ygor.field.FieldKeyMapping
 
 @Log4j
@@ -24,10 +25,9 @@ class ZdbReader extends AbstractReader {
   }
 
   @Override
-  List<Map<String, String>> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
+  List<Map<String, String>> readItemData(String queryString) {
     List<Map<String, String>> result = new ArrayList<>()
     try {
-      String queryString = getAPIQuery(identifier, fieldKeyMapping.kbartKeys)
       log.info("query ZDB: " + queryString)
       String text = new URL(queryString).getText()
       def records = new XmlSlurper().parseText(text).depthFirst().findAll { it.name() == 'records' }
@@ -63,7 +63,7 @@ class ZdbReader extends AbstractReader {
   }
 
 
-  private String getAPIQuery(String identifier, List<String> queryIdentifier) {
+  static String getAPIQuery(String identifier, List<String> queryIdentifier) {
     return REQUEST_URL +
         "&recordSchema=" + FORMAT_IDENTIFIER +
         "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier + QUERY_ONLY_JOURNALS

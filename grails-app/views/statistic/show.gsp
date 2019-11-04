@@ -14,6 +14,7 @@
                     <tr>
                         <th>Title</th>
                         <g:if test="${displayZDB}">
+                            <th>ZDB</th>
                             <th>ZDB ID</th>
                         </g:if>
                         <th>eISSN</th>
@@ -21,11 +22,12 @@
                     <g:set var="lineCounter" value="${0}" />
                     <g:each in="${invalidRecords}" var="record">
                         <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                            <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]"
-                                                                id="${record.key}">${record.value.publicationTitle}</g:link></td>
-                        <g:if test="${displayZDB}">
-                            <td class="statistics-cell">${record.value.zdbId}<br/></td>
-                        </g:if>
+                            <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.key}">${record.value.publicationTitle}</g:link>
+                            </td>
+                            <g:if test="${displayZDB}">
+                                <td><a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a></td>
+                                <td class="statistics-cell">${record.value.zdbId}<br/></td>
+                            </g:if>
                         <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
                         </tr>
                         <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -46,6 +48,7 @@
                     <tr>
                         <th>Title</th>
                         <g:if test="${displayZDB}">
+                            <th>ZDB</th>
                             <th>ZDB ID</th>
                         </g:if>
                         <th>eISSN</th>
@@ -53,9 +56,9 @@
                     <g:set var="lineCounter" value="${0}" />
                     <g:each in="${validRecords}" var="record">
                         <tr class="${ (lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                            <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]"
-                                                                id="${record.key}">${record.value.publicationTitle}</g:link></td>
+                            <td class="statistics-cell"><g:link action="edit" params="[sthash:sthash]" id="${record.key}">${record.value.publicationTitle}</g:link></td>
                             <g:if test="${displayZDB}">
+                                <td><a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a></td>
                                 <td class="statistics-cell">${record.value.zdbId}<br/></td>
                             </g:if>
                             <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
