@@ -71,7 +71,7 @@
 <script>
     $(document).ready(function() {
         $("#edit-table").dataTable({
-            "pageLength": 100
+            "paging": false
             // "order": [[ 3, "asc" ]]  // in case we want to order by status
         });
     });
