@@ -4,9 +4,7 @@
         <div class="panel-group">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" href="#gokb-info">Info</a>
-              </h4>
+              <h4 class="panel-title">Info</h4>
             </div>
             <div id="gokb-info" class="panel-collapse collapse in">
               <div class="panel-body">
