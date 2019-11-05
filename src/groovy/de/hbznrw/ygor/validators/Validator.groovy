@@ -122,7 +122,7 @@ class Validator {
       return Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC
     }
     if (identifierType in ["onlineIdentifier", "printIdentifier"]) {
-      if (str.matches("\\d{4}-\\d{4}")) {
+      if (str.matches("\\d{4}-\\d{3}[\\dXx]")) {
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
       } else {
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
