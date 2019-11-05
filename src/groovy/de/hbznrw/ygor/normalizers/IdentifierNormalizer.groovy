@@ -19,19 +19,26 @@ class IdentifierNormalizer {
     if (!(type in ["titleId", "onlineIdentifier", "printIdentifier"])) {
       str = str.replaceAll(/[\/-]+/, "")
     }
-    if (type in ["eissn", "pissn"]) {
+    if (type in ["onlineIdentifier", "printIdentifier"]) {
       if (str.length() == 8) {
         str = new StringBuilder(str).insert(4, "-").toString()
       }
-    } else if (type.equals("zdbId")) {
+      if (str.endsWith("x")) {
+        str = str.replaceAll("x\$", "X")
+      }
+    }
+    else if (type.equals("zdbId")) {
       str = new StringBuilder(str.replaceAll("x", "X")).insert(Math.abs(str.length() - 1).toInteger(), "-").toString()
-    } else if (type.equals("ezbId")) {
+    }
+    else if (type.equals("ezbId")) {
       // TODO
-    } else if (type.equals("titleId")) {
+    }
+    else if (type.equals("titleId")) {
       if (namespace.equals("doi")) {
         str = Pattern.compile("^https?://(dx\\.)?doi.org/").matcher(str).replaceAll("")
       }
-    } else if (type.equals("inID_" + namespace)) {
+    }
+    else if (type.equals("inID_" + namespace)) {
       str = namespace ? str : ''
     }
     str
