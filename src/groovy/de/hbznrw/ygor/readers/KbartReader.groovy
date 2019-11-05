@@ -9,7 +9,7 @@ import org.apache.commons.csv.QuoteMode
 import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 
-class KbartReader extends AbstractReader {
+class KbartReader {
 
   static final IDENTIFIER = 'kbart'
 
@@ -65,7 +65,6 @@ class KbartReader extends AbstractReader {
   }
 
 
-  @Override
   Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
     // guess, the iterator is in the position to return the desired next record
     CSVRecord next = getNext()

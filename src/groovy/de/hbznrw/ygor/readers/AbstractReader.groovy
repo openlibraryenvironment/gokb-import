@@ -2,6 +2,6 @@ package de.hbznrw.ygor.readers
 
 abstract class AbstractReader {
 
-  abstract def readItemData(String queryString)
+  abstract List<Map<String, String>> readItemData(String queryString)
 
 }
