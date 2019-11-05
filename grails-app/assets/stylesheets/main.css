@@ -630,12 +630,12 @@ tr.even:hover, tr.odd:hover {
 
 tr.critical-even-hover {
 	background: #bd4b4b;
-	color: #fff;
+	color: #f00;
 }
 
 tr.critical-odd-hover {
 	background: #bd4b4b;
-	color: #fff;
+	color: #f00;
 }
 
 tr.noncritical-even-hover {

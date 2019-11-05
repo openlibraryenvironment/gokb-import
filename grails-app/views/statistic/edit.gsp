@@ -18,13 +18,15 @@
                     </h3>
                 </div>
                 <div class="statistics-data">
-                    <table class="statistics-details">
-                        <tr>
-                            <th><g:message code="statistic.edit.field"/></th>
-                            <th><g:message code="statistic.edit.value"/></th>
-                            <th><g:message code="statistic.edit.source"/></th>
-                            <th><g:message code="statistic.edit.status"/></th>
-                        </tr>
+                    <table class="statistics-details" id="edit-table">
+                        <thead>
+                            <tr>
+                                <th><g:message code="statistic.edit.field"/></th>
+                                <th><g:message code="statistic.edit.value"/></th>
+                                <th><g:message code="statistic.edit.source"/></th>
+                                <th><g:message code="statistic.edit.status"/></th>
+                            </tr>
+                        </thead>
                         <g:set var="lineCounter" value="${0}" />
                         <g:each in="${record.multiFields}" var="multiField">
                             <g:if test="${multiField.value.isCriticallyInvalid()}">
@@ -63,8 +65,17 @@
         </g:form>
     </div>
 </div>
+<asset:javascript src="jquery.dataTables.js"/>
+<asset:stylesheet src="jquery.dataTables.css"/>
 
 <script>
+    $(document).ready(function() {
+        $("#edit-table").dataTable({
+            "pageLength": 100
+            // "order": [[ 3, "asc" ]]  // in case we want to order by status
+        });
+    });
+
     const validationMessages = getValidationMessageMap();
     var tableRowIndex;
     var keys    = document.querySelectorAll('.statistics-cell-key'),

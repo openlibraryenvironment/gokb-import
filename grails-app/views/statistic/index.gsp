@@ -4,6 +4,8 @@
 		<title>Ygor - Alpha</title>
 		<meta name="layout" content="enrichment">
 		<g:if env="development"><link rel="stylesheet" href="${resource(dir: 'css', file: 'errors.css')}" type="text/css"></g:if>
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.css"/>
+		<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
 	</head>
 	<body>
 		<g:form controller="statistic" action="show">
