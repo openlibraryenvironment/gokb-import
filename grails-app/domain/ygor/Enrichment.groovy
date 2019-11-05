@@ -138,8 +138,10 @@ class Enrichment {
     result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
     result.append("\"date\":\"").append(date).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
-    String pn = packageName ? packageName : dataContainer.packageHeader.name.asText()
-    result.append("\"packageName\":\"").append(pn).append("\",")
+    String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
+    if (pn){
+      result.append("\"packageName\":\"").append(pn).append("\",")
+    }
     result.append("\"configuration\":{")
     result.append("\"dataType\":\"").append(dataType).append("\",")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
