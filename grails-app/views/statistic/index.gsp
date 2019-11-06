@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<title>Ygor - Alpha</title>
+		<asset:javascript src="jquery.dataTables.js"/>
+		<asset:stylesheet src="jquery.dataTables.css"/>
 		<meta name="layout" content="enrichment">
 		<g:if env="development"><link rel="stylesheet" href="${resource(dir: 'css', file: 'errors.css')}" type="text/css"></g:if>
-		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.css"/>
-		<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
 	</head>
 	<body>
 		<g:form controller="statistic" action="show">

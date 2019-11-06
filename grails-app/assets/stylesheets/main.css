@@ -616,11 +616,12 @@ a.skip:focus, a.skip:active {
 
 
 table.statistics-details {
-	border-collapse: separate;
+	border-collapse: collapse;
 }
 
 td.statistics-cell-key, td.statistics-cell-value, td.statistics-cell-source, td.statistics-cell-status {
 	padding: 0px 5px 0px 0px;
+	line-height: 1.8em;
 }
 
 tr.even:hover, tr.odd:hover {
@@ -630,12 +631,12 @@ tr.even:hover, tr.odd:hover {
 
 tr.critical-even-hover {
 	background: #bd4b4b;
-	color: #f00;
+	color: #fff;
 }
 
 tr.critical-odd-hover {
 	background: #bd4b4b;
-	color: #f00;
+	color: #fff;
 }
 
 tr.noncritical-even-hover {
@@ -649,12 +650,12 @@ tr.noncritical-odd-hover {
 }
 
 tr.valid-even-hover {
-	background: #f0fff3;
+	background: #ffffff;
 	color: #000;
 }
 
 tr.valid-odd-hover {
-	background: #e1f7e6;
+	background: #f7f7f7;
 	color: #000;
 }
 
@@ -685,4 +686,23 @@ td a {
 	border-bottom: 1px solid transparent;
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
+}
+
+
+table.dataTable thead .sorting_asc {
+	background-image: url(../images/sort_asc.png);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+table.dataTable thead .sorting {
+	background-image: url(../images/sort_both.png);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+table.dataTable thead .sorting_desc {
+	background-image: url(../images/sort_desc.png);
+	background-repeat: no-repeat;
+	background-position: right;
 }

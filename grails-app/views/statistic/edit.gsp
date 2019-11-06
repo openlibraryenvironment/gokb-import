@@ -72,8 +72,6 @@
         </g:form>
     </div>
 </div>
-<asset:javascript src="jquery.dataTables.js"/>
-<asset:stylesheet src="jquery.dataTables.css"/>
 
 <script>
     $(document).ready(function() {
