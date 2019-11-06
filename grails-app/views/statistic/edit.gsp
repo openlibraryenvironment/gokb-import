@@ -8,6 +8,13 @@
         <g:form>
             <input type="hidden" name="sthash" value="${sthash}"/>
             <input type="hidden" name="record.uid" value="${record.uid}"/>
+            <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())}">
+                <div class="panel-heading-invalid">
+                    <h3 class="panel-title"><g:message code="statistic.edit.record.zdbmatch"/> : <g:message code="${record.multiFields.get("zdbId").status}"/></h3>
+                </div>
+            </g:if>
+            <div/>
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
