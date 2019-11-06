@@ -124,41 +124,54 @@ class Validator {
     if (identifierType in ["onlineIdentifier", "printIdentifier"]) {
       if (str.matches("\\d{4}-\\d{3}[\\dXx]")) {
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
-      } else {
+      }
+      else {
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
       }
-    } else if (identifierType.equals(ZdbBridge.IDENTIFIER)) {
-      if (2 < str.length() && str.indexOf("-") == str.length() - 2) {
+    }
+    else if (identifierType.equals("zdbId")){
+      if (str.matches("[0-9]{1,9}-[0-9Xx]")){
+        // "Das Feld wird maschinell besetzt und enthält eine bis zu 11 Stellen umfassende Identifikationsnummer mit Prüfziffer."
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
-      } else {
+      }
+      else{
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
       }
-    } else if (identifierType.equals(TitleStruct.EISBN) || identifierType.equals(TitleStruct.PISBN)) {
+    }
+    else if (identifierType.equals(TitleStruct.EISBN) || identifierType.equals(TitleStruct.PISBN)) {
       if (validateISBN(str)) {
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
-      } else {
+      }
+      else {
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
       }
-    } else if (identifierType.equals(EzbBridge.IDENTIFIER)) {
+    }
+    else if (identifierType.equals(EzbBridge.IDENTIFIER)) {
       // TODO .. no valid definition
       if (str.length() > 2) {
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
-      } else {
+      }
+      else {
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
       }
-    } else if (identifierType.equals(TitleStruct.DOI)) {
+    }
+    else if (identifierType.equals(TitleStruct.DOI)) {
       if (str.startsWith("10.")) {
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
-      } else {
+      }
+      else {
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
       }
-    } else if (identifierType.equals("inID_" + namespace)) {
+    }
+    else if (identifierType.equals("inID_" + namespace)) {
       if (str) {
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
-      } else {
+      }
+      else {
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
       }
-    } else if (identifierType == namespace) {
+    }
+    else if (identifierType == namespace) {
       // TODO use identifier type in GOKb (String, URL, ...) and specify here
       return Status.VALIDATOR_IDENTIFIER_IS_VALID
     }
