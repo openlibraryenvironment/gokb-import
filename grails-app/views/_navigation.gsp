@@ -18,9 +18,9 @@
 					<a href="${grailsApplication.config.grails.app.context}/statistic/index"><g:message code="navigation.menue.stats" /></a>
 				</li>
 				<!--<li><a href="zevport">ZevPort-Export</a></li>-->
-				<li <g:if test="${currentView == 'config'}">class="active"</g:if>>
+				<!-- <li <g:if test="${currentView == 'config'}">class="active"</g:if>>
 					<a href="${grailsApplication.config.grails.app.context}/enrichment/config"><g:message code="navigation.menue.config" /></a>
-				</li>
+				</li> -->
 				<li <g:if test="${currentView == 'howto'}">class="active"</g:if>>
 					<a href="${grailsApplication.config.grails.app.context}/enrichment/howto"><g:message code="navigation.menue.howto" /></a>
 				</li>
