@@ -55,6 +55,7 @@ class KbartProcessor extends AbstractProcessor {
       'nullquote'  : 'null',
       'all'        : QuoteMode.ALL,
       'nonnumeric' : QuoteMode.NON_NUMERIC,
+      'minimal'    : QuoteMode.MINIMAL,
       'none'       : QuoteMode.NONE
     ]
 
@@ -73,7 +74,7 @@ class KbartProcessor extends AbstractProcessor {
       }
     }
     if (null != quoteMode) {
-      csvFormat = csvFormat.withEscape((char) '^')
+      csvFormat = csvFormat.withEscape((char) '\\')
       csvFormat = csvFormat.withQuoteMode((QuoteMode) quoteMode)
     }
     if (null != recordSeparator) {

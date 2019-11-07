@@ -85,8 +85,8 @@ class EnrichmentController {
         log.debug("Detected encoding ${encoding}")
         if (!encoding || encoding == "UTF-8") {
             def foDelimiter = request.parameterMap['formatDelimiter'][0]
-            def foQuote = null // = request.parameterMap['formatQuote'][0]
-            def foQuoteMode = null // = request.parameterMap['formatQuoteMode'][0]
+            def foQuote = 'nullquote' // = request.parameterMap['formatQuote'][0]
+            def foQuoteMode = 'none' // = request.parameterMap['formatQuoteMode'][0]
             def dataTyp = request.parameterMap['dataTyp'][0]
 
             if (!request.session.lastUpdate) {
