@@ -207,13 +207,43 @@ class DnbSruPicaConnector extends AbstractConnector {
 
     private Envelope getTitle() {
         def result = []
+        def record = currentRecord.children()[2].children()[0]
 
         // correction
-        result << getFirstPicaValue(currentRecord.children()[2].children()[0], '025@', 'a')
+        result << getFirstPicaValue(record, '025@', 'a')
 
         // or .. main title
-        if(result.minus(null).isEmpty()) {
-            result << getFirstPicaValue(currentRecord.children()[2].children()[0],'021A', 'a')
+        if (result.minus(null).isEmpty()) {
+            def main_title = getFirstPicaValue(record, '021A', 'a')
+
+            getAllChildrenById(record.children(), '021C').each { df ->
+                def l = getFirstChildById(df.children(), "l")
+                def a = getFirstChildById(df.children(), "a")
+                log.debug("Got subtitle info for ${main_title}: ${l} - ${a}")
+
+                def vol = l ? l.text() : null
+                def subtitle = a ? a.text() : null
+ 
+                if (vol) {
+                    main_title = main_title + " / " + vol
+                    log.debug("Added vol: ${main_title}")
+                }
+
+                if (subtitle) {
+                    if (vol) {
+                        main_title = main_title + ": " + subtitle
+                        log.debug("Added name: ${main_title}")
+                    }
+                    else {
+                        main_title = main_title + " / " + subtitle
+                        log.debug("Added name: ${main_title}")
+                    }
+                }
+            }
+
+            log.debug("Final title: ${main_title}")
+
+            result << (main_title)
         }
 
         def noAt = []

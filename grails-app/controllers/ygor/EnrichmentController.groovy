@@ -311,21 +311,32 @@ class EnrichmentController {
 
         log.debug("sendTitlesFile response: ${response}")
 
+        if (response.failure[0] != null) {
+            flash.error = response.failure.message
+        }
+        else {
+            if (response.info[0] != null) {
+                log.debug("json class: ${response.info.class}")
+                def info_objects = response.info.results
 
-        if (response.info) {
-            log.debug("json class: ${response.info.class}")
-            def info_objects = response.info.results
-
-            info_objects[0].each { robj ->
-                log.debug("robj: ${robj}")
-                if (robj.result == 'ERROR') {
-                    flash.error.add(robj.message)
-                    errors++
+                info_objects[0].each { robj ->
+                    log.debug("robj: ${robj}")
+                    if (robj.result == 'ERROR') {
+                        flash.error.add(robj.message)
+                        errors++
+                    }
+                    total++
                 }
-                total++
+                if (errors > 0) {
+                    flash.warning = "Total: ${total}, Errors: ${errors}"
+                }
+                else {
+                    flash.info = "Total: ${total}, Errors: ${errors}"
+                }
             }
-
-            flash.info = "Total: ${total}, Errors: ${errors}"
+            else if (response.error[0] != null) {
+                flash.error = response.error.message
+            }
         }
 
         process()

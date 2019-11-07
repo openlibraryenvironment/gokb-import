@@ -171,39 +171,52 @@ class EnrichmentService {
         
         log.info("exportFile: " + enrichment.resultHash + " -> " + url)
 
-        def http = new HTTPBuilder(url)
-        http.auth.basic user, pwd
-        
-        http.request(Method.POST, ContentType.JSON) { req ->
-            headers.'User-Agent' = 'ygor'
-            headers.'Connection' = 'close'
+        try {
 
-            body = json.getText()
-            response.success = { resp, html ->
-                log.info("server response: ${resp.statusLine}")
-                log.debug("server:          ${resp.headers.'Content-Type'}")
-                log.debug("server:          ${resp.headers.'Server'}")
-                log.debug("content length:  ${resp.headers.'Content-Length'}")
-                if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
-                    if(resp.status < 400){
-                        return ['info':html]
+            def http = new HTTPBuilder(url)
+            http.auth.basic user, pwd
+
+            http.request(Method.POST, ContentType.JSON) { req ->
+                headers.'User-Agent' = 'ygor'
+                headers.'Connection' = 'close'
+
+                body = json.getText()
+                response.success = { resp, html ->
+                    log.info("server response:  ${resp.statusLine}")
+                    log.debug("content-type:    ${resp.headers.'Content-Type'}")
+                    log.debug("server:          ${resp.headers.'Server'}")
+                    log.debug("content length:  ${resp.headers.'Content-Length'}")
+                    log.debug("status: ${resp.status} (${resp.status.class.name})" )
+                    if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
+                        if(resp.status < 400){
+                            return ['info':html]
+                        }
+                        else {
+                            return ['warning':html]
+                        }
                     }
                     else {
-                        return ['warning':html]
+                        return ['failure': ['message':"Authentication error!", 'result':"ERROR"]]
                     }
                 }
-                else {
-                    return ['error': ['message':"Authentication error!", 'result':"ERROR"]]
+                response.failure = { resp, html ->
+                    log.error("server response: ${resp.status} - ${resp.statusLine}")
+                    if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
+                        return ['error': html]
+                    }
+                    else {
+                        return ['failure': ['message':"Authentication error!", 'result':"ERROR"]]
+                    }
                 }
             }
-            response.failure = { resp, html ->
-                log.error("server response: ${resp.statusLine}")
-                if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
-                    return ['error': html]
-                }
-                else {
-                    return ['error': ['message':"Authentication error!", 'result':"ERROR"]]
-                }
+        }
+        catch (Exception e) {
+            log.debug("exportFileToGOKb exception: ${e}")
+            if (e.statusCode == 401 ) {
+              return ['failure': ['message': "Upload permission denied!", 'result':"ERROR"]]
+            }
+            else {
+              return ['failure': ['message': "There was an error sending data to GOKb!", 'result':"ERROR"]]
             }
         }
     }
