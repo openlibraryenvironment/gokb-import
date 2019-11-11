@@ -20,11 +20,11 @@
         <div class="panel-group">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h4 class="panel-title">
+              <h4 class="panel-title" color="#f00">
                 <a data-toggle="collapse" href="#gokb-warnings">Warnings (${flash.warning.size()})</a>
               </h4>
             </div>
-            <div id="gokb-warnings" class="panel-collapse collapse in">
+            <div id="gokb-warnings" class="panel-collapse collapse in" color="#f00">
               <div class="panel-body">
                 <g:if test="${flash.warning instanceof String}">
                   <div class="alert alert-warning" role="alert" style="z-index:2;">
@@ -46,7 +46,7 @@
 			<g:if test="${flash.error}">
         <div class="panel-group">
           <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-heading-invalid">
               <h4 class="panel-title">
                 <a data-toggle="collapse" href="#gokb-errors">Errors (${flash.error.size()})</a>
               </h4>
