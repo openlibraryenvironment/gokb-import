@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-xs-12">
         <g:form>
-            <input type="hidden" name="sthash" value="${sthash}"/>
+            <input type="hidden" name="resultHash" value="${resultHash}"/>
             <input type="hidden" name="record.uid" value="${record.uid}"/>
             <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())}">
                 <div class="panel-heading-invalid">
@@ -62,10 +62,10 @@
                     </table>
                 </div>
             </div>
-            <g:link controller="statistic" action="cancel" params="[sthash:sthash]" id="${record.uid}">
+            <g:link controller="statistic" action="cancel" params="[resultHash:resultHash]" id="${record.uid}">
                 <g:actionSubmit action="cancel" value="${message(code:'statistic.edit.cancel')}" class="btn btn-default"/>
             </g:link>
-            <g:link controller="statistic" action="save" params='[sthash:sthash, record:record.uid]' id="commitchanges">
+            <g:link controller="statistic" action="save" params='[resultHash:resultHash, record:record.uid]' id="commitchanges">
                 <g:actionSubmit action="save" value="${message(code:'statistic.edit.save')}" class="btn btn-success"
                                 onclick="changesToHiddenInputFields()" id="saveChanges"/>
             </g:link>
@@ -114,7 +114,7 @@
                             key: rowKey,
                             value: value,
                             uid: '${record.uid}',
-                            sthash: '${sthash}'
+                            resultHash: '${resultHash}'
                         },
                         success: function(data) {
                             const recordJson = JSON.parse(data.record)

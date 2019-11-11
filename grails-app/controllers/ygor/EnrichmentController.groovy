@@ -4,6 +4,7 @@ import de.hbznrw.ygor.export.Statistics
 import grails.converters.JSON
 import org.mozilla.universalchardet.UniversalDetector
 
+
 class EnrichmentController {
 
   static scope = "session"
@@ -124,12 +125,13 @@ class EnrichmentController {
   def uploadRawFile = {
     def file = request.getFile('uploadRawFile')
     Enrichment enrichment = Enrichment.fromFile(file)
-    request.session.enrichments << [(enrichment.originHash): enrichment]
+    enrichmentService.addSessionEnrichment(enrichment)
     if (null == request.session.lastUpdate) {
       request.session.lastUpdate = [:]
     }
     request.session.lastUpdate << [dataTyp: enrichment.dataType]
     Statistics.getRecordsStatisticsBeforeParsing(enrichment)
+    enrichment.setCurrentSession()
     enrichment.saveResult()
 
     render(
@@ -346,7 +348,7 @@ class EnrichmentController {
 
 
   Enrichment getCurrentEnrichment() {
-    def hash = (String) request.parameterMap['originHash'][0]
+    def hash = (String) request.parameterMap['resultHash'][0]
     def enrichments = enrichmentService.getSessionEnrichments()
     Enrichment result = enrichments[hash]
     if (null == result) {

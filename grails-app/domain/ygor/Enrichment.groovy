@@ -7,6 +7,8 @@ import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.tools.FileToolkit
 import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.ygor.tools.SessionToolkit
+import grails.util.Holders
 import groovy.json.JsonOutput
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.InvokerInvocationException
@@ -66,6 +68,8 @@ class Enrichment {
     originName = originalFilename.replaceAll(/\s+/, '_')
     originHash = FileToolkit.getMD5Hash(originName + Math.random())
     originPathName = this.sessionFolder.getPath() + File.separator + originHash
+    resultHash = FileToolkit.getMD5Hash(originName + Math.random())
+    resultPathName = sessionFolder.getPath() + File.separator + resultHash
 
     dataContainer = new DataContainer()
     setStatus(ProcessingState.UNTOUCHED)
@@ -73,8 +77,6 @@ class Enrichment {
 
   def process(HashMap options) {
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
-    resultHash = FileToolkit.getMD5Hash(originName + Math.random())
-    resultPathName = sessionFolder.getPath() + File.separator + resultHash
     dataType = options.get('dataTyp')
     ygorVersion = options.get('ygorVersion')
 
@@ -122,12 +124,7 @@ class Enrichment {
 
   File getAsFile(FileType type) {
     // by now, the only export file type is for GOKb, so call GOKbExporter
-
-    if (type.equals(FileType.JSON_OO_RAW)) {
-      return GokbExporter.getFile(this, type, resultPathName)
-    }
-    // else
-    return GokbExporter.getFile(this, type, originPathName)
+    return GokbExporter.getFile(this, type)
   }
 
 
@@ -137,7 +134,10 @@ class Enrichment {
     result.append("\"originalFileName\":\"").append(originName).append("\",")
     result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
     result.append("\"date\":\"").append(date).append("\",")
+    result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
+    result.append("\"originPathName\":\"").append(originPathName).append("\",")
+    result.append("\"resultPathName\":\"").append(resultPathName).append("\",")
     String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
@@ -162,10 +162,12 @@ class Enrichment {
     def en = new Enrichment(new File(sessionFolder), originalFileName)
     en.ygorVersion = JsonToolkit.fromJson(rootNode, "ygorVersion") // TODO compare with current version and abort?
     en.date = JsonToolkit.fromJson(rootNode, "date")
+    en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
+    en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
+    en.resultPathName = JsonToolkit.fromJson(rootNode, "resultPathName")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
-    en.resultPathName = sessionFolder.concat(File.separator).concat(FileToolkit.getMD5Hash(originalFileName + Math.random()))
     en.dataContainer = DataContainer.fromJson(rootNode.path("data"), en.mappingsContainer)
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
@@ -243,5 +245,12 @@ class Enrichment {
       record.addMultiField(titleMedium)
     }
     return
+  }
+
+
+  void setCurrentSession(){
+    sessionFolder = new File(Holders.config.ygor.uploadLocation + File.separator + SessionToolkit.getSession().id)
+    originPathName = sessionFolder.absolutePath + File.separator + originHash
+    resultPathName = sessionFolder.absolutePath + File.separator + resultHash
   }
 }

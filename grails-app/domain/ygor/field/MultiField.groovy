@@ -86,7 +86,7 @@ class MultiField {
       return g.message(code: 'record.source.revised')
     }
     if (keyMapping == null) {
-      return "KBART"
+      return "kbart"
     }
     if (keyMapping.valIsFix) {
       return g.message(code:'record.source.default')
@@ -133,6 +133,7 @@ class MultiField {
     jsonGenerator.writeStringField("ygorKey", ygorFieldKey)
     jsonGenerator.writeStringField("status", status)
     jsonGenerator.writeStringField("normalized", normalized)
+    jsonGenerator.writeStringField("revised", revised)
 
     jsonGenerator.writeFieldName("fields")
     jsonGenerator.writeStartArray()
@@ -151,6 +152,7 @@ class MultiField {
     }
     result.status = JsonToolkit.fromJson(json, "status")
     result.normalized = JsonToolkit.fromJson(json, "normalized")
+    result.revised = JsonToolkit.fromJson(json, "revised")
     Iterator it = json.path("fields").iterator()
     while (it.hasNext()) {
       JsonNode fieldNode = it.next()

@@ -28,7 +28,7 @@ class EnrichmentService {
     formats << ["${en.originHash}": tmp]
 
     def enrichments = getSessionEnrichments()
-    enrichments << ["${en.originHash}": en]
+    enrichments << ["${en.resultHash}": en]
 
     file.transferTo(new File(en.originPathName))
   }
@@ -44,15 +44,10 @@ class EnrichmentService {
       def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN)
       if (origin)
         origin.delete()
-      getSessionEnrichments()?.remove("${enrichment.originHash}")
-      getSessionEnrichments()?.remove(enrichment.originHash)
+      getSessionEnrichments()?.remove("${enrichment.resultHash}")
+      getSessionEnrichments()?.remove(enrichment.resultHash)
       getSessionFormats()?.remove("${enrichment.originHash}")
       getSessionFormats()?.remove(enrichment.originHash)
-      /* double remove calls are necessary in different processes by now:
-       * .remove("${enrichment.originHash}")   works for CSV uploads
-       * .remove(enrichment.originHash)        works for raw Json uploads
-       * TODO cleanup
-       */
     }
   }
 
@@ -183,6 +178,15 @@ class EnrichmentService {
         }
       }
     }
+  }
+
+
+  def addSessionEnrichment(Enrichment enrichment) {
+    HttpSession session = SessionToolkit.getSession()
+    if (!session.enrichments) {
+      session.enrichments = [:]
+    }
+    session.enrichments.put(enrichment.resultHash, enrichment)
   }
 
 

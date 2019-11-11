@@ -22,27 +22,24 @@ class GokbExporter {
   static GokbFormatter FORMATTER = new GokbFormatter()
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
-  static File getFile(Enrichment enrichment, FileType type, String path) {
+  static File getFile(Enrichment enrichment, FileType type) {
     enrichment.validateContainer()
     switch (type) {
       case FileType.ORIGIN:
-        return new File(path)
-        break
+        return new File(enrichment.originPathName)
       case FileType.JSON_PACKAGE_ONLY:
         ObjectNode result = GokbExporter.extractPackage(enrichment)
-        def file = new File(path)
+        def file = new File(enrichment.resultPathName + ".package.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
-        break
       case FileType.JSON_TITLES_ONLY:
         ArrayNode result = GokbExporter.extractTitles(enrichment)
-        def file = new File(path)
+        def file = new File(enrichment.resultPathName + ".titles.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
-        break
       case FileType.JSON_OO_RAW:
-        return new File(path)
-        break
+        enrichment.saveResult()
+        return new File(enrichment.resultPathName)
     }
     return null
   }
@@ -62,11 +59,9 @@ class GokbExporter {
     log.debug("extracting titles ...")
     ArrayNode titles = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
-      if (record.isValid(enrichment.dataType)) {
-        ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
-        appendValue(title, "name", "subTitle", ": ", true)
-        titles.add(title)
-      }
+      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+      appendValue(title, "name", "subTitle", ": ", true)
+      titles.add(title)
     }
     titles = removeEmptyFields(titles)
     titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
@@ -82,9 +77,7 @@ class GokbExporter {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
-      if (record.isValid(enrichment.dataType)) {
-        tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
-      }
+      tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
     }
     tipps = removeEmptyFields(tipps)
     tipps = removeEmptyIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY)

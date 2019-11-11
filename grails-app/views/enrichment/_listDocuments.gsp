@@ -11,7 +11,8 @@
 
 	<g:each in="${enrichments}" var="e">
 		<g:form controller="enrichment" action="process">
-			<g:hiddenField name="originHash" value="${e.key}" />
+			<g:hiddenField name="originHash" value="${e.value.originHash}" />
+			<g:hiddenField name="resultHash" value="${e.value.resultHash}" />
 			<g:hiddenField name="dataTyp" value="${session.lastUpdate?.dataTyp}" />
 			
 			<div class="row" xmlns="http://www.w3.org/1999/html">
@@ -69,7 +70,7 @@
 							
 							<br />
 							
-							<div id="progress-${e.key}" class="progress">
+							<div id="progress-${e.value.resultHash}" class="progress">
 								<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 									<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%;">100%</div>
 								</g:if>
@@ -335,7 +336,7 @@
 					</g:if>
 					<g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
 
-						<g:link controller="statistic" action="show" params="[sthash:e?.value?.resultHash]" target="_blank" class="btn btn-info"><g:message code="listDocuments.button.showstatistics" /></g:link>
+						<g:link controller="statistic" action="show" params="[resultHash:e?.value?.resultHash]" target="_blank" class="btn btn-info"><g:message code="listDocuments.button.showstatistics" /></g:link>
 
 						<g:actionSubmit action="downloadTitlesFile" value="${message(code:'listDocuments.button.downloadtitlesfile')}" class="btn btn-info"/>
 						<g:actionSubmit action="downloadPackageFile" value="${message(code:'listDocuments.button.downloadpackagefile')}" class="btn btn-info"/>
@@ -419,21 +420,23 @@
 			<g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
 				<script>
 					$(function(){
-						var ygorDocumentStatus${e.key} = function(){
+						var ygorDocumentStatus${e.value.resultHash} = function(){
 							jQuery.ajax({
 								type:       'GET',
 								url:         '${grailsApplication.config.grails.app.context}/enrichment/ajaxGetStatus',
-								data:        'originHash=${e.key}',
+								data:        'originHash=${e.value.originHash}',
+								data:        'resultHash=${e.value.resultHash}',
 								success:function(data, textStatus){
 									
 									data = jQuery.parseJSON(data)
-									console.log(data)
+									console.log("OH: ${e.value.originHash}");
+									console.log("RH: ${e.value.resultHash}");
 									var status = data.status;
 									var progress = data.progress;
 									
-									jQuery('#progress-${e.key} > .progress-bar').attr('aria-valuenow', progress);
-									jQuery('#progress-${e.key} > .progress-bar').attr('style', 'width:' + progress + '%');
-									jQuery('#progress-${e.key} > .progress-bar').text(progress + '%');
+									jQuery('#progress-${e.value.resultHash} > .progress-bar').attr('aria-valuenow', progress);
+									jQuery('#progress-${e.value.resultHash} > .progress-bar').attr('style', 'width:' + progress + '%');
+									jQuery('#progress-${e.value.resultHash} > .progress-bar').text(progress + '%');
 	
 									if(status == 'FINISHED') {
 										window.location = '${grailsApplication.config.grails.app.context}/enrichment/process';
@@ -444,12 +447,12 @@
 									
 								},
 								error:function(XMLHttpRequest, textStatus, errorThrown){
-									clearInterval(ygorDocumentStatus${e.key});
+									clearInterval(ygorDocumentStatus${e.value.resultHash});
 								}
 							});
 						}
 	
-						var ygorInterval${e.key} = setInterval(ygorDocumentStatus${e.key}, 1500);
+						var ygorInterval${e.value.resultHash} = setInterval(ygorDocumentStatus${e.value.resultHash}, 1500);
 					})
 				</script>
 			</g:if>

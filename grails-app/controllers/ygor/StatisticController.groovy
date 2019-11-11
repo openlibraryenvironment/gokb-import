@@ -15,7 +15,7 @@ class StatisticController {
   }
 
   def grailsApplication
-  Map<String, Enrichment> enrichments = new HashMap<>()
+  EnrichmentService enrichmentService
   Map<String, Map<String, Map<String, String>>> validRecords = new HashMap<>()
   Map<String, Map<String, Map<String, String>>> invalidRecords = new HashMap<>()
 
@@ -27,18 +27,18 @@ class StatisticController {
   }
 
   def show() {
-    String sthash = (String) request.parameterMap['sthash'][0]
+    String resultHash = (String) request.parameterMap['resultHash'][0]
+    log.info('show enrichment ' + resultHash)
     String ygorVersion
     String date
     String filename
-    log.info('reading file: ' + sthash)
-    Enrichment enrichment = getEnrichment(sthash)
+    Enrichment enrichment = getEnrichment(resultHash)
     try {
       if (enrichment) {
         ygorVersion = enrichment.ygorVersion
         date = enrichment.date
         filename = enrichment.originName
-        classifyAllRecords(sthash)
+        classifyAllRecords(resultHash)
       }
       else {
         throw new EmptyStackException()
@@ -52,14 +52,14 @@ class StatisticController {
     render(
         view: 'show',
         model: [
-            sthash        : sthash,
+            resultHash    : resultHash,
             currentView   : 'statistic',
             ygorVersion   : ygorVersion,
             date          : date,
             filename      : filename,
             dataType      : enrichment?.dataType,
-            validRecords  : validRecords[sthash],
-            invalidRecords: invalidRecords[sthash]
+            validRecords  : validRecords[resultHash],
+            invalidRecords: invalidRecords[resultHash]
         ]
     )
   }
@@ -67,18 +67,18 @@ class StatisticController {
 
   def cancel() {
     // restore record from dataContainer
-    String sthash = params['sthash']
-    Enrichment enrichment = getEnrichment(sthash)
+    String resultHash = params['resultHash']
+    Enrichment enrichment = getEnrichment(resultHash)
     Record record = enrichment.dataContainer.getRecord(params['record.uid'])
     classifyRecord(record, enrichment)
     render(
         view: 'show',
         model: [
-            sthash        : sthash,
+            resultHash    : resultHash,
             currentView   : 'statistic',
             dataType      : enrichment?.dataType,
-            validRecords  : validRecords[sthash],
-            invalidRecords: invalidRecords[sthash]
+            validRecords  : validRecords[resultHash],
+            invalidRecords: invalidRecords[resultHash]
         ]
     )
   }
@@ -86,8 +86,8 @@ class StatisticController {
 
   def save() {
     // write record into dataContainer
-    String sthash = params['sthash']
-    Enrichment enrichment = getEnrichment(sthash)
+    String resultHash = params['resultHash']
+    Enrichment enrichment = getEnrichment(resultHash)
     Record record = enrichment.dataContainer.records[params['record.uid']]
     for (def field in params['fieldschanged']){
       record.multiFields.get(field.key).revised = field.value
@@ -96,36 +96,36 @@ class StatisticController {
     render(
         view: 'show',
         model: [
-            sthash        : sthash,
+            resultHash    : resultHash,
             currentView   : 'statistic',
             dataType      : enrichment?.dataType,
-            invalidRecords: invalidRecords[sthash],
-            validRecords  : validRecords[sthash]
+            invalidRecords: invalidRecords[resultHash],
+            validRecords  : validRecords[resultHash]
         ]
     )
   }
 
 
   def edit() {
-    String sthash = request.parameterMap['sthash'][0]
-    Enrichment enrichment = getEnrichment(sthash)
+    String resultHash = request.parameterMap['resultHash'][0]
+    Enrichment enrichment = getEnrichment(resultHash)
     Record record = enrichment.dataContainer.getRecord(params.id)
     [
-        sthash: sthash,
-        record: record
+        resultHash: resultHash,
+        record    : record
     ]
   }
 
 
   def update() {
-    def sthash = params.sthash
+    def resultHash = params.resultHash
     def value = params.value
     def key = params.key
     def uid = params.uid
     Record record
 
     try {
-      Enrichment enrichment = getEnrichment(sthash)
+      Enrichment enrichment = getEnrichment(resultHash)
       String namespace = enrichment.dataContainer.info.namespace_title_id
       if (enrichment) {
         record = enrichment.dataContainer.records.get(uid)
@@ -143,7 +143,7 @@ class StatisticController {
     }
     render (groovy.json.JsonOutput.toJson ([
         record        : record.asStatisticsJson(),
-        sthash        : sthash
+        resultHash    : resultHash
     ]))
   }
 
@@ -151,30 +151,31 @@ class StatisticController {
   private void classifyRecord(Record record, Enrichment enrichment) {
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid(enrichment.dataType)) {
-      validRecords[params['sthash']].put(multiFieldMap.get("uid"), multiFieldMap)
-      invalidRecords[params['sthash']].remove(multiFieldMap.get("uid"))
+      validRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+      invalidRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
     }
     else {
-      invalidRecords[params['sthash']].put(multiFieldMap.get("uid"), multiFieldMap)
-      validRecords[params['sthash']].remove(multiFieldMap.get("uid"))
+      invalidRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+      validRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
     }
   }
 
 
-  private Enrichment getEnrichment(String sthash) {
+  private Enrichment getEnrichment(String resultHash) {
     // get enrichment if existing
-    if (null != enrichments.get(sthash)){
-      return enrichments.get(sthash)
+    def enrichments = enrichmentService.getSessionEnrichments()
+    if (null != enrichments.get(resultHash)){
+      return enrichments.get(resultHash)
     }
-    // get new Enrichment
-    invalidRecords[sthash] = new HashMap<>()
-    validRecords[sthash] = new HashMap<>()
+    // else get new Enrichment
+    invalidRecords[resultHash] = new HashMap<>()
+    validRecords[resultHash] = new HashMap<>()
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)) {
       for (def file in dir.listFiles()) {
-        if (file.getName() == sthash) {
+        if (file.getName() == resultHash) {
           Enrichment enrichment = Enrichment.fromFile(file)
-          enrichments.put(sthash, enrichment)
+          enrichmentService.addSessionEnrichment(enrichment)
           return enrichment
         }
       }
@@ -183,8 +184,10 @@ class StatisticController {
   }
 
 
-  private void classifyAllRecords(String sthash){
-    Enrichment enrichment = getEnrichment(sthash)
+  private void classifyAllRecords(String resultHash){
+    validRecords[resultHash] = new HashMap<>()
+    invalidRecords[resultHash] = new HashMap<>()
+    Enrichment enrichment = getEnrichment(resultHash)
     if (enrichment == null){
       return
     }
@@ -193,9 +196,10 @@ class StatisticController {
       record.validate(namespace)
       def multiFieldMap = record.asMultiFieldMap()
       if (record.isValid(enrichment.dataType)) {
-        validRecords[sthash].put(multiFieldMap.get("uid"), multiFieldMap)
-      } else {
-        invalidRecords[sthash].put(multiFieldMap.get("uid"), multiFieldMap)
+        validRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
+      }
+      else {
+        invalidRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
       }
     }
   }
