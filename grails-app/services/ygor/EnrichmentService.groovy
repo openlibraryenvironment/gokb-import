@@ -178,7 +178,6 @@ class EnrichmentService {
 
             http.request(Method.POST, ContentType.JSON) { req ->
                 headers.'User-Agent' = 'ygor'
-                headers.'Connection' = 'close'
 
                 body = json.getText()
                 response.success = { resp, html ->
