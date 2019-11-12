@@ -718,7 +718,7 @@
     "out" : {
       "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.name"]
     },
-    "order" : ["zdb", "kbart"],
+    "order" : ["kbart", "zdb"],
     "type" : "String"
   },
   {
