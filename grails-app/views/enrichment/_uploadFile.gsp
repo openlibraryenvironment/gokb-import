@@ -1,7 +1,7 @@
 <!-- _uploadFile.gsp -->
 <%@ page import="ygor.Enrichment" %>
 
-<g:if test="${enrichments.size() == 0}">
+<g:if test="${enrichment == null || enrichment.status == null}">
 
     <div class="row">
         <div class="col-xs-12">

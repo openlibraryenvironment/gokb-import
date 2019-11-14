@@ -9,10 +9,10 @@
         import="de.hbznrw.ygor.connectors.KbartConnector"
 %>
 
-<g:each in="${enrichments}" var="e">
+<g:if test="enrichment">
     <g:form controller="enrichment" action="process">
-        <g:hiddenField name="originHash" value="${e.value.originHash}"/>
-        <g:hiddenField name="resultHash" value="${e.value.resultHash}"/>
+        <g:hiddenField name="originHash" value="${enrichment.originHash}"/>
+        <g:hiddenField name="resultHash" value="${enrichment.resultHash}"/>
         <g:hiddenField name="dataTyp" value="${session.lastUpdate?.dataTyp}"/>
 
         <div class="row" xmlns="http://www.w3.org/1999/html">
@@ -25,23 +25,23 @@
 
                         <div class="input-group">
                             <span class="input-group-addon">Datei</span>
-                            <span class="form-control" title="${e.value.originHash}">
-        ${e.value.originName}
+                            <span class="form-control" title="${enrichment.originHash}">
+        ${enrichment.originName}
 
         <span><em>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE}">
                 &rarr; <g:message code="listDocuments.state.prepare"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.UNTOUCHED}">
                 &rarr; <g:message code="listDocuments.state.untouched"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.WORKING}">
                 &rarr; <g:message code="listDocuments.state.working"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.ERROR}">
                 &rarr; <g:message code="listDocuments.state.error"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.FINISHED}">
                 &rarr; <g:message code="listDocuments.state.finished"/>
             </g:if>
         </em></span>
@@ -70,8 +70,8 @@
 
         <br/>
 
-        <div id="progress-${e.value.resultHash}" class="progress">
-            <g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
+        <div id="progress-${enrichment.resultHash}" class="progress">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.FINISHED}">
                 <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
                      style="width:100%;">100%</div>
             </g:if>
@@ -83,7 +83,7 @@
 
 
 
-        <g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
+        <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE}">
 
             <div class="input-group">
                 <span class="input-group-addon"><g:message code="listDocuments.key.title"/></span>
@@ -233,36 +233,36 @@
         </g:if>
 
 
-        <g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
+        <g:if test="${enrichment.status == Enrichment.ProcessingState.UNTOUCHED}">
 
-            ${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
+            ${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
                     message(code: 'listDocuments.js.message.noplatformname') +
                     raw('</div>')}
 
             <div class="input-group custom-control">
                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.platformname"/></span>
-                <span class="form-control">${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.name}</span>
+                <span class="form-control">${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.name}</span>
             </div>
 
             <br/>
 
-            ${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">') +
+            ${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">') +
                     message(code: 'listDocuments.js.message.noplatformurl') +
                     raw('</div>')}
             <div class="input-group">
                 <span class="input-group-addon"><em>GOKb</em>  <g:message code="listDocuments.key.platformurl"/></span>
-                <span class="form-control">${e.value.dataContainer.pkg.packageHeader.v.nominalPlatform.url}</span>
+                <span class="form-control">${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.url}</span>
             </div>
 
             <br/>
 
-            ${e.value.dataContainer.pkg.packageHeader.v.nominalProvider.v ? '' : raw('<div class="alert alert-danger" role="alert">') +
+            ${enrichment.dataContainer.pkg.packageHeader.v.nominalProvider.v ? '' : raw('<div class="alert alert-danger" role="alert">') +
                     message(code: 'listDocuments.js.message.noprovider') +
                     raw('</div>')}
 
             <div class="input-group">
                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.provider"/></span>
-                <span class="form-control">${e.value.dataContainer.pkg.packageHeader.v.nominalProvider.v}</span>
+                <span class="form-control">${enrichment.dataContainer.pkg.packageHeader.v.nominalProvider.v}</span>
             </div>
 
             <br/>
@@ -330,26 +330,26 @@
         <ul class="list-group content-list">
         <li class="list-group-item">
 
-            <g:if test="${e.value.status == Enrichment.ProcessingState.UNTOUCHED}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.UNTOUCHED}">
             <g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
             <g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
             <g:actionSubmit action="processFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.PREPARE}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE}">
             <g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
             <g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
             <g:actionSubmit action="prepareFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.WORKING}">
             <g:actionSubmit action="stopProcessingFile" value="${message(code:'listDocuments.button.stopprocessingfile')}" class="btn btn-danger"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.ERROR}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.ERROR}">
             <g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
             <g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
             </g:if>
-            <g:if test="${e.value.status == Enrichment.ProcessingState.FINISHED}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.FINISHED}">
 
-                <g:link controller="statistic" action="show" params="[resultHash: e?.value?.resultHash]" target="_blank"
+                <g:link controller="statistic" action="show" params="[resultHash: enrichment.resultHash]" target="_blank"
                         class="btn btn-info"><g:message code="listDocuments.button.showstatistics"/></g:link>
 
                 <g:actionSubmit action="downloadTitlesFile"
@@ -456,26 +456,26 @@
             })
         </script>
 
-        <g:if test="${e.value.status == Enrichment.ProcessingState.WORKING}">
+        <g:if test="${enrichment.status == Enrichment.ProcessingState.WORKING}">
             <script>
                 $(function () {
-                    var ygorDocumentStatus${e.value.resultHash} = function () {
+                    var ygorDocumentStatus${enrichment.resultHash} = function () {
                         jQuery.ajax({
                             type: 'GET',
                             url: '${grailsApplication.config.grails.app.context}/enrichment/ajaxGetStatus',
-                            data: 'originHash=${e.value.originHash}',
-                            data: 'resultHash=${e.value.resultHash}',
+                            data: 'originHash=${enrichment.originHash}',
+                            data: 'resultHash=${enrichment.resultHash}',
                             success: function (data, textStatus) {
 
                                 data = jQuery.parseJSON(data)
-                                console.log("OH: ${e.value.originHash}");
-                                console.log("RH: ${e.value.resultHash}");
+                                console.log("OH: ${enrichment.originHash}");
+                                console.log("RH: ${enrichment.resultHash}");
                                 var status = data.status;
                                 var progress = data.progress;
 
-                                jQuery('#progress-${e.value.resultHash} > .progress-bar').attr('aria-valuenow', progress);
-                                jQuery('#progress-${e.value.resultHash} > .progress-bar').attr('style', 'width:' + progress + '%');
-                                jQuery('#progress-${e.value.resultHash} > .progress-bar').text(progress + '%');
+                                jQuery('#progress-${enrichment.resultHash} > .progress-bar').attr('aria-valuenow', progress);
+                                jQuery('#progress-${enrichment.resultHash} > .progress-bar').attr('style', 'width:' + progress + '%');
+                                jQuery('#progress-${enrichment.resultHash} > .progress-bar').text(progress + '%');
 
                                 if (status == 'FINISHED') {
                                     window.location = '${grailsApplication.config.grails.app.context}/enrichment/process';
@@ -486,14 +486,14 @@
 
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                clearInterval(ygorDocumentStatus${e.value.resultHash});
+                                clearInterval(ygorDocumentStatus${enrichment.resultHash});
                             }
                         });
                     }
 
-                    var ygorInterval${e.value.resultHash} = setInterval(ygorDocumentStatus${e.value.resultHash}, 1500);
+                    var ygorInterval${enrichment.resultHash} = setInterval(ygorDocumentStatus${enrichment.resultHash}, 1500);
                 })
             </script>
         </g:if>
     </g:form>
-</g:each>
+</g:if>

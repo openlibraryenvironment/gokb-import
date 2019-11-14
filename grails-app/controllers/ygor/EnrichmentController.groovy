@@ -22,7 +22,7 @@ class EnrichmentController{
     render(
         view: 'process',
         model: [
-            enrichments: enrichmentService.getSessionEnrichments(),
+            enrichment : getCurrentEnrichment(),
             gokbService: gokbService,
             namespaces : gokb_ns,
             currentView: 'process'
@@ -35,7 +35,7 @@ class EnrichmentController{
     render(
         view: 'json',
         model: [
-            enrichments: enrichmentService.getSessionEnrichments(),
+            enrichment : getCurrentEnrichment(),
             currentView: 'json'
         ]
     )
@@ -107,7 +107,7 @@ class EnrichmentController{
         flash.error = message(code: 'error.noValidFile')
         render(view: 'process',
             model: [
-                enrichments: enrichmentService.getSessionEnrichments(),
+                enrichment : getCurrentEnrichment(),
                 currentView: 'process'
             ]
         )
@@ -138,7 +138,7 @@ class EnrichmentController{
     render(
         view: 'process',
         model: [
-            enrichments: enrichment,
+            enrichment : enrichment,
             currentView: 'process'
         ]
     )
@@ -189,7 +189,7 @@ class EnrichmentController{
     render(
         view: 'process',
         model: [
-            enrichments: enrichmentService.getSessionEnrichments(),
+            enrichment : getCurrentEnrichment(),
             currentView: 'process',
             pOptions   : pmOptions,
         ]
@@ -209,7 +209,7 @@ class EnrichmentController{
     render(
         view: 'process',
         model: [
-            enrichments: enrichmentService.getSessionEnrichments(),
+            enrichment : getCurrentEnrichment(),
             currentView: 'process'
         ]
     )
@@ -221,7 +221,7 @@ class EnrichmentController{
     render(
         view: 'process',
         model: [
-            enrichments: enrichmentService.getSessionEnrichments(),
+            enrichment : getCurrentEnrichment(),
             currentView: 'process'
         ]
     )
