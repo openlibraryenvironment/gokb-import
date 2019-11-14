@@ -23,7 +23,7 @@
 
     <g:if test="${enrichment}">
 
-        <g:if test="${enrichment.value.status == Enrichment.ProcessingState.PREPARE}">
+        <g:if test="${enrichment.value.status == Enrichment.ProcessingState.PREPARE_2}">
 
             <div class="col-xs-8">
                 <g:render template="messages"/>
@@ -59,7 +59,7 @@
 
         </g:if>
 
-        <g:if test="${enrichment.value.status != Enrichment.ProcessingState.FINISHED && enrichment.value.status != Enrichment.ProcessingState.PREPARE}">
+        <g:if test="${enrichment.value.status != Enrichment.ProcessingState.FINISHED && enrichment.value.status != Enrichment.ProcessingState.PREPARE_2}">
 
             <div class="col-xs-8">
                 <g:render template="messages"/>

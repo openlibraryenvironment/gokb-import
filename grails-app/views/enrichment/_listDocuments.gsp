@@ -29,10 +29,10 @@
         ${enrichment.originName}
 
         <span><em>
-            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_2}">
                 &rarr; <g:message code="listDocuments.state.prepare"/>
             </g:if>
-            <g:if test="${enrichment.status == Enrichment.ProcessingState.UNTOUCHED}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_1}">
                 &rarr; <g:message code="listDocuments.state.untouched"/>
             </g:if>
             <g:if test="${enrichment.status == Enrichment.ProcessingState.WORKING}">
@@ -83,7 +83,7 @@
 
 
 
-        <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE}">
+        <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_2}">
 
             <div class="input-group">
                 <span class="input-group-addon"><g:message code="listDocuments.key.title"/></span>
@@ -233,7 +233,7 @@
         </g:if>
 
 
-        <g:if test="${enrichment.status == Enrichment.ProcessingState.UNTOUCHED}">
+        <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_1}">
 
             ${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
                     message(code: 'listDocuments.js.message.noplatformname') +
@@ -330,12 +330,12 @@
         <ul class="list-group content-list">
         <li class="list-group-item">
 
-            <g:if test="${enrichment.status == Enrichment.ProcessingState.UNTOUCHED}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_1}">
             <g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
             <g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
             <g:actionSubmit action="processFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
             </g:if>
-            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE}">
+            <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_2}">
             <g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deletefile')}" class="btn btn-danger"/>
             <g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctfile')}" class="btn btn-warning"/>
             <g:actionSubmit action="prepareFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>

@@ -30,7 +30,7 @@ class Enrichment{
   }
 
   static enum ProcessingState {
-    UNTOUCHED, PREPARE, WORKING, FINISHED, ERROR
+    PREPARE_1, PREPARE_2, WORKING, FINISHED, ERROR
   }
 
   static ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper()
@@ -72,7 +72,7 @@ class Enrichment{
     resultPathName = sessionFolder.getPath() + File.separator + resultHash
 
     dataContainer = new DataContainer()
-    setStatus(ProcessingState.UNTOUCHED)
+    setStatus(ProcessingState.PREPARE_1)
   }
 
   def process(HashMap options){
