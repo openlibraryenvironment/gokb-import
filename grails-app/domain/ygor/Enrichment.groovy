@@ -18,7 +18,7 @@ import ygor.field.MultiField
 
 import java.time.LocalDateTime
 
-class Enrichment {
+class Enrichment{
 
   static enum FileType {
     ORIGIN,
@@ -63,7 +63,7 @@ class Enrichment {
   static constraints = {
   }
 
-  Enrichment(File sessionFolder, String originalFilename) {
+  Enrichment(File sessionFolder, String originalFilename){
     this.sessionFolder = sessionFolder
     originName = originalFilename.replaceAll(/\s+/, '_')
     originHash = FileToolkit.getMD5Hash(originName + Math.random())
@@ -75,7 +75,7 @@ class Enrichment {
     setStatus(ProcessingState.UNTOUCHED)
   }
 
-  def process(HashMap options) {
+  def process(HashMap options){
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     dataType = options.get('dataTyp')
     ygorVersion = options.get('ygorVersion')
@@ -89,46 +89,46 @@ class Enrichment {
     thread.start()
   }
 
-  def setProgress(double progress) {
+  def setProgress(double progress){
     this.apiProgress = progress
   }
 
-  double getProgress() {
+  double getProgress(){
     apiProgress
   }
 
-  def setMessage(String message) {
+  def setMessage(String message){
     this.apiMessage = message
   }
 
-  String getMessage() {
+  String getMessage(){
     apiMessage
   }
 
-  def setStatusByCallback(ProcessingState status) {
+  def setStatusByCallback(ProcessingState status){
     setStatus(status)
   }
 
-  def setStatus(ProcessingState status) {
+  def setStatus(ProcessingState status){
     this.status = status
   }
 
-  ProcessingState getStatus() {
+  ProcessingState getStatus(){
     status
   }
 
-  void validateContainer() {
+  void validateContainer(){
     dataContainer.validateRecords()
   }
 
 
-  File getAsFile(FileType type) {
+  File getAsFile(FileType type){
     // by now, the only export file type is for GOKb, so call GOKbExporter
     return GokbExporter.getFile(this, type)
   }
 
 
-  void saveResult() {
+  void saveResult(){
     StringWriter result = new StringWriter()
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
@@ -156,7 +156,7 @@ class Enrichment {
   }
 
 
-  static Enrichment fromRawJson(JsonNode rootNode) {
+  static Enrichment fromRawJson(JsonNode rootNode){
     String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
     String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
     def en = new Enrichment(new File(sessionFolder), originalFileName)
@@ -176,12 +176,12 @@ class Enrichment {
   }
 
 
-  static Enrichment fromFile(def file) {
+  static Enrichment fromFile(def file){
     String json
-    try {
+    try{
       json = file.getInputStream()?.text
     }
-    catch (MissingMethodException | InvokerInvocationException e) {
+    catch (MissingMethodException | InvokerInvocationException e){
       json = file.newInputStream()?.text
     }
     JsonNode rootNode = JSON_OBJECT_MAPPER.readTree(json)
@@ -195,53 +195,57 @@ class Enrichment {
   }
 
 
-  FieldKeyMapping setTitleMediumMapping() {
+  FieldKeyMapping setTitleMediumMapping(){
     FieldKeyMapping mediumMapping = mappingsContainer.getMapping("medium", MappingsContainer.YGOR)
-    if (dataType == 'ebooks') {
+    if (dataType == 'ebooks'){
       mediumMapping.val = "Book"
-    } else if (dataType == 'database') {
+    }
+    else if (dataType == 'database'){
       mediumMapping.val = "Database"
-    } else {
+    }
+    else{
       mediumMapping.val = "Journal"
     }
     return mediumMapping
   }
 
 
-  FieldKeyMapping setTitleTypeMapping() {
+  FieldKeyMapping setTitleTypeMapping(){
     FieldKeyMapping typeMapping = mappingsContainer.getMapping("publicationType", MappingsContainer.YGOR)
-    if (dataType == 'ebooks') {
+    if (dataType == 'ebooks'){
       typeMapping.val = "Book"
-    } else if (dataType == 'database') {
+    }
+    else if (dataType == 'database'){
       typeMapping.val = "Database"
-    } else {
+    }
+    else{
       typeMapping.val = "Serial"
     }
     return typeMapping
   }
 
 
-  FieldKeyMapping setTippPlatformNameMapping() {
+  FieldKeyMapping setTippPlatformNameMapping(){
     FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
-    if (StringUtils.isEmpty(platformNameMapping.val)) {
+    if (StringUtils.isEmpty(platformNameMapping.val)){
       platformNameMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.name
     }
     platformNameMapping
   }
 
 
-  FieldKeyMapping setTippPlatformUrlMapping() {
+  FieldKeyMapping setTippPlatformUrlMapping(){
     FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
-    if (StringUtils.isEmpty(platformUrlMapping.val)) {
+    if (StringUtils.isEmpty(platformUrlMapping.val)){
       platformUrlMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.url
     }
     platformUrlMapping
   }
 
 
-  void enrollMappingToRecords(FieldKeyMapping mapping) {
+  void enrollMappingToRecords(FieldKeyMapping mapping){
     MultiField titleMedium = new MultiField(mapping)
-    for (Record record in dataContainer.records.values()) {
+    for (Record record in dataContainer.records.values()){
       record.addMultiField(titleMedium)
     }
     return

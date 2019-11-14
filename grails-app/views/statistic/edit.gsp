@@ -10,7 +10,8 @@
             <input type="hidden" name="record.uid" value="${record.uid}"/>
             <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())}">
                 <div class="panel-heading-invalid">
-                    <h3 class="panel-title"><g:message code="statistic.edit.record.zdbmatch"/> : <g:message code="${record.multiFields.get("zdbId").status}"/></h3>
+                    <h3 class="panel-title"><g:message code="statistic.edit.record.zdbmatch"/> : <g:message
+                            code="${record.multiFields.get("zdbId").status}"/></h3>
                 </div>
             </g:if>
             <div/>
@@ -18,23 +19,25 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <g:message code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}
+                        <g:message
+                                code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}
                         <g:if test="${displayZDB && record.zdbIntegrationUrl}">
                             <a href="${record.zdbIntegrationUrl}" class="link-icon-header"></a>
                         </g:if>
                     </h3>
                 </div>
+
                 <div class="statistics-data">
                     <table class="statistics-details" id="edit-table">
                         <thead>
-                            <tr>
-                                <th><g:message code="statistic.edit.field"/></th>
-                                <th><g:message code="statistic.edit.value"/></th>
-                                <th><g:message code="statistic.edit.source"/></th>
-                                <th><g:message code="statistic.edit.status"/></th>
-                            </tr>
+                        <tr>
+                            <th><g:message code="statistic.edit.field"/></th>
+                            <th><g:message code="statistic.edit.value"/></th>
+                            <th><g:message code="statistic.edit.source"/></th>
+                            <th><g:message code="statistic.edit.status"/></th>
+                        </tr>
                         </thead>
-                        <g:set var="lineCounter" value="${0}" />
+                        <g:set var="lineCounter" value="${0}"/>
                         <g:each in="${record.multiFields}" var="multiField">
                             <g:if test="${multiField.value.isCriticallyInvalid()}">
                                 <g:set var="status" value="critical"/>
@@ -53,7 +56,8 @@
                             </g:else>
                             <tr class="${status}">
                                 <td class="statistics-cell-key">${multiField.key}</td>
-                                <td class="statistics-cell-value" contenteditable="true">${multiField.value.getPrioValue()}</td>
+                                <td class="statistics-cell-value"
+                                    contenteditable="true">${multiField.value.getPrioValue()}</td>
                                 <td class="statistics-cell-source">${multiField.value.getPrioSource()}</td>
                                 <td class="statistics-cell-status"><g:message code="${multiField.value.status}"/></td>
                             </tr>
@@ -62,11 +66,13 @@
                     </table>
                 </div>
             </div>
-            <g:link controller="statistic" action="cancel" params="[resultHash:resultHash]" id="${record.uid}">
-                <g:actionSubmit action="cancel" value="${message(code:'statistic.edit.cancel')}" class="btn btn-default"/>
+            <g:link controller="statistic" action="cancel" params="[resultHash: resultHash]" id="${record.uid}">
+                <g:actionSubmit action="cancel" value="${message(code: 'statistic.edit.cancel')}"
+                                class="btn btn-default"/>
             </g:link>
-            <g:link controller="statistic" action="save" params='[resultHash:resultHash, record:record.uid]' id="commitchanges">
-                <g:actionSubmit action="save" value="${message(code:'statistic.edit.save')}" class="btn btn-success"
+            <g:link controller="statistic" action="save" params='[resultHash: resultHash, record: record.uid]'
+                    id="commitchanges">
+                <g:actionSubmit action="save" value="${message(code: 'statistic.edit.save')}" class="btn btn-success"
                                 onclick="changesToHiddenInputFields()" id="saveChanges"/>
             </g:link>
         </g:form>
@@ -74,7 +80,7 @@
 </div>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#edit-table").dataTable({
             "paging": false
             // "order": [[ 3, "asc" ]]  // in case we want to order by status
@@ -83,8 +89,8 @@
 
     const validationMessages = getValidationMessageMap();
     var tableRowIndex;
-    var keys    = document.querySelectorAll('.statistics-cell-key'),
-        values  = document.querySelectorAll('.statistics-cell-value'),
+    var keys = document.querySelectorAll('.statistics-cell-key'),
+        values = document.querySelectorAll('.statistics-cell-value'),
         sources = document.querySelectorAll('.statistics-cell-source');
 
     values.forEach((valueField) => {
@@ -97,18 +103,17 @@
                     // restore unedited state
                     document.execCommand('undo');
                     target.blur();
-                }
-                else if (event.which == 13 || event.which == 9 /* that is "enter" or "tab" */) {
+                } else if (event.which == 13 || event.which == 9 /* that is "enter" or "tab" */) {
                     // save && send update
                     var valuesArray = Array.prototype.slice.call(values);
                     tableRowIndex = valuesArray.indexOf(valueField);
                     const rowKey = keys.item(tableRowIndex).innerHTML;
                     const value = target.innerHTML;
                     jQuery.ajax({
-                        method : "POST",
+                        method: "POST",
                         url: '${grailsApplication.config.grails.app.context}/statistic/update',
-                        dataType : "json",
-                        timeout : 60000,
+                        dataType: "json",
+                        timeout: 60000,
                         async: true,
                         data: {
                             key: rowKey,
@@ -116,7 +121,7 @@
                             uid: '${record.uid}',
                             resultHash: '${resultHash}'
                         },
-                        success: function(data) {
+                        success: function (data) {
                             const recordJson = JSON.parse(data.record)
                             const sourceField = valueField.nextElementSibling;
                             sourceField.innerHTML = recordJson[rowKey]["source"];
@@ -138,9 +143,9 @@
     });
 
 
-    function changesToHiddenInputFields(){
-        for (let i=0; i<keys.length; i++){
-            if (sources[i].innerHTML == "${g.message(code:"record.source.revised")}"){
+    function changesToHiddenInputFields() {
+        for (let i = 0; i < keys.length; i++) {
+            if (sources[i].innerHTML == "${g.message(code:"record.source.revised")}") {
                 keys[i].parentElement.appendChild(createHiddenField(keys[i].innerHTML, values[i].innerHTML));
             }
         }
@@ -148,7 +153,7 @@
 
 
     // TODO is possible to iterate over all messages starting with "VALIDATOR_" - do this
-    function getValidationMessageMap(){
+    function getValidationMessageMap() {
         const vms = new Object();
         vms["VALIDATOR_DATE_IS_INVALID"] = "${g.message(code:"VALIDATOR_DATE_IS_INVALID")}";
         vms["VALIDATOR_DATE_IS_MISSING"] = "${g.message(code:"VALIDATOR_DATE_IS_MISSING")}";
@@ -175,12 +180,12 @@
     }
 
 
-    function getValidationMessage(vms, key){
+    function getValidationMessage(vms, key) {
         return (vms[key] != null) ? vms[key] : key;
     }
 
 
-    function createHiddenField(name, value){
+    function createHiddenField(name, value) {
         let input = document.createElement("input");
         input.setAttribute("type", "hidden");
         input.setAttribute("name", "fieldschanged." + name);

@@ -9,12 +9,12 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
 
-class EnrichmentService {
+class EnrichmentService{
 
   def grailsApplication
   GokbService gokbService
 
-  void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp) {
+  void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp){
     def en = new Enrichment(getSessionFolder(), file.originalFilename)
     en.setStatus(Enrichment.ProcessingState.PREPARE)
 
@@ -34,16 +34,17 @@ class EnrichmentService {
   }
 
 
-  File getFile(Enrichment enrichment, Enrichment.FileType type) {
+  File getFile(Enrichment enrichment, Enrichment.FileType type){
     enrichment.getAsFile(type)
   }
 
 
-  void deleteFileAndFormat(Enrichment enrichment) {
-    if (enrichment) {
+  void deleteFileAndFormat(Enrichment enrichment){
+    if (enrichment){
       def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN)
-      if (origin)
+      if (origin){
         origin.delete()
+      }
       getSessionEnrichments()?.remove("${enrichment.resultHash}")
       getSessionEnrichments()?.remove(enrichment.resultHash)
       getSessionFormats()?.remove("${enrichment.originHash}")
@@ -52,7 +53,7 @@ class EnrichmentService {
   }
 
 
-  void prepareFile(Enrichment enrichment, Map pm) {
+  void prepareFile(Enrichment enrichment, Map pm){
     def ph = enrichment.dataContainer.pkg.packageHeader
     ph.v.name.v = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
@@ -60,28 +61,28 @@ class EnrichmentService {
 //        if ("" != pm['pkgVariantName'][0].trim()) {
 //          ph.v.variantNames << new Pod(pm['pkgVariantName'][0])
 //        }
-    if ("" != pm['pkgCuratoryGroup1'][0].trim()) {
+    if ("" != pm['pkgCuratoryGroup1'][0].trim()){
       ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
     }
-    if ("" != pm['pkgCuratoryGroup2'][0].trim()) {
+    if ("" != pm['pkgCuratoryGroup2'][0].trim()){
       ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup2'][0])
     }
 
     setPlatformMap(pm, ph)
 
     def pkgNomProvider = pm['pkgNominalProvider'][0]
-    if (pkgNomProvider) {
+    if (pkgNomProvider){
       ph.v.nominalProvider.v = pkgNomProvider
       ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
     }
-    if (pm['namespace_title_id']) {
+    if (pm['namespace_title_id']){
       enrichment.dataContainer.info.namespace_title_id = pm['namespace_title_id'][0]
     }
     enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
   }
 
 
-  private void setPlatformMap(Map pm, ph) {
+  private void setPlatformMap(Map pm, ph){
     log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
 
     def tmp = pm['pkgNominalPlatform'][0].split(';')
@@ -93,44 +94,46 @@ class EnrichmentService {
 
     log.debug("Got platforms: ${platforms}")
 
-    platforms.each {
-      if (it.name == qterm && it.status == "Current" && it.oid == platformID) {
-        if (pkgNomPlatform) {
+    platforms.each{
+      if (it.name == qterm && it.status == "Current" && it.oid == platformID){
+        if (pkgNomPlatform){
           log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
-        } else {
+        }
+        else{
           log.debug("Setze ${it.name} als nominalPlatform.")
           pkgNomPlatform = it
         }
       }
     }
 
-    if (pkgNomPlatform) {
+    if (pkgNomPlatform){
       setUrlIfValid(pkgNomPlatform.url, ph)
       ph.v.nominalPlatform.name = pkgNomPlatform.name
       ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
-    } else {
+    }
+    else{
       log.error("package platform not set!")
     }
   }
 
 
-  private void setUrlIfValid(value, ph) {
-    try {
+  private void setUrlIfValid(value, ph){
+    try{
       URL url = new URL(value)
       ph.v.nominalPlatform.url = value
     }
-    catch (MalformedURLException e) {
+    catch (MalformedURLException e){
       ph.v.nominalPlatform.url = ""
     }
   }
 
 
-  void stopProcessing(Enrichment enrichment) {
+  void stopProcessing(Enrichment enrichment){
     enrichment.thread.isRunning = false
   }
 
 
-  List sendFile(Enrichment enrichment, Object fileType, def user, def pwd) {
+  List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
     def result = []
     def json = enrichment.getAsFile(fileType)
     def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
@@ -144,13 +147,13 @@ class EnrichmentService {
   }
 
 
-  private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd) {
+  private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
     log.info("exportFile: " + enrichment.resultHash + " -> " + url)
 
     def http = new HTTPBuilder(url)
     http.auth.basic user, pwd
 
-    http.request(Method.POST, ContentType.JSON) { req ->
+    http.request(Method.POST, ContentType.JSON){ req ->
       headers.'User-Agent' = 'ygor'
 
       body = json.getText()
@@ -159,21 +162,24 @@ class EnrichmentService {
         log.debug("server:          ${resp.headers.'Content-Type'}")
         log.debug("server:          ${resp.headers.'Server'}")
         log.debug("content length:  ${resp.headers.'Content-Length'}")
-        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
-          if (resp.status < 400) {
+        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (resp.status < 400){
             return ['info': html]
-          } else {
+          }
+          else{
             return ['warning': html]
           }
-        } else {
+        }
+        else{
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
       response.failure = { resp, html ->
         log.error("server response: ${resp.statusLine}")
-        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
+        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
           return ['error': html]
-        } else {
+        }
+        else{
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
@@ -181,27 +187,27 @@ class EnrichmentService {
   }
 
 
-  def addSessionEnrichment(Enrichment enrichment) {
+  def addSessionEnrichment(Enrichment enrichment){
     HttpSession session = SessionToolkit.getSession()
-    if (!session.enrichments) {
+    if (!session.enrichments){
       session.enrichments = [:]
     }
     session.enrichments.put(enrichment.resultHash, enrichment)
   }
 
 
-  def getSessionEnrichments() {
+  def getSessionEnrichments(){
     HttpSession session = SessionToolkit.getSession()
-    if (!session.enrichments) {
+    if (!session.enrichments){
       session.enrichments = [:]
     }
     session.enrichments
   }
 
 
-  def getSessionFormats() {
+  def getSessionFormats(){
     HttpSession session = SessionToolkit.getSession()
-    if (!session.formats) {
+    if (!session.formats){
       session.formats = [:]
     }
     session.formats
@@ -212,11 +218,11 @@ class EnrichmentService {
    * Return session depending directory for file upload.
    * Creates if not existing.
    */
-  File getSessionFolder() {
+  File getSessionFolder(){
     def session = WebUtils.retrieveGrailsWebRequest().session
     def path = grailsApplication.config.ygor.uploadLocation + File.separator + session.id
     def sessionFolder = new File(path)
-    if (!sessionFolder.exists()) {
+    if (!sessionFolder.exists()){
       sessionFolder.mkdirs()
     }
     sessionFolder
