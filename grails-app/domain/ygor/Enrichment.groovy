@@ -72,7 +72,6 @@ class Enrichment{
     resultPathName = sessionFolder.getPath() + File.separator + resultHash
 
     dataContainer = new DataContainer()
-    setStatus(ProcessingState.PREPARE_1)
   }
 
   def process(HashMap options){

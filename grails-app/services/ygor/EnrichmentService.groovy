@@ -14,9 +14,9 @@ class EnrichmentService{
   def grailsApplication
   GokbService gokbService
 
-  void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp){
+  Enrichment addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp){
     def en = new Enrichment(getSessionFolder(), file.originalFilename)
-    en.setStatus(Enrichment.ProcessingState.PREPARE_2)
+    en.setStatus(Enrichment.ProcessingState.PREPARE_1)
 
     def tmp = [:]
     tmp << ['delimiter': delimiter]
@@ -31,6 +31,7 @@ class EnrichmentService{
     enrichments << ["${en.resultHash}": en]
 
     file.transferTo(new File(en.originPathName))
+    return en
   }
 
 
@@ -78,7 +79,7 @@ class EnrichmentService{
     if (pm['namespace_title_id']){
       enrichment.dataContainer.info.namespace_title_id = pm['namespace_title_id'][0]
     }
-    enrichment.setStatus(Enrichment.ProcessingState.PREPARE_1)
+    enrichment.setStatus(Enrichment.ProcessingState.PREPARE_2)
   }
 
 

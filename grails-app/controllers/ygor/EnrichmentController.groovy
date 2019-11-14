@@ -21,6 +21,10 @@ class EnrichmentController{
     def gokb_ns = gokbService.getNamespaceList()
     render(
         view: 'process',
+        params: [
+            resultHash: request.parameterMap.resultHash,
+            originHash: request.parameterMap.originHash
+        ],
         model: [
             enrichment : getCurrentEnrichment(),
             gokbService: gokbService,
@@ -113,8 +117,19 @@ class EnrichmentController{
         )
         return
       }
-      enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
-      redirect(action: 'process')
+      Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
+      enrichment.status = Enrichment.ProcessingState.PREPARE_1
+      redirect(
+          action: 'process',
+          params: [
+              resultHash: enrichment.resultHash,
+              originHash: enrichment.originHash
+          ],
+          model: [
+              enrichment : getCurrentEnrichment(),
+              currentView: 'process'
+          ]
+      )
     }
     else{
       flash.error = message(code: 'error.noUtf8Encoding') //+ encoding!=null?" but: "+encoding:""
@@ -135,27 +150,43 @@ class EnrichmentController{
     enrichment.setCurrentSession()
     enrichment.saveResult()
 
-    render(
-        view: 'process',
+    redirect(
+        controller: 'Statistic',
+        action: 'show',
+        params: [
+            resultHash: enrichment.resultHash,
+            originHash: enrichment.originHash
+        ],
         model: [
             enrichment : enrichment,
             currentView: 'process'
         ]
     )
-    redirect(action: 'process')
   }
 
 
   def prepareFile = {
-    enrichmentService.prepareFile(getCurrentEnrichment(), request.parameterMap)
+    Enrichment enrichment = getCurrentEnrichment()
+    enrichmentService.prepareFile(enrichment, request.parameterMap)
     request.session.lastUpdate.parameterMap = request.parameterMap
-    redirect(action: 'process')
+    redirect(
+        action: 'process',
+        params: [
+            resultHash: enrichment.resultHash,
+            originHash: enrichment.originHash
+        ],
+        model: [
+            enrichment : enrichment,
+            currentView: 'process'
+        ]
+    )
   }
 
 
   def processFile = {
     def pmOptions = request.parameterMap['processOption']
-    if (getCurrentEnrichment().status != Enrichment.ProcessingState.WORKING){
+    def en = getCurrentEnrichment()
+    if (en.status != Enrichment.ProcessingState.WORKING){
       if (!pmOptions){
         flash.info = null
         flash.warning = message(code: 'warning.noEnrichmentOption')
@@ -166,7 +197,7 @@ class EnrichmentController{
           request.session.lastUpdate = [:]
         }
         request.session.lastUpdate.pmOptions = pmOptions
-        def en = getCurrentEnrichment()
+
         if (en.status != Enrichment.ProcessingState.WORKING){
           flash.info = message(code: 'info.started')
           flash.warning = null
@@ -186,14 +217,33 @@ class EnrichmentController{
         }
       }
     }
-    render(
-        view: 'process',
-        model: [
-            enrichment : getCurrentEnrichment(),
-            currentView: 'process',
-            pOptions   : pmOptions,
-        ]
-    )
+    if (en.status != Enrichment.ProcessingState.FINISHED){
+      redirect(
+          action: 'process',
+          params: [
+              resultHash: en.resultHash,
+              originHash: en.originHash
+          ],
+          model: [
+              enrichment : en,
+              currentView: 'process'
+          ]
+      )
+    }
+    else{
+      redirect(
+          controller: 'Statistic',
+          action: 'show',
+          params: [
+              resultHash: en.resultHash,
+              originHash: en.originHash
+          ],
+          model: [
+              enrichment : en,
+              currentView: 'process'
+          ]
+      )
+    }
   }
 
 
@@ -264,88 +314,6 @@ class EnrichmentController{
   }
 
 
-  def sendPackageFile = {
-    def en = getCurrentEnrichment()
-    if (en){
-      def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY,
-          params.gokbUsername, params.gokbPassword)
-      flash.info = []
-      flash.warning = []
-      flash.error = []
-
-      if (response.JSON){
-        if (response.info[0] != null){
-          if (response.info[0].result == 'ERROR'){
-            flash.warning = [response.info[0].message]
-          }
-          else{
-            flash.info = response.info[0].message
-          }
-          flash.error = []
-
-          response.info[0].errors?.each{ e ->
-            flash.error.add(e.message)
-          }
-        }
-        if (response.warning[0] != null){
-          log.debug("${response.warning[0]}")
-          flash.warning = [response.warning[0].message]
-
-          response.warning[0].errors.each{ e ->
-            flash.warning.add(e.message)
-          }
-        }
-        if (response.error[0] != null){
-          log.warn("ERROR: ${response.error}")
-          flash.error = [response.error[0].message]
-
-          response.error.errors?.each{ e ->
-            flash.error.add(e.message)
-          }
-        }
-      }
-    }
-    else{
-      flash.error = "There was an error authenticating with GOKb!"
-    }
-    process()
-  }
-
-
-  def sendTitlesFile = {
-    def en = getCurrentEnrichment()
-    if (en){
-      def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_TITLES_ONLY,
-          params.gokbUsername, params.gokbPassword)
-      flash.info = []
-      flash.warning = []
-      List errorList = []
-      def total = 0
-      def errors = 0
-      log.debug("sendTitlesFile response: ${response}")
-      if (response.info){
-        log.debug("json class: ${response.info.class}")
-        def info_objects = response.info.results
-        info_objects[0].each{ robj ->
-          log.debug("robj: ${robj}")
-          if (robj.result == 'ERROR'){
-            errorList.add(robj.message)
-            errors++
-          }
-          total++
-        }
-        flash.info = "Total: ${total}, Errors: ${errors}"
-        flash.error = errorList
-        // parsing errors for user feedback
-//        for (result in response.info.results){
-//
-//        }
-      }
-      process()
-    }
-  }
-
-
   def ajaxGetStatus = {
     def en = getCurrentEnrichment()
     if (en){
@@ -355,6 +323,9 @@ class EnrichmentController{
 
 
   Enrichment getCurrentEnrichment(){
+    if (!request.parameterMap['resultHash'] || !(String) request.parameterMap['resultHash'][0]){
+      return new Enrichment()
+    }
     def hash = (String) request.parameterMap['resultHash'][0]
     def enrichments = enrichmentService.getSessionEnrichments()
     Enrichment result = enrichments[hash]

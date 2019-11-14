@@ -27,7 +27,8 @@ class StatisticController{
   }
 
   def show(){
-    String resultHash = (String) request.parameterMap['resultHash'][0]
+    String resultHash = request.parameterMap.resultHash[0]
+    String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
     String ygorVersion
     String date
@@ -52,6 +53,7 @@ class StatisticController{
     render(
         view: 'show',
         model: [
+            originHash    : originHash,
             resultHash    : resultHash,
             currentView   : 'statistic',
             ygorVersion   : ygorVersion,
@@ -59,7 +61,8 @@ class StatisticController{
             filename      : filename,
             dataType      : enrichment?.dataType,
             validRecords  : validRecords[resultHash],
-            invalidRecords: invalidRecords[resultHash]
+            invalidRecords: invalidRecords[resultHash],
+            status        : enrichment.status
         ]
     )
   }
@@ -208,4 +211,198 @@ class StatisticController{
   static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
   static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
   static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
+
+
+  def deleteFile = {
+    request.session.lastUpdate = [:]
+    enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
+    redirect(
+        controller: 'Enrichment',
+        view: 'process'
+    )
+  }
+
+
+  def correctFile = {
+    enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
+    redirect(
+        controller: 'Enrichment',
+        view: 'process'
+    )
+  }
+
+
+  def downloadPackageFile = {
+    def en = getCurrentEnrichment()
+    if (en){
+      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
+      render(file: result, fileName: "${en.resultName}.package.json")
+    }
+    else{
+      noValidEnrichment()
+    }
+  }
+
+
+  def downloadTitlesFile = {
+    def en = getCurrentEnrichment()
+    if (en){
+      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
+      render(file: result, fileName: "${en.resultName}.titles.json")
+    }
+    else{
+      noValidEnrichment()
+    }
+  }
+
+
+  def downloadRawFile = {
+    def en = getCurrentEnrichment()
+    if (en){
+      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
+      render(file: result, fileName: "${en.resultName}.raw.json")
+    }
+    else{
+      noValidEnrichment()
+    }
+  }
+
+
+  def sendPackageFile = {
+    def en = getCurrentEnrichment()
+    if (en){
+      def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY,
+          params.gokbUsername, params.gokbPassword)
+      flash.info = []
+      flash.warning = []
+      flash.error = []
+
+      if (response.JSON){
+        if (response.info[0] != null){
+          if (response.info[0].result == 'ERROR'){
+            flash.warning = [response.info[0].message]
+          }
+          else{
+            flash.info = response.info[0].message
+          }
+          flash.error = []
+
+          response.info[0].errors?.each{ e ->
+            flash.error.add(e.message)
+          }
+        }
+        if (response.warning[0] != null){
+          log.debug("${response.warning[0]}")
+          flash.warning = [response.warning[0].message]
+
+          response.warning[0].errors.each{ e ->
+            flash.warning.add(e.message)
+          }
+        }
+        if (response.error[0] != null){
+          log.warn("ERROR: ${response.error}")
+          flash.error = [response.error[0].message]
+
+          response.error.errors?.each{ e ->
+            flash.error.add(e.message)
+          }
+        }
+      }
+    }
+    else{
+      flash.error = "There was an error authenticating with GOKb!"
+    }
+    render(
+        view: 'show',
+        model: [
+            originHash    : en.originHash,
+            resultHash    : en.resultHash,
+            currentView   : 'statistic',
+            ygorVersion   : en.ygorVersion,
+            date          : en.date,
+            filename      : en.originName,
+            dataType      : en.dataType,
+            validRecords  : validRecords[en.resultHash],
+            invalidRecords: invalidRecords[en.resultHash],
+            status        : en.status
+        ]
+    )
+  }
+
+
+  def sendTitlesFile = {
+    def en = getCurrentEnrichment()
+    if (en){
+      def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_TITLES_ONLY,
+          params.gokbUsername, params.gokbPassword)
+      flash.info = []
+      flash.warning = []
+      List errorList = []
+      def total = 0
+      def errors = 0
+      log.debug("sendTitlesFile response: ${response}")
+      if (response.info){
+        log.debug("json class: ${response.info.class}")
+        def info_objects = response.info.results
+        info_objects[0].each{ robj ->
+          log.debug("robj: ${robj}")
+          if (robj.result == 'ERROR'){
+            errorList.add(robj.message)
+            errors++
+          }
+          total++
+        }
+        flash.info = "Total: ${total}, Errors: ${errors}"
+        flash.error = errorList
+      }
+      render(
+          view: 'show',
+          model: [
+              originHash    : en.originHash,
+              resultHash    : en.resultHash,
+              currentView   : 'statistic',
+              ygorVersion   : en.ygorVersion,
+              date          : en.date,
+              filename      : en.originName,
+              dataType      : en.dataType,
+              validRecords  : validRecords[en.resultHash],
+              invalidRecords: invalidRecords[en.resultHash],
+              status        : en.status
+          ]
+      )
+    }
+  }
+
+
+  def ajaxGetStatus = {
+    def en = getCurrentEnrichment()
+    if (en){
+      render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
+    }
+  }
+
+
+  Enrichment getCurrentEnrichment(){
+    def hash = (String) request.parameterMap['resultHash'][0]
+    def enrichments = enrichmentService.getSessionEnrichments()
+    Enrichment result = enrichments[hash]
+    if (null == result){
+      result = enrichments.get("${hash}")
+    }
+    result
+  }
+
+
+  HashMap getCurrentFormat(){
+    def hash = (String) request.parameterMap['originHash'][0]
+    enrichmentService.getSessionFormats().get("${hash}")
+  }
+
+
+  void noValidEnrichment(){
+    flash.info = null
+    flash.warning = message(code: 'warning.fileNotFound')
+    flash.error = null
+    redirect(controller: 'Enrichment', action: 'process')
+  }
 }
