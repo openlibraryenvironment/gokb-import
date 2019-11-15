@@ -328,7 +328,7 @@ class EnrichmentController {
                     total++
                 }
                 if (errors > 0) {
-                    flash.warning = "Total: ${total}, Errors: ${errors}"
+                    flash.warning = ["Total: ${total}, Errors: ${errors}"]
                 }
                 else {
                     flash.info = "Total: ${total}, Errors: ${errors}"
