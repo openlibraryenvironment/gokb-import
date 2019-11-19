@@ -12,6 +12,10 @@ import ygor.field.FieldKeyMapping
 class KbartReader {
 
   static final IDENTIFIER = 'kbart'
+  static final KBART_HEADER_ZDB_ID = "zdb_id"
+  static final KBART_HEADER_ONLINE_IDENTIFIER = "online_identifier"
+  static final KBART_HEADER_PRINT_IDENTIFIER = "print_identifier"
+  static final KBART_HEADER_DOI_IDENTIFIER = "doi_identifier"
 
   private MultipleProcessingThread owner
 

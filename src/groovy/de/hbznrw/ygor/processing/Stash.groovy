@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.processing
 
-import de.hbznrw.ygor.connectors.KbartConnector
 import de.hbznrw.ygor.readers.KbartReader
 import groovy.util.logging.Log4j
 
@@ -16,10 +15,10 @@ class Stash {
     values = [:]
 
     // api enrichment
-    values[KbartConnector.KBART_HEADER_ZDB_ID] = [:]
-    values[KbartConnector.KBART_HEADER_ONLINE_IDENTIFIER] = [:]
-    values[KbartConnector.KBART_HEADER_PRINT_IDENTIFIER] = [:]
-    values[KbartConnector.KBART_HEADER_DOI_IDENTIFIER] = [:]
+    values[KbartReader.KBART_HEADER_ZDB_ID] = [:]
+    values[KbartReader.KBART_HEADER_ONLINE_IDENTIFIER] = [:]
+    values[KbartReader.KBART_HEADER_PRINT_IDENTIFIER] = [:]
+    values[KbartReader.KBART_HEADER_DOI_IDENTIFIER] = [:]
 
     // file enrichment
     values[KbartReader.IDENTIFIER] = [:]

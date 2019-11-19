@@ -6,7 +6,6 @@
         import="de.hbznrw.ygor.export.structure.TitleStruct"
         import="de.hbznrw.ygor.export.structure.PackageStruct"
         import="de.hbznrw.ygor.readers.*"
-        import="de.hbznrw.ygor.connectors.KbartConnector"
 %>
 
 <g:form controller="enrichment" action="process">

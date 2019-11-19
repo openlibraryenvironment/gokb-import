@@ -2,7 +2,6 @@ package de.hbznrw.ygor.readers
 
 import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
-import ygor.field.FieldKeyMapping
 
 @Log4j
 class EzbReader extends AbstractReader {

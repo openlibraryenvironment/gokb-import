@@ -17,10 +17,8 @@ class MappingsContainer {
   final public static String KBART = "kbart"
   final public static String ZDB = "zdb"
   final public static String EZB = "ezb"
-  final public static String PRIO = "prio"
   final public static String GOKB = "gokb"
   final public static String TYPE = "type"
-  final public static OBLIGATORY_KEYS = [YGOR, KBART, ZDB, EZB, PRIO]
   final public static DEFAULT_SOURCE_PRIO = [ZDB, KBART, EZB]
 
   final private static JsonSlurper SLURPY = new JsonSlurper()
