@@ -1,10 +1,10 @@
 package de.hbznrw.ygor.connectors
 
+import de.hbznrw.ygor.readers.KbartReader
 import groovy.util.logging.Log4j
 import de.hbznrw.ygor.processing.Envelope
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.interfaces.*
-import de.hbznrw.ygor.bridges.*
 
 
 /**
@@ -59,7 +59,7 @@ class KbartConnector extends AbstractConnector {
 
     try {
       def stash = bridge.processor.getStash()
-      def kbart = stash.get(KbartBridge.IDENTIFIER)
+      def kbart = stash.get(KbartReader.IDENTIFIER)
 
       kbart.any { k, v ->
         if (k == identifier) {

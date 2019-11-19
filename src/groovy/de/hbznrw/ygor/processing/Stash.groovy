@@ -1,8 +1,7 @@
 package de.hbznrw.ygor.processing
 
-import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.connectors.KbartConnector
-import de.hbznrw.ygor.export.structure.TitleStruct
+import de.hbznrw.ygor.readers.KbartReader
 import groovy.util.logging.Log4j
 
 @Log4j
@@ -23,7 +22,7 @@ class Stash {
     values[KbartConnector.KBART_HEADER_DOI_IDENTIFIER] = [:]
 
     // file enrichment
-    values[KbartBridge.IDENTIFIER] = [:]
+    values[KbartReader.IDENTIFIER] = [:]
 
     // must
     values[Stash.IGNORED_KBART_ENTRIES] = []

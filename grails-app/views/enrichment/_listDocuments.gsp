@@ -5,7 +5,7 @@
         import="ygor.GokbService"
         import="de.hbznrw.ygor.export.structure.TitleStruct"
         import="de.hbznrw.ygor.export.structure.PackageStruct"
-        import="de.hbznrw.ygor.bridges.*"
+        import="de.hbznrw.ygor.readers.*"
         import="de.hbznrw.ygor.connectors.KbartConnector"
 %>
 
@@ -235,29 +235,29 @@
                                 <span class="form-control">
                                     <div class="checkbox">
                                         <label>
-                                            <g:checkBox name="processOption" required="true" checked="true" value="${KbartBridge.IDENTIFIER}"/>
+                                            <g:checkBox name="processOption" required="true" checked="true" value="${KbartReader.IDENTIFIER}"/>
                                             KBART <code><g:message code="listDocuments.enrichment.file" /></code>
                                         </label>
                                     &nbsp;
                                         <g:if test="${session.lastUpdate?.dataTyp == "journals" || session.lastUpdate?.dataTyp == "database"}">
                                             <label>
-                                                <g:checkBox name="processOption" required="true" checked="true" value="${ZdbBridge.IDENTIFIER}"/>
+                                                <g:checkBox name="processOption" required="true" checked="true" value="${ZdbReader.IDENTIFIER}"/>
                                                 ZDB <em>@GBV</em> <code>API</code>
                                             </label>
                                             &nbsp;
                                             <label>
-                                                <g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbBridge.IDENTIFIER)}">
-                                                    <g:checkBox name="processOption" checked="true" value="${EzbBridge.IDENTIFIER}" />
+                                                <g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbReader.IDENTIFIER)}">
+                                                    <g:checkBox name="processOption" checked="true" value="${EzbReader.IDENTIFIER}" />
                                                 </g:if>
                                                 <g:else>
-                                                    <g:checkBox name="processOption" checked="false" value="${EzbBridge.IDENTIFIER}" />
+                                                    <g:checkBox name="processOption" checked="false" value="${EzbReader.IDENTIFIER}" />
                                                 </g:else>
                                                 EZB <code>API</code>
                                             </label>
                                             <!--
                                             &nbsp;
                                             <label>
-                                            <g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbBridge.IDENTIFIER}"/>
+                                            <g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbReader.IDENTIFIER}"/>
                                             ZDB <code>API</code>
                                         </label>
                                         -->

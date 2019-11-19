@@ -6,7 +6,7 @@ import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
 import de.hbznrw.ygor.enums.*
-import de.hbznrw.ygor.bridges.*
+import de.hbznrw.ygor.readers.*
 
 /**
  * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
@@ -92,14 +92,14 @@ class ValidatorSpec extends Specification {
     "1234-56789"   | TitleStruct.EISSN    | Status.VALIDATOR_IDENTIFIER_IS_INVALID
     "1234-56X"     | TitleStruct.PISSN    | Status.VALIDATOR_IDENTIFIER_IS_INVALID
     "1234-567X"    | TitleStruct.PISSN    | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "1234-X"       | ZdbBridge.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "1234-5X"      | ZdbBridge.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "1234678910-X" | ZdbBridge.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "23"           | EzbBridge.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "1234254"      | EzbBridge.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
+    "1234-X"       | ZdbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
+    "1234-5X"      | ZdbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+    "1234678910-X" | ZdbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
+    "23"           | EzbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_INVALID
+    "1234254"      | EzbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
     "1234678910-X" | "unkown identifier"  | Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
     ""             | TitleStruct.EISSN    | Status.VALIDATOR_IDENTIFIER_IS_MISSING
-    null           | EzbBridge.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_MISSING
+    null           | EzbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_MISSING
   }
 
   void "isValidDate(String str)"() {

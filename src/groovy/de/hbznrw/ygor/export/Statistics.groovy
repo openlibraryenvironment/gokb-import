@@ -4,14 +4,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import de.hbznrw.ygor.bridges.ZdbBridge
-import de.hbznrw.ygor.enums.Status
-import de.hbznrw.ygor.export.structure.TitleStruct
-import de.hbznrw.ygor.normalizers.UrlNormalizer
 import ygor.Enrichment
-import ygor.Record
 import ygor.StatisticController
-import ygor.field.MultiField
 
 class Statistics {
 

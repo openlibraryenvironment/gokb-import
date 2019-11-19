@@ -1,6 +1,6 @@
 package de.hbznrw.ygor.export
 
-import de.hbznrw.ygor.bridges.ZdbBridge
+import de.hbznrw.ygor.readers.ZdbReader
 import de.hbznrw.ygor.export.structure.TitleStruct
 import de.hbznrw.ygor.normalizers.*
 import grails.test.mixin.TestMixin
@@ -108,12 +108,12 @@ class NormalizerSpec extends Specification {
     ["123456789", TitleStruct.EISSN]    | "123456789"
     ["33445XXX", TitleStruct.PISSN]     | "3344-5XXX"
     ["3344--YYYY", TitleStruct.PISSN]   | "3344-YYYY"
-    ["1234-567X", ZdbBridge.IDENTIFIER] | "1234567-X"
-    ["12345", ZdbBridge.IDENTIFIER]     | "1234-5"
+    ["1234-567X", ZdbReader.IDENTIFIER] | "1234567-X"
+    ["12345", ZdbReader.IDENTIFIER]     | "1234-5"
     [null, null]                        | null
     ["", ""]                            | ""
 
-    // TODO: not implemented DataNormalizer.normIdentifier(", EzbBridge.IDENTIFIER)
+    // TODO: not implemented DataNormalizer.normIdentifier(", EzbReader.IDENTIFIER)
   }
 
   void "normIdentifier(ArrayList list, Object type)"() {

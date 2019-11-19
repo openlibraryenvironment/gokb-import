@@ -2,9 +2,8 @@ package de.hbznrw.ygor.validators
 
 import de.hbznrw.ygor.enums.*
 import de.hbznrw.ygor.export.structure.TitleStruct
-import de.hbznrw.ygor.bridges.*
 import de.hbznrw.ygor.normalizers.DateNormalizer
-import de.hbznrw.ygor.tools.UrlToolkit
+import de.hbznrw.ygor.readers.EzbReader
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.validator.routines.UrlValidator
 
@@ -146,7 +145,7 @@ class Validator {
         return Status.VALIDATOR_IDENTIFIER_IS_INVALID
       }
     }
-    else if (identifierType.equals(EzbBridge.IDENTIFIER)) {
+    else if (identifierType.equals(EzbReader.IDENTIFIER)) {
       // TODO .. no valid definition
       if (str.length() > 2) {
         return Status.VALIDATOR_IDENTIFIER_IS_VALID
