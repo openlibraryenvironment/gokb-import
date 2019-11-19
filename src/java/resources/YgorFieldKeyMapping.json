@@ -722,6 +722,19 @@
     "type" : "String"
   },
   {
+    "ygor" : "publisherPlace",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "033A:p",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.place"]
+    },
+    "order" : ["zdb"],
+    "type" : "String"
+  },
+  {
     "ygor" : "shortcode",
     "in" : {
       "kbart" : "",
