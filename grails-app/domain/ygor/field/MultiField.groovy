@@ -123,6 +123,11 @@ class MultiField {
   }
 
 
+  boolean isValid(){
+    return (!isCriticallyInvalid() && !isNonCriticallyInvalid())
+  }
+
+
   String toString() {
     this.getClass().getName().concat(": ").concat(ygorFieldKey).concat(", fields: ").concat(fields.toString())
   }

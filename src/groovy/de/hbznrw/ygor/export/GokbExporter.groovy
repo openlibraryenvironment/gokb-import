@@ -61,6 +61,7 @@ class GokbExporter {
     for (Record record in enrichment.dataContainer.records.values()) {
       ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
       appendValue(title, "name", "subTitle", ": ", true)
+      title = removeInvalidHistoryEvents(title, record)
       titles.add(title)
     }
     titles = removeEmptyFields(titles)
@@ -321,5 +322,40 @@ class GokbExporter {
       }
     }
     return result
+  }
+
+
+  static ObjectNode removeInvalidHistoryEvents(ObjectNode node, Record record) {
+    ArrayNode historyEvents = node.get("historyEvents")
+    if (historyEvents != null && historyEvents.size() != 0){
+      ArrayNode filteredHistoryEvents = NODE_FACTORY.arrayNode(historyEvents.size())
+      for (ObjectNode historyEvent in historyEvents){
+        if (isValidHistoryEvent(historyEvent, record)){
+          filteredHistoryEvents.add(historyEvent)
+        }
+      }
+      node.set("historyEvents", filteredHistoryEvents)
+    }
+    return node
+  }
+
+
+  static boolean isValidHistoryEvent(ObjectNode historyEvent, Record record){
+    // Current validation assumption: there has to be a valid date in any case
+    if (historyEvent.get("date") == null || !record.multiFields.get("historyEventDate").isValid()) return false
+
+    // Current validation assumption: there has to be one of:
+    // - zdbId AND relationType
+    // - predecessor
+    // - predecessorOrSuccessor
+    // - successor
+    if ((historyEvent.get("zdbId") == null || historyEvent.get("relationType") == null)
+        && historyEvent.get("predecessor") == null
+        && historyEvent.get("predecessorOrSuccessor") == null
+        && historyEvent.get("successor") == null ) return false
+
+    // TODO implement further criteria using the Record's status fields
+
+    return true
   }
 }
