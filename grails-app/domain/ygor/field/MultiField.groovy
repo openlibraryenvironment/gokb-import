@@ -14,7 +14,7 @@ class MultiField {
 
   String ygorFieldKey
   FieldKeyMapping keyMapping          // TODO: keep in MappingsContainer only and access by ygorFieldKey (?)
-  Map fields = [:]
+  List fields = []
   String type                         // TODO: move to FieldKeyMapping (?)
   String status
   String normalized = null
@@ -40,15 +40,12 @@ class MultiField {
 
   def addField(String source, String key, String value) {
     if (keyMapping == null) {
-      fields.put(source, new Field(source, key, value))
-    } else {
+      fields.add(source, new Field(source, key, value))
+    }
+    else {
       for (mappedKey in keyMapping.get(source)) {
         if (key == mappedKey) {
-          fields.put(source, new Field(source, mappedKey, value))
-          break
-        }
-        // else: is there already a value with a higher prio?
-        if (fields.get(source) != null) {
+          fields.add(new Field(source, mappedKey, value))
           break
         }
       }
@@ -56,28 +53,44 @@ class MultiField {
   }
 
 
-  String getPrioValue() {
+  String getFirstPrioValue() {
+    return getPrioValues()[0]
+  }
+
+
+  List<String> getPrioValues() {
     if (revised != null) {
-      return revised
+      return [revised]
     }
     if (normalized != null) {
-      return normalized
+      return [normalized]
     }
     if (keyMapping == null) {
-      return fields.values().toArray()[0]
+      return fields
     }
     if (keyMapping.valIsFix) {
-      return extractFixedValue(keyMapping.val)
+      return [extractFixedValue(keyMapping.val)]
     }
     // no fixed value --> search for collected values
     for (source in keyMapping.sourcePrio) {
-      def field = fields.get(source)
-      if (field != null) {
-        return field.value
+      List<String> prioFields = getFieldValuesBySource(source)
+      if (!prioFields.isEmpty()) {
+        return prioFields
       }
     }
     // no collected value --> return default value (if any)
-    return keyMapping.val
+    return [keyMapping.val]
+  }
+
+
+  private List<String> getFieldValuesBySource(String source){
+    List<String> result = []
+    for (Field field in fields){
+      if (field.source == source){
+        result.add(field.value)
+      }
+    }
+    return result
   }
 
 
@@ -93,8 +106,8 @@ class MultiField {
     }
     // no fixed value --> search for collected values
     for (source in keyMapping.sourcePrio) {
-      def field = fields.get(source)
-      if (field != null) {
+      def values = getFieldValuesBySource(source)
+      if (!values.isEmpty()) {
         return source
       }
     }
@@ -109,7 +122,7 @@ class MultiField {
 
 
   void validate(String namespace) {
-    status = Validator.validate(type, getPrioValue(), ygorFieldKey, namespace)
+    status = Validator.validate(type, getFirstPrioValue(), ygorFieldKey, namespace)
   }
 
 
@@ -142,7 +155,7 @@ class MultiField {
 
     jsonGenerator.writeFieldName("fields")
     jsonGenerator.writeStartArray()
-    for (Field f in fields.values()) {
+    for (Field f in fields) {
       f.asJson(jsonGenerator)
     }
     jsonGenerator.writeEndArray()

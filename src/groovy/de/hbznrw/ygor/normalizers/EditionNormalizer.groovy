@@ -16,6 +16,6 @@ class EditionNormalizer {
 
     MultiField editionNumber = record.getMultiField("editionNumber")
     // re-set first number for now
-    editionNumber.addField("kbart", "editionNumber", editionNumber.getPrioValue())
+    editionNumber.addField("kbart", "editionNumber", editionNumber.getFirstPrioValue())
   }
 }

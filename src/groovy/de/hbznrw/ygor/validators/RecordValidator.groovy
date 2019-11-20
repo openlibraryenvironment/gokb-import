@@ -16,11 +16,11 @@ class RecordValidator {
     MultiField endDate = record.getMultiField("dateLastIssueOnline")
     MultiField startVolume = record.getMultiField("numFirstVolOnline")
     MultiField endVolume = record.getMultiField("numLastIssueOnline")
-
+    
     // remove due to parsing or data error
-    if (startDate.getPrioValue() == endDate.getPrioValue() &&
-        startVolume.getPrioValue() == endVolume.getPrioValue() &&
-        startDate.getPrioValue() == startVolume.getPrioValue()) {
+    if (startDate.getFirstPrioValue() == endDate.getFirstPrioValue() &&
+        startVolume.getFirstPrioValue() == endVolume.getFirstPrioValue() &&
+        startDate.getFirstPrioValue() == startVolume.getFirstPrioValue()) {
       record.addValidation("coverage", Status.STRUCTVALIDATOR_REMOVE_FLAG)
     } else {
       record.addValidation("coverage", Status.STRUCTVALIDATOR_COVERAGE_IS_UNDEF)

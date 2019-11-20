@@ -20,7 +20,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <g:message
-                                code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getPrioValue()}
+                                code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getFirstPrioValue()}
                         <g:if test="${displayZDB && record.zdbIntegrationUrl}">
                             <a href="${record.zdbIntegrationUrl}" class="link-icon-header"></a>
                         </g:if>
@@ -57,7 +57,7 @@
                             <tr class="${status}">
                                 <td class="statistics-cell-key">${multiField.key}</td>
                                 <td class="statistics-cell-value"
-                                    contenteditable="true">${multiField.value.getPrioValue()}</td>
+                                    contenteditable="true">${multiField.value.getFirstPrioValue()}</td>
                                 <td class="statistics-cell-source">${multiField.value.getPrioSource()}</td>
                                 <td class="statistics-cell-status"><g:message code="${multiField.value.status}"/></td>
                             </tr>

@@ -6,7 +6,7 @@ class CommonNormalizer {
 
 
   static String normalize(MultiField field, String type, String namespace) {
-    String value = MultiField.extractFixedValue(field.getPrioValue())
+    String value = MultiField.extractFixedValue(field.getFirstPrioValue())
     switch (type) {
       case "Title":
         return StringNormalizer.normalizeString(value, true)

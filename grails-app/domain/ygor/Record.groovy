@@ -220,7 +220,7 @@ class Record{
     for (MultiField mf in multiFields.values()) {
       jsonGenerator.writeFieldName(mf.ygorFieldKey)
       jsonGenerator.writeStartObject()
-      jsonGenerator.writeStringField("value", mf.getPrioValue())
+      jsonGenerator.writeStringField("value", mf.getFirstPrioValue())
       jsonGenerator.writeStringField("source", mf.getPrioSource())
       jsonGenerator.writeStringField("status", mf.status)
       jsonGenerator.writeEndObject()
@@ -247,7 +247,7 @@ class Record{
       result.put("zdbIntegrationUrl", zdbIntegrationUrl)
     }
     for (def multiField in multiFields) {
-      result.put(multiField.key, multiField.value.getPrioValue())
+      result.put(multiField.key, multiField.value.getFirstPrioValue())
     }
     result
   }

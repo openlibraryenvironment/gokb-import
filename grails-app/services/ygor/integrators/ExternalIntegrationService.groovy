@@ -53,7 +53,7 @@ class ExternalIntegrationService {
         FieldKeyMapping fieldKeyMapping = mappingsContainer.getMapping(key, containerProperty)
         if (fieldKeyMapping) {
           for (String zdbKey in fieldKeyMapping."${keyMappingProperty}") {
-            if (record.getMultiField(fieldKeyMapping.ygorKey).getPrioValue()
+            if (record.getMultiField(fieldKeyMapping.ygorKey).getFirstPrioValue()
               .equals(readItem.get(zdbKey))) {
               narrowedResult.add(readItem)
             }
@@ -78,7 +78,7 @@ class ExternalIntegrationService {
   // The record needs to be processed in external APIs if and only if it is a journal, or if no value for
   // the medium type is given, meaning that API processing is default.
   protected boolean isApiCallMedium(Record record) {
-    String medium = record.multiFields.get(mediumTypeKey).getPrioValue()
+    String medium = record.multiFields.get(mediumTypeKey).getFirstPrioValue()
     return (medium.equals("Journal") || StringUtils.isEmpty(medium))
   }
 }

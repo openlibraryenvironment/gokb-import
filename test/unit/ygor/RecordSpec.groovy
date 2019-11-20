@@ -31,7 +31,7 @@ class RecordSpec extends Specification {
 
     then: "the record's multifields are empty"
     for (MultiField mf in record.multiFields.values()) {
-      mf.getPrioValue() == null
+      mf.getFirstPrioValue() == null
     }
     and: "the record's identifiers match the given ones"
     record.onlineIdentifier.identifier == "12345678"
