@@ -82,15 +82,24 @@ class EnrichmentController{
     def file = request.getFile('uploadFile')
     if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
         request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename){
-      // the file form is unpopulated but the previously selected file in unchanged
+      // the file form is unpopulated but the previously selected file is unchanged
       file = request.session.lastUpdate.file
     }
-    String encoding = UniversalDetector.detectCharset(file.getInputStream())
+    String encoding
+    try {
+      encoding = UniversalDetector.detectCharset(file.getInputStream())
+    }
+    catch (java.lang.IllegalStateException ise){
+      ByteArrayOutputStream baos = new ByteArrayOutputStream()
+      org.apache.commons.io.IOUtils.copy(file.getInputStream(), baos)
+      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
+      encoding = UniversalDetector.detectCharset(file.getInputStream())
+    }
     log.debug("Detected encoding ${encoding}")
     if (!encoding || encoding == "UTF-8"){
       def foDelimiter = request.parameterMap['formatDelimiter'][0]
 
-      def foQuote = null              // = request.parameterMap['formatQuote'][0]
+      def foQuote = null                  // = request.parameterMap['formatQuote'][0]
       def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
       def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
       def dataTyp = request.parameterMap['dataTyp'][0]
