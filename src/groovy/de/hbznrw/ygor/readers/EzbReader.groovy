@@ -23,8 +23,8 @@ class EzbReader extends AbstractReader {
 
 
   @Override
-  List<Map<String, String>> readItemData(String queryString) {
-    List<Map<String, String>> result = new ArrayList<>()
+  List<Map<String, List<String>>> readItemData(String queryString) {
+    List<Map<String, List<String>>> result = new ArrayList<>()
     try {
       log.info("query EZB: " + queryString)
       String text = new URL(queryString).getText()
@@ -34,8 +34,8 @@ class EzbReader extends AbstractReader {
           Map<String, String> recordMap = new HashMap<>()
           String name = records.get(0).localText()[0]
           String ezbId = records.get(0).parent().attributes().get("jourid")
-          recordMap.put("jourid", ezbId)
-          recordMap.put("title", name)
+          recordMap.put("jourid", [] << ezbId)
+          recordMap.put("title", [] << name)
           result.add(recordMap)
         }
       }

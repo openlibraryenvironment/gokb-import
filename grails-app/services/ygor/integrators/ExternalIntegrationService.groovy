@@ -17,13 +17,13 @@ class ExternalIntegrationService {
     mediumTypeKey = mappingsContainer.ygorMappings.get("medium").ygorKey
   }
 
-  static void integrateWithExisting(Record item, Map<String, String> readData,
+  static void integrateWithExisting(Record item, Map<String, List<String>> readData,
                                     MappingsContainer mappings, String source) {
     if (!item || !readData || !mappings || !source) {
       // TODO: throw exception?
       return
     }
-    for (Map.Entry<String, String> date : readData) {
+    for (Map.Entry<String, List<String>> date : readData) {
       FieldKeyMapping mapping = mappings.getMapping(date.key, source)
       if (mapping) {
         MultiField multiField = item.getMultiField(mapping.ygorKey)
@@ -31,7 +31,9 @@ class ExternalIntegrationService {
           multiField = new MultiField(mapping)
           item.addMultiField(multiField)
         }
-        multiField.addField(source, date.key, date.value)
+        for (String singleValue in date.value){
+          multiField.addField(source, date.key, singleValue)
+        }
       }
     }
   }
@@ -41,24 +43,24 @@ class ExternalIntegrationService {
    * Return an empty Map<String, String> if no singular best match could be determined.
    */
   protected Map<String, String> filterBestMatch(MultipleProcessingThread owner, Record record,
-                                                List<Map<String, String>> readData, int keyOrderCount,
+                                                List<Map<String, List<String>>> readData, int keyOrderCount,
                                                 String containerProperty, String keyMappingProperty) {
     if (readData.size() == 1) {
       return readData.get(0)
     }
     String key = owner.KEY_ORDER.get(keyOrderCount)
     if (key) {
-      List<Map<String, String>> narrowedResult = new ArrayList<>()
-      for (Map<String, String> readItem in readData) {
+      List<Map<String, List<String>>> narrowedResult = new ArrayList<>()
+      for (Map<String, List<String>> readItem in readData) {
         FieldKeyMapping fieldKeyMapping = mappingsContainer.getMapping(key, containerProperty)
         if (fieldKeyMapping) {
           for (String zdbKey in fieldKeyMapping."${keyMappingProperty}") {
-            if (record.getMultiField(fieldKeyMapping.ygorKey).getFirstPrioValue()
-              .equals(readItem.get(zdbKey))) {
+            if (record.getMultiField(fieldKeyMapping.ygorKey).getFirstPrioValue() in (readItem.get(zdbKey))) {
               narrowedResult.add(readItem)
             }
           }
-        } else {
+        }
+        else {
           break
         }
       }

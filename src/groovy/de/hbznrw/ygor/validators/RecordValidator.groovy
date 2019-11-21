@@ -59,6 +59,11 @@ class RecordValidator {
     // status
     // name
 
+    MultiField startDate = record.getMultiField("dateFirstIssueOnline")
+    MultiField endDate = record.getMultiField("dateLastIssueOnline")
+    MultiField startVolume = record.getMultiField("numFirstVolOnline")
+    MultiField endVolume = record.getMultiField("numLastIssueOnline")
+
     MultiField publisherHistory = record.getMultiField("publisherHistory")
     record.addValidation("publisherHistory", Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF)
   }

@@ -32,8 +32,8 @@ class EzbIntegrationService extends ExternalIntegrationService {
   }
 
 
-  private Map<String, String> getBestMatch(MultipleProcessingThread owner, Record record) {
-    List<Map<String, String>> readData = new ArrayList<>()
+  private Map<String, List<String>> getBestMatch(MultipleProcessingThread owner, Record record) {
+    List<Map<String, List<String>>> readData = new ArrayList<>()
     for (String key in owner.KEY_ORDER) {
       AbstractIdentifier id = record."${key}"
       if (id && !StringUtils.isEmpty(id.identifier)) {

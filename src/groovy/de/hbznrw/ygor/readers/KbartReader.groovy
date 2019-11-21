@@ -68,7 +68,7 @@ class KbartReader {
     iterator = csv.iterator()
   }
 
-
+  // NOTE: should have been an override of AbstractReader.readItemData(), but the parameters are too different
   Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
     // guess, the iterator is in the position to return the desired next record
     CSVRecord next = getNext()

@@ -40,7 +40,7 @@ class MultiField {
 
   def addField(String source, String key, String value) {
     if (keyMapping == null) {
-      fields.add(source, new Field(source, key, value))
+      fields.add(new Field(source, key, value))
     }
     else {
       for (mappedKey in keyMapping.get(source)) {

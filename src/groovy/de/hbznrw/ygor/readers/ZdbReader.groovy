@@ -25,22 +25,26 @@ class ZdbReader extends AbstractReader {
   }
 
   @Override
-  List<Map<String, String>> readItemData(String queryString) {
-    List<Map<String, String>> result = new ArrayList<>()
+  List<Map<String, List<String>>> readItemData(String queryString) {
+    List<Map<String, List<String>>> result = new ArrayList<>()
     try {
       log.info("query ZDB: " + queryString)
       String text = new URL(queryString).getText()
       def records = new XmlSlurper().parseText(text).depthFirst().findAll { it.name() == 'records' }
       if (records) {
         for (GPathResult record in records) {
-          Map<String, String> recordMap = new TreeMap<String, String>()
+          Map<String, List<String>> recordMap = new TreeMap<String, String>()
           def subfields = record.depthFirst().findAll { it.name() == 'subf' }
           subfields.each { subfield ->
             if (subfield.parent().parent().name() == "global") {
-              def attribute = subfield.attributes().get("id")
-              def parentAttribute = subfield.parent().attributes().get("id")
+              def key = subfield.parent().attributes().get("id").concat(":").concat(subfield.attributes().get("id"))
               def value = subfield.localText()[0]
-              recordMap.put(parentAttribute.concat(":").concat(attribute), value)
+              List<String> values = recordMap.get(key)
+              if (values == null){
+                values = []
+              }
+              values << value
+              recordMap.put(key, values)
             }
           }
           if (!recordMap.isEmpty()) {
