@@ -174,6 +174,21 @@ class Record{
     multiFields.get(ygorFieldKey)
   }
 
+
+  List<MultiField> getFieldsByPath(String path){
+    List<MultiField> result = []
+    multiFields.each{ key, value ->
+      if (key.contains(path)){
+        // TODO: this criterion works for now, but is not very precise
+        //       possibly, it should be replaced with a check on MultiField.keyMapping.gokb.
+        //       Optionally, use reflection for output sink ("gokb").
+        result.add(value)
+      }
+    }
+    return result
+  }
+
+
   private void validateMultifields(String namespace) {
     multiFields.each { k, v -> v.validate(namespace) }
   }

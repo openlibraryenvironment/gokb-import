@@ -43,7 +43,7 @@ class MultiField {
       fields.add(field)
     }
     else {
-      for (mappedKey in keyMapping.get(source)) {
+      for (mappedKey in keyMapping.get(field.source)) {
         if (field.key == mappedKey) {
           fields.add(field)
           break
