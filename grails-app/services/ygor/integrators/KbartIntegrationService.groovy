@@ -5,6 +5,7 @@ import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import ygor.Record
+import ygor.field.Field
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -51,7 +52,7 @@ class KbartIntegrationService {
              (MappingsContainer.EZB)  : ""])
         }
         MultiField multiField = new MultiField(fieldKeyMapping)
-        multiField.addField(MappingsContainer.KBART, key, value)
+        multiField.addField(new Field(MappingsContainer.KBART, key, value))
         record.addMultiField(multiField)
       }
       data.addRecord(record)

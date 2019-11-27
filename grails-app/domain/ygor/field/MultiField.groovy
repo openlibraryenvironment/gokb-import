@@ -38,14 +38,14 @@ class MultiField {
   }
 
 
-  def addField(String source, String key, String value) {
+  def addField(Field field) {
     if (keyMapping == null) {
-      fields.add(new Field(source, key, value))
+      fields.add(field)
     }
     else {
       for (mappedKey in keyMapping.get(source)) {
-        if (key == mappedKey) {
-          fields.add(new Field(source, mappedKey, value))
+        if (field.key == mappedKey) {
+          fields.add(field)
           break
         }
       }
@@ -177,7 +177,7 @@ class MultiField {
       String source = JsonToolkit.fromJson(fieldNode, "source")
       String key = JsonToolkit.fromJson(fieldNode, "key")
       String value = JsonToolkit.fromJson(fieldNode, "value")
-      result.addField(source, key, value)
+      result.addField(new Field(source, key, value))
     }
     result
   }

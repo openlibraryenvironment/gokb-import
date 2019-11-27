@@ -3,6 +3,7 @@ package ygor.integrators
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import org.apache.commons.lang.StringUtils
 import ygor.Record
+import ygor.field.Field
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -32,7 +33,7 @@ class ExternalIntegrationService {
           item.addMultiField(multiField)
         }
         for (String singleValue in date.value){
-          multiField.addField(source, date.key, singleValue)
+          multiField.addField(new Field(source, date.key, singleValue))
         }
       }
     }

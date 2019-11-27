@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.normalizers
 
 import ygor.Record
+import ygor.field.Field
 import ygor.field.MultiField
 
 class EditionNormalizer {
@@ -16,6 +17,6 @@ class EditionNormalizer {
 
     MultiField editionNumber = record.getMultiField("editionNumber")
     // re-set first number for now
-    editionNumber.addField("kbart", "editionNumber", editionNumber.getFirstPrioValue())
+    editionNumber.addField(new Field("kbart", "editionNumber", editionNumber.getFirstPrioValue()))
   }
 }
