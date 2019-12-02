@@ -201,7 +201,7 @@ class JsonToolkit {
   /**
    * Requires a fromJson(JsonNode) method for the desired object(s) class
    */
-  static Object fromJson(JsonNode root, String subField) {
+  static def fromJson(JsonNode root, String subField) {
 
     String[] pathSplit = subField.split("\\.", 2)
     JsonNode subNode = root.path(pathSplit[0])
@@ -211,14 +211,20 @@ class JsonToolkit {
     }
     if (subNode instanceof TextNode) {
       return subNode.asText()
-    } else if (subNode instanceof ArrayNode) {
+    }
+    if (subNode instanceof IntNode) {
+      return subNode.asInt()
+    }
+    if (subNode instanceof ArrayNode) {
       int i = 0 // TODO
-    } else if (subNode instanceof ObjectNode) {
+    }
+    else if (subNode instanceof ObjectNode) {
       Class clazz = Class.forName("ygor.field.".concat(
           subField.substring(0, 1).toUpperCase() + subField.substring(1)))
       Method method = clazz.getMethod("fromJson", JsonNode.class)
       return method.invoke(null, subNode)
-    } else {
+    }
+    else {
       assert (subNode instanceof MissingNode || subNode instanceof NullNode)
       return null
     }

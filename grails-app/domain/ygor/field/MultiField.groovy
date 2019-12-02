@@ -94,6 +94,17 @@ class MultiField {
   }
 
 
+  List<Field> getFields(String source){
+    List<Field> result = []
+    for (Field field in fields){
+      if (field.source == source){
+        result.add(field)
+      }
+    }
+    result
+  }
+
+
   String getPrioSource() {
     if (revised != null){
       return g.message(code: 'record.source.revised')
@@ -176,8 +187,9 @@ class MultiField {
       JsonNode fieldNode = it.next()
       String source = JsonToolkit.fromJson(fieldNode, "source")
       String key = JsonToolkit.fromJson(fieldNode, "key")
+      int index = JsonToolkit.fromJson(fieldNode, "index")
       String value = JsonToolkit.fromJson(fieldNode, "value")
-      result.addField(new Field(source, key, value))
+      result.addField(new Field(source, key, index, value))
     }
     result
   }

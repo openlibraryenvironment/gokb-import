@@ -33,7 +33,7 @@ class ExternalIntegrationService {
           item.addMultiField(multiField)
         }
         for (String singleValue in date.value){
-          multiField.addField(new Field(source, date.key, singleValue))
+          multiField.addField(new Field(source, date.key, multiField.getFields(source).size(), singleValue))
         }
       }
     }
