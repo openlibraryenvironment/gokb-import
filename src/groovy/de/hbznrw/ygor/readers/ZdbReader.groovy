@@ -12,9 +12,9 @@ class ZdbReader extends AbstractReader {
 
   final static Map QUERY_IDS = [:]
   static {
-    QUERY_IDS.put("zdb_id", "query=dnb.zdbid%3D")
-    QUERY_IDS.put("online_identifier", "query=dnb.iss%3D")
-    QUERY_IDS.put("print_identifier", "query=dnb.iss%3D")
+    QUERY_IDS.put(KbartReader.KBART_HEADER_ZDB_ID, "query=dnb.zdbid%3D")
+    QUERY_IDS.put(KbartReader.KBART_HEADER_ONLINE_IDENTIFIER, "query=dnb.iss%3D")
+    QUERY_IDS.put(KbartReader.KBART_HEADER_PRINT_IDENTIFIER, "query=dnb.iss%3D")
   }
   final static String REQUEST_URL = "http://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&maximumRecords=10"
   final static String QUERY_ONLY_JOURNALS = "%20and%20dnb.frm=O"
