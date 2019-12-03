@@ -136,13 +136,13 @@
     "ygor" : "doi",
     "in" : {
       "kbart" : "doi_identifier",
-      "zdb" : "",
+      "zdb" : "2051:0",
       "ezb" : ""
     },
     "out" : {
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:doi,value)", "$TIPP.title.identifiers.$ARRAY.(type:doi,value)"]
     },
-    "order" : ["kbart"],
+    "order" : ["kbart", "zdb"],
     "type" : "String"
   },
   {
@@ -543,13 +543,13 @@
     "ygor" : "onlineIdentifier",
     "in" : {
       "kbart" : "online_identifier",
-      "zdb" : "",
+      "zdb" : "005I:0",
       "ezb" : ""
     },
     "out" : {
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:eissn,value)", "$TIPP.title.identifiers.$ARRAY.(type:eissn,value)"]
     },
-    "order" : ["kbart"],
+    "order" : ["kbart", "zdb"],
     "type" : "ID"
   },
   {
@@ -596,13 +596,13 @@
     "ygor" : "printIdentifier",
     "in" : {
       "kbart" : "print_identifier",
-      "zdb" : "",
+      "zdb" : "004A:0",
       "ezb" : ""
     },
     "out" : {
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:isbn,value)", "$TIPP.title.identifiers.$ARRAY.(type:isbn,value)"]
     },
-    "order" : ["kbart"],
+    "order" : ["kbart", "zdb"],
     "type" : "ID"
   },
   {
