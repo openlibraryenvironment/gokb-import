@@ -24,13 +24,13 @@ class HistoryEvent {
 
 
   HistoryEvent(Record record, int index){
-    date = record.multiFields.get("historyEventDate").getFieldValue("zdb", index)
     String fromId
     String toId
     String relationType = record.multiFields.get("historyEventRelationType").getFieldValue("zdb", index)
     if (relationType.equals("f")){
       fromId = record.multiFields.get("historyEventIdentifier").getFieldValue("zdb", index)
       toId = record.multiFields.get("zdbId").getFieldValue("zdb", index)
+      date = extractDate("from", record.multiFields.get("historyEventDate").getFieldValue("zdb", index))
     }
     else if(relationType.equals("s")){
       toId = record.multiFields.get("historyEventIdentifier").getFieldValue("zdb", index)
@@ -38,6 +38,21 @@ class HistoryEvent {
     }
     from = [] << new GokbTitleReference(fromId, KbartReader.KBART_HEADER_ZDB_ID)
     to   = [] << new GokbTitleReference(toId, KbartReader.KBART_HEADER_ZDB_ID)
+  }
+
+
+  String extractDate(String relation, String zdbDateSpan){
+    if (zdbDateSpan.matches("[\\d]{4}-[\\d]{4}")){
+      String year
+      if (relation.equals("from")){
+        year = zdbDateSpan.substring(5)
+      }
+      else if (relation.equals("to")){
+        year = zdbDateSpan.substring(0,4)
+      }
+      return year.concat("-01-01")
+    }
+    return null
   }
 
 
