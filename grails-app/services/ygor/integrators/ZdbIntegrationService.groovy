@@ -53,7 +53,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         if (mapping == null) {
           continue
         }
-        String queryString = ZdbReader.getAPIQuery(id.identifier, mapping.kbartKeys)
+        String queryString = ZdbReader.getAPIQuery(id.identifier, mapping.kbartKeys.getAt(0))
         readData = owner.zdbReader.readItemData(queryString)
         if (!readData.isEmpty()) {
           record.zdbIntegrationUrl = queryString

@@ -11,6 +11,7 @@ import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.normalizers.EditionNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.RecordValidator
+import ygor.field.HistoryEvent
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.*
@@ -34,11 +35,13 @@ class Record{
   String ezbIntegrationDate
   String zdbIntegrationUrl
   String ezbIntegrationUrl
+  List historyEvents
 
 
   static hasMany = [multiFields       : MultiField,
                     validation        : String,
-                    validationMessages: String]
+                    validationMessages: String,
+                    historyEvents     : HistoryEvent]
 
   static constraints = {
   }
@@ -59,6 +62,7 @@ class Record{
     }
     multiFields = [:]
     validation = [:]
+    historyEvents = []
     for (def ygorMapping in container.ygorMappings) {
       multiFields.put(ygorMapping.key, new MultiField(ygorMapping.value))
     }
@@ -102,23 +106,17 @@ class Record{
   }
 
 
-  List<MultiField> getIdentifierFields() {
-    List<MultiField> result = []
-    if (multiFields.get("ezbId")) result.add(multiFields.get("ezbId"))
-    if (multiFields.get("onlineIdentifier")) result.add(multiFields.get("onlineIdentifier"))
-    if (multiFields.get("parentPublicationTitleId")) result.add(multiFields.get("parentPublicationTitleId"))
-    if (multiFields.get("precedingPublicationTitleId")) result.add(multiFields.get("precedingPublicationTitleId"))
-    if (multiFields.get("printIdentifier")) result.add(multiFields.get("printIdentifier"))
-    if (multiFields.get("titleId")) result.add(multiFields.get("titleId"))
-    if (multiFields.get("zdbId")) result.add(multiFields.get("zdbId"))
-    result
-  }
-
-
   void normalize(String namespace) {
     EditionNormalizer.normalizeEditionNumber(this)
     for (MultiField multiField in multiFields.values()) {
       multiField.normalize(namespace)
+    }
+  }
+
+
+  void deriveHistoryEventObjects() {
+    for (int index = 0; index < multiFields.get("historyEventDate").getFields(MappingsContainer.ZDB).size(); index++){
+      historyEvents << new HistoryEvent(this, index)
     }
   }
 
@@ -161,6 +159,7 @@ class Record{
     validation.put(property, status)
   }
 
+
   Status getValidation(String property) {
     return validation.get(property)
   }
@@ -193,9 +192,16 @@ class Record{
     multiFields.each { k, v -> v.validate(namespace) }
   }
 
+
   def getCoverage() {
     false // TODO
   }
+
+
+  private void processHistoryEvents(){
+    // for () // TODO
+  }
+
 
   String asJson(JsonGenerator jsonGenerator) {
     jsonGenerator.writeStartObject()

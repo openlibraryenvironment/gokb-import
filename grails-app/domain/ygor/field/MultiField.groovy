@@ -83,6 +83,15 @@ class MultiField {
   }
 
 
+  String getFieldValue(String source, int index){
+    List<String> allValuesOfThisSource = getFieldValuesBySource(source)
+    if (allValuesOfThisSource.size() <= index){
+      return null
+    }
+    return allValuesOfThisSource.get(index)
+  }
+
+
   private List<String> getFieldValuesBySource(String source){
     List<String> result = []
     for (Field field in fields){

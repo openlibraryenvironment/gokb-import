@@ -20,9 +20,8 @@ class ZdbReader extends AbstractReader {
   final static String QUERY_ONLY_JOURNALS = "%20and%20dnb.frm=O"
   final static String FORMAT_IDENTIFIER = 'PicaPlus-xml'
 
-  ZdbReader() {
+  ZdbReader(){}
 
-  }
 
   @Override
   List<Map<String, List<String>>> readItemData(String queryString) {
@@ -67,9 +66,9 @@ class ZdbReader extends AbstractReader {
   }
 
 
-  static String getAPIQuery(String identifier, List<String> queryIdentifier) {
+  static String getAPIQuery(String identifier, String queryIdentifier) {
     return REQUEST_URL +
         "&recordSchema=" + FORMAT_IDENTIFIER +
-        "&" + QUERY_IDS.get(queryIdentifier.getAt(0)) + identifier + QUERY_ONLY_JOURNALS
+        "&" + QUERY_IDS.get(queryIdentifier) + identifier + QUERY_ONLY_JOURNALS
   }
 }

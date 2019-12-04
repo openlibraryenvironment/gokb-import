@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.*
 import de.hbznrw.ygor.format.YgorFormatter
 import org.apache.commons.lang.StringUtils
 import ygor.Record
+import ygor.field.HistoryEvent
 import ygor.field.MultiField
 
 import java.lang.reflect.Method
@@ -19,6 +20,7 @@ class JsonToolkit {
   private static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
   final private static String ARRAY = "\$ARRAY"
   final private static String COUNT = "\$COUNT"
+  final private static JsonGenerator JSON_GENERATOR = new JsonFactory().createGenerator(new StringWriter())
 
 
   private static def removeMetaClass(def dataStructure) {
@@ -83,6 +85,13 @@ class JsonToolkit {
           }
         }
       }
+    }
+    if (typeFilter.equals("\$TITLE") && record.historyEvents.size() > 0){
+      ArrayNode historyEvents = MAPPER.createArrayNode()
+      for (HistoryEvent he in record.historyEvents){
+        historyEvents.add(he.toJson())
+      }
+      result.set("historyEvents", historyEvents)
     }
     result
   }
