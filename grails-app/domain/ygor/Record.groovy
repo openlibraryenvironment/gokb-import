@@ -46,17 +46,14 @@ class Record{
   static constraints = {
   }
 
+
   Record(List<AbstractIdentifier> ids, MappingsContainer container) {
-    this(ids, container, null)
+    this(ids, container, UUID.randomUUID().toString())
   }
 
+
   Record(List<AbstractIdentifier> ids, MappingsContainer container, String uid) {
-    if (null == uid) {
-      this.uid = UUID.randomUUID().toString()
-    }
-    else {
-      this.uid = uid
-    }
+    this.uid = uid
     for (id in ids) {
       addIdentifier(id)
     }
@@ -71,6 +68,7 @@ class Record{
     zdbIntegrationUrl = null
     ezbIntegrationUrl = null
   }
+
 
   void addIdentifier(AbstractIdentifier identifier) {
     if (identifier instanceof ZdbIdentifier) {
@@ -114,9 +112,9 @@ class Record{
   }
 
 
-  void deriveHistoryEventObjects() {
+  void deriveHistoryEventObjects(Enrichment enrichment) {
     for (int index = 0; index < multiFields.get("historyEventDate").getFields(MappingsContainer.ZDB).size(); index++){
-      historyEvents << new HistoryEvent(this, index)
+      historyEvents << new HistoryEvent(this, index, enrichment)
     }
   }
 
@@ -168,6 +166,7 @@ class Record{
   void addMultiField(MultiField multiField) {
     multiFields.put(multiField.ygorFieldKey, multiField)
   }
+
 
   MultiField getMultiField(def ygorFieldKey) {
     multiFields.get(ygorFieldKey)

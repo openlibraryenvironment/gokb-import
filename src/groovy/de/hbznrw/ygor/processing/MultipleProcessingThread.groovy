@@ -109,7 +109,7 @@ class MultipleProcessingThread extends Thread {
       enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
       log.error(e.getMessage())
       log.info('Aborted MultipleProcessingThread run.')
-      def stacktrace = Throwables.getStackTraceAsString(e).substring(0, 800).replaceAll("\\p{C}", " ")
+      def stacktrace = Throwables.getStackTraceAsString(e).replaceAll("\\p{C}", " ")
       enrichment.setMessage(stacktrace + " ..")
       return
     }

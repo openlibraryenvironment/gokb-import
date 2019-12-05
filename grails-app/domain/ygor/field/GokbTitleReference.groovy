@@ -4,50 +4,39 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
-import de.hbznrw.ygor.readers.ZdbReader
 import org.apache.commons.lang.StringUtils
+import ygor.Enrichment
+import ygor.Record
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.DoiIdentifier
 import ygor.identifier.EissnIdentifier
+import ygor.identifier.EzbIdentifier
 import ygor.identifier.PissnIdentifier
 import ygor.identifier.ZdbIdentifier
 
 
 class GokbTitleReference{
   ZdbIdentifier zdbId
+  EzbIdentifier ezbId
   DoiIdentifier doiIdentifier
   EissnIdentifier onlineIdentifier
   PissnIdentifier printIdentifier
   String publicationTitle
 
-  static ZDB_READER = new ZdbReader()
-  static MAPPINGS = new MappingsContainer()
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
   static constraints = {}
 
 
-  GokbTitleReference(String identifier, String type){
-    String queryString = ZdbReader.getAPIQuery(identifier, type)
-    List<Map<String, List<String>>> referencedTitles = ZDB_READER.readItemData(queryString)
-    // for sake of simplicity, use only unambiguous references for now
-    if (referencedTitles.size() == 1){
-      Map<String, List<String>> referencedTitle = referencedTitles.getAt(0)
-      // ZDB ID from mappings
-      FieldKeyMapping zdbMapping = MAPPINGS.ygorMappings.get("zdbId")
-      zdbId = new ZdbIdentifier(referencedTitle.get(zdbMapping.zdbKeys?.get(0))?.get(0), zdbMapping)
-      // DOI from mappings
-      FieldKeyMapping doiMapping = MAPPINGS.ygorMappings.get("doi")
-      doiIdentifier = new DoiIdentifier(referencedTitle.get(doiMapping.zdbKeys?.get(0))?.get(0), doiMapping)
-      // eISSN from mappings
-      FieldKeyMapping eissnMapping = MAPPINGS.ygorMappings.get("onlineIdentifier")
-      onlineIdentifier = new EissnIdentifier(referencedTitle.get(eissnMapping.zdbKeys?.get(0))?.get(0), eissnMapping)
-      // pISSN from mappings
-      FieldKeyMapping pissnMapping = MAPPINGS.ygorMappings.get("printIdentifier")
-      printIdentifier = new PissnIdentifier(referencedTitle.get(pissnMapping.zdbKeys?.get(0))?.get(0), pissnMapping)
-      // publicationTitle from mappings
-      publicationTitle = referencedTitle.get(MAPPINGS.ygorMappings.get("publicationTitle").zdbKeys.get(0))?.get(0)
-    }
+  GokbTitleReference(String identifier, Enrichment enrichment){
+    Record referencedRecord = enrichment.dataContainer.getRecord(new ZdbIdentifier(identifier,
+        enrichment.mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)))
+    zdbId = referencedRecord.zdbId
+    ezbId = referencedRecord.ezbId
+    doiIdentifier = referencedRecord.doiId
+    onlineIdentifier = referencedRecord.onlineIdentifier
+    printIdentifier = referencedRecord.printIdentifier
+    publicationTitle = referencedRecord.multiFields.get("publicationTitle").getFirstPrioValue()
   }
 
 

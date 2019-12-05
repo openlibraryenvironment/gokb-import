@@ -59,7 +59,7 @@ class GokbExporter {
     log.debug("extracting titles ...")
     ArrayNode titles = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
-      record.deriveHistoryEventObjects()
+      record.deriveHistoryEventObjects(enrichment)
       ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
       appendValue(title, "name", "subTitle", ": ", true)
       titles.add(title)

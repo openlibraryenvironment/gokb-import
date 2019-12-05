@@ -3,8 +3,8 @@ package ygor.field
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.ArrayNode
-import de.hbznrw.ygor.readers.KbartReader
 import org.apache.commons.lang.StringUtils
+import ygor.Enrichment
 import ygor.Record
 
 
@@ -14,8 +14,8 @@ class HistoryEvent {
   // historyEventDate     : 039E:H --> GOKb: "$TITLE.historyEvents.$ARRAY.$COUNT.date"
   // historyEventRelationType : 039E:b --> GOKb:
   String date
-  List<GokbTitleReference> from
-  List<GokbTitleReference> to
+  List<GokbTitleReference> from = []
+  List<GokbTitleReference> to   = []
 
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
@@ -23,21 +23,31 @@ class HistoryEvent {
   static constraints = {}
 
 
-  HistoryEvent(Record record, int index){
+  HistoryEvent(Record record, int index, Enrichment enrichment){
     String fromId
     String toId
     String relationType = record.multiFields.get("historyEventRelationType").getFieldValue("zdb", index)
     if (relationType.equals("f")){
       fromId = record.multiFields.get("historyEventIdentifier").getFieldValue("zdb", index)
-      toId = record.multiFields.get("zdbId").getFieldValue("zdb", index)
+      toId = record.multiFields.get("zdbId").getFieldValue("zdb", 0)
       date = extractDate("from", record.multiFields.get("historyEventDate").getFieldValue("zdb", index))
     }
     else if(relationType.equals("s")){
       toId = record.multiFields.get("historyEventIdentifier").getFieldValue("zdb", index)
-      fromId = record.multiFields.get("zdbId").getFieldValue("zdb", index)
+      fromId = record.multiFields.get("zdbId").getFieldValue("zdb", 0)
     }
-    from = [] << new GokbTitleReference(fromId, KbartReader.KBART_HEADER_ZDB_ID)
-    to   = [] << new GokbTitleReference(toId, KbartReader.KBART_HEADER_ZDB_ID)
+    GokbTitleReference fromReference
+    GokbTitleReference toReference
+    try{
+      // exceptions can occur if we have a second order link
+      fromReference = new GokbTitleReference(fromId, enrichment)
+      toReference = new GokbTitleReference(toId, enrichment)
+    }
+    catch (Exception e){
+      return
+    }
+    from << fromReference
+    to   << toReference
   }
 
 
