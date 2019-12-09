@@ -55,6 +55,9 @@ class EnrichmentService{
 
 
   void prepareFile(Enrichment enrichment, Map pm){
+    if (enrichment == null || pm == null){
+      return
+    }
     def ph = enrichment.dataContainer.pkg.packageHeader
     ph.v.name.v = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
