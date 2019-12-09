@@ -224,10 +224,15 @@ class StatisticController{
 
 
   def correctFile = {
-    enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
+    Enrichment enrichment = getCurrentEnrichment()
+    enrichmentService.deleteFileAndFormat(enrichment)
     redirect(
         controller: 'Enrichment',
-        view: 'process'
+        view: 'process',
+        model: [
+            enrichment : enrichment,
+            currentView: 'process'
+        ]
     )
   }
 

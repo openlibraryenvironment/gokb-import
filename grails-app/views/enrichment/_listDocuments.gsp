@@ -95,6 +95,19 @@
                                 <select name="pkgNominalProvider" id="pkgNominalProvider"></select>
                             </div>
                             <br />
+                            <g:if test="${namespaces?.size() > 0}">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
+                                    <g:if test="${session.lastUpdate?.parameterMap?.pkgTitleId}">
+                                        <g:select name="pkgTitleId" id="pkgTitleId" from="${namespaces}" optionKey="text" optionValue="id" value="${session.lastUpdate?.parameterMap?.pkgTitleId.getAt(0)}" class="form-control"></g:select>
+                                    </g:if>
+                                    <g:else>
+                                        <g:select name="pkgTitleId" id="pkgTitleId" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':message(code:'listDocuments.js.placeholder.namespace')]}" class="form-control"></g:select>
+                                    </g:else>
+                                </div>
+                                <br>
+                            </g:if>
+
                             <script>
                                 var platform = null;
                                 if (${false != session.lastUpdate?.parameterMap?.pkgNominalPlatform?.getAt(0)}){
@@ -103,6 +116,10 @@
                                 var provider = null;
                                 if (${false != session.lastUpdate?.parameterMap?.pkgNominalProvider?.getAt(0)}){
                                     provider = "${session.lastUpdate?.parameterMap?.pkgNominalProvider?.getAt(0)}";
+                                }
+                                var titleId = null;
+                                if (${false != session.lastUpdate?.parameterMap?.pkgTitleId?.getAt(0)}){
+                                    titleId = "${session.lastUpdate?.parameterMap?.pkgTitleId?.getAt(0)}";
                                 }
                                 $(document).ready(function() {
                                     $('#pkgNominalPlatform').select2({
@@ -150,16 +167,9 @@
                                         }
                                     });
                                     $('#pkgNominalProvider').append($('<option></option>').attr('value', provider).text(provider));
+                                    $('#pkgTitleId').append($('<option></option>').attr('value', titleId).text(titleId));
                                 });
                             </script>
-
-                            <g:if test="${namespaces?.size() > 0}">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
-                                    <g:select name="namespace_title_id" id="namespace_title_id" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':message(code:'listDocuments.js.placeholder.namespace')]}" class="form-control"></g:select>
-                                </div>
-                                <br>
-                            </g:if>
 
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em> Curatory Group 1</span>
@@ -180,19 +190,6 @@
                                     <g:textField name="pkgCuratoryGroup2" size="24" value="hbz" class="form-control" />
                                 </g:else>
                             </div>
-
-                            <!--
-                            <div class="row">
-                                <div class="col-xs-6 col-xs-offset-6">
-                                    GOKb Source Name:
-                                    <br /><br />
-                            <g:textField name="pkgSourceName" size="24" value="LAS:eR" />
-                            &nbsp;
-                            <g:textField name="pkgSourceUrl" size="24" value="hbz" />
-                            <br />
-                            <br />
-                        </div>
-                    </div> .row -->
 
                         </g:if>
 
