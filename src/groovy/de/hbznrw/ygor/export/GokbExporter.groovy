@@ -326,24 +326,5 @@ class GokbExporter {
     }
     return result
   }
-
-
-  static boolean isValidHistoryEvent(ObjectNode historyEvent, Record record){
-    // Current validation assumption: there has to be a valid date in any case
-    if (historyEvent.get("date") == null || !record.multiFields.get("historyEventDate").isValid()) return false
-
-    // Current validation assumption: there has to be one of:
-    // - zdbId AND relationType
-    // - predecessor
-    // - predecessorOrSuccessor
-    // - successor
-    if ((historyEvent.get("zdbId") == null || historyEvent.get("relationType") == null)
-        && historyEvent.get("predecessor") == null
-        && historyEvent.get("predecessorOrSuccessor") == null
-        && historyEvent.get("successor") == null ) return false
-
-    // TODO implement further criteria using the Record's status fields
-
-    return true
-  }
+  
 }
