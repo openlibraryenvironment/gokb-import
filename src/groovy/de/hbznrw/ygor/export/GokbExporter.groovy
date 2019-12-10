@@ -328,21 +328,6 @@ class GokbExporter {
   }
 
 
-  static ObjectNode removeInvalidHistoryEvents(ObjectNode node, Record record) {
-    ArrayNode historyEvents = node.get("historyEvents")
-    if (historyEvents != null && historyEvents.size() != 0){
-      ArrayNode filteredHistoryEvents = NODE_FACTORY.arrayNode(historyEvents.size())
-      for (ObjectNode historyEvent in historyEvents){
-        if (isValidHistoryEvent(historyEvent, record)){
-          filteredHistoryEvents.add(historyEvent)
-        }
-      }
-      node.set("historyEvents", filteredHistoryEvents)
-    }
-    return node
-  }
-
-
   static boolean isValidHistoryEvent(ObjectNode historyEvent, Record record){
     // Current validation assumption: there has to be a valid date in any case
     if (historyEvent.get("date") == null || !record.multiFields.get("historyEventDate").isValid()) return false
