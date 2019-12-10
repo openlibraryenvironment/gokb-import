@@ -89,19 +89,17 @@ class HistoryEvent {
 
   ObjectNode toJson() {
     ObjectNode result = NODE_FACTORY.objectNode()
-    if (this.isValid()){
-      result.put("date", date)
-      ArrayNode fromNode = NODE_FACTORY.arrayNode()
-      for (GokbTitleReference fromReference in from){
-        fromNode.add(fromReference.toJson())
-      }
-      result.set("from", fromNode)
-      ArrayNode toNode = NODE_FACTORY.arrayNode()
-      for (GokbTitleReference toReference in to){
-        toNode.add(toReference.toJson())
-      }
-      result.set("to", toNode)
+    result.put("date", date)
+    ArrayNode fromNode = NODE_FACTORY.arrayNode()
+    for (GokbTitleReference fromReference in from){
+      fromNode.add(fromReference.toJson())
     }
+    result.set("from", fromNode)
+    ArrayNode toNode = NODE_FACTORY.arrayNode()
+    for (GokbTitleReference toReference in to){
+      toNode.add(toReference.toJson())
+    }
+    result.set("to", toNode)
     result
   }
 }

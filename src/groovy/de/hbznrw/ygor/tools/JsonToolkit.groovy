@@ -89,7 +89,9 @@ class JsonToolkit {
     if (typeFilter.equals("\$TITLE") && record.historyEvents.size() > 0){
       ArrayNode historyEvents = MAPPER.createArrayNode()
       for (HistoryEvent he in record.historyEvents){
-        historyEvents.add(he.toJson())
+        if (he.isValid()){
+          historyEvents.add(he.toJson())
+        }
       }
       result.set("historyEvents", historyEvents)
     }
