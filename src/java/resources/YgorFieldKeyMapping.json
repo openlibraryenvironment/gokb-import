@@ -619,6 +619,19 @@
     "type" : "ID"
   },
   {
+    "ygor" : "publicationSubTitle",
+    "in" : {
+      "kbart" : "",
+      "zdb" : ["021C:a", "021C:r"],
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
+    },
+    "order" : ["zdb"],
+    "type" : "Title"
+  },
+  {
     "ygor" : "publicationTitle",
     "in" : {
       "kbart" : "publication_title",
@@ -632,14 +645,14 @@
     "type" : "Title"
   },
   {
-    "ygor" : "publicationSubTitle",
+    "ygor" : "publicationTitleVariation",
     "in" : {
       "kbart" : "",
-      "zdb" : ["021C:a", "021C:r", "025@:a"],
+      "zdb" : ["025@:a"],
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
+      "gokb" : []
     },
     "order" : ["zdb"],
     "type" : "Title"
