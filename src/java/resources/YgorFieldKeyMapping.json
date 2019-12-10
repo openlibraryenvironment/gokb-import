@@ -301,6 +301,19 @@
     "type" : "String"
   },
   {
+    "ygor" : "historyEventTitle",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "039E:Y",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.title"]
+    },
+    "order" : ["zdb"],
+    "type" : "Title"
+  },
+  {
     "ygor" : "imprint",
     "out" : {
       "gokb" : ["$TITLE.imprint"]
