@@ -60,9 +60,17 @@ class HistoryEvent {
       else if (relation.equals("to")){
         year = zdbDateSpan.substring(0,4)
       }
-      return year.concat("-01-01")
+      return appendDateFormat(year)
+    }
+    if (zdbDateSpan.matches("[\\d]{4}")){
+      return appendDateFormat(zdbDateSpan)
     }
     return null
+  }
+
+
+  private static String appendDateFormat(String year){
+    return year.concat("-01-01")
   }
 
 
