@@ -287,42 +287,6 @@ class EnrichmentController{
   }
 
 
-  def downloadPackageFile = {
-    def en = getCurrentEnrichment()
-    if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
-      render(file: result, fileName: "${en.resultName}.package.json")
-    }
-    else{
-      noValidEnrichment()
-    }
-  }
-
-
-  def downloadTitlesFile = {
-    def en = getCurrentEnrichment()
-    if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
-      render(file: result, fileName: "${en.resultName}.titles.json")
-    }
-    else{
-      noValidEnrichment()
-    }
-  }
-
-
-  def downloadRawFile = {
-    def en = getCurrentEnrichment()
-    if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
-      render(file: result, fileName: "${en.resultName}.raw.json")
-    }
-    else{
-      noValidEnrichment()
-    }
-  }
-
-
   def ajaxGetStatus = {
     def en = getCurrentEnrichment()
     if (en){

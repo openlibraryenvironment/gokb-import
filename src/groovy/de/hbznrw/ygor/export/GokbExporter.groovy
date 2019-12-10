@@ -269,7 +269,8 @@ class GokbExporter {
       if (idNode.get("type").asText().equals("titleId")) {
         titleIdNode = idNode
         break
-      } else {
+      }
+      else {
         count++
       }
     }
@@ -295,8 +296,10 @@ class GokbExporter {
     titleIdNode.remove("type")
     titleIdNode.set("type", new TextNode(namespace))
     // normalize value
-    TextNode oldValue = titleIdNode.remove("value")
-    titleIdNode.set("value", new TextNode(DoiNormalizer.normalizeDoi(oldValue.asText())))
+    if (titleIdNode.get("type").asText().equals("doi")){
+      TextNode oldValue = titleIdNode.remove("value")
+      titleIdNode.set("value", new TextNode(DoiNormalizer.normalizeDoi(oldValue.asText())))
+    }
   }
 
 
