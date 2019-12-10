@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.format.GokbFormatter
 import de.hbznrw.ygor.normalizers.DoiNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.ygor.tools.StopwordToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import ygor.Enrichment
@@ -61,7 +62,7 @@ class GokbExporter {
     for (Record record in enrichment.dataContainer.records.values()) {
       record.deriveHistoryEventObjects(enrichment)
       ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
-      appendValue(title, "name", "subTitle", ": ", true)
+      title = postProcessPublicationTitle(title, record)
       titles.add(title)
     }
     titles = removeEmptyFields(titles)
@@ -171,24 +172,56 @@ class GokbExporter {
   }
 
 
-  private static void appendValue(ObjectNode node,
-                                  String targetField,
-                                  String appendixField,
-                                  String delimiter,
-                                  boolean removeFromAppendixField) {
-    String appendixValue = node.path(appendixField).asText()
-    if (!StringUtils.isEmpty(appendixValue)) {
-      String stubValue = node.path(targetField).asText()
-      if (!StringUtils.isEmpty(stubValue)) {
-        stubValue = stubValue.concat(delimiter)
-      }
-      stubValue = stubValue.concat(appendixValue)
-      node.set(targetField, new TextNode(stubValue))
-      if (removeFromAppendixField) {
-        node.set(appendixField, new TextNode(""))
+  private static ObjectNode postProcessPublicationTitle(ObjectNode titleNode, Record record){
+    String title = titleNode.get("name").asText()
+    for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
+      String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
+      if (!StringUtils.isEmpty(extendedTitle)){
+        if (isRoughlySubString(title, extendedTitle)){
+          titleNode.set("name", new TextNode(extendedTitle))
+        }
+        else{
+          titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
+        }
+        return titleNode
       }
     }
+    return titleNode
+  }
 
+
+  private static boolean isRoughlySubString(String subStringCandidate, String longerString){
+    List<String> subStringStems = getStems(subStringCandidate)
+    List<String> longerStringStems = getStems(longerString)
+    if (subStringStems.size() >= longerStringStems.size()){
+      return false
+    }
+    for (String subStem in subStringStems){
+      if (!(subStem in longerStringStems)){
+        return false
+      }
+    }
+    return true
+  }
+
+
+  /**
+   * This helper method is called get"Stems" as syntactical stemming intended (but not implemented for now).
+   */
+  static private List<String> getStems(String title){
+    List<String> result = []
+    String[] splitTitle = title.split(" ")
+    for (String split in splitTitle){
+      if (!StopwordToolkit.isStopword(split) && isWord(split)){
+        result.add(split)
+      }
+    }
+    return result
+  }
+
+
+  private static boolean isWord(String string){
+    return string.matches(".*[A-Za-zà].*")
   }
 
 
@@ -326,5 +359,5 @@ class GokbExporter {
     }
     return result
   }
-  
+
 }
