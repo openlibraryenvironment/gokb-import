@@ -212,8 +212,9 @@ class GokbExporter {
     List<String> result = []
     String[] splitTitle = title.split(" ")
     for (String split in splitTitle){
+      split = split.toLowerCase()
       if (!StopwordToolkit.isStopword(split) && isWord(split)){
-        result.add(split)
+        result.add(split.replaceAll("[^a-zà]", ""))
       }
     }
     return result
@@ -221,7 +222,7 @@ class GokbExporter {
 
 
   private static boolean isWord(String string){
-    return string.matches(".*[A-Za-zà].*")
+    return string.matches(".*[a-zà].*")
   }
 
 
