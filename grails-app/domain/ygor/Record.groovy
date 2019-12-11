@@ -114,6 +114,8 @@ class Record{
 
 
   void deriveHistoryEventObjects(Enrichment enrichment) {
+    // first, re-set history - there might be old events of previous calculations
+    historyEvents = []
     for (int index = 0; index < multiFields.get("historyEventDate").getFields(MappingsContainer.ZDB).size(); index++){
       historyEvents << new HistoryEvent(this, index, enrichment)
     }
