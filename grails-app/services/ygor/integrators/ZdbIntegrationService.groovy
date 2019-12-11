@@ -72,6 +72,9 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         integrateRecord(owner, newLinkedRecord, [zdbIdMapping])
         result.add(newLinkedRecord)
       }
+      else{
+        result.add(existing)
+      }
     }
     result
   }
