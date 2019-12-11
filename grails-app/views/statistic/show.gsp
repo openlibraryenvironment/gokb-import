@@ -30,7 +30,7 @@
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                        id="${record.key}">${record.value.publicationTitle}</g:link>
+                                        id="${record.key}">${record.value.displayTitle}</g:link>
                             </td>
                             <g:if test="${displayZDB}">
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
@@ -72,7 +72,7 @@
                     <g:each in="${validRecords}" var="record">
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell"><g:link action="edit" params="[resultHash: resultHash]"
-                                                                id="${record.key}">${record.value.publicationTitle}</g:link></td>
+                                                                id="${record.key}">${record.value.displayTitle}</g:link></td>
                             <g:if test="${displayZDB}">
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
                                     <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>

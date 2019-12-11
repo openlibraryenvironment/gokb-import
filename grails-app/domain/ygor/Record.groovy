@@ -11,6 +11,7 @@ import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.normalizers.EditionNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.RecordValidator
+import org.apache.commons.lang.StringUtils
 import ygor.field.HistoryEvent
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -269,7 +270,19 @@ class Record{
     for (def multiField in multiFields) {
       result.put(multiField.key, multiField.value.getFirstPrioValue())
     }
+    result.put("displayTitle", this.getDisplayTitle())
     result
+  }
+
+
+  String getDisplayTitle(){
+    List<String> titleFieldNames = ["publicationTitleVariation", "publicationSubTitle", "publicationTitle"]
+    for (String displayTitleCandidateFieldNames in titleFieldNames){
+      String value = multiFields.get(displayTitleCandidateFieldNames).getFirstPrioValue()
+      if (!StringUtils.isEmpty(value)){
+        return value
+      }
+    }
   }
 
 
