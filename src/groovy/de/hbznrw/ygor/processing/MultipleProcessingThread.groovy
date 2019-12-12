@@ -48,7 +48,7 @@ class MultipleProcessingThread extends Thread {
   private ZdbReader zdbReader
   private EzbReader ezbReader
 
-  MultipleProcessingThread(Enrichment en, HashMap options) {
+  MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     enrichment = en
     apiCalls = options.get('options')
     delimiter = options.get('delimiter')
@@ -57,9 +57,9 @@ class MultipleProcessingThread extends Thread {
     recordSeparator = options.get('recordSeparator')
     platform = options.get('platform')
     kbartFile = en.originPathName
-    kbartReader = new KbartReader(this, delimiter)
     zdbReader = new ZdbReader()
     ezbReader = new EzbReader()
+    this.kbartReader = kbartReader
     zdbKeyMapping = en.mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
     pissnKeyMapping = en.mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
     eissnKeyMapping = en.mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)

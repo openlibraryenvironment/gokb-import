@@ -1,7 +1,10 @@
 package ygor
 
 import de.hbznrw.ygor.export.Statistics
+import de.hbznrw.ygor.processing.YgorProcessingException
+import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
+import org.apache.commons.io.IOUtils
 import org.mozilla.universalchardet.UniversalDetector
 
 
@@ -11,6 +14,7 @@ class EnrichmentController{
 
   EnrichmentService enrichmentService
   GokbService gokbService
+  KbartReader kbartReader
 
   def index = {
     redirect(action: 'process')
@@ -85,65 +89,92 @@ class EnrichmentController{
       // the file form is unpopulated but the previously selected file is unchanged
       file = request.session.lastUpdate.file
     }
-    String encoding
-    try {
-      encoding = UniversalDetector.detectCharset(file.getInputStream())
+    String encoding = getEncoding(file)
+    if (encoding && encoding != "UTF-8"){
+      flash.error = message(code: 'error.noUtf8Encoding')
+      redirect(action: 'process')
     }
-    catch (java.lang.IllegalStateException ise){
-      ByteArrayOutputStream baos = new ByteArrayOutputStream()
-      org.apache.commons.io.IOUtils.copy(file.getInputStream(), baos)
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
-      encoding = UniversalDetector.detectCharset(file.getInputStream())
-    }
-    log.debug("Detected encoding ${encoding}")
-    if (!encoding || encoding == "UTF-8"){
-      def foDelimiter = request.parameterMap['formatDelimiter'][0]
+    def foDelimiter = request.parameterMap['formatDelimiter'][0]
 
-      def foQuote = null                  // = request.parameterMap['formatQuote'][0]
-      def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
-      def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
-      def dataTyp = request.parameterMap['dataTyp'][0]
+    def foQuote = null                  // = request.parameterMap['formatQuote'][0]
+    def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
+    def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
+    def dataTyp = request.parameterMap['dataTyp'][0]
 
-      if (!request.session.lastUpdate){
-        request.session.lastUpdate = [:]
-      }
-      request.session.lastUpdate.file = file
-      request.session.lastUpdate.foDelimiter = foDelimiter
-      request.session.lastUpdate.foQuote = foQuote
-      request.session.lastUpdate.foQuoteMode = foQuoteMode
-      request.session.lastUpdate.recordSeparator = recordSeparator
-      request.session.lastUpdate.dataTyp = dataTyp
+    setInputFieldDataToLastUpdate(file, foDelimiter, foQuote, foQuoteMode, recordSeparator, dataTyp)
 
-      if (file.empty){
-        flash.info = null
-        flash.warning = null
-        flash.error = message(code: 'error.noValidFile')
-        render(view: 'process',
-            model: [
-                enrichment : getCurrentEnrichment(),
-                currentView: 'process'
-            ]
-        )
-        return
-      }
-      Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
-      enrichment.status = Enrichment.ProcessingState.PREPARE_1
-      redirect(
-          action: 'process',
-          params: [
-              resultHash: enrichment.resultHash,
-              originHash: enrichment.originHash
-          ],
+    if (file.empty){
+      flash.info = null
+      flash.warning = null
+      flash.error = message(code: 'error.noValidFile')
+      render(view: 'process',
           model: [
               enrichment : getCurrentEnrichment(),
               currentView: 'process'
           ]
       )
+      return
     }
-    else{
-      flash.error = message(code: 'error.noUtf8Encoding') //+ encoding!=null?" but: "+encoding:""
-      redirect(action: 'process')
+
+    kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()), foDelimiter)
+    try {
+      kbartReader.checkHeader()
     }
+    catch (YgorProcessingException ype) {
+      flash.info = null
+      flash.warning = null
+      flash.error = ype.getMessage()
+      render(view: 'process',
+          model: [
+              enrichment : getCurrentEnrichment(),
+              currentView: 'process'
+          ]
+      )
+      return
+    }
+
+    Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
+    enrichment.status = Enrichment.ProcessingState.PREPARE_1
+    redirect(
+        action: 'process',
+        params: [
+            resultHash: enrichment.resultHash,
+            originHash: enrichment.originHash
+        ],
+        model: [
+            enrichment : getCurrentEnrichment(),
+            currentView: 'process'
+        ]
+    )
+  }
+
+
+  private void setInputFieldDataToLastUpdate(file, String foDelimiter, foQuote, foQuoteMode, String recordSeparator, String dataTyp){
+    if (!request.session.lastUpdate){
+      request.session.lastUpdate = [:]
+    }
+    request.session.lastUpdate.file = file
+    request.session.lastUpdate.foDelimiter = foDelimiter
+    request.session.lastUpdate.foQuote = foQuote
+    request.session.lastUpdate.foQuoteMode = foQuoteMode
+    request.session.lastUpdate.recordSeparator = recordSeparator
+    request.session.lastUpdate.dataTyp = dataTyp
+  }
+
+
+  private String getEncoding(file){
+    String encoding
+    try{
+      encoding = UniversalDetector.detectCharset(file.getInputStream())
+    }
+    catch (IllegalStateException ise){
+      ByteArrayOutputStream baos = new ByteArrayOutputStream()
+      IOUtils.copy(file.getInputStream(), baos)
+      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
+      encoding = UniversalDetector.detectCharset(file.getInputStream())
+    }
+    log.debug("Detected encoding ${encoding}")
+    encoding
   }
 
 
@@ -193,65 +224,71 @@ class EnrichmentController{
 
 
   def processFile = {
-    def pmOptions = request.parameterMap['processOption']
-    def en = getCurrentEnrichment()
-    if (en.status != Enrichment.ProcessingState.WORKING){
-      if (!pmOptions){
-        flash.info = null
-        flash.warning = message(code: 'warning.noEnrichmentOption')
-        flash.error = null
+    try{
+      def pmOptions = request.parameterMap['processOption']
+      def en = getCurrentEnrichment()
+      if (en.status != Enrichment.ProcessingState.WORKING){
+        if (!pmOptions){
+          flash.info = null
+          flash.warning = message(code: 'warning.noEnrichmentOption')
+          flash.error = null
+        }
+        else{
+          if (!request.session.lastUpdate){
+            request.session.lastUpdate = [:]
+          }
+          request.session.lastUpdate.pmOptions = pmOptions
+
+          if (en.status != Enrichment.ProcessingState.WORKING){
+            flash.info = message(code: 'info.started')
+            flash.warning = null
+            flash.error = null
+
+            def format = getCurrentFormat()
+            def options = [
+                'options'    : pmOptions,
+                'delimiter'  : format.get('delimiter'),
+                'quote'      : format.get('quote'),
+                'quoteMode'  : format.get('quoteMode'),
+                'dataTyp'    : format.get('dataTyp'),
+                'ygorVersion': grailsApplication.config.ygor.version,
+                'ygorType'   : grailsApplication.config.ygor.type
+            ]
+            en.process(options, kbartReader)
+          }
+        }
+      }
+      if (en.status != Enrichment.ProcessingState.FINISHED){
+        redirect(
+            action: 'process',
+            params: [
+                resultHash: en.resultHash,
+                originHash: en.originHash
+            ],
+            model: [
+                enrichment : en,
+                currentView: 'process'
+            ]
+        )
       }
       else{
-        if (!request.session.lastUpdate){
-          request.session.lastUpdate = [:]
-        }
-        request.session.lastUpdate.pmOptions = pmOptions
-
-        if (en.status != Enrichment.ProcessingState.WORKING){
-          flash.info = message(code: 'info.started')
-          flash.warning = null
-          flash.error = null
-
-          def format = getCurrentFormat()
-          def options = [
-              'options'    : pmOptions,
-              'delimiter'  : format.get('delimiter'),
-              'quote'      : format.get('quote'),
-              'quoteMode'  : format.get('quoteMode'),
-              'dataTyp'    : format.get('dataTyp'),
-              'ygorVersion': grailsApplication.config.ygor.version,
-              'ygorType'   : grailsApplication.config.ygor.type
-          ]
-          en.process(options)
-        }
+        redirect(
+            controller: 'Statistic',
+            action: 'show',
+            params: [
+                resultHash: en.resultHash,
+                originHash: en.originHash
+            ],
+            model: [
+                enrichment : en,
+                currentView: 'process'
+            ]
+        )
       }
     }
-    if (en.status != Enrichment.ProcessingState.FINISHED){
-      redirect(
-          action: 'process',
-          params: [
-              resultHash: en.resultHash,
-              originHash: en.originHash
-          ],
-          model: [
-              enrichment : en,
-              currentView: 'process'
-          ]
-      )
-    }
-    else{
-      redirect(
-          controller: 'Statistic',
-          action: 'show',
-          params: [
-              resultHash: en.resultHash,
-              originHash: en.originHash
-          ],
-          model: [
-              enrichment : en,
-              currentView: 'process'
-          ]
-      )
+    catch(YgorProcessingException ype){
+      flash.error = ype.getMessage()
+      redirect(action: 'process')
     }
   }
 

@@ -1,13 +1,14 @@
 package de.hbznrw.ygor.readers
 
-import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.processing.YgorProcessingException
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.apache.commons.csv.QuoteMode
 import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.tools.shell.util.MessageSource
 import ygor.field.FieldKeyMapping
+import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
 class KbartReader {
 
@@ -17,13 +18,14 @@ class KbartReader {
   static final KBART_HEADER_PRINT_IDENTIFIER = "print_identifier"
   static final KBART_HEADER_DOI_IDENTIFIER = "doi_identifier"
 
-  private MultipleProcessingThread owner
-
   private CSVFormat csvFormat
   private CSVParser csv
   private List<String> csvHeader
   private Iterator<CSVRecord> iterator
   private CSVRecord lastItemReturned
+
+  MessageSource messageSource
+  static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
   static MANDATORY_KBART_KEYS = [
       'date_first_issue_online',
@@ -43,9 +45,8 @@ class KbartReader {
       'zdb_id': ['zdb-id', 'ZDB_ID', 'ZDB-ID']
   ]
 
-  KbartReader(MultipleProcessingThread owner, String delimiter) {
-    this.owner = owner
-    String fileData = new File(owner.kbartFile).getText();
+  KbartReader(Reader kbartFile, String delimiter) throws YgorProcessingException{
+    String fileData = kbartFile.getText()
     // remove the BOM from the Data
     fileData.replace('\uFEFF', '')
     // automatic delimiter adaptation
@@ -58,13 +59,13 @@ class KbartReader {
         favourite = prop
       }
     }
-    if (delimiter != favourite)
+    if (delimiter != favourite){
       log.warn("delimiter automagically changed from '" + delimiter + "' to '" + favourite + "'")
+    }
     char delimiterChar = resolver.get(favourite)
     csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar).withIgnoreSurroundingSpaces()
     csv = CSVParser.parse(fileData, csvFormat)
     csvHeader = csv.getHeaderMap().keySet() as ArrayList
-    checkHeader(csvHeader)
     iterator = csv.iterator()
   }
 
@@ -120,10 +121,10 @@ class KbartReader {
   }
 
 
-  void checkHeader(List<String> csvHeader) {
+  void checkHeader(List<String> csvHeader) throws YgorProcessingException {
     def missingKeys = []
     if (!csvHeader) {
-      throw new YgorProcessingException("Fehlender Dateiinhalt im CSV-File.")
+      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader'))
     }
     // check mandatory fields
     MANDATORY_KBART_KEYS.each { kbk ->

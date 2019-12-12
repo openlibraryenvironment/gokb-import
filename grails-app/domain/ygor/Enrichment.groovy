@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.processing.YgorProcessingException
+import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.FileToolkit
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.SessionToolkit
@@ -74,7 +76,7 @@ class Enrichment{
     dataContainer = new DataContainer()
   }
 
-  def process(HashMap options){
+  def process(HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     dataType = options.get('dataTyp')
     ygorVersion = options.get('ygorVersion')
@@ -83,7 +85,7 @@ class Enrichment{
     dataContainer.info.type = options.get('ygorType')
 
     mappingsContainer = new MappingsContainer()
-    thread = new MultipleProcessingThread(this, options)
+    thread = new MultipleProcessingThread(this, options, kbartReader)
     date = LocalDateTime.now().toString()
     thread.start()
   }
