@@ -91,8 +91,11 @@ class EnrichmentController{
     }
     String encoding = getEncoding(file)
     if (encoding && encoding != "UTF-8"){
+      flash.info = null
+      flash.warning = null
       flash.error = message(code: 'error.noUtf8Encoding')
       redirect(action: 'process')
+      return
     }
     def foDelimiter = request.parameterMap['formatDelimiter'][0]
 
