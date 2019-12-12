@@ -6,7 +6,6 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.apache.commons.csv.QuoteMode
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.tools.shell.util.MessageSource
 import ygor.field.FieldKeyMapping
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
@@ -24,7 +23,6 @@ class KbartReader {
   private Iterator<CSVRecord> iterator
   private CSVRecord lastItemReturned
 
-  MessageSource messageSource
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
   static MANDATORY_KBART_KEYS = [
@@ -121,7 +119,7 @@ class KbartReader {
   }
 
 
-  void checkHeader(List<String> csvHeader) throws YgorProcessingException {
+  void checkHeader() throws YgorProcessingException {
     def missingKeys = []
     if (!csvHeader) {
       throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader'))
