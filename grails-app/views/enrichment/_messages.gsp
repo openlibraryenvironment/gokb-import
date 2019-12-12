@@ -50,7 +50,7 @@
             <a data-toggle="collapse" href="#gokb-errors">Errors (${flash.error.size()})</a>
           </h4>
         </div>
-        <div id="gokb-errors" class="panel-collapse collapse">
+        <div id="gokb-errors" class="panel-collapse collapse in">
           <div class="panel-body">
             <g:if test="${flash.error instanceof String}">
               <div class="alert alert-danger" role="alert" style="z-index:2;">
