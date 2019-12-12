@@ -62,7 +62,16 @@ class KbartReader {
     }
     char delimiterChar = resolver.get(favourite)
     csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar).withIgnoreSurroundingSpaces()
-    csv = CSVParser.parse(fileData, csvFormat)
+    try{
+      csv = CSVParser.parse(fileData, csvFormat)
+    }
+    catch(IllegalArgumentException iae){
+      String duplicateName = iae.getMessage().minus("The header contains a duplicate name: \"")
+      duplicateName = duplicateName.substring(0, duplicateName.indexOf("\""))
+      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.multipleColumn').toString()
+          .replace("{}", duplicateName)
+          .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
+    }
     csvHeader = csv.getHeaderMap().keySet() as ArrayList
     iterator = csv.iterator()
   }
@@ -122,7 +131,8 @@ class KbartReader {
   void checkHeader() throws YgorProcessingException {
     def missingKeys = []
     if (!csvHeader) {
-      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader'))
+      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader').toString()
+          .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }
     // check mandatory fields
     MANDATORY_KBART_KEYS.each { kbk ->
@@ -139,7 +149,9 @@ class KbartReader {
       }
     }
     if (missingKeys.size() > 0) {
-      throw new YgorProcessingException("Fehlende Spalten im CSV-Header: " + missingKeys.toString())
+      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingColumns').toString()
+          .replace("{}", missingKeys.toString())
+          .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }
     // replace aliases
     for (Map.Entry<String, List<String>> alias : ALIASES) {

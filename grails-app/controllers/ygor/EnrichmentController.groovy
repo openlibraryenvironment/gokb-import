@@ -93,7 +93,8 @@ class EnrichmentController{
     if (encoding && encoding != "UTF-8"){
       flash.info = null
       flash.warning = null
-      flash.error = message(code: 'error.kbart.noUtf8Encoding')
+      flash.error = message(code: 'error.kbart.noUtf8Encoding').toString().concat("<br>")
+          .concat(message(code: 'error.kbart.messageFooter').toString())
       redirect(action: 'process')
       return
     }
@@ -109,7 +110,8 @@ class EnrichmentController{
     if (file.empty){
       flash.info = null
       flash.warning = null
-      flash.error = message(code: 'error.kbart.noValidFile')
+      flash.error = message(code: 'error.kbart.noValidFile').toString().concat("<br>")
+          .concat(message(code: 'error.kbart.messageFooter').toString())
       render(view: 'process',
           model: [
               enrichment : getCurrentEnrichment(),
@@ -118,9 +120,8 @@ class EnrichmentController{
       )
       return
     }
-
-    kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()), foDelimiter)
     try {
+      kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()), foDelimiter)
       kbartReader.checkHeader()
     }
     catch (YgorProcessingException ype) {

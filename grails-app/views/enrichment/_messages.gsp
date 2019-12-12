@@ -47,7 +47,7 @@
       <div class="panel panel-default">
         <div class="panel-heading-invalid">
           <h4 class="panel-title">
-            <a data-toggle="collapse" href="#gokb-errors">Errors (${flash.error.size()})</a>
+            <a data-toggle="collapse" href="#gokb-errors">${message(code: 'error')}</a>
           </h4>
         </div>
         <div id="gokb-errors" class="panel-collapse collapse in">
