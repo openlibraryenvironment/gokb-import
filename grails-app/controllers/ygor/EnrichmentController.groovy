@@ -93,7 +93,7 @@ class EnrichmentController{
     if (encoding && encoding != "UTF-8"){
       flash.info = null
       flash.warning = null
-      flash.error = message(code: 'error.noUtf8Encoding')
+      flash.error = message(code: 'error.kbart.noUtf8Encoding')
       redirect(action: 'process')
       return
     }
@@ -109,7 +109,7 @@ class EnrichmentController{
     if (file.empty){
       flash.info = null
       flash.warning = null
-      flash.error = message(code: 'error.noValidFile')
+      flash.error = message(code: 'error.kbart.noValidFile')
       render(view: 'process',
           model: [
               enrichment : getCurrentEnrichment(),
