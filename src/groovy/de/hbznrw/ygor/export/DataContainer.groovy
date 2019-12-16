@@ -86,35 +86,35 @@ class DataContainer {
   private Record getRecordFromIdentifier(AbstractIdentifier identifier){
     if (identifier instanceof ZdbIdentifier){
       for (Record record in records.values()){
-        if (record.zdbId.identifier.equals(identifier.identifier)){
+        if (identifier.identifier.equals(record.zdbId?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof EzbIdentifier){
       for (Record record in records.values()){
-        if (record.ezbId.identifier.equals(identifier.identifier)){
+        if (identifier.identifier.equals(record.ezbId?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof DoiIdentifier){
       for (Record record in records.values()){
-        if (record.doiId.identifier.equals(identifier.identifier)){
+        if (identifier.identifier.equals(record.doiId?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof EissnIdentifier){
       for (Record record in records.values()){
-        if (record.onlineIdentifier.identifier.equals(identifier.identifier)){
+        if (identifier.identifier.equals(record.onlineIdentifier?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof PissnIdentifier){
       for (Record record in records.values()){
-        if (record.printIdentifier.identifier.equals(identifier.identifier)){
+        if (identifier.identifier.equals(record.printIdentifier?.identifier)){
           return record
         }
       }
