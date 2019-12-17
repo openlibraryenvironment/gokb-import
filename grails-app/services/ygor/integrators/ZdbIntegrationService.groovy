@@ -27,16 +27,16 @@ class ZdbIntegrationService extends ExternalIntegrationService {
     zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
     processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
     List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.pissnKeyMapping, owner.eissnKeyMapping]
-    List<Record> linkedRecords = []
-    for (Record record in dataContainer.records.values()) {
+    List<Record> existingRecords = []
+    existingRecords.addAll(dataContainer.records.values())
+    for (Record record in existingRecords) {
       if (isApiCallMedium(record)) {
         integrateRecord(owner, record, idMappings)
       }
-      linkedRecords.addAll(getLinkedRecords(record, owner))
+      for (Record linkedRecord in getLinkedRecords(record, owner)){
+        dataContainer.addRecord(linkedRecord)
+      }
       owner.increaseProgress()
-    }
-    for (Record linkedRecord in linkedRecords){
-      dataContainer.addRecord(linkedRecord)
     }
   }
 
