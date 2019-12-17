@@ -2,8 +2,7 @@ package de.hbznrw.ygor.readers
 
 import groovy.util.logging.Log4j
 import groovy.util.slurpersupport.GPathResult
-import ygor.Record
-import ygor.field.FieldKeyMapping
+
 
 @Log4j
 class ZdbReader extends AbstractReader {
@@ -34,16 +33,29 @@ class ZdbReader extends AbstractReader {
         for (GPathResult record in records) {
           Map<String, List<String>> recordMap = new TreeMap<String, String>()
           def subfields = record.depthFirst().findAll { it.name() == 'subf' }
-          subfields.each { subfield ->
+          int count = 0
+          int size = 0
+          List<String> readSubFieldsInThisTag
+          for (def subfield in subfields){
             if (subfield.parent().parent().name() == "global") {
-              def key = subfield.parent().attributes().get("id").concat(":").concat(subfield.attributes().get("id"))
-              def value = subfield.localText()[0]
-              List<String> values = recordMap.get(key)
-              if (values == null){
-                values = []
+              if (count == 0){
+                size = subfield.parent().children().size()
+                readSubFieldsInThisTag = []
               }
-              values << value
-              recordMap.put(key, values)
+              def key = subfield.parent().attributes().get("id").concat(":").concat(subfield.attributes().get("id"))
+              if (!readSubFieldsInThisTag.contains(key)){
+                def value = subfield.localText()[0]
+                List<String> values = recordMap.get(key)
+                if (values == null){
+                  values = []
+                }
+                values << value
+                recordMap.put(key, values)
+                readSubFieldsInThisTag.add(key)
+              }
+              if (++count == size){
+                count = 0
+              }
             }
           }
           if (!recordMap.isEmpty()) {
