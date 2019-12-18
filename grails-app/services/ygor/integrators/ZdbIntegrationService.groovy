@@ -43,7 +43,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
   private void integrateRecord(MultipleProcessingThread owner, Record record, List<FieldKeyMapping> idMappings){
     Map<String, String> zdbMatch = getBestMatch(owner, record)
-    if (zdbMatch){
+    if (zdbMatch != null && !zdbMatch.isEmpty()){
       record.zdbIntegrationDate = processStart
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
       for (idMapping in idMappings){
@@ -70,7 +70,11 @@ class ZdbIntegrationService extends ExternalIntegrationService {
       if (existing == null){
         Record newLinkedRecord = new Record([] << zdbIdentifier, owner.enrichment.mappingsContainer)
         integrateRecord(owner, newLinkedRecord, [zdbIdMapping])
-        result.add(newLinkedRecord)
+        if (newLinkedRecord.zdbIntegrationDate != null){
+          // If there is no zdbIntegrationDate, the integration didn't happen, most probably because there was
+          // no match. In this case, we would not add an empty record stub to the result list.
+          result.add(newLinkedRecord)
+        }
       }
       else{
         result.add(existing)
@@ -94,6 +98,9 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         if (!readData.isEmpty()) {
           record.zdbIntegrationUrl = queryString
           break
+        }
+        else{
+          return new HashMap<String, String>()
         }
       }
     }
