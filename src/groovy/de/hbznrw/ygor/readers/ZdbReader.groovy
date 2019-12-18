@@ -23,49 +23,43 @@ class ZdbReader extends AbstractReader {
 
 
   @Override
-  List<Map<String, List<String>>> readItemData(String queryString) {
+  List<Map<String, List<String>>> readItemData(String queryString){
     List<Map<String, List<String>>> result = new ArrayList<>()
-    try {
-      log.info("query ZDB: " + queryString)
-      String text = new URL(queryString).getText()
-      def records = new XmlSlurper().parseText(text).depthFirst().findAll { it.name() == 'records' }
-      if (records) {
-        for (GPathResult record in records) {
-          Map<String, List<String>> recordMap = new TreeMap<String, String>()
-          def subfields = record.depthFirst().findAll { it.name() == 'subf' }
-          int count = 0
-          int size = 0
-          List<String> readSubFieldsInThisTag
-          for (def subfield in subfields){
-            if (subfield.parent().parent().name() == "global") {
-              if (count == 0){
-                size = subfield.parent().children().size()
-                readSubFieldsInThisTag = []
-              }
-              def key = subfield.parent().attributes().get("id").concat(":").concat(subfield.attributes().get("id"))
-              if (!readSubFieldsInThisTag.contains(key)){
-                def value = subfield.localText()[0]
-                List<String> values = recordMap.get(key)
-                if (values == null){
-                  values = []
-                }
-                values << value
-                recordMap.put(key, values)
-                readSubFieldsInThisTag.add(key)
-              }
-              if (++count == size){
-                count = 0
-              }
-            }
-          }
-          if (!recordMap.isEmpty()) {
-            result.add(recordMap)
-          }
-        }
+    log.info("query ZDB: " + queryString)
+    String text = new URL(queryString).getText()
+    def xml = new XmlParser().parseText(text)
+    List<Node> records = xml.get("records")
+    for (Node record in records){
+      if (record.record.size() == 0){
+        // no records in API response
+        continue
+      }
+      NodeList tags = record.record.recordData[0].get("ppxml:record")[0].get("ppxml:global")[0].children()
+      Map<String, List<String>> recordMap = getDataFromTagNodes(tags)
+      if (!recordMap.isEmpty()){
+        result.add(recordMap)
       }
     }
-    catch (Exception e) {
-      log.error(e)
+    result
+  }
+
+
+  private Map<String, List<String>> getDataFromTagNodes(NodeList tags){
+    Map<String, List<String>> result = [:]
+    for (Node tag in tags){
+      String tagId = tag.attributes()."id"
+      def subfields = tag.children()
+      for (Node subfield in subfields){
+        String subfieldId = subfield.attributes()."id"
+        String key = tagId.concat(":").concat(subfieldId)
+        String value = subfield.value()[0]
+        List<String> existingValues = result.get(key)
+        if (existingValues == null){
+          existingValues = new ArrayList<String>()
+        }
+        existingValues.add(value)
+        result.put(key, existingValues)
+      }
     }
     result
   }
