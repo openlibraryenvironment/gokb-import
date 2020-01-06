@@ -148,12 +148,16 @@ class Enrichment{
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
-    result.append("},\"data\":")
-    result.append(JsonToolkit.toJson(dataContainer.records.values()))
-    result.append("}")
+    result.append("}\n}\n")
     File file = new File(resultPathName)
     file.getParentFile().mkdirs()
     file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
+
+    // write records into separate files named <resultHash>_<recordUid>
+    for (def record in dataContainer.records){
+      new File(resultPathName.concat("_").concat(record.key))
+              .write(JsonOutput.prettyPrint(JsonToolkit.toJson(record.value)), "UTF-8")
+    }
   }
 
 
@@ -169,7 +173,7 @@ class Enrichment{
     en.resultPathName = JsonToolkit.fromJson(rootNode, "resultPathName")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
-    en.dataContainer = DataContainer.fromJson(rootNode.path("data"), en.mappingsContainer)
+    en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
@@ -178,14 +182,7 @@ class Enrichment{
 
 
   static Enrichment fromFile(def file){
-    String json
-    try{
-      json = file.getInputStream()?.text
-    }
-    catch (MissingMethodException | InvokerInvocationException e){
-      json = file.newInputStream()?.text
-    }
-    JsonNode rootNode = JSON_OBJECT_MAPPER.readTree(json)
+    JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode)
     enrichment.setTitleMediumMapping()
     enrichment.setTitleTypeMapping()
