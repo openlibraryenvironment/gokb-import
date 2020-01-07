@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.tools.FileToolkit
 import groovy.util.logging.Log4j
 import ygor.field.MultiField
 
@@ -264,8 +265,8 @@ class StatisticController{
   def downloadRawFile = {
     def en = getCurrentEnrichment()
     if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_OO_RAW)
-      render(file: result, fileName: "${en.resultName}.raw.json")
+      File zip = FileToolkit.zipFiles(en.sessionFolder, en.resultHash);
+      render(file: zip, fileName: "${en.resultName}.zip", contentType: "application/zip")
     }
     else{
       noValidEnrichment()
