@@ -178,7 +178,7 @@ class StatisticController{
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
         if (file.getName() == resultHash){
-          Enrichment enrichment = Enrichment.fromFile(file)
+          Enrichment enrichment = Enrichment.fromJsonFile(file)
           enrichmentService.addSessionEnrichment(enrichment)
           return enrichment
         }
@@ -266,7 +266,7 @@ class StatisticController{
     def en = getCurrentEnrichment()
     if (en){
       File zip = FileToolkit.zipFiles(en.sessionFolder, en.resultHash);
-      render(file: zip, fileName: "${en.resultName}.zip", contentType: "application/zip")
+      render(file: zip, fileName: "${en.resultName}.raw.zip", contentType: "application/zip")
     }
     else{
       noValidEnrichment()

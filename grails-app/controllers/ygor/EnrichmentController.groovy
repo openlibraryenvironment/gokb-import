@@ -184,7 +184,7 @@ class EnrichmentController{
 
   def uploadRawFile = {
     def file = request.getFile('uploadRawFile')
-    Enrichment enrichment = Enrichment.fromFile(file)
+    Enrichment enrichment = Enrichment.fromZipFile(file, enrichmentService.sessionFolder.parentFile.absolutePath)
     enrichmentService.addSessionEnrichment(enrichment)
     if (null == request.session.lastUpdate){
       request.session.lastUpdate = [:]

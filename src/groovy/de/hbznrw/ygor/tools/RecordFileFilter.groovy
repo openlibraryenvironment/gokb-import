@@ -11,6 +11,6 @@ class RecordFileFilter implements java.io.FileFilter {
   }
 
   boolean accept(File file) {
-    return pattern.matcher(file.getName()).find()
+    return pattern.matcher(file.getName()).find() && file.getName().length() == 69
   }
 }

@@ -183,7 +183,7 @@
                 <ul class="list-group content-list">
                     <li class="list-group-item">
                         <label class="btn btn-link btn-file">
-                            <input type="file" accept=".raw.json" name="uploadRawFile"
+                            <input type="file" accept=".raw.zip" name="uploadRawFile"
                                    style="display: none;"/><g:message code="uploadFile.button.select"/>
                         </label>
                         <input type="submit" value="${message(code: 'uploadFile.button.upload')}"
