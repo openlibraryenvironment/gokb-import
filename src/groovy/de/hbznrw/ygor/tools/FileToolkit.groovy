@@ -1,10 +1,15 @@
 package de.hbznrw.ygor.tools
 
+import ygor.Record
+
 import java.security.MessageDigest
 import java.nio.file.Paths
 import org.codehaus.groovy.runtime.DateGroovyMethods
 import org.springframework.core.io.Resource
 import grails.util.Holders
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class FileToolkit {
 
@@ -19,11 +24,46 @@ class FileToolkit {
     p2 + p3.toString()
   }
 
+
   static String getMD5Hash(String s) {
     MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8")).encodeHex().toString()
   }
 
+
   static Resource getResourceByClassPath(String path) {
     Holders.getGrailsApplication().parentContext.getResource('classpath:' + path)
   }
+
+
+  static File zipFiles(File folder, String resultHash) throws IOException{
+    if (!folder.isDirectory()){
+      throw new IOException("Could not read from session directory.")
+    }
+    File resultZip = new File(folder.getAbsolutePath().concat(File.separator).concat(resultHash).concat(".zip"))
+    ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(resultZip))
+    // zip header and configuration file
+    File configFile = new File(folder.getAbsolutePath().concat(File.separator).concat(resultHash))
+    zos.putNextEntry(new ZipEntry(configFile.getName()))
+    streamByteArray(configFile, zos)
+    // zip record files
+    for (File record : folder.listFiles(new RecordFileFilter(resultHash))) {
+      ZipEntry ze = new ZipEntry(record.getName())
+      zos.putNextEntry(ze)
+      streamByteArray(record, zos)
+    }
+    zos.close()
+    return resultZip
+  }
+
+
+  private static void streamByteArray(File record, ZipOutputStream zos){
+    FileInputStream fis = new FileInputStream(record)
+    byte[] bytes = new byte[1024]
+    int length
+    while ((length = fis.read(bytes)) >= 0){
+      zos.write(bytes, 0, length)
+    }
+    fis.close()
+  }
+
 }
