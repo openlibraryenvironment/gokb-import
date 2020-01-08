@@ -61,15 +61,15 @@ class Validator {
    */
   static isValidString(String str) {
     if (!str || str.trim().equals("")) {
-      return Status.VALIDATOR_STRING_IS_MISSING
+      return Status.STRING_IS_MISSING
     } else if (str.length() < 2) {
       if (!StringUtils.isNumeric(str)) {
-        return Status.VALIDATOR_STRING_IS_INVALID
+        return Status.STRING_IS_INVALID
       }
     } else if (str.contains("|")) {
-      return Status.VALIDATOR_STRING_IS_NOT_ATOMIC
+      return Status.STRING_IS_NOT_ATOMIC
     }
-    return Status.VALIDATOR_STRING_IS_VALID
+    return Status.STRING_IS_VALID
   }
 
   /**
@@ -79,15 +79,15 @@ class Validator {
    */
   static isValidAbbreviation(String abbreviation) {
     if (StringUtils.isEmpty(abbreviation)) {
-      return Status.VALIDATOR_STRING_IS_MISSING
+      return Status.STRING_IS_MISSING
     }
     if (abbreviation.contains("|")) {
-      return Status.VALIDATOR_STRING_IS_NOT_ATOMIC
+      return Status.STRING_IS_NOT_ATOMIC
     }
     if (abbreviation.length() > 1) {
-      return Status.VALIDATOR_STRING_IS_INVALID
+      return Status.STRING_IS_INVALID
     }
-    return Status.VALIDATOR_STRING_IS_VALID
+    return Status.STRING_IS_VALID
   }
 
   /**
@@ -97,14 +97,14 @@ class Validator {
    */
   static isValidNumber(String str) {
     if (!str || str.trim().equals("")) {
-      return Status.VALIDATOR_NUMBER_IS_MISSING
+      return Status.NUMBER_IS_MISSING
     } else if (str.contains("|")) {
-      return Status.VALIDATOR_NUMBER_IS_NOT_ATOMIC
+      return Status.NUMBER_IS_NOT_ATOMIC
     } else if (str.isInteger()) {
-      return Status.VALIDATOR_NUMBER_IS_VALID
+      return Status.NUMBER_IS_VALID
     }
 
-    return Status.VALIDATOR_NUMBER_IS_INVALID
+    return Status.NUMBER_IS_INVALID
   }
 
   /**
@@ -115,66 +115,66 @@ class Validator {
    */
   static isValidIdentifier(String str, Object identifierType, String namespace) {
     if (!str || str.trim().equals("")) {
-      return Status.VALIDATOR_IDENTIFIER_IS_MISSING
+      return Status.IDENTIFIER_IS_MISSING
     }
     if (str.contains("|")) {
-      return Status.VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC
+      return Status.IDENTIFIER_IS_NOT_ATOMIC
     }
     if (identifierType in ["onlineIdentifier", "printIdentifier"]) {
       if (str.matches("\\d{4}-\\d{3}[\\dXx]")) {
-        return Status.VALIDATOR_IDENTIFIER_IS_VALID
+        return Status.IDENTIFIER_IS_VALID
       }
       else {
-        return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+        return Status.IDENTIFIER_IS_INVALID
       }
     }
     else if (identifierType.equals("zdbId")){
       if (str.matches("[0-9]{1,9}-[0-9Xx]")){
         // "Das Feld wird maschinell besetzt und enthält eine bis zu 11 Stellen umfassende Identifikationsnummer mit Prüfziffer."
-        return Status.VALIDATOR_IDENTIFIER_IS_VALID
+        return Status.IDENTIFIER_IS_VALID
       }
       else{
-        return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+        return Status.IDENTIFIER_IS_INVALID
       }
     }
     else if (identifierType.equals(TitleStruct.EISBN) || identifierType.equals(TitleStruct.PISBN)) {
       if (validateISBN(str)) {
-        return Status.VALIDATOR_IDENTIFIER_IS_VALID
+        return Status.IDENTIFIER_IS_VALID
       }
       else {
-        return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+        return Status.IDENTIFIER_IS_INVALID
       }
     }
     else if (identifierType.equals(EzbReader.IDENTIFIER)) {
       // TODO .. no valid definition
       if (str.length() > 2) {
-        return Status.VALIDATOR_IDENTIFIER_IS_VALID
+        return Status.IDENTIFIER_IS_VALID
       }
       else {
-        return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+        return Status.IDENTIFIER_IS_INVALID
       }
     }
     else if (identifierType.equals(TitleStruct.DOI)) {
       if (str.startsWith("10.")) {
-        return Status.VALIDATOR_IDENTIFIER_IS_VALID
+        return Status.IDENTIFIER_IS_VALID
       }
       else {
-        return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+        return Status.IDENTIFIER_IS_INVALID
       }
     }
     else if (identifierType.equals("inID_" + namespace)) {
       if (str) {
-        return Status.VALIDATOR_IDENTIFIER_IS_VALID
+        return Status.IDENTIFIER_IS_VALID
       }
       else {
-        return Status.VALIDATOR_IDENTIFIER_IS_INVALID
+        return Status.IDENTIFIER_IS_INVALID
       }
     }
     else if (identifierType == namespace) {
       // TODO use identifier type in GOKb (String, URL, ...) and specify here
-      return Status.VALIDATOR_IDENTIFIER_IS_VALID
+      return Status.IDENTIFIER_IS_VALID
     }
-    return Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
+    return Status.IDENTIFIER_IN_UNKNOWN_STATE
   }
 
 
@@ -185,14 +185,14 @@ class Validator {
    */
   static isValidURL(String str) {
     if (StringUtils.isEmpty(str)) {
-      return Status.VALIDATOR_URL_IS_MISSING
+      return Status.URL_IS_MISSING
     } else if (str.contains("|")) {
-      return Status.VALIDATOR_URL_IS_NOT_ATOMIC
+      return Status.URL_IS_NOT_ATOMIC
     }
     if (URL_VALIDATOR.isValid(str)) {
-      return Status.VALIDATOR_URL_IS_VALID
+      return Status.URL_IS_VALID
     }
-    return Status.VALIDATOR_URL_IS_INVALID
+    return Status.URL_IS_INVALID
   }
 
   /**
@@ -202,18 +202,18 @@ class Validator {
    */
   static isValidDate(String str) {
     if (!str || str.trim().equals("")) {
-      return Status.VALIDATOR_DATE_IS_MISSING
+      return Status.DATE_IS_MISSING
     }
     // also accept "YYYY" or "YYYY-MM-DD" or "YYYY/MM/DD"
     if (str.matches("[\\d]{4}([-/][\\d]{2}[-/][\\d]{2})?")){
-      return Status.VALIDATOR_DATE_IS_VALID
+      return Status.DATE_IS_VALID
     }
     try {
       Timestamp.valueOf(str)
-      return Status.VALIDATOR_DATE_IS_VALID
+      return Status.DATE_IS_VALID
     }
     catch (Exception e) {
-      return Status.VALIDATOR_DATE_IS_INVALID
+      return Status.DATE_IS_INVALID
     }
   }
 

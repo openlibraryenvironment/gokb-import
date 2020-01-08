@@ -40,8 +40,7 @@ class Record{
 
 
   static hasMany = [multiFields       : MultiField,
-                    validation        : String,
-                    validationMessages: String,
+                    validation        : Status,
                     historyEvents     : HistoryEvent]
 
   static constraints = {
@@ -135,7 +134,7 @@ class Record{
     if (urlMultiField == null) {
       return false
     }
-    if (urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()) {
+    if (urlMultiField.status != Status.URL_IS_VALID.toString()) {
       return false
     }
     // check multifields for critical errors
@@ -158,11 +157,6 @@ class Record{
 
   void addValidation(String property, Status status) {
     validation.put(property, status)
-  }
-
-
-  Status getValidation(String property) {
-    return validation.get(property)
   }
 
 

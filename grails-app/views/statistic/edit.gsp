@@ -8,7 +8,7 @@
         <g:form>
             <input type="hidden" name="resultHash" value="${resultHash}"/>
             <input type="hidden" name="record.uid" value="${record.uid}"/>
-            <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())}">
+            <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.IDENTIFIER_IS_VALID.toString())}">
                 <div class="panel-heading-invalid">
                     <h3 class="panel-title"><g:message code="statistic.edit.record.zdbmatch"/> : <g:message
                             code="${record.multiFields.get("zdbId").status}"/></h3>
@@ -152,29 +152,28 @@
     }
 
 
-    // TODO is possible to iterate over all messages starting with "VALIDATOR_" - do this
     function getValidationMessageMap() {
         const vms = new Object();
-        vms["VALIDATOR_DATE_IS_INVALID"] = "${g.message(code:"VALIDATOR_DATE_IS_INVALID")}";
-        vms["VALIDATOR_DATE_IS_MISSING"] = "${g.message(code:"VALIDATOR_DATE_IS_MISSING")}";
-        vms["VALIDATOR_DATE_IS_VALID"] = "${g.message(code:"VALIDATOR_DATE_IS_VALID")}";
-        vms["VALIDATOR_IDENTIFIER_IS_INVALID"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_INVALID")}";
-        vms["VALIDATOR_IDENTIFIER_IS_MISSING"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_MISSING")}";
-        vms["VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE")}";
-        vms["VALIDATOR_IDENTIFIER_IS_VALID"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_VALID")}";
-        vms["VALIDATOR_NUMBER_IS_INVALID"] = "${g.message(code:"VALIDATOR_NUMBER_IS_INVALID")}";
-        vms["VALIDATOR_NUMBER_IS_MISSING"] = "${g.message(code:"VALIDATOR_NUMBER_IS_MISSING")}";
-        vms["VALIDATOR_NUMBER_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_NUMBER_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_NUMBER_IS_VALID"] = "${g.message(code:"VALIDATOR_NUMBER_IS_VALID")}";
-        vms["VALIDATOR_STRING_IS_INVALID"] = "${g.message(code:"VALIDATOR_STRING_IS_INVALID")}";
-        vms["VALIDATOR_STRING_IS_MISSING"] = "${g.message(code:"VALIDATOR_STRING_IS_MISSING")}";
-        vms["VALIDATOR_STRING_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_STRING_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_STRING_IS_VALID"] = "${g.message(code:"VALIDATOR_STRING_IS_VALID")}";
-        vms["VALIDATOR_URL_IS_INVALID"] = "${g.message(code:"VALIDATOR_URL_IS_INVALID")}";
-        vms["VALIDATOR_URL_IS_MISSING"] = "${g.message(code:"VALIDATOR_URL_IS_MISSING")}";
-        vms["VALIDATOR_URL_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_URL_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_URL_IS_VALID"] = "${g.message(code:"VALIDATOR_URL_IS_VALID")}";
+        vms["DATE_IS_INVALID"] = "${g.message(code:"DATE_IS_INVALID")}";
+        vms["DATE_IS_MISSING"] = "${g.message(code:"DATE_IS_MISSING")}";
+        vms["DATE_IS_VALID"] = "${g.message(code:"DATE_IS_VALID")}";
+        vms["IDENTIFIER_IS_INVALID"] = "${g.message(code:"IDENTIFIER_IS_INVALID")}";
+        vms["IDENTIFIER_IS_MISSING"] = "${g.message(code:"IDENTIFIER_IS_MISSING")}";
+        vms["IDENTIFIER_IS_NOT_ATOMIC"] = "${g.message(code:"IDENTIFIER_IS_NOT_ATOMIC")}";
+        vms["IDENTIFIER_IN_UNKNOWN_STATE"] = "${g.message(code:"IDENTIFIER_IN_UNKNOWN_STATE")}";
+        vms["IDENTIFIER_IS_VALID"] = "${g.message(code:"IDENTIFIER_IS_VALID")}";
+        vms["NUMBER_IS_INVALID"] = "${g.message(code:"NUMBER_IS_INVALID")}";
+        vms["NUMBER_IS_MISSING"] = "${g.message(code:"NUMBER_IS_MISSING")}";
+        vms["NUMBER_IS_NOT_ATOMIC"] = "${g.message(code:"NUMBER_IS_NOT_ATOMIC")}";
+        vms["NUMBER_IS_VALID"] = "${g.message(code:"NUMBER_IS_VALID")}";
+        vms["STRING_IS_INVALID"] = "${g.message(code:"STRING_IS_INVALID")}";
+        vms["STRING_IS_MISSING"] = "${g.message(code:"STRING_IS_MISSING")}";
+        vms["STRING_IS_NOT_ATOMIC"] = "${g.message(code:"STRING_IS_NOT_ATOMIC")}";
+        vms["STRING_IS_VALID"] = "${g.message(code:"STRING_IS_VALID")}";
+        vms["URL_IS_INVALID"] = "${g.message(code:"URL_IS_INVALID")}";
+        vms["URL_IS_MISSING"] = "${g.message(code:"URL_IS_MISSING")}";
+        vms["URL_IS_NOT_ATOMIC"] = "${g.message(code:"URL_IS_NOT_ATOMIC")}";
+        vms["URL_IS_VALID"] = "${g.message(code:"URL_IS_VALID")}";
         vms["UNDEFINED"] = "${g.message(code:"UNDEFINED")}";
         return vms;
     }

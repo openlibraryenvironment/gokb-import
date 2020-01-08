@@ -44,40 +44,40 @@ class StructValidatorSpec extends Specification {
 
     /*
     def coverage1 = PackageStruct.getNewTippCoverage()
-    coverage1.startDate   = new Pod("some_string", Status.VALIDATOR_DATE_IS_INVALID)
-    coverage1.endDate     = new Pod("some_string", Status.VALIDATOR_DATE_IS_INVALID)
-    coverage1.startVolume = new Pod("11",  Status.VALIDATOR_NUMBER_IS_VALID)
-    coverage1.endVolume   = new Pod("11",  Status.VALIDATOR_NUMBER_IS_VALID)
+    coverage1.startDate   = new Pod("some_string", Status.DATE_IS_INVALID)
+    coverage1.endDate     = new Pod("some_string", Status.DATE_IS_INVALID)
+    coverage1.startVolume = new Pod("11",  Status.NUMBER_IS_VALID)
+    coverage1.endVolume   = new Pod("11",  Status.NUMBER_IS_VALID)
 
     def coverage2 = PackageStruct.getNewTippCoverage()
-    coverage2.startDate   = new Pod("some_string", Status.VALIDATOR_DATE_IS_INVALID)
-    coverage2.endDate     = new Pod("some_string", Status.VALIDATOR_DATE_IS_INVALID)
-    coverage2.startVolume = new Pod("5",   Status.VALIDATOR_NUMBER_IS_VALID)
-    coverage2.endVolume   = new Pod("22",  Status.VALIDATOR_NUMBER_IS_VALID)
+    coverage2.startDate   = new Pod("some_string", Status.DATE_IS_INVALID)
+    coverage2.endDate     = new Pod("some_string", Status.DATE_IS_INVALID)
+    coverage2.startVolume = new Pod("5",   Status.NUMBER_IS_VALID)
+    coverage2.endVolume   = new Pod("22",  Status.NUMBER_IS_VALID)
 
     def coverage3 = PackageStruct.getNewTippCoverage()
-    coverage3.startDate   = new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage3.endDate     = new Pod("2012-02-05 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage3.startVolume = new Pod("",  Status.VALIDATOR_NUMBER_IS_INVALID)
-    coverage3.endVolume   = new Pod("",  Status.VALIDATOR_NUMBER_IS_INVALID)
+    coverage3.startDate   = new Pod("2012-01-01 00:00:00.000", Status.DATE_IS_VALID)
+    coverage3.endDate     = new Pod("2012-02-05 00:00:00.000", Status.DATE_IS_VALID)
+    coverage3.startVolume = new Pod("",  Status.NUMBER_IS_INVALID)
+    coverage3.endVolume   = new Pod("",  Status.NUMBER_IS_INVALID)
 
     def coverage4 = PackageStruct.getNewTippCoverage()
-    coverage4.startDate   = new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage4.endDate     = new Pod("2012-02-05 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage4.startVolume = new Pod("3",  Status.VALIDATOR_NUMBER_IS_VALID)
-    coverage4.endVolume   = new Pod("6",  Status.VALIDATOR_NUMBER_IS_VALID)
+    coverage4.startDate   = new Pod("2012-01-01 00:00:00.000", Status.DATE_IS_VALID)
+    coverage4.endDate     = new Pod("2012-02-05 00:00:00.000", Status.DATE_IS_VALID)
+    coverage4.startVolume = new Pod("3",  Status.NUMBER_IS_VALID)
+    coverage4.endVolume   = new Pod("6",  Status.NUMBER_IS_VALID)
 
     def coverage5 = PackageStruct.getNewTippCoverage()
-    coverage5.startDate   = new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage5.endDate     = new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage5.startVolume = new Pod("1",  Status.VALIDATOR_NUMBER_IS_VALID)
-    coverage5.endVolume   = new Pod("1",  Status.VALIDATOR_NUMBER_IS_VALID)
+    coverage5.startDate   = new Pod("2012-01-01 00:00:00.000", Status.DATE_IS_VALID)
+    coverage5.endDate     = new Pod("2012-01-01 00:00:00.000", Status.DATE_IS_VALID)
+    coverage5.startVolume = new Pod("1",  Status.NUMBER_IS_VALID)
+    coverage5.endVolume   = new Pod("1",  Status.NUMBER_IS_VALID)
 
     def coverage6 = PackageStruct.getNewTippCoverage()
-    coverage6.startDate   = new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage6.endDate     = new Pod("2012-01-01 00:00:00.000", Status.VALIDATOR_DATE_IS_VALID)
-    coverage6.startVolume = new Pod("5",    Status.VALIDATOR_NUMBER_IS_VALID)
-    coverage6.endVolume   = new Pod("101",  Status.VALIDATOR_NUMBER_IS_VALID)
+    coverage6.startDate   = new Pod("2012-01-01 00:00:00.000", Status.DATE_IS_VALID)
+    coverage6.endDate     = new Pod("2012-01-01 00:00:00.000", Status.DATE_IS_VALID)
+    coverage6.startVolume = new Pod("5",    Status.NUMBER_IS_VALID)
+    coverage6.endVolume   = new Pod("101",  Status.NUMBER_IS_VALID)
 
     given:
         List<TippCoverage> test = [
@@ -89,12 +89,12 @@ class StructValidatorSpec extends Specification {
             coverage6
         ]
         def result = [
-            Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID,
-            Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID,
-            Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID,
-            Status.STRUCTVALIDATOR_COVERAGE_IS_VALID,
-            Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID,
-            Status.STRUCTVALIDATOR_COVERAGE_IS_INVALID
+            Status.COVERAGE_IS_INVALID,
+            Status.COVERAGE_IS_INVALID,
+            Status.COVERAGE_IS_INVALID,
+            Status.COVERAGE_IS_VALID,
+            Status.COVERAGE_IS_INVALID,
+            Status.COVERAGE_IS_INVALID
         ]
 
     expect:
