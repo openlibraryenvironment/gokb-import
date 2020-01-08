@@ -1,7 +1,6 @@
 package ygor
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.MultipleProcessingThread
@@ -9,16 +8,23 @@ import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.FileToolkit
 import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.ygor.tools.RecordFileFilter
 import de.hbznrw.ygor.tools.SessionToolkit
 import grails.util.Holders
 import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.runtime.InvokerInvocationException
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
 class Enrichment{
 
@@ -34,8 +40,6 @@ class Enrichment{
   static enum ProcessingState {
     PREPARE_1, PREPARE_2, WORKING, FINISHED, ERROR
   }
-
-  static ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper()
 
   ProcessingState status
 
@@ -65,6 +69,7 @@ class Enrichment{
   static constraints = {
   }
 
+
   Enrichment(File sessionFolder, String originalFilename){
     this.sessionFolder = sessionFolder
     originName = originalFilename.replaceAll(/\s+/, '_')
@@ -72,9 +77,9 @@ class Enrichment{
     originPathName = this.sessionFolder.getPath() + File.separator + originHash
     resultHash = FileToolkit.getMD5Hash(originName + Math.random())
     resultPathName = sessionFolder.getPath() + File.separator + resultHash
-
     dataContainer = new DataContainer()
   }
+
 
   def process(HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
@@ -148,12 +153,16 @@ class Enrichment{
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
-    result.append("},\"data\":")
-    result.append(JsonToolkit.toJson(dataContainer.records.values()))
-    result.append("}")
+    result.append("}\n}\n")
     File file = new File(resultPathName)
     file.getParentFile().mkdirs()
     file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
+
+    // write records into separate files named <resultHash>_<recordUid>
+    for (def record in dataContainer.records){
+      new File(resultPathName.concat("_").concat(record.key))
+              .write(JsonOutput.prettyPrint(JsonToolkit.toJson(record.value)), "UTF-8")
+    }
   }
 
 
@@ -169,7 +178,7 @@ class Enrichment{
     en.resultPathName = JsonToolkit.fromJson(rootNode, "resultPathName")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
-    en.dataContainer = DataContainer.fromJson(rootNode.path("data"), en.mappingsContainer)
+    en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
@@ -177,15 +186,8 @@ class Enrichment{
   }
 
 
-  static Enrichment fromFile(def file){
-    String json
-    try{
-      json = file.getInputStream()?.text
-    }
-    catch (MissingMethodException | InvokerInvocationException e){
-      json = file.newInputStream()?.text
-    }
-    JsonNode rootNode = JSON_OBJECT_MAPPER.readTree(json)
+  static Enrichment fromJsonFile(def file){
+    JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode)
     enrichment.setTitleMediumMapping()
     enrichment.setTitleTypeMapping()
@@ -193,6 +195,73 @@ class Enrichment{
     enrichment.setTippPlatformUrlMapping()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
+  }
+
+
+  static Enrichment fromZipFile(def zipFile, String sessionFoldersRoot) throws IOException{
+    JsonSlurper slurpy = new JsonSlurper()
+    byte[] buffer = new byte[1024]
+    ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile.fileItem.tempFile))
+    ZipEntry zipEntry = zis.getNextEntry()
+    Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
+    File sessionFolder = new File(configMap.get("sessionFolder"))
+    File configFile = new File(configMap.get("resultPathName"))
+    zipEntry = zis.getNextEntry()
+    while (zipEntry != null) {
+      File nextFile = getNextFileFromZip(sessionFolder, zipEntry)
+      writeIntoFileOutputStream(nextFile, zis, buffer)
+      zipEntry = zis.getNextEntry()
+    }
+    zis.closeEntry()
+    zis.close()
+
+    List<File> recordFiles = sessionFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
+    Enrichment enrichment = fromJsonFile(configFile)
+    for (File RecordFile in recordFiles){
+      Record record = Record.fromJson(JsonToolkit.jsonNodeFromFile(RecordFile), enrichment.mappingsContainer)
+      enrichment.dataContainer.records.put(record.uid, record)
+    }
+    enrichment
+  }
+
+
+  private static Map getConfigMap(ZipEntry configZipEntry, ZipInputStream zis,
+                                  JsonSlurper slurpy, String sessionFoldersRoot) throws IOException{
+    File tmpFile = new File(sessionFoldersRoot.concat(File.separator).concat(UUID.randomUUID().toString()))
+    File configFile = getNextFileFromZip(tmpFile, configZipEntry)
+    Files.createDirectories(configFile.parentFile.toPath())
+    configFile.createNewFile()
+    writeIntoFileOutputStream(configFile, zis, new byte[1024])
+    Map<?,?> configMap = slurpy.parseText(configFile.text)
+    File sessionFolder = new File(configMap.get("sessionFolder"))
+    if (sessionFolder.exists()){
+      Paths.get(configMap.get("sessionFolder")).deleteDir()
+    }
+    sessionFolder.mkdirs()
+    Path fullResultPath = Paths.get(configMap.get("sessionFolder").concat(File.separator).concat(configMap.get("resultHash")))
+    Files.move(configFile.toPath(), fullResultPath, StandardCopyOption.REPLACE_EXISTING)
+    return configMap
+  }
+
+
+  private static void writeIntoFileOutputStream(File nextFile, ZipInputStream zis, byte[] buffer){
+    FileOutputStream fos = new FileOutputStream(nextFile)
+    int len
+    while ((len = zis.read(buffer)) > 0){
+      fos.write(buffer, 0, len)
+    }
+    fos.close()
+  }
+
+
+  private static File getNextFileFromZip(File destinationDir, ZipEntry zipEntry) throws IOException {
+    File destFile = new File(destinationDir, zipEntry.getName())
+    String destDirPath = destinationDir.getCanonicalPath()
+    String destFilePath = destFile.getCanonicalPath()
+    if (!destFilePath.startsWith(destDirPath + File.separator)) {
+      throw new IOException("Entry is outside of the target dir: " + zipEntry.getName())
+    }
+    return destFile
   }
 
 

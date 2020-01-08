@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.*
 import de.hbznrw.ygor.format.YgorFormatter
 import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.runtime.InvokerInvocationException
 import ygor.Record
 import ygor.field.HistoryEvent
 import ygor.field.MultiField
@@ -239,6 +240,18 @@ class JsonToolkit {
       assert (subNode instanceof MissingNode || subNode instanceof NullNode)
       return null
     }
+  }
+
+
+  static JsonNode jsonNodeFromFile(File file){
+    String json
+    try{
+      json = file.getInputStream()?.text
+    }
+    catch (MissingMethodException | InvokerInvocationException e){
+      json = file.newInputStream()?.text
+    }
+    MAPPER.readTree(json)
   }
 
 }

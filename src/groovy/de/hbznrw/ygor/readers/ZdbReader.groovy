@@ -19,6 +19,8 @@ class ZdbReader extends AbstractReader {
   final static String QUERY_ONLY_JOURNALS = "%20and%20dnb.frm=O"
   final static String FORMAT_IDENTIFIER = 'PicaPlus-xml'
 
+  final static XmlParser XMLPARSER = new XmlParser()
+
   ZdbReader(){}
 
 
@@ -27,7 +29,7 @@ class ZdbReader extends AbstractReader {
     List<Map<String, List<String>>> result = new ArrayList<>()
     log.info("query ZDB: " + queryString)
     String text = new URL(queryString).getText()
-    def xml = new XmlParser().parseText(text)
+    def xml = XMLPARSER.parseText(text)
     List<Node> records = xml.get("records")
     for (Node record in records){
       if (record.record.size() == 0){
@@ -39,7 +41,10 @@ class ZdbReader extends AbstractReader {
       if (!recordMap.isEmpty()){
         result.add(recordMap)
       }
+      tags = recordMap = null
     }
+    xml = records = null
+    System.gc()
     result
   }
 

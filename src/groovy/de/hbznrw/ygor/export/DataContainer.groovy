@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
+import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.ygor.tools.RecordFileFilter
 import ygor.Record
 import ygor.field.MappingsContainer
 import ygor.identifier.AbstractIdentifier
@@ -72,11 +74,13 @@ class DataContainer {
   }
 
 
-  static DataContainer fromJson(ArrayNode dataContainerNode, MappingsContainer mappings) {
+  static DataContainer fromJson(File sessionFolder, String resultHash, MappingsContainer mappings) throws IOException{
     DataContainer result = new DataContainer()
-    Iterator it = dataContainerNode.iterator()
-    while (it.hasNext()) {
-      Record rec = Record.fromJson(it.next(), mappings)
+    if (!sessionFolder.isDirectory()){
+      throw new IOException("Could not read from record directory.")
+    }
+    for (File file : sessionFolder.listFiles(new RecordFileFilter(resultHash))) {
+      Record rec = Record.fromJson(JsonToolkit.jsonNodeFromFile(file), mappings)
       result.records.put(rec.uid, rec)
     }
     result
