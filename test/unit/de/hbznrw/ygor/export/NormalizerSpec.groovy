@@ -106,8 +106,8 @@ class NormalizerSpec extends Specification {
     ["1234/5678", TitleStruct.EISSN]    | "1234-5678"
     ["1234567", TitleStruct.EISSN]      | "1234567"
     ["123456789", TitleStruct.EISSN]    | "123456789"
-    ["33445XXX", TitleStruct.PISSN]     | "3344-5XXX"
-    ["3344--YYYY", TitleStruct.PISSN]   | "3344-YYYY"
+    ["33445XXX", TitleStruct.ISSN]      | "3344-5XXX"
+    ["3344--YYYY", TitleStruct.ISSN]    | "3344-YYYY"
     ["1234-567X", ZdbReader.IDENTIFIER] | "1234567-X"
     ["12345", ZdbReader.IDENTIFIER]     | "1234-5"
     [null, null]                        | null
@@ -129,7 +129,7 @@ class NormalizerSpec extends Specification {
     println "${list2} -> ${result2}"
 
     IdentifierNormalizer.normIdentifier(list1, TitleStruct.EISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result1
-    IdentifierNormalizer.normIdentifier(list2, TitleStruct.PISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result2
+    IdentifierNormalizer.normIdentifier(list2, TitleStruct.ISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result2
   }
 
   void "normDate(String str, Object dateType)"() {

@@ -98,7 +98,7 @@ class Record{
     }
     else if (identifier instanceof PissnIdentifier) {
       if (printIdentifier && identifier.identifier != printIdentifier.identifier) {
-        throw new IllegalArgumentException("PISSN ${identifier} already set to ${printIdentifier} for record")
+        throw new IllegalArgumentException("ISSN ${identifier} already set to ${printIdentifier} for record")
       }
       printIdentifier = identifier
     }
@@ -212,7 +212,7 @@ class Record{
     jsonGenerator.writeStringField("ezbId", ezbId?.identifier)
     jsonGenerator.writeStringField("doiId", doiId?.identifier)
     jsonGenerator.writeStringField("eissn", onlineIdentifier?.identifier)
-    jsonGenerator.writeStringField("pissn", printIdentifier?.identifier)
+    jsonGenerator.writeStringField("issn", printIdentifier?.identifier)
     if (ezbIntegrationDate) {
       jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
     }
@@ -294,7 +294,7 @@ class Record{
     ids.add(new EzbIdentifier(JsonToolkit.fromJson(json, "ezbId"), mappings.getMapping("ezbId", MappingsContainer.YGOR)))
     ids.add(new DoiIdentifier(JsonToolkit.fromJson(json, "doiId"), mappings.getMapping("doiId", MappingsContainer.YGOR)))
     ids.add(new EissnIdentifier(JsonToolkit.fromJson(json, "eissn"), mappings.getMapping("onlineIdentifier", MappingsContainer.YGOR)))
-    ids.add(new PissnIdentifier(JsonToolkit.fromJson(json, "pissn"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
+    ids.add(new PissnIdentifier(JsonToolkit.fromJson(json, "issn"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
     String uid = JsonToolkit.fromJson(json, "uid")
     Record result = new Record(ids, mappings, uid)
     Iterator it = ((ArrayNode) (json.path("multiFields"))).iterator()

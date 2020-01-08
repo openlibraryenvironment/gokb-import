@@ -63,7 +63,7 @@ class GokbTitleReference{
       ArrayNode identifiers = NODE_FACTORY.arrayNode()
       newIdentifierIntoArrayNode(identifiers, "zdb", zdbId?.identifier)
       newIdentifierIntoArrayNode(identifiers, "eissn", onlineIdentifier?.identifier)
-      newIdentifierIntoArrayNode(identifiers, "pissn", printIdentifier?.identifier)
+      newIdentifierIntoArrayNode(identifiers, "issn", printIdentifier?.identifier)
       result.set("identifiers", identifiers)
     }
   }

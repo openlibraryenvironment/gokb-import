@@ -27,7 +27,7 @@ class MultipleProcessingThread extends Thread {
   public identifierByKey = [:]
 
   FieldKeyMapping zdbKeyMapping
-  FieldKeyMapping pissnKeyMapping
+  FieldKeyMapping issnKeyMapping
   FieldKeyMapping eissnKeyMapping
 
   public isRunning
@@ -61,10 +61,10 @@ class MultipleProcessingThread extends Thread {
     ezbReader = new EzbReader()
     this.kbartReader = kbartReader
     zdbKeyMapping = en.mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
-    pissnKeyMapping = en.mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
+    issnKeyMapping = en.mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
     eissnKeyMapping = en.mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)
     identifierByKey = [(zdbKeyMapping)  : ZdbIdentifier.class,
-                       (pissnKeyMapping): PissnIdentifier.class,
+                       (issnKeyMapping) : PissnIdentifier.class,
                        (eissnKeyMapping): EissnIdentifier.class]
   }
 

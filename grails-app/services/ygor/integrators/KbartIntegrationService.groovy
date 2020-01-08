@@ -24,7 +24,7 @@ class KbartIntegrationService {
   def integrate(MultipleProcessingThread owner, DataContainer data,
                 KbartReaderConfiguration kbartReaderConfiguration) {
     KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
-    List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.pissnKeyMapping, owner.eissnKeyMapping]
+    List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
     List<AbstractIdentifier> identifiers
     TreeMap<String, String> item = reader.readItemData(null, null)
     while (item != null) {

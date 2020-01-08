@@ -26,7 +26,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
   def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
     zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
     processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
-    List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.pissnKeyMapping, owner.eissnKeyMapping]
+    List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
     List<Record> existingRecords = []
     existingRecords.addAll(dataContainer.records.values())
     for (Record record in existingRecords) {
