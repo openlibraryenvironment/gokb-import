@@ -10,7 +10,13 @@
       "gokb" : ["$TITLE.continuingSeries"]
     },
     "order" : [""],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "defaultAccessURL",
@@ -23,7 +29,13 @@
       "gokb" : ["$TITLE.defaultAccessURL"]
     },
     "order" : [""],
-    "type" : "URL"
+    "type" : "URL",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "editStatus",
@@ -33,6 +45,12 @@
     "type" : "String",
     "value" : {
       "fixed" : "In Progress"
+    },
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
     }
   },
   {
@@ -40,7 +58,13 @@
     "out" : {
       "gokb" : ["$TITLE.imprint"]
     },
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "issuer",
@@ -53,7 +77,13 @@
       "gokb" : ["$TITLE.issuer"]
     },
     "order" : [""],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "listpriceEur",
@@ -66,7 +96,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "listpriceGbp",
@@ -79,7 +115,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "listpriceUsd",
@@ -92,7 +134,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "oaApcEur",
@@ -105,7 +153,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "oaApcGbp",
@@ -118,7 +172,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "oaApcUsd",
@@ -131,7 +191,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "oaGold",
@@ -144,7 +210,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "oaHybrid",
@@ -157,7 +229,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "oaStatus",
@@ -170,7 +248,13 @@
       "gokb" : ["$TITLE.OAStatus"]
     },
     "order" : [],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "parentPublicationTitleId",
@@ -183,7 +267,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "precedingPublicationTitleId",
@@ -196,7 +286,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "publisherHistoryStatus",
@@ -206,6 +302,12 @@
     "type" : "String",
     "value" : {
       "fixed" : "Active"
+    },
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
     }
   },
   {
@@ -216,6 +318,12 @@
     "type" : "String",
     "value" : {
       "fixed" : "Electronic"
+    },
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
     }
   },
   {
@@ -226,6 +334,12 @@
     "type" : "String",
     "value" : {
       "fixed" : "Current"
+    },
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
     }
   },
   {
@@ -236,6 +350,12 @@
     "type" : "String",
     "value" : {
       "fixed" : "Current"
+    },
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
     }
   }
 ]

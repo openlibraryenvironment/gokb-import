@@ -10,7 +10,13 @@
       "gokb" : ["$TIPP.accessEndDate"]
     },
     "order" : ["kbart"],
-    "type" : "EndDate"
+    "type" : "EndDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "accessStartDate",
@@ -23,7 +29,13 @@
       "gokb" : ["$TIPP.accessStartDate"]
     },
     "order" : ["kbart"],
-    "type" : "StartDate"
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "accessType",
@@ -36,7 +48,13 @@
       "gokb" : []
     },
     "order" : ["kbart"],
-    "type" : "Abbreviation"
+    "type" : "Abbreviation",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "coverageDepth",
@@ -52,6 +70,12 @@
     "type" : "String",
     "value" : {
       "fixed" : "Fulltext"
+    },
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
     }
   },
   {
@@ -65,7 +89,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startDate"]
     },
     "order" : ["kbart"],
-    "type" : "StartDate"
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "dateLastIssueOnline",
@@ -78,7 +108,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endDate"]
     },
     "order" : ["kbart"],
-    "type" : "EndDate"
+    "type" : "EndDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "dateMonographPublishedOnline",
@@ -91,7 +127,13 @@
       "gokb" : ["$TITLE.dateFirstOnline"]
     },
     "order" : ["kbart"],
-    "type" : "StartDate"
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "dateMonographPublishedPrint",
@@ -104,7 +146,13 @@
       "gokb" : ["$TITLE.dateFirstInPrint"]
     },
     "order" : ["kbart"],
-    "type" : "StartDate"
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "doi",
@@ -117,7 +165,13 @@
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:doi,value)", "$TIPP.title.identifiers.$ARRAY.(type:doi,value)"]
     },
     "order" : ["kbart", "zdb"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "editionNumber",
@@ -132,7 +186,13 @@
       ]
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "embargoInfo",
@@ -145,7 +205,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.embargo"]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "ezbId",
@@ -158,7 +224,13 @@
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:ezb,value)", "$TIPP.title.identifiers.$ARRAY.(type:ezb,value)"]
     },
     "order" : ["ezb", "kbart"],
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "firstAuthor",
@@ -171,7 +243,13 @@
       "gokb" : ["$TITLE.firstAuthor"]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "firstEditor",
@@ -184,7 +262,13 @@
       "gokb" : ["$TITLE.firstEditor"]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "historyEventDate",
@@ -197,7 +281,13 @@
       "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.date"]
     },
     "order" : ["zdb"],
-    "type" : "Date"
+    "type" : "Date",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "historyEventIdentifier",
@@ -210,7 +300,13 @@
       "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.zdbId"]
     },
     "order" : ["zdb"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "historyEventRelationType",
@@ -223,7 +319,13 @@
       "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.relationType"]
     },
     "order" : ["zdb"],
-    "type" : "Abbreviation"
+    "type" : "Abbreviation",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "historyEventPredecessor",
@@ -236,7 +338,13 @@
       "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessor"]
     },
     "order" : ["zdb"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "historyEventPredecessorOrSuccessor",
@@ -249,7 +357,13 @@
       "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessorOrSuccessor"]
     },
     "order" : ["zdb"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "historyEventSuccessor",
@@ -262,7 +376,13 @@
       "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.successor"]
     },
     "order" : ["zdb"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "historyEventTitle",
@@ -275,14 +395,26 @@
       "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.title"]
     },
     "order" : ["zdb"],
-    "type" : "Title"
+    "type" : "Title",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "medium",
     "out" : {
       "gokb" : ["$TITLE.medium"]
     },
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "monographEdition",
@@ -299,7 +431,13 @@
       ]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "monographVolume",
@@ -312,7 +450,13 @@
       "gokb" : ["$TITLE.monographVolume", "$TITLE.volumeNumber"]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "notes",
@@ -325,7 +469,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageNote"]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "numFirstIssueOnline",
@@ -338,7 +488,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "numFirstVolOnline",
@@ -351,7 +507,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "numLastIssueOnline",
@@ -364,7 +526,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "numLastVolOnline",
@@ -377,7 +545,13 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
     },
     "order" : ["kbart"],
-    "type" : "Number"
+    "type" : "Number",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "onlineIdentifier",
@@ -390,21 +564,39 @@
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:eissn,value)", "$TIPP.title.identifiers.$ARRAY.(type:eissn,value)"]
     },
     "order" : ["kbart", "zdb"],
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "platformName",
     "out" : {
       "gokb" : ["$TIPP.platform.name"]
     },
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "error",
+      "undefined" : "error"
+    }
   },
   {
     "ygor" : "platformUrl",
     "out" : {
       "gokb" : ["$TIPP.platform.primaryUrl"]
     },
-    "type" : "URL"
+    "type" : "URL",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "error",
+      "undefined" : "error"
+    }
   },
   {
     "ygor" : "printIdentifier",
@@ -417,7 +609,13 @@
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:isbn,value)", "$TIPP.title.identifiers.$ARRAY.(type:isbn,value)"]
     },
     "order" : ["kbart", "zdb"],
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "publicationSubTitle",
@@ -430,7 +628,13 @@
       "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
     },
     "order" : ["zdb"],
-    "type" : "Title"
+    "type" : "Title",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "publicationTitle",
@@ -443,7 +647,13 @@
       "gokb" : ["$TITLE.name", "$TIPP.title.name"]
     },
     "order" : ["zdb","kbart","ezb"],
-    "type" : "Title"
+    "type" : "Title",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "error",
+      "undefined" : "error"
+    }
   },
   {
     "ygor" : "publicationTitleVariation",
@@ -456,7 +666,13 @@
       "gokb" : []
     },
     "order" : ["zdb"],
-    "type" : "Title"
+    "type" : "Title",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "publicationType",
@@ -469,7 +685,13 @@
       "gokb" : ["$TITLE.type", "$TIPP.title.type"]
     },
     "order" : ["kbart"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "error",
+      "undefined" : "error"
+    }
   },
   {
     "ygor" : "publishedFrom",
@@ -482,7 +704,13 @@
       "gokb" : ["$TITLE.publishedFrom"]
     },
     "order" : ["zdb"],
-    "type" : "StartDate"
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "publishedTo",
@@ -495,7 +723,13 @@
       "gokb" : ["$TITLE.publishedTo"]
     },
     "order" : ["zdb"],
-    "type" : "EndDate"
+    "type" : "EndDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "publisherHistoryEndDate",
@@ -509,7 +743,13 @@
       "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
-    "type" : "EndDate"
+    "type" : "EndDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "publisherHistoryStartDate",
@@ -523,7 +763,13 @@
       "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
-    "type" : "StartDate"
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "publisherName",
@@ -536,7 +782,13 @@
       "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.name"]
     },
     "order" : ["kbart", "zdb"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "publisherPlace",
@@ -549,7 +801,13 @@
       "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.place"]
     },
     "order" : ["zdb"],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
   },
   {
     "ygor" : "shortcode",
@@ -562,7 +820,13 @@
       "gokb" : ["$TITLE.shortcode"]
     },
     "order" : [""],
-    "type" : "String"
+    "type" : "String",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "titleId",
@@ -575,7 +839,13 @@
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:titleId,value)", "$TIPP.title.identifiers.$ARRAY.(type:titleId,value)"]
     },
     "order" : ["kbart"],
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "ok",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
   },
   {
     "ygor" : "titleUrl",
@@ -589,7 +859,13 @@
     },
     "order" : ["ezb","kbart"],
     "type" : "URL",
-    "comment" : "The field name 'titleUrl' is misleading from the point of differentiating title vs. TIPP. In fact, it is a TIPP field."
+    "comment" : "The field name 'titleUrl' is misleading from the point of differentiating title vs. TIPP. In fact, it is a TIPP field.",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "error",
+      "undefined" : "error"
+    }
   },
   {
     "ygor" : "zdbId",
@@ -602,6 +878,12 @@
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:zdb,value)", "$TIPP.title.identifiers.$ARRAY.(type:zdb,value)"]
     },
     "order" : ["zdb","kbart"],
-    "type" : "ID"
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "warning",
+      "undefined" : "warning"
+    }
   }
 ]
