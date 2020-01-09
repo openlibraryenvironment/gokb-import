@@ -18,12 +18,16 @@ class FieldKeyMapping {
   boolean valIsFix
   boolean keepIfEmpty
   List<String> sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
+  Map<String, String> flags = [:]
 
   static constraints = {
     ygorKey nullable: false
     type nullable: false
     gokb nullable: false
   }
+
+  static String[] VALID_FLAG_TYPES = ["valid", "invalid", "missing", "undefined"]
+  static String[] VALID_FLAG_STATUS = ["ok", "warning", "error"]
 
   static hasMany = [kbartKeys : String,
                     zdbKeys   : String,
@@ -93,9 +97,31 @@ class FieldKeyMapping {
           val = mapping.value
           valIsFix = false
           break
+        case "flags":
+          parseMapping(mapping.value)
+          break
+        case "valid":
+          addFlag(mapping)
+          break
+        case "invalid":
+          addFlag(mapping)
+          break
+        case "missing":
+          addFlag(mapping)
+          break
+        case "undefined":
+          addFlag(mapping)
+          break
         default:
           continue
       }
+    }
+  }
+
+
+  private void addFlag(def mapping){
+    if (mapping.key in VALID_FLAG_TYPES && mapping.value in VALID_FLAG_STATUS){
+      flags.put(mapping.key, mapping.value)
     }
   }
 
