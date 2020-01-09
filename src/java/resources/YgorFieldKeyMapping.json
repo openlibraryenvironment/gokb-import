@@ -39,19 +39,6 @@
     "type" : "Abbreviation"
   },
   {
-    "ygor" : "continuingSeries",
-    "in" : {
-      "kbart" : "",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.continuingSeries"]
-    },
-    "order" : [""],
-    "type" : "String"
-  },
-  {
     "ygor" : "coverageDepth",
     "in" : {
       "kbart" : "coverage_depth",
@@ -120,19 +107,6 @@
     "type" : "StartDate"
   },
   {
-    "ygor" : "defaultAccessURL",
-    "in" : {
-      "kbart" : "",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.defaultAccessURL"]
-    },
-    "order" : [""],
-    "type" : "URL"
-  },
-  {
     "ygor" : "doi",
     "in" : {
       "kbart" : "doi_identifier",
@@ -159,16 +133,6 @@
     },
     "order" : ["kbart"],
     "type" : "Number"
-  },
-  {
-    "ygor" : "editStatus",
-    "out" : {
-      "gokb" : ["$TITLE.editStatus"]
-    },
-    "type" : "String",
-    "value" : {
-      "fixed" : "In Progress"
-    }
   },
   {
     "ygor" : "embargoInfo",
@@ -314,65 +278,6 @@
     "type" : "Title"
   },
   {
-    "ygor" : "imprint",
-    "out" : {
-      "gokb" : ["$TITLE.imprint"]
-    },
-    "type" : "String"
-  },
-  {
-    "ygor" : "issuer",
-    "in" : {
-      "kbart" : "",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.issuer"]
-    },
-    "order" : [""],
-    "type" : "String"
-  },
-  {
-    "ygor" : "listpriceEur",
-    "in" : {
-      "kbart" : "listprice_eur",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "Number"
-  },
-  {
-    "ygor" : "listpriceGbp",
-    "in" : {
-      "kbart" : "listprice_gbp",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "Number"
-  },
-  {
-    "ygor" : "listpriceUsd",
-    "in" : {
-      "kbart" : "listprice_usd",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "Number"
-  },
-  {
     "ygor" : "medium",
     "out" : {
       "gokb" : ["$TITLE.medium"]
@@ -475,84 +380,6 @@
     "type" : "Number"
   },
   {
-    "ygor" : "oaApcEur",
-    "in" : {
-      "kbart" : "oa_apc_eur",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "String"
-  },
-  {
-    "ygor" : "oaApcGbp",
-    "in" : {
-      "kbart" : "oa_apc_gbp",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "String"
-  },
-  {
-    "ygor" : "oaApcUsd",
-    "in" : {
-      "kbart" : "oa_apc_usd",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "String"
-  },
-  {
-    "ygor" : "oaGold",
-    "in" : {
-      "kbart" : "oa_gold",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "String"
-  },
-  {
-    "ygor" : "oaHybrid",
-    "in" : {
-      "kbart" : "oa_hybrid",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "String"
-  },
-  {
-    "ygor" : "oaStatus",
-    "in" : {
-      "kbart" : "",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.OAStatus"]
-    },
-    "order" : [],
-    "type" : "String"
-  },
-  {
     "ygor" : "onlineIdentifier",
     "in" : {
       "kbart" : "online_identifier",
@@ -563,19 +390,6 @@
       "gokb" : ["$TITLE.identifiers.$ARRAY.(type:eissn,value)", "$TIPP.title.identifiers.$ARRAY.(type:eissn,value)"]
     },
     "order" : ["kbart", "zdb"],
-    "type" : "ID"
-  },
-  {
-    "ygor" : "parentPublicationTitleId",
-    "in" : {
-      "kbart" : "parent_publication_title_id",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
     "type" : "ID"
   },
   {
@@ -591,19 +405,6 @@
       "gokb" : ["$TIPP.platform.primaryUrl"]
     },
     "type" : "URL"
-  },
-  {
-    "ygor" : "precedingPublicationTitleId",
-    "in" : {
-      "kbart" : "preceding_publication_title_id",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "ID"
   },
   {
     "ygor" : "printIdentifier",
@@ -725,16 +526,6 @@
     "type" : "StartDate"
   },
   {
-    "ygor" : "publisherHistoryStatus",
-    "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.status"]
-    },
-    "type" : "String",
-    "value" : {
-      "fixed" : "Active"
-    }
-  },
-  {
     "ygor" : "publisherName",
     "in" : {
       "kbart" : "publisher_name",
@@ -774,26 +565,6 @@
     "type" : "String"
   },
   {
-    "ygor" : "tippMedium",
-    "out" : {
-      "gokb" : ["$TIPP.medium"]
-    },
-    "type" : "String",
-    "value" : {
-      "fixed" : "Electronic"
-    }
-  },
-  {
-    "ygor" : "tippStatus",
-    "out" : {
-      "gokb" : ["$TIPP.status"]
-    },
-    "type" : "String",
-    "value" : {
-      "fixed" : "Current"
-    }
-  },
-  {
     "ygor" : "titleId",
     "in" : {
       "kbart" : "title_id",
@@ -805,16 +576,6 @@
     },
     "order" : ["kbart"],
     "type" : "ID"
-  },
-  {
-    "ygor" : "titleStatus",
-    "out" : {
-      "gokb" : ["$TITLE.status"]
-    },
-    "type" : "String",
-    "value" : {
-      "fixed" : "Current"
-    }
   },
   {
     "ygor" : "titleUrl",
