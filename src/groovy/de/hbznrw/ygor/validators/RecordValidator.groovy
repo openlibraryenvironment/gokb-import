@@ -30,7 +30,7 @@ class RecordValidator {
       record.addValidation("coverage", Status.REMOVE_FLAG)
     }
     else {
-      record.addValidation("coverage", Status.COVERAGE_IS_UNDEF)
+      record.addValidation("coverage", Status.UNDEFINED)
     }
 
   }
@@ -65,7 +65,7 @@ class RecordValidator {
     MultiField endVolume = record.getMultiField("numLastIssueOnline")
 
     MultiField publisherHistory = record.getMultiField("publisherHistory")
-    record.addValidation("publisherHistory", Status.PUBLISHERHISTORY_IS_UNDEF)
+    record.addValidation("publisherHistory", Status.UNDEFINED)
   }
 
 }

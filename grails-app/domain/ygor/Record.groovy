@@ -134,12 +134,12 @@ class Record{
     if (urlMultiField == null) {
       return false
     }
-    if (urlMultiField.status != Status.URL_IS_VALID.toString()) {
+    if (urlMultiField.status != Status.VALID.toString()) {
       return false
     }
     // check multifields for critical errors
     for (MultiField multiField in multiFields.values()){
-      if (multiField.isCriticallyInvalid()){
+      if (multiField.isCriticallyIncorrect()){
         return false
       }
     }
