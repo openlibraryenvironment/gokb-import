@@ -135,9 +135,10 @@ class GokbExporter {
       result.put("${field}", packageHeader."${field}".v)
     }
     setIsil(packageHeader, result)
-    if (enrichment.packageName) {
+    if (enrichment.packageName){
       result.put("name", enrichment.packageName)
-    } else {
+    }
+    else {
       result.put("name", packageHeader.name.v.v)
     }
 
@@ -148,9 +149,11 @@ class GokbExporter {
 
     if (enrichment.dataType == 'ebooks') {
       result.put("contentType", "Book")
-    } else if (enrichment.dataType == 'journals') {
+    }
+    else if (enrichment.dataType == 'journals') {
       result.put("contentType", "Journal")
-    } else if (enrichment.dataType == 'database') {
+    }
+    else if (enrichment.dataType == 'database') {
       result.put("contentType", "Database")
     }
 

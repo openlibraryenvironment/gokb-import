@@ -3,19 +3,19 @@ package de.hbznrw.ygor.enums
 enum Status {
 
   // default value
-  UNDEFINED("UNDEFINED"),
+  UNDEFINED("undefined"),
   // hardcoded values
-  HARDCODED("HARDCODED"),
+  HARDCODED("hardcoded"),
   // constants, tmp vars, etc
-  IGNORE("IGNORE"),
+  IGNORE("ignore"),
 
 
-  VALID("VALID"),
-  INVALID("INVALID"),
-  MISSING("MISSING"),
+  VALID("valid"),
+  INVALID("invalid"),
+  MISSING("missing"),
 
   // parsing crap
-  REMOVE_FLAG("REMOVE_FLAG")
+  REMOVE_FLAG("remove_flag")
 
   private String value
 
