@@ -40,13 +40,13 @@
                         <g:set var="lineCounter" value="${0}"/>
                         <g:each in="${record.multiFields}" var="multiField">
                             <g:if test="${multiField.value.isCriticallyIncorrect()}">
-                                <g:set var="status" value="critical"/>
+                                <g:set var="status" value="error"/>
                             </g:if>
                             <g:elseif test="${multiField.value.isNonCriticallyIncorrect()}">
-                                <g:set var="status" value="noncritical"/>
+                                <g:set var="status" value="warning"/>
                             </g:elseif>
                             <g:else>
-                                <g:set var="status" value="valid"/>
+                                <g:set var="status" value="ok"/>
                             </g:else>
                             <g:if test="${(lineCounter % 2) == 0}">
                                 <g:set var="status" value="${status}-even-hover"/>
