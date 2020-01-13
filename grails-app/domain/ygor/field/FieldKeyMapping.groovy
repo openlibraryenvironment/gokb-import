@@ -218,6 +218,13 @@ class FieldKeyMapping {
     }
     jsonGenerator.writeEndArray()
 
+    jsonGenerator.writeFieldName(MappingsContainer.FLAGS)
+    jsonGenerator.writeStartObject()
+    for (def flag in flags){
+      jsonGenerator.writeStringField(flag.key, flag.value)
+    }
+    jsonGenerator.writeEndObject()
+
     jsonGenerator.writeEndObject()
   }
 
