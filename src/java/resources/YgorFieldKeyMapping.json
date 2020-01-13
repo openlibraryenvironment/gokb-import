@@ -577,7 +577,7 @@
     "out" : {
       "gokb" : ["$TIPP.platform.name"]
     },
-    "type" : "ID",
+    "type" : "Title",
     "flags" : {
       "valid" : "ok",
       "invalid" : "error",
