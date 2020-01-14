@@ -668,7 +668,7 @@ td a {
 }
 
 
-.panel-heading-invalid {
+.panel-heading-red {
 	color: #ffffff;
 	background-color: #d9534f;
 	border-color: #d43f3a;
@@ -678,7 +678,7 @@ td a {
 	border-top-right-radius: 3px;
 }
 
-.panel-heading-valid {
+.panel-heading-green {
 	color: #ffffff;
 	background-color: #5cb85c;
 	border-color: #4cae4c;

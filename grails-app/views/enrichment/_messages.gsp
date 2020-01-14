@@ -45,7 +45,7 @@
   <g:if test="${flash.error}">
     <div class="panel-group">
       <div class="panel panel-default">
-        <div class="panel-heading-invalid">
+        <div class="panel-heading-red">
           <h4 class="panel-title">
             <a data-toggle="collapse" href="#gokb-errors">${message(code: 'error')}</a>
           </h4>

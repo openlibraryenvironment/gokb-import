@@ -8,8 +8,8 @@
 
     <div class="col-xs-12">
         <div class="panel panel-default">
-            <div class="panel-heading-invalid">
-                <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.invalid"/></h3>
+            <div class="panel-heading-red">
+                <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.red"/></h3>
             </div>
 
             <div class="statistics-data">
@@ -51,8 +51,8 @@
 
     <div class="col-xs-12">
         <div class="panel panel-default">
-            <div class="panel-heading-valid">
-                <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.valid"/></h3>
+            <div class="panel-heading-green">
+                <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.green"/></h3>
             </div>
 
             <div class="statistics-data">

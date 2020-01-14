@@ -9,7 +9,7 @@
             <input type="hidden" name="resultHash" value="${resultHash}"/>
             <input type="hidden" name="record.uid" value="${record.uid}"/>
             <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.VALID.toString())}">
-                <div class="panel-heading-invalid">
+                <div class="panel-heading-red">
                     <h3 class="panel-title"><g:message code="statistic.edit.record.zdbmatch"/> : <g:message
                             code="${record.multiFields.get("zdbId").status}"/></h3>
                 </div>
