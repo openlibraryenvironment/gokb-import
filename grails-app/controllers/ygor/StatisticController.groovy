@@ -17,8 +17,9 @@ class StatisticController{
 
   def grailsApplication
   EnrichmentService enrichmentService
-  Map<String, Map<String, Map<String, String>>> validRecords = new HashMap<>()
-  Map<String, Map<String, Map<String, String>>> invalidRecords = new HashMap<>()
+  Map<String, Map<String, Map<String, String>>> greenRecords = new HashMap<>()
+  Map<String, Map<String, Map<String, String>>> yellowRecords = new HashMap<>()
+  Map<String, Map<String, Map<String, String>>> redRecords = new HashMap<>()
 
   def index(){
     render(
@@ -61,8 +62,9 @@ class StatisticController{
             date          : date,
             filename      : filename,
             dataType      : enrichment?.dataType,
-            validRecords  : validRecords[resultHash],
-            invalidRecords: invalidRecords[resultHash],
+            greenRecords  : greenRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
+            redRecords    : redRecords[resultHash],
             status        : enrichment.status
         ]
     )
@@ -81,8 +83,9 @@ class StatisticController{
             resultHash    : resultHash,
             currentView   : 'statistic',
             dataType      : enrichment?.dataType,
-            validRecords  : validRecords[resultHash],
-            invalidRecords: invalidRecords[resultHash]
+            greenRecords  : greenRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
+            redRecords    : redRecords[resultHash]
         ]
     )
   }
@@ -103,8 +106,9 @@ class StatisticController{
             resultHash    : resultHash,
             currentView   : 'statistic',
             dataType      : enrichment?.dataType,
-            invalidRecords: invalidRecords[resultHash],
-            validRecords  : validRecords[resultHash]
+            redRecords    : redRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
+            greenRecords  : greenRecords[resultHash]
         ]
     )
   }
@@ -155,12 +159,21 @@ class StatisticController{
   private void classifyRecord(Record record, Enrichment enrichment){
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid(enrichment.dataType)){
-      validRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-      invalidRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      if (record.zdbIntegrationUrl != null){
+        greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+        redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      }
+      else{
+        yellowRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        greenRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+        redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      }
     }
     else{
-      invalidRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-      validRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      redRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+      yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      greenRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
     }
   }
 
@@ -172,8 +185,9 @@ class StatisticController{
       return enrichments.get(resultHash)
     }
     // else get new Enrichment
-    invalidRecords[resultHash] = new HashMap<>()
-    validRecords[resultHash] = new HashMap<>()
+    redRecords[resultHash] = new HashMap<>()
+    yellowRecords[resultHash] = new HashMap<>()
+    greenRecords[resultHash] = new HashMap<>()
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
@@ -189,8 +203,9 @@ class StatisticController{
 
 
   private void classifyAllRecords(String resultHash){
-    validRecords[resultHash] = new HashMap<>()
-    invalidRecords[resultHash] = new HashMap<>()
+    greenRecords[resultHash] = new HashMap<>()
+    yellowRecords[resultHash] = new HashMap<>()
+    redRecords[resultHash] = new HashMap<>()
     Enrichment enrichment = getEnrichment(resultHash)
     if (enrichment == null){
       return
@@ -200,10 +215,15 @@ class StatisticController{
       record.validate(namespace)
       def multiFieldMap = record.asMultiFieldMap()
       if (record.isValid(enrichment.dataType)){
-        validRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
+        if (record.zdbIntegrationUrl != null){
+          greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        }
+        else{
+          yellowRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        }
       }
       else{
-        invalidRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
+        redRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
       }
     }
   }
@@ -328,8 +348,9 @@ class StatisticController{
             date          : en.date,
             filename      : en.originName,
             dataType      : en.dataType,
-            validRecords  : validRecords[en.resultHash],
-            invalidRecords: invalidRecords[en.resultHash],
+            greenRecords  : greenRecords[en.resultHash],
+            yellowRecords : yellowRecords[en.resultHash],
+            redRecords    : redRecords[en.resultHash],
             status        : en.status
         ]
     )
@@ -371,8 +392,9 @@ class StatisticController{
               date          : en.date,
               filename      : en.originName,
               dataType      : en.dataType,
-              validRecords  : validRecords[en.resultHash],
-              invalidRecords: invalidRecords[en.resultHash],
+              greenRecords  : greenRecords[en.resultHash],
+              yellowRecords : yellowRecords[en.resultHash],
+              redRecords    : redRecords[en.resultHash],
               status        : en.status
           ]
       )

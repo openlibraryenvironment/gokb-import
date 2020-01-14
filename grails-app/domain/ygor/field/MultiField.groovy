@@ -146,18 +146,28 @@ class MultiField {
   }
 
 
-  boolean isCriticallyInvalid(){
-    return status?.endsWith("_INVALID")  // TODO dummy criterion, to be specified
+  boolean isCriticallyIncorrect(){
+    if (keyMapping == null){
+      return false
+    }
+    return "error".equals(keyMapping.flags.get(status))
   }
 
 
-  boolean isNonCriticallyInvalid(){
-    return status?.endsWith("_MISSING")  // TODO dummy criterion, to be specified
+  boolean isNonCriticallyIncorrect(){
+    if (keyMapping == null){
+      return false
+    }
+    return "warning".equals(keyMapping.flags.get(status))
   }
 
 
-  boolean isValid(){
-    return (!isCriticallyInvalid() && !isNonCriticallyInvalid())
+  boolean isCorrect(){
+    if (keyMapping == null){
+      // fields without a key mapping cannot be evaluated
+      return true
+    }
+    return "ok".equals(keyMapping.flags.get(status))
   }
 
 

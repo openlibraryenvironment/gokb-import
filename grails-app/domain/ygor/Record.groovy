@@ -40,8 +40,7 @@ class Record{
 
 
   static hasMany = [multiFields       : MultiField,
-                    validation        : String,
-                    validationMessages: String,
+                    validation        : Status,
                     historyEvents     : HistoryEvent]
 
   static constraints = {
@@ -123,24 +122,17 @@ class Record{
 
 
   boolean isValid(String type) {
-    // check ZDB api match for non-ebooks
-    if (type.toLowerCase() != "ebooks") {
-      if (!zdbIntegrationDate) {
-        // has not been matched in ZDB API
-        return false
-      }
-    }
     // validate tipp.titleUrl
     MultiField urlMultiField = multiFields.get("titleUrl")
     if (urlMultiField == null) {
       return false
     }
-    if (urlMultiField.status != Status.VALIDATOR_URL_IS_VALID.toString()) {
+    if (urlMultiField.status != Status.VALID.toString()) {
       return false
     }
     // check multifields for critical errors
     for (MultiField multiField in multiFields.values()){
-      if (multiField.isCriticallyInvalid()){
+      if (multiField.isCriticallyIncorrect()){
         return false
       }
     }
@@ -158,11 +150,6 @@ class Record{
 
   void addValidation(String property, Status status) {
     validation.put(property, status)
-  }
-
-
-  Status getValidation(String property) {
-    return validation.get(property)
   }
 
 

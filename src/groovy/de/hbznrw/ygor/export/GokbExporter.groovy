@@ -60,10 +60,12 @@ class GokbExporter {
     log.debug("extracting titles ...")
     ArrayNode titles = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
-      record.deriveHistoryEventObjects(enrichment)
-      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
-      title = postProcessPublicationTitle(title, record)
-      titles.add(title)
+      if (record.isValid(enrichment.dataType)){
+        record.deriveHistoryEventObjects(enrichment)
+        ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+        title = postProcessPublicationTitle(title, record)
+        titles.add(title)
+      }
     }
     titles = removeEmptyFields(titles)
     titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
@@ -79,7 +81,9 @@ class GokbExporter {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
-      tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
+      if (record.isValid(enrichment.dataType)){
+        tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
+      }
     }
     tipps = removeEmptyFields(tipps)
     tipps = removeEmptyIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY)
@@ -135,9 +139,10 @@ class GokbExporter {
       result.put("${field}", packageHeader."${field}".v)
     }
     setIsil(packageHeader, result)
-    if (enrichment.packageName) {
+    if (enrichment.packageName){
       result.put("name", enrichment.packageName)
-    } else {
+    }
+    else {
       result.put("name", packageHeader.name.v.v)
     }
 
@@ -148,9 +153,11 @@ class GokbExporter {
 
     if (enrichment.dataType == 'ebooks') {
       result.put("contentType", "Book")
-    } else if (enrichment.dataType == 'journals') {
+    }
+    else if (enrichment.dataType == 'journals') {
       result.put("contentType", "Journal")
-    } else if (enrichment.dataType == 'database') {
+    }
+    else if (enrichment.dataType == 'database') {
       result.put("contentType", "Database")
     }
 

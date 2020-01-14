@@ -314,9 +314,10 @@ class Enrichment{
 
 
   void enrollMappingToRecords(FieldKeyMapping mapping){
-    MultiField titleMedium = new MultiField(mapping)
+    MultiField multiField = new MultiField(mapping)
     for (Record record in dataContainer.records.values()){
-      record.addMultiField(titleMedium)
+      multiField.validate(dataContainer.info.namespace_title_id)
+      record.addMultiField(multiField)
     }
     return
   }

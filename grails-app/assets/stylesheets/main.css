@@ -629,32 +629,32 @@ tr.even:hover, tr.odd:hover {
 	color: #fff;
 }
 
-tr.critical-even-hover {
+tr.error-even-hover {
 	background: #bd4b4b;
 	color: #fff;
 }
 
-tr.critical-odd-hover {
+tr.error-odd-hover {
 	background: #bd4b4b;
 	color: #fff;
 }
 
-tr.noncritical-even-hover {
+tr.warning-even-hover {
+	background: #f9ff99;
+	color: #000;
+}
+
+tr.warning-odd-hover {
+	background: #f9ff99;
+	color: #000;
+}
+
+tr.ok-even-hover {
 	background: #ffffff;
 	color: #000;
 }
 
-tr.noncritical-odd-hover {
-	background: #f7f7f7;
-	color: #000;
-}
-
-tr.valid-even-hover {
-	background: #ffffff;
-	color: #000;
-}
-
-tr.valid-odd-hover {
+tr.ok-odd-hover {
 	background: #f7f7f7;
 	color: #000;
 }
@@ -668,9 +668,9 @@ td a {
 }
 
 
-.panel-heading-invalid {
+.panel-heading-red {
 	color: #ffffff;
-	background-color: #d9534f;
+	background-color: #c04c49;
 	border-color: #d43f3a;
 	padding: 10px 15px;
 	border-bottom: 1px solid transparent;
@@ -678,9 +678,19 @@ td a {
 	border-top-right-radius: 3px;
 }
 
-.panel-heading-valid {
+.panel-heading-yellow {
 	color: #ffffff;
-	background-color: #5cb85c;
+	background-color: #f0ad4e;
+	border-color: #eea236;
+	padding: 10px 15px;
+	border-bottom: 1px solid transparent;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.panel-heading-green {
+	color: #ffffff;
+	background-color: #5aa95a;
 	border-color: #4cae4c;
 	padding: 10px 15px;
 	border-bottom: 1px solid transparent;

@@ -20,17 +20,17 @@ class RecordValidator {
     // remove due to inconsistency in data length
     if (!(startDate.getPrioValues().size() == endDate.getPrioValues().size()
           == startVolume.getPrioValues().size() == endVolume.getPrioValues().size())){
-      record.addValidation("coverage", Status.STRUCTVALIDATOR_REMOVE_FLAG)
+      record.addValidation("coverage", Status.REMOVE_FLAG)
     }
 
     // remove due to parsing or data error
     if (startDate.getFirstPrioValue() == endDate.getFirstPrioValue() &&
         startVolume.getFirstPrioValue() == endVolume.getFirstPrioValue() &&
         startDate.getFirstPrioValue() == startVolume.getFirstPrioValue()) {
-      record.addValidation("coverage", Status.STRUCTVALIDATOR_REMOVE_FLAG)
+      record.addValidation("coverage", Status.REMOVE_FLAG)
     }
     else {
-      record.addValidation("coverage", Status.STRUCTVALIDATOR_COVERAGE_IS_UNDEF)
+      record.addValidation("coverage", Status.UNDEFINED)
     }
 
   }
@@ -43,12 +43,12 @@ class RecordValidator {
     MultiField historyEvents = record.getMultiField("historyEvents")
     /* TODO
     if (historyEvents.size == 0){
-        if (historyEvents.status == Status.UNDEFINED || historyEvents.status == Status.VALIDATOR_DATE_IS_MISSING){
-            record.addValidation("historyEvents", Status.STRUCTVALIDATOR_REMOVE_FLAG)
+        if (historyEvents.status == Status.UNDEFINED || historyEvents.status == Status.DATE_IS_MISSING){
+            record.addValidation("historyEvents", Status.REMOVE_FLAG)
         }
     }
     else{
-        record.addValidation("historyEvents", Status.STRUCTVALIDATOR_HISTORYEVENT_IS_UNDEF)
+        record.addValidation("historyEvents", Status.HISTORYEVENT_IS_UNDEF)
     }
     */
   }
@@ -65,7 +65,7 @@ class RecordValidator {
     MultiField endVolume = record.getMultiField("numLastIssueOnline")
 
     MultiField publisherHistory = record.getMultiField("publisherHistory")
-    record.addValidation("publisherHistory", Status.STRUCTVALIDATOR_PUBLISHERHISTORY_IS_UNDEF)
+    record.addValidation("publisherHistory", Status.UNDEFINED)
   }
 
 }

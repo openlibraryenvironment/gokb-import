@@ -49,12 +49,12 @@ class ValidatorSpec extends Specification {
 
     where:
     raw                | result
-    "a"                | Status.VALIDATOR_STRING_IS_INVALID
-    "This is a title"  | Status.VALIDATOR_STRING_IS_VALID
-    "Multiple|Strings" | Status.VALIDATOR_STRING_IS_NOT_ATOMIC
-    "ab"               | Status.VALIDATOR_STRING_IS_VALID
-    ""                 | Status.VALIDATOR_STRING_IS_MISSING
-    null               | Status.VALIDATOR_STRING_IS_MISSING
+    "a"                | Status.STRING_IS_INVALID
+    "This is a title"  | Status.STRING_IS_VALID
+    "Multiple|Strings" | Status.STRING_IS_NOT_ATOMIC
+    "ab"               | Status.STRING_IS_VALID
+    ""                 | Status.STRING_IS_MISSING
+    null               | Status.STRING_IS_MISSING
   }
 
   void "isValidNumber(String str)"() {
@@ -67,13 +67,13 @@ class ValidatorSpec extends Specification {
 
     where:
     raw       | result
-    "124"     | Status.VALIDATOR_NUMBER_IS_VALID
-    "124,5"   | Status.VALIDATOR_NUMBER_IS_INVALID
-    "333.6"   | Status.VALIDATOR_NUMBER_IS_INVALID
-    "ab"      | Status.VALIDATOR_NUMBER_IS_INVALID
-    "123|456" | Status.VALIDATOR_NUMBER_IS_NOT_ATOMIC
-    ""        | Status.VALIDATOR_NUMBER_IS_MISSING
-    null      | Status.VALIDATOR_NUMBER_IS_MISSING
+    "124"     | Status.NUMBER_IS_VALID
+    "124,5"   | Status.NUMBER_IS_INVALID
+    "333.6"   | Status.NUMBER_IS_INVALID
+    "ab"      | Status.NUMBER_IS_INVALID
+    "123|456" | Status.NUMBER_IS_NOT_ATOMIC
+    ""        | Status.NUMBER_IS_MISSING
+    null      | Status.NUMBER_IS_MISSING
   }
 
   void "isValidIdentifier(String str, Object identifierType)"() {
@@ -86,20 +86,20 @@ class ValidatorSpec extends Specification {
 
     where:
     raw1           | raw2                 | result
-    "1234-5678"    | TitleStruct.EISSN    | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "12345-678"    | TitleStruct.EISSN    | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "12345678"     | TitleStruct.EISSN    | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "1234-56789"   | TitleStruct.EISSN    | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "1234-56X"     | TitleStruct.ISSN     | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "1234-567X"    | TitleStruct.ISSN     | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "1234-X"       | ZdbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "1234-5X"      | ZdbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "1234678910-X" | ZdbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "23"           | EzbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_INVALID
-    "1234254"      | EzbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_VALID
-    "1234678910-X" | "unkown identifier"  | Status.VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE
-    ""             | TitleStruct.EISSN    | Status.VALIDATOR_IDENTIFIER_IS_MISSING
-    null           | EzbReader.IDENTIFIER | Status.VALIDATOR_IDENTIFIER_IS_MISSING
+    "1234-5678"    | TitleStruct.EISSN    | Status.IDENTIFIER_IS_VALID
+    "12345-678"    | TitleStruct.EISSN    | Status.IDENTIFIER_IS_INVALID
+    "12345678"     | TitleStruct.EISSN    | Status.IDENTIFIER_IS_INVALID
+    "1234-56789"   | TitleStruct.EISSN    | Status.IDENTIFIER_IS_INVALID
+    "1234-56X"     | TitleStruct.ISSN     | Status.IDENTIFIER_IS_INVALID
+    "1234-567X"    | TitleStruct.ISSN     | Status.IDENTIFIER_IS_VALID
+    "1234-X"       | ZdbReader.IDENTIFIER | Status.IDENTIFIER_IS_VALID
+    "1234-5X"      | ZdbReader.IDENTIFIER | Status.IDENTIFIER_IS_INVALID
+    "1234678910-X" | ZdbReader.IDENTIFIER | Status.IDENTIFIER_IS_VALID
+    "23"           | EzbReader.IDENTIFIER | Status.IDENTIFIER_IS_INVALID
+    "1234254"      | EzbReader.IDENTIFIER | Status.IDENTIFIER_IS_VALID
+    "1234678910-X" | "unkown identifier"  | Status.IDENTIFIER_IN_UNKNOWN_STATE
+    ""             | TitleStruct.EISSN    | Status.IDENTIFIER_IS_MISSING
+    null           | EzbReader.IDENTIFIER | Status.IDENTIFIER_IS_MISSING
   }
 
   void "isValidDate(String str)"() {
@@ -112,12 +112,12 @@ class ValidatorSpec extends Specification {
 
     where:
     raw                       | result
-    "1999-01-01 00:00:00.000" | Status.VALIDATOR_DATE_IS_VALID
-    "1989-12-31 23:59:59.000" | Status.VALIDATOR_DATE_IS_VALID
-    "-01-01 00:00:00.000"     | Status.VALIDATOR_DATE_IS_INVALID
-    "-12-31 23:59:59.000"     | Status.VALIDATOR_DATE_IS_INVALID
-    ""                        | Status.VALIDATOR_DATE_IS_MISSING
-    null                      | Status.VALIDATOR_DATE_IS_MISSING
+    "1999-01-01 00:00:00.000" | Status.DATE_IS_VALID
+    "1989-12-31 23:59:59.000" | Status.DATE_IS_VALID
+    "-01-01 00:00:00.000"     | Status.DATE_IS_INVALID
+    "-12-31 23:59:59.000"     | Status.DATE_IS_INVALID
+    ""                        | Status.DATE_IS_MISSING
+    null                      | Status.DATE_IS_MISSING
   }
 
   void "isValidURL(String str)"() {
@@ -130,11 +130,11 @@ class ValidatorSpec extends Specification {
 
     where:
     raw                                                                                 | result
-    "https://google.de/"                                                                | Status.VALIDATOR_URL_IS_VALID
-    "http://google.de/?123"                                                             | Status.VALIDATOR_URL_IS_VALID
-    "google.de"                                                                         | Status.VALIDATOR_URL_IS_INVALID
-    "http://bib.uni-regensburg.de/ezeit/?2007988|http://www.emeraldinsight.com/loi/bij" | Status.VALIDATOR_URL_IS_NOT_ATOMIC
-    ""                                                                                  | Status.VALIDATOR_URL_IS_MISSING
-    null                                                                                | Status.VALIDATOR_URL_IS_MISSING
+    "https://google.de/"                                                                | Status.URL_IS_VALID
+    "http://google.de/?123"                                                             | Status.URL_IS_VALID
+    "google.de"                                                                         | Status.URL_IS_INVALID
+    "http://bib.uni-regensburg.de/ezeit/?2007988|http://www.emeraldinsight.com/loi/bij" | Status.URL_IS_NOT_ATOMIC
+    ""                                                                                  | Status.URL_IS_MISSING
+    null                                                                                | Status.URL_IS_MISSING
   }
 }

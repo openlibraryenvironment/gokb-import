@@ -8,8 +8,8 @@
 
     <div class="col-xs-12">
         <div class="panel panel-default">
-            <div class="panel-heading-invalid">
-                <h3 class="panel-title">${invalidRecords.size} <g:message code="statistic.show.records.invalid"/></h3>
+            <div class="panel-heading-red">
+                <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.red"/></h3>
             </div>
 
             <div class="statistics-data">
@@ -26,7 +26,7 @@
                     </thead>
                     <tbody>
                     <g:set var="lineCounter" value="${0}"/>
-                    <g:each in="${invalidRecords}" var="record">
+                    <g:each in="${redRecords}" var="record">
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
@@ -48,11 +48,51 @@
         </div>
     </div>
 
+    <g:if test="${displayZDB}">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading-yellow">
+                    <h3 class="panel-title">${yellowRecords.size} <g:message code="statistic.show.records.yellow"/></h3>
+                </div>
+
+                <div class="statistics-data">
+                    <table class="statistics-details">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>ZDB</th>
+                            <th>ZDB ID</th>
+                            <th>eISSN</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <g:set var="lineCounter" value="${0}"/>
+                        <g:each in="${yellowRecords}" var="record">
+                            <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                                <td class="statistics-cell">
+                                    <g:link action="edit" params="[resultHash: resultHash]"
+                                            id="${record.key}">${record.value.displayTitle}</g:link>
+                                </td>
+                                <td><g:if test="${record.value.zdbIntegrationUrl}">
+                                    <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
+                                </g:if></td>
+                                <td class="statistics-cell">${record.value.zdbId}<br/></td>
+                                <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
+                            </tr>
+                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                        </g:each>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </g:if>
+
 
     <div class="col-xs-12">
         <div class="panel panel-default">
-            <div class="panel-heading-valid">
-                <h3 class="panel-title">${validRecords.size} <g:message code="statistic.show.records.valid"/></h3>
+            <div class="panel-heading-green">
+                <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.green"/></h3>
             </div>
 
             <div class="statistics-data">
@@ -69,7 +109,7 @@
                     </thead>
                     <tbody>
                     <g:set var="lineCounter" value="${0}"/>
-                    <g:each in="${validRecords}" var="record">
+                    <g:each in="${greenRecords}" var="record">
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell"><g:link action="edit" params="[resultHash: resultHash]"
                                                                 id="${record.key}">${record.value.displayTitle}</g:link></td>

@@ -8,8 +8,8 @@
         <g:form>
             <input type="hidden" name="resultHash" value="${resultHash}"/>
             <input type="hidden" name="record.uid" value="${record.uid}"/>
-            <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.VALIDATOR_IDENTIFIER_IS_VALID.toString())}">
-                <div class="panel-heading-invalid">
+            <g:if test="${!record.multiFields.get("zdbId").status.toString().equals(de.hbznrw.ygor.enums.Status.VALID.toString())}">
+                <div class="panel-heading-red">
                     <h3 class="panel-title"><g:message code="statistic.edit.record.zdbmatch"/> : <g:message
                             code="${record.multiFields.get("zdbId").status}"/></h3>
                 </div>
@@ -39,14 +39,14 @@
                         </thead>
                         <g:set var="lineCounter" value="${0}"/>
                         <g:each in="${record.multiFields}" var="multiField">
-                            <g:if test="${multiField.value.isCriticallyInvalid()}">
-                                <g:set var="status" value="critical"/>
+                            <g:if test="${multiField.value.isCriticallyIncorrect()}">
+                                <g:set var="status" value="error"/>
                             </g:if>
-                            <g:elseif test="${multiField.value.isNonCriticallyInvalid()}">
-                                <g:set var="status" value="noncritical"/>
+                            <g:elseif test="${multiField.value.isNonCriticallyIncorrect()}">
+                                <g:set var="status" value="warning"/>
                             </g:elseif>
                             <g:else>
-                                <g:set var="status" value="valid"/>
+                                <g:set var="status" value="ok"/>
                             </g:else>
                             <g:if test="${(lineCounter % 2) == 0}">
                                 <g:set var="status" value="${status}-even-hover"/>
@@ -152,30 +152,12 @@
     }
 
 
-    // TODO is possible to iterate over all messages starting with "VALIDATOR_" - do this
     function getValidationMessageMap() {
         const vms = new Object();
-        vms["VALIDATOR_DATE_IS_INVALID"] = "${g.message(code:"VALIDATOR_DATE_IS_INVALID")}";
-        vms["VALIDATOR_DATE_IS_MISSING"] = "${g.message(code:"VALIDATOR_DATE_IS_MISSING")}";
-        vms["VALIDATOR_DATE_IS_VALID"] = "${g.message(code:"VALIDATOR_DATE_IS_VALID")}";
-        vms["VALIDATOR_IDENTIFIER_IS_INVALID"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_INVALID")}";
-        vms["VALIDATOR_IDENTIFIER_IS_MISSING"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_MISSING")}";
-        vms["VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IN_UNKNOWN_STATE")}";
-        vms["VALIDATOR_IDENTIFIER_IS_VALID"] = "${g.message(code:"VALIDATOR_IDENTIFIER_IS_VALID")}";
-        vms["VALIDATOR_NUMBER_IS_INVALID"] = "${g.message(code:"VALIDATOR_NUMBER_IS_INVALID")}";
-        vms["VALIDATOR_NUMBER_IS_MISSING"] = "${g.message(code:"VALIDATOR_NUMBER_IS_MISSING")}";
-        vms["VALIDATOR_NUMBER_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_NUMBER_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_NUMBER_IS_VALID"] = "${g.message(code:"VALIDATOR_NUMBER_IS_VALID")}";
-        vms["VALIDATOR_STRING_IS_INVALID"] = "${g.message(code:"VALIDATOR_STRING_IS_INVALID")}";
-        vms["VALIDATOR_STRING_IS_MISSING"] = "${g.message(code:"VALIDATOR_STRING_IS_MISSING")}";
-        vms["VALIDATOR_STRING_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_STRING_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_STRING_IS_VALID"] = "${g.message(code:"VALIDATOR_STRING_IS_VALID")}";
-        vms["VALIDATOR_URL_IS_INVALID"] = "${g.message(code:"VALIDATOR_URL_IS_INVALID")}";
-        vms["VALIDATOR_URL_IS_MISSING"] = "${g.message(code:"VALIDATOR_URL_IS_MISSING")}";
-        vms["VALIDATOR_URL_IS_NOT_ATOMIC"] = "${g.message(code:"VALIDATOR_URL_IS_NOT_ATOMIC")}";
-        vms["VALIDATOR_URL_IS_VALID"] = "${g.message(code:"VALIDATOR_URL_IS_VALID")}";
-        vms["UNDEFINED"] = "${g.message(code:"UNDEFINED")}";
+        vms["valid"] = "${g.message(code:"VALID")}";
+        vms["invalid"] = "${g.message(code:"INVALID")}";
+        vms["missing"] = "${g.message(code:"MISSING")}";
+        vms["undefined"] = "${g.message(code:"UNDEFINED")}";
         return vms;
     }
 
