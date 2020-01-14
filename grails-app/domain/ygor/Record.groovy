@@ -122,13 +122,6 @@ class Record{
 
 
   boolean isValid(String type) {
-    // check ZDB api match for non-ebooks
-    if (type.toLowerCase() != "ebooks") {
-      if (!zdbIntegrationDate) {
-        // has not been matched in ZDB API
-        return false
-      }
-    }
     // validate tipp.titleUrl
     MultiField urlMultiField = multiFields.get("titleUrl")
     if (urlMultiField == null) {

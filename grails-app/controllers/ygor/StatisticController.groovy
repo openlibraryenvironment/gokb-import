@@ -18,6 +18,7 @@ class StatisticController{
   def grailsApplication
   EnrichmentService enrichmentService
   Map<String, Map<String, Map<String, String>>> greenRecords = new HashMap<>()
+  Map<String, Map<String, Map<String, String>>> yellowRecords = new HashMap<>()
   Map<String, Map<String, Map<String, String>>> redRecords = new HashMap<>()
 
   def index(){
@@ -62,6 +63,7 @@ class StatisticController{
             filename      : filename,
             dataType      : enrichment?.dataType,
             greenRecords  : greenRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
             redRecords    : redRecords[resultHash],
             status        : enrichment.status
         ]
@@ -82,6 +84,7 @@ class StatisticController{
             currentView   : 'statistic',
             dataType      : enrichment?.dataType,
             greenRecords  : greenRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
             redRecords    : redRecords[resultHash]
         ]
     )
@@ -104,6 +107,7 @@ class StatisticController{
             currentView   : 'statistic',
             dataType      : enrichment?.dataType,
             redRecords    : redRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
             greenRecords  : greenRecords[resultHash]
         ]
     )
@@ -155,11 +159,20 @@ class StatisticController{
   private void classifyRecord(Record record, Enrichment enrichment){
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid(enrichment.dataType)){
-      greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-      redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      if (record.zdbIntegrationUrl != null){
+        greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+        redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      }
+      else{
+        yellowRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        greenRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+        redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      }
     }
     else{
       redRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+      yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
       greenRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
     }
   }
@@ -173,6 +186,7 @@ class StatisticController{
     }
     // else get new Enrichment
     redRecords[resultHash] = new HashMap<>()
+    yellowRecords[resultHash] = new HashMap<>()
     greenRecords[resultHash] = new HashMap<>()
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
@@ -190,6 +204,7 @@ class StatisticController{
 
   private void classifyAllRecords(String resultHash){
     greenRecords[resultHash] = new HashMap<>()
+    yellowRecords[resultHash] = new HashMap<>()
     redRecords[resultHash] = new HashMap<>()
     Enrichment enrichment = getEnrichment(resultHash)
     if (enrichment == null){
@@ -200,7 +215,12 @@ class StatisticController{
       record.validate(namespace)
       def multiFieldMap = record.asMultiFieldMap()
       if (record.isValid(enrichment.dataType)){
-        greenRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
+        if (record.zdbIntegrationUrl != null){
+          greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        }
+        else{
+          yellowRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
+        }
       }
       else{
         redRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
@@ -329,6 +349,7 @@ class StatisticController{
             filename      : en.originName,
             dataType      : en.dataType,
             greenRecords  : greenRecords[en.resultHash],
+            yellowRecords : yellowRecords[en.resultHash],
             redRecords    : redRecords[en.resultHash],
             status        : en.status
         ]
@@ -372,6 +393,7 @@ class StatisticController{
               filename      : en.originName,
               dataType      : en.dataType,
               greenRecords  : greenRecords[en.resultHash],
+              yellowRecords : yellowRecords[en.resultHash],
               redRecords    : redRecords[en.resultHash],
               status        : en.status
           ]
