@@ -9,7 +9,7 @@
     <div class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading-invalid">
-                <h3 class="panel-title">${invalidRecords.size} <g:message code="statistic.show.records.invalid"/></h3>
+                <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.invalid"/></h3>
             </div>
 
             <div class="statistics-data">
@@ -26,7 +26,7 @@
                     </thead>
                     <tbody>
                     <g:set var="lineCounter" value="${0}"/>
-                    <g:each in="${invalidRecords}" var="record">
+                    <g:each in="${redRecords}" var="record">
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
@@ -52,7 +52,7 @@
     <div class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading-valid">
-                <h3 class="panel-title">${validRecords.size} <g:message code="statistic.show.records.valid"/></h3>
+                <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.valid"/></h3>
             </div>
 
             <div class="statistics-data">
@@ -69,7 +69,7 @@
                     </thead>
                     <tbody>
                     <g:set var="lineCounter" value="${0}"/>
-                    <g:each in="${validRecords}" var="record">
+                    <g:each in="${greenRecords}" var="record">
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell"><g:link action="edit" params="[resultHash: resultHash]"
                                                                 id="${record.key}">${record.value.displayTitle}</g:link></td>
