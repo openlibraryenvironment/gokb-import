@@ -155,10 +155,10 @@
 
     function getValidationMessageMap() {
         const vms = new Object();
-        vms["valid"] = "${g.message(code:"VALID")}";
-        vms["invalid"] = "${g.message(code:"INVALID")}";
-        vms["missing"] = "${g.message(code:"MISSING")}";
-        vms["undefined"] = "${g.message(code:"UNDEFINED")}";
+        vms["valid"] = "${g.message(code:"valid")}";
+        vms["invalid"] = "${g.message(code:"invalid")}";
+        vms["missing"] = "${g.message(code:"missing")}";
+        vms["undefined"] = "${g.message(code:"undefined")}";
         return vms;
     }
 
