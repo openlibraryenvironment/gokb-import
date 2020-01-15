@@ -11,9 +11,9 @@ import ygor.Record
 import ygor.field.MappingsContainer
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.DoiIdentifier
-import ygor.identifier.EissnIdentifier
 import ygor.identifier.EzbIdentifier
-import ygor.identifier.PissnIdentifier
+import ygor.identifier.OnlineIdentifier
+import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
 class DataContainer {
@@ -109,14 +109,14 @@ class DataContainer {
         }
       }
     }
-    if (identifier instanceof EissnIdentifier){
+    if (identifier instanceof OnlineIdentifier){
       for (Record record in records.values()){
         if (identifier.identifier.equals(record.onlineIdentifier?.identifier)){
           return record
         }
       }
     }
-    if (identifier instanceof PissnIdentifier){
+    if (identifier instanceof PrintIdentifier){
       for (Record record in records.values()){
         if (identifier.identifier.equals(record.printIdentifier?.identifier)){
           return record

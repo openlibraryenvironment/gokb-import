@@ -2,7 +2,7 @@ package de.hbznrw.ygor.normalizers
 
 
 import groovy.util.logging.Log4j
-import ygor.identifier.EissnIdentifier
+import ygor.identifier.OnlineIdentifier
 
 import java.util.regex.Pattern
 
@@ -46,7 +46,7 @@ class IdentifierNormalizer {
 
 
   static def fixIdentifier(String id, Class clazz) {
-    if (clazz.equals(EissnIdentifier.class)) {
+    if (clazz.equals(OnlineIdentifier.class)) {
       return fixEISSN(id)
     }
     id

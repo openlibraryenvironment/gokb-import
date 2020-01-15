@@ -28,8 +28,8 @@ class Record{
   ZdbIdentifier zdbId
   EzbIdentifier ezbId
   DoiIdentifier doiId
-  EissnIdentifier onlineIdentifier
-  PissnIdentifier printIdentifier
+  OnlineIdentifier onlineIdentifier
+  PrintIdentifier printIdentifier
   Map multiFields
   Map validation
   String zdbIntegrationDate
@@ -89,13 +89,13 @@ class Record{
       }
       doiId = identifier
     }
-    else if (identifier instanceof EissnIdentifier) {
+    else if (identifier instanceof OnlineIdentifier) {
       if (onlineIdentifier && identifier.identifier != onlineIdentifier.identifier) {
         throw new IllegalArgumentException("EISSN ${dentifier} already set to ${onlineIdentifier} for record")
       }
       onlineIdentifier = identifier
     }
-    else if (identifier instanceof PissnIdentifier) {
+    else if (identifier instanceof PrintIdentifier) {
       if (printIdentifier && identifier.identifier != printIdentifier.identifier) {
         throw new IllegalArgumentException("ISSN ${identifier} already set to ${printIdentifier} for record")
       }
@@ -280,8 +280,8 @@ class Record{
     ids.add(new ZdbIdentifier(JsonToolkit.fromJson(json, "zdbId"), mappings.getMapping("zdbId", MappingsContainer.YGOR)))
     ids.add(new EzbIdentifier(JsonToolkit.fromJson(json, "ezbId"), mappings.getMapping("ezbId", MappingsContainer.YGOR)))
     ids.add(new DoiIdentifier(JsonToolkit.fromJson(json, "doiId"), mappings.getMapping("doiId", MappingsContainer.YGOR)))
-    ids.add(new EissnIdentifier(JsonToolkit.fromJson(json, "eissn"), mappings.getMapping("onlineIdentifier", MappingsContainer.YGOR)))
-    ids.add(new PissnIdentifier(JsonToolkit.fromJson(json, "issn"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
+    ids.add(new OnlineIdentifier(JsonToolkit.fromJson(json, "eissn"), mappings.getMapping("onlineIdentifier", MappingsContainer.YGOR)))
+    ids.add(new PrintIdentifier(JsonToolkit.fromJson(json, "issn"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
     String uid = JsonToolkit.fromJson(json, "uid")
     Record result = new Record(ids, mappings, uid)
     Iterator it = ((ArrayNode) (json.path("multiFields"))).iterator()

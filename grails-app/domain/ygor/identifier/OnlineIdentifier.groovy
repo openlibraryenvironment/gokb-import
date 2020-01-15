@@ -2,7 +2,7 @@ package ygor.identifier
 
 import ygor.field.FieldKeyMapping
 
-class EissnIdentifier extends AbstractIdentifier {
+class OnlineIdentifier extends AbstractIdentifier {
 
   static constraints = {
     fieldKeyMapping nullable: false
@@ -12,7 +12,7 @@ class EissnIdentifier extends AbstractIdentifier {
     }
   }
 
-  EissnIdentifier(String id, FieldKeyMapping fieldKeyMapping) {
+  OnlineIdentifier(String id, FieldKeyMapping fieldKeyMapping) {
     super(fieldKeyMapping)
     identifier = id
   }
