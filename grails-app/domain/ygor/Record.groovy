@@ -11,6 +11,7 @@ import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.normalizers.EditionNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.RecordValidator
+import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 import ygor.field.HistoryEvent
 import ygor.field.MappingsContainer
@@ -20,8 +21,10 @@ import ygor.identifier.*
 class Record{
 
   static ObjectMapper MAPPER = new ObjectMapper()
+  static List<String> GOKB_FIELD_ORDER = []
   static {
     MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+    GOKB_FIELD_ORDER.addAll(new JsonSlurper().parseText(new File("src/java/resources/GokbOutputFieldOrder.json").text))
   }
 
   String uid
@@ -174,6 +177,15 @@ class Record{
       }
     }
     return result
+  }
+
+
+  List<MultiField> multiFieldsInGokbOrder(){
+    multiFields.values().sort{
+      multiField -> (GOKB_FIELD_ORDER.indexOf(multiField.ygorFieldKey) > -1 ?
+          GOKB_FIELD_ORDER.indexOf(multiField.ygorFieldKey) :
+          GOKB_FIELD_ORDER.size())
+    }
   }
 
 

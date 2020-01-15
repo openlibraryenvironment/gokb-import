@@ -38,11 +38,11 @@
                         </tr>
                         </thead>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${record.multiFields}" var="multiField">
-                            <g:if test="${multiField.value.isCriticallyIncorrect()}">
+                        <g:each in="${record.multiFieldsInGokbOrder()}" var="multiField">
+                            <g:if test="${multiField.isCriticallyIncorrect()}">
                                 <g:set var="status" value="error"/>
                             </g:if>
-                            <g:elseif test="${multiField.value.isNonCriticallyIncorrect()}">
+                            <g:elseif test="${multiField.isNonCriticallyIncorrect()}">
                                 <g:set var="status" value="warning"/>
                             </g:elseif>
                             <g:else>
@@ -55,11 +55,11 @@
                                 <g:set var="status" value="${status}-odd-hover"/>
                             </g:else>
                             <tr class="${status}">
-                                <td class="statistics-cell-key">${multiField.key}</td>
+                                <td class="statistics-cell-key">${multiField.ygorFieldKey}</td>
                                 <td class="statistics-cell-value"
-                                    contenteditable="true">${multiField.value.getFirstPrioValue()}</td>
-                                <td class="statistics-cell-source">${multiField.value.getPrioSource()}</td>
-                                <td class="statistics-cell-status"><g:message code="${multiField.value.status}"/></td>
+                                    contenteditable="true">${multiField.getFirstPrioValue()}</td>
+                                <td class="statistics-cell-source">${multiField.getPrioSource()}</td>
+                                <td class="statistics-cell-status"><g:message code="${multiField.status}"/></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
                         </g:each>
@@ -82,7 +82,8 @@
 <script>
     $(document).ready(function () {
         $("#edit-table").dataTable({
-            "paging": false
+            "paging": false,
+            "ordering": false
             // "order": [[ 3, "asc" ]]  // in case we want to order by status
         });
     });
@@ -154,10 +155,10 @@
 
     function getValidationMessageMap() {
         const vms = new Object();
-        vms["valid"] = "${g.message(code:"VALID")}";
-        vms["invalid"] = "${g.message(code:"INVALID")}";
-        vms["missing"] = "${g.message(code:"MISSING")}";
-        vms["undefined"] = "${g.message(code:"UNDEFINED")}";
+        vms["valid"] = "${g.message(code:"valid")}";
+        vms["invalid"] = "${g.message(code:"invalid")}";
+        vms["missing"] = "${g.message(code:"missing")}";
+        vms["undefined"] = "${g.message(code:"undefined")}";
         return vms;
     }
 
