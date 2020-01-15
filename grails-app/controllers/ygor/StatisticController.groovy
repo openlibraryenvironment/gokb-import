@@ -159,7 +159,7 @@ class StatisticController{
   private void classifyRecord(Record record, Enrichment enrichment){
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid(enrichment.dataType)){
-      if (record.zdbIntegrationUrl != null){
+      if (record.multiFields.get("publicationType").getFirstPrioValue().equals("Book") || record.zdbIntegrationUrl != null){
         greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
         yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
         redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
@@ -213,18 +213,7 @@ class StatisticController{
     String namespace = enrichment.dataContainer.info.namespace_title_id
     for (Record record in enrichment.dataContainer.records.values()){
       record.validate(namespace)
-      def multiFieldMap = record.asMultiFieldMap()
-      if (record.isValid(enrichment.dataType)){
-        if (record.zdbIntegrationUrl != null){
-          greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-        }
-        else{
-          yellowRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-        }
-      }
-      else{
-        redRecords[resultHash].put(multiFieldMap.get("uid"), multiFieldMap)
-      }
+      classifyRecord(record, enrichment)
     }
   }
 
