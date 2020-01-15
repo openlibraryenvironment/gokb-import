@@ -14,7 +14,7 @@ class AbstractIdentifier {
 
   static Pattern ISSN_PATTERN = Pattern.compile("[\\d]{4}-?[\\d]{3}[\\dX]")
   static Pattern ISBN10_SIMPLE_PATTERN = Pattern.compile("([\\d]{9}|[\\d-]{12})[\\dX]")
-  static Pattern ISBN13_SIMPLE_PATTERN = Pattern.compile("[\\d-]{17}")
+  static Pattern ISBN13_SIMPLE_PATTERN = Pattern.compile("[\\d-]{13,17}")
 
   static constraints = {
     identifier nullable: false
