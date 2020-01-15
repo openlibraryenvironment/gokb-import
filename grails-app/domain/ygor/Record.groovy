@@ -13,6 +13,7 @@ import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.RecordValidator
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.grails.io.support.ClassPathResource
 import ygor.field.HistoryEvent
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -24,7 +25,7 @@ class Record{
   static List<String> GOKB_FIELD_ORDER = []
   static {
     MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-    GOKB_FIELD_ORDER.addAll(new JsonSlurper().parseText(new File("src/java/resources/GokbOutputFieldOrder.json").text))
+    GOKB_FIELD_ORDER.addAll(new JsonSlurper().parseText(new ClassPathResource("/resources/GokbOutputFieldOrder.json").file.text))
   }
 
   String uid
