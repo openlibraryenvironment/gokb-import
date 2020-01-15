@@ -8,7 +8,9 @@ class OnlineIdentifier extends AbstractIdentifier {
     fieldKeyMapping nullable: false
 
     identifier validator: {
-      ISSN_PATTERN.matcher(identifier).matches()
+      ISSN_PATTERN.matcher(identifier).matches() ||
+          ISBN13_SIMPLE_PATTERN.matcher(identifier).matches() ||
+          ISBN10_SIMPLE_PATTERN.matcher(identifier).matches()
     }
   }
 
