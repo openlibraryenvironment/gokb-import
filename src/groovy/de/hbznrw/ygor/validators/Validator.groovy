@@ -6,6 +6,7 @@ import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.readers.EzbReader
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.validator.routines.UrlValidator
+import ygor.identifier.AbstractIdentifier
 
 import java.sql.Timestamp
 
@@ -121,7 +122,9 @@ class Validator {
       return Status.UNDEFINED
     }
     if (identifierType in ["onlineIdentifier", "printIdentifier"]) {
-      if (str.matches("\\d{4}-\\d{3}[\\dXx]")) {
+      if (AbstractIdentifier.ISSN_PATTERN.matcher(str).matches() ||
+          AbstractIdentifier.ISBN13_SIMPLE_PATTERN.matcher(str).matches() ||
+          AbstractIdentifier.ISBN10_SIMPLE_PATTERN.matcher(str).matches()) {
         return Status.VALID
       }
       else {

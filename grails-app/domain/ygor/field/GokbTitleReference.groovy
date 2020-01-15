@@ -9,9 +9,9 @@ import ygor.Enrichment
 import ygor.Record
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.DoiIdentifier
-import ygor.identifier.EissnIdentifier
+import ygor.identifier.OnlineIdentifier
 import ygor.identifier.EzbIdentifier
-import ygor.identifier.PissnIdentifier
+import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
 
@@ -19,8 +19,8 @@ class GokbTitleReference{
   ZdbIdentifier zdbId
   EzbIdentifier ezbId
   DoiIdentifier doiIdentifier
-  EissnIdentifier onlineIdentifier
-  PissnIdentifier printIdentifier
+  OnlineIdentifier onlineIdentifier
+  PrintIdentifier printIdentifier
   String publicationTitle
 
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance

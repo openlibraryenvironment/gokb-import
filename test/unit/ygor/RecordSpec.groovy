@@ -5,7 +5,7 @@ import spock.lang.Specification
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
-import ygor.identifier.EissnIdentifier
+import ygor.identifier.OnlineIdentifier
 import ygor.identifier.ZdbIdentifier
 
 @TestFor(Record)
@@ -23,7 +23,7 @@ class RecordSpec extends Specification {
   void "create Record"() {
     given: "a mappings container and a list of identifiers"
     ZdbIdentifier zdbId = new ZdbIdentifier("12345", container.getMapping("zdbId", MappingsContainer.YGOR))
-    EissnIdentifier eissn = new EissnIdentifier("12345678", container.getMapping("onlineIdentifier", MappingsContainer.YGOR))
+    OnlineIdentifier eissn = new OnlineIdentifier("12345678", container.getMapping("onlineIdentifier", MappingsContainer.YGOR))
     ArrayList<AbstractIdentifier> ids = [zdbId, eissn]
 
     when: "a record is created"

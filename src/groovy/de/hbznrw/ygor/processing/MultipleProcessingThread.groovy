@@ -12,8 +12,8 @@ import ygor.Enrichment
 import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
-import ygor.identifier.EissnIdentifier
-import ygor.identifier.PissnIdentifier
+import ygor.identifier.OnlineIdentifier
+import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 import ygor.integrators.EzbIntegrationService
 import ygor.integrators.KbartIntegrationService
@@ -64,8 +64,8 @@ class MultipleProcessingThread extends Thread {
     issnKeyMapping = en.mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
     eissnKeyMapping = en.mappingsContainer.getMapping("onlineIdentifier", MappingsContainer.YGOR)
     identifierByKey = [(zdbKeyMapping)  : ZdbIdentifier.class,
-                       (issnKeyMapping) : PissnIdentifier.class,
-                       (eissnKeyMapping): EissnIdentifier.class]
+                       (issnKeyMapping) : PrintIdentifier.class,
+                       (eissnKeyMapping): OnlineIdentifier.class]
   }
 
   @Override
