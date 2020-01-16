@@ -151,6 +151,12 @@ class Enrichment{
     result.append("\"configuration\":{")
     result.append("\"dataType\":\"").append(dataType).append("\",")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
+    if (dataContainer.curatoryGroup1 != null){
+      result.append("\"curatoryGroup1\":\"").append(dataContainer.curatoryGroup1).append("\",")
+    }
+    if (dataContainer.curatoryGroup2 != null){
+      result.append("\"curatoryGroup2\":\"").append(dataContainer.curatoryGroup2).append("\",")
+    }
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
     result.append("}\n}\n")
@@ -180,6 +186,12 @@ class Enrichment{
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
     en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
+    if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup1")){
+      en.dataContainer.curatoryGroup1 = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup1")
+    }
+    if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")){
+      en.dataContainer.curatoryGroup2 = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")
+    }
     en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
     return en

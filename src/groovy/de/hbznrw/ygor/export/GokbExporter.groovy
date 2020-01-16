@@ -161,7 +161,12 @@ class GokbExporter {
       result.put("contentType", "Database")
     }
 
-    result.set("curatoryGroups", getArrayNode(packageHeader, "curatoryGroups"))
+    if (null != enrichment.dataContainer.curatoryGroup1){
+      result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup1))
+    }
+    if (null != enrichment.dataContainer.curatoryGroup2){
+      result.put("curatoryGroup2", (enrichment.dataContainer.curatoryGroup2))
+    }
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
     def source = new ObjectNode(NODE_FACTORY)

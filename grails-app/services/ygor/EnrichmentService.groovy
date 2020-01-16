@@ -66,10 +66,10 @@ class EnrichmentService{
 //          ph.v.variantNames << new Pod(pm['pkgVariantName'][0])
 //        }
     if ("" != pm['pkgCuratoryGroup1'][0].trim()){
-      ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
+      enrichment.dataContainer.curatoryGroup1 = (pm['pkgCuratoryGroup1'][0])
     }
     if ("" != pm['pkgCuratoryGroup2'][0].trim()){
-      ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup2'][0])
+      enrichment.dataContainer.curatoryGroup2 = (pm['pkgCuratoryGroup2'][0])
     }
 
     setPlatformMap(pm, ph)
