@@ -177,7 +177,7 @@
                                     <g:textField name="pkgCuratoryGroup1" size="24" value="${session.lastUpdate.parameterMap.pkgCuratoryGroup1[0]}" class="form-control" />
                                 </g:if>
                                 <g:else>
-                                    <g:textField name="pkgCuratoryGroup1" size="24" value="LAS:eR" class="form-control" />
+                                    <g:textField name="pkgCuratoryGroup1" size="24" class="form-control" />
                                 </g:else>
                             </div>
 
@@ -187,7 +187,7 @@
                                     <g:textField name="pkgCuratoryGroup2" size="24" value="${session.lastUpdate.parameterMap.pkgCuratoryGroup2[0]}" class="form-control" />
                                 </g:if>
                                 <g:else>
-                                    <g:textField name="pkgCuratoryGroup2" size="24" value="hbz" class="form-control" />
+                                    <g:textField name="pkgCuratoryGroup2" size="24" class="form-control" />
                                 </g:else>
                             </div>
 
