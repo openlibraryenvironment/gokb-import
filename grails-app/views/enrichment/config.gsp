@@ -37,13 +37,7 @@
 					<td>packageHeader.nominalPlatform</td>
 					<td>GOKb Plattform</td>
 				</tr>
-				<tr>
-					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
-					<td></td>
-					<td>packageHeader.curatoryGroups</td>
-					<td>GOKb Curatory Group</td>
-				</tr>
-							
+
 				<tr>
 					<td>KBART <em>, <g:message code="config.table.file" /></em></td>
 					<td></td>
@@ -188,12 +182,6 @@
 				<td></td>
 				<td>packageHeader.nominalPlatform</td>
 				<td>GOKb Plattform</td>
-			</tr>
-			<tr>
-				<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
-				<td></td>
-				<td>packageHeader.curatoryGroups</td>
-				<td>GOKb Curatory Group</td>
 			</tr>
 
 			<tr>

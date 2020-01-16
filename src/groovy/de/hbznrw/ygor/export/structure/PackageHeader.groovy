@@ -22,6 +22,5 @@ class PackageHeader {
   PackageHeaderNominalPlatform nominalPlatform = PackageStruct.getNewPackageHeaderNominalPlatform()
 
   def additionalProperties = [] // TODO
-  ArrayList curatoryGroups = []
   Pod isil = new Pod("")
 }

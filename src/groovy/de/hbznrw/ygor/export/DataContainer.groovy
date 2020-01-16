@@ -20,12 +20,14 @@ class DataContainer {
 
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
-  Meta info    // TODO: use or delete
+  Meta info
   Package pkg
   ObjectNode packageHeader
   Map<String, Record> records
   ArrayNode titles
   ArrayNode tipps
+  String curatoryGroup1
+  String curatoryGroup2
 
 
   DataContainer() {
