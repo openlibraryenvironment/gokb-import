@@ -6,6 +6,7 @@ import groovyx.net.http.Method
 class GokbService {
 
   def grailsApplication
+  def messageSource
 
   Map getPlatformMap(def qterm = null, def suggest = true) {
     log.info("getting platform map from gokb ..")
@@ -130,14 +131,16 @@ class GokbService {
     String nsBase = grailsApplication.config.gokbApi.baseUri.toString() + "api/namespaces"
     String nsCategory = grailsApplication.config.gokbApi.namespaceCategory ?: null
     String nsUrl = buildUri(nsBase, null, null, null, null, nsCategory)
-    def result = [[id: 'doi', text: 'doi']]
+    def placeholderNamespace = messageSource.getMessage('listDocuments.js.placeholder.namespace', null, Locale.default)
+    def result = [[id: '', text: placeholderNamespace],[id: 'doi', text: 'doi']]
 
-    log.debug("Retrieving namespaces via: ${nsUrl}")
+    log.debug("Quering namespaces via: ${nsUrl}")
     try {
       def json = queryElasticsearch(nsUrl)
       if (json?.info?.result) {
+        log.debug("Retrieved namespaces via: ${nsUrl}")
         json.info.result.each { r ->
-          if (!(r.value in ["issn", "eissn"])) {
+          if (!(r.value in ["issn", "eissn", "doi"])) {
             result.add([id: r.value, text: r.value, cat: r.category])
           }
         }
