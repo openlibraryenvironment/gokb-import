@@ -95,7 +95,7 @@ class Record{
     }
     else if (identifier instanceof OnlineIdentifier) {
       if (onlineIdentifier && identifier.identifier != onlineIdentifier.identifier) {
-        throw new IllegalArgumentException("EISSN ${dentifier} already set to ${onlineIdentifier} for record")
+        throw new IllegalArgumentException("EISSN ${identifier} already set to ${onlineIdentifier} for record")
       }
       onlineIdentifier = identifier
     }
