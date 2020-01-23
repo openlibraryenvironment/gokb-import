@@ -94,7 +94,9 @@ class JsonToolkit {
           historyEvents.add(he.toJson())
         }
       }
-      result.set("historyEvents", historyEvents)
+      if (historyEvents.size() > 0){
+        result.set("historyEvents", historyEvents)
+      }
     }
     result
   }

@@ -277,9 +277,6 @@
       "zdb" : "039E:H",
       "ezb" : ""
     },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.date"]
-    },
     "order" : ["zdb"],
     "type" : "Date",
     "flags" : {
@@ -295,9 +292,6 @@
       "kbart" : "",
       "zdb" : "039E:0",
       "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.zdbId"]
     },
     "order" : ["zdb"],
     "type" : "String",
@@ -315,9 +309,6 @@
       "zdb" : "039E:b",
       "ezb" : ""
     },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.relationType"]
-    },
     "order" : ["zdb"],
     "type" : "Abbreviation",
     "flags" : {
@@ -333,9 +324,6 @@
       "kbart" : "",
       "zdb" : "039E:f",
       "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessor"]
     },
     "order" : ["zdb"],
     "type" : "String",
@@ -353,9 +341,6 @@
       "zdb" : "039E:z",
       "ezb" : ""
     },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.predecessorOrSuccessor"]
-    },
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
@@ -372,9 +357,6 @@
       "zdb" : "039E:s",
       "ezb" : ""
     },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.successor"]
-    },
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
@@ -390,9 +372,6 @@
       "kbart" : "",
       "zdb" : "039E:Y",
       "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.historyEvents.$ARRAY.$COUNT.title"]
     },
     "order" : ["zdb"],
     "type" : "Title",
