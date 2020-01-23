@@ -55,7 +55,7 @@ class HistoryEvent {
     if (zdbDateSpan.matches("[\\d]{4}-[\\d]{4}")){
       String year
       if (relation.equals("from")){
-        year = zdbDateSpan.substring(5)
+        year = String.valueOf(Integer.valueOf(zdbDateSpan.substring(5)) + 1)
       }
       else if (relation.equals("to")){
         year = zdbDateSpan.substring(0,4)
