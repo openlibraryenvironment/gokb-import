@@ -207,8 +207,12 @@ class Validator {
     if (!str || str.trim().equals("")) {
       return Status.MISSING
     }
-    // also accept "YYYY" or "YYYY-MM-DD" or "YYYY/MM/DD"
+    // accept "YYYY" or "YYYY-MM-DD" or "YYYY/MM/DD"
     if (str.matches("[\\d]{4}([-/][\\d]{2}[-/][\\d]{2})?")){
+      return Status.VALID
+    }
+    // also accept some time spans, like "YYYY-YYYY"
+    if (str.matches("\\[?[\\d]{4} ?- ?[\\d]{4}]?")){
       return Status.VALID
     }
     try {
