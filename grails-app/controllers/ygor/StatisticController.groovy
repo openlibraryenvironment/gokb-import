@@ -41,6 +41,7 @@ class StatisticController{
         ygorVersion = enrichment.ygorVersion
         date = enrichment.date
         filename = enrichment.originName
+        enrichment.dataContainer.markDuplicateIds()
         classifyAllRecords(resultHash)
       }
       else{

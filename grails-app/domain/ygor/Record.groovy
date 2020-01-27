@@ -41,11 +41,13 @@ class Record{
   String zdbIntegrationUrl
   String ezbIntegrationUrl
   List historyEvents
+  Map<AbstractIdentifier, Record> duplicates
 
 
   static hasMany = [multiFields       : MultiField,
                     validation        : Status,
-                    historyEvents     : HistoryEvent]
+                    historyEvents     : HistoryEvent,
+                    duplicates        : Record]
 
   static constraints = {
   }
@@ -63,6 +65,7 @@ class Record{
     }
     multiFields = [:]
     validation = [:]
+    duplicates = [:]
     historyEvents = []
     for (def ygorMapping in container.ygorMappings) {
       multiFields.put(ygorMapping.key, new MultiField(ygorMapping.value))
@@ -151,6 +154,15 @@ class Record{
 
   void addValidation(String property, Status status) {
     validation.put(property, status)
+  }
+
+
+  void addDuplicates(AbstractIdentifier id, List<Record> records){
+    for (Record rec in records){
+      if (rec != this){
+        duplicates.put(id, rec)
+      }
+    }
   }
 
 
