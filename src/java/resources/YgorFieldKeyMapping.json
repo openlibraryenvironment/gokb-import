@@ -842,7 +842,7 @@
     "flags" : {
       "valid" : "ok",
       "invalid" : "error",
-      "missing" : "error",
+      "missing" : "warning",
       "undefined" : "error"
     }
   },

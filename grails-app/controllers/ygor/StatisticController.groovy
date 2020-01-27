@@ -159,7 +159,8 @@ class StatisticController{
   private void classifyRecord(Record record, Enrichment enrichment){
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid(enrichment.dataType)){
-      if (!record.multiFields.get("publicationType").getFirstPrioValue().equals("Serial") || record.zdbIntegrationUrl != null){
+      if (record.multiFields.get("titleUrl").isCorrect() &&
+          (!record.multiFields.get("publicationType").getFirstPrioValue().equals("Serial") || record.zdbIntegrationUrl != null)){
         greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
         yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
         redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
