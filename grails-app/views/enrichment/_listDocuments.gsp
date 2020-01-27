@@ -98,12 +98,14 @@
                             <g:if test="${namespaces?.size() > 0}">
                                 <div class="input-group">
                                     <span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
+                                    <g:select
+                                        name="pkgTitleId" id="pkgTitleId" from="${namespaces}" optionKey="id" optionValue="text" class="form-control">
+                                    </g:select>
                                     <g:if test="${session.lastUpdate?.parameterMap?.pkgTitleId}">
-                                        <g:select name="pkgTitleId" id="pkgTitleId" from="${namespaces}" optionKey="text" optionValue="id" value="${session.lastUpdate?.parameterMap?.pkgTitleId.getAt(0)}" class="form-control"></g:select>
+                                        <script>
+                                            $('#pkgTitleId').val('${session.lastUpdate?.parameterMap?.pkgTitleId[0]}').select();
+                                        </script>
                                     </g:if>
-                                    <g:else>
-                                        <g:select name="pkgTitleId" id="pkgTitleId" from="${namespaces}" optionKey="text" optionValue="id" noSelection="${['':message(code:'listDocuments.js.placeholder.namespace')]}" class="form-control"></g:select>
-                                    </g:else>
                                 </div>
                                 <br>
                             </g:if>
@@ -167,7 +169,6 @@
                                         }
                                     });
                                     $('#pkgNominalProvider').append($('<option></option>').attr('value', provider).text(provider));
-                                    $('#pkgTitleId').append($('<option></option>').attr('value', titleId).text(titleId));
                                 });
                             </script>
 
