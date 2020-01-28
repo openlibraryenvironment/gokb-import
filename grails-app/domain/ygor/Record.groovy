@@ -159,10 +159,28 @@ class Record{
 
   void addDuplicates(AbstractIdentifier id, Set<Record> recordUids){
     for (Record rec in recordUids){
-      if (rec.uid != this.uid){
+      if (rec.uid != this.uid && !haveDistinctiveId(this, rec)){
         duplicates.put(id, rec.uid)
       }
     }
+  }
+
+
+  static haveDistinctiveId(Record rec1, Record rec2){
+    if (rec1.zdbId?.identifier != null && rec2.zdbId?.identifier != null &&
+        rec1.zdbId.identifier != rec2.zdbId.identifier){
+      return true
+    }
+    if (rec1.onlineIdentifier?.identifier != null && rec2.onlineIdentifier?.identifier != null &&
+        rec1.onlineIdentifier.identifier != rec2.onlineIdentifier.identifier){
+      return true
+    }
+    if (rec1.printIdentifier?.identifier != null && rec2.printIdentifier?.identifier != null &&
+        rec1.printIdentifier.identifier != rec2.printIdentifier.identifier){
+      return true
+    }
+    // else
+    return false
   }
 
 
