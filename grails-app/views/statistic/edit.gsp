@@ -27,6 +27,12 @@
                         </g:if>
                     </h3>
                 </div>
+                <g:if test="${!record.duplicates.isEmpty()}">
+                    <div class="panel-heading-yellow">
+                        <h3 class="panel-title"><g:message code="statistic.edit.record.duplicateidentifiers"/>
+                        <g:each in="${record.duplicates}" var="rec"> : ${rec.key}</g:each>
+                    </div>
+                </g:if>
 
                 <div class="statistics-data">
                     <table class="statistics-details" id="edit-table">
