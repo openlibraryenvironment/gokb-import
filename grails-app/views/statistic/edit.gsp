@@ -1,7 +1,7 @@
 <%@ page import="de.hbznrw.ygor.tools.JsonToolkit; grails.converters.JSON" %>
 <meta name="layout" content="enrichment">
 
-<g:set var="displayZDB" value="${dataType == null || dataType.toLowerCase() != 'ebooks'}"/>
+<g:set var="displayZDB" value="${true}"/>
 
 <div class="row">
     <div class="col-xs-12">

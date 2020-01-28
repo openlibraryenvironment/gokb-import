@@ -125,7 +125,7 @@ class Record{
   }
 
 
-  boolean isValid(String type) {
+  boolean isValid() {
     // validate tipp.titleUrl
     MultiField urlMultiField = multiFields.get("titleUrl")
     if (urlMultiField == null) {

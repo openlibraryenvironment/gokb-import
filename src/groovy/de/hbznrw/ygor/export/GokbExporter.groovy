@@ -60,7 +60,7 @@ class GokbExporter {
     log.debug("extracting titles ...")
     ArrayNode titles = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
-      if (record.isValid(enrichment.dataType)){
+      if (record.isValid()){
         record.deriveHistoryEventObjects(enrichment)
         ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
         title = postProcessPublicationTitle(title, record)
@@ -81,7 +81,7 @@ class GokbExporter {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
-      if (record.isValid(enrichment.dataType)){
+      if (record.isValid()){
         tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
       }
     }
@@ -150,16 +150,6 @@ class GokbExporter {
     nominalPlatform.put("name", packageHeader.nominalPlatform.name)
     nominalPlatform.put("primaryUrl", packageHeader.nominalPlatform.url)
     result.set("nominalPlatform", nominalPlatform)
-
-    if (enrichment.dataType == 'ebooks') {
-      result.put("contentType", "Book")
-    }
-    else if (enrichment.dataType == 'journals') {
-      result.put("contentType", "Journal")
-    }
-    else if (enrichment.dataType == 'database') {
-      result.put("contentType", "Database")
-    }
 
     if (null != enrichment.dataContainer.curatoryGroup1){
       result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup1))
