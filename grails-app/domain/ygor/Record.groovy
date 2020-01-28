@@ -41,13 +41,13 @@ class Record{
   String zdbIntegrationUrl
   String ezbIntegrationUrl
   List historyEvents
-  Map<AbstractIdentifier, Record> duplicates
+  Map<AbstractIdentifier, String> duplicates
 
 
   static hasMany = [multiFields       : MultiField,
                     validation        : Status,
                     historyEvents     : HistoryEvent,
-                    duplicates        : Record]
+                    duplicates        : String]
 
   static constraints = {
   }
@@ -157,10 +157,10 @@ class Record{
   }
 
 
-  void addDuplicates(AbstractIdentifier id, List<Record> records){
-    for (Record rec in records){
-      if (rec != this){
-        duplicates.put(id, rec)
+  void addDuplicates(AbstractIdentifier id, Set<Record> recordUids){
+    for (Record rec in recordUids){
+      if (rec.uid != this.uid){
+        duplicates.put(id, rec.uid)
       }
     }
   }
@@ -238,6 +238,14 @@ class Record{
     jsonGenerator.writeStartArray()
     for (MultiField mf in multiFields.values()) {
       mf.asJson(jsonGenerator)
+    }
+    if (!duplicates.isEmpty()){
+      jsonGenerator.writeFieldName("duplicates")
+      jsonGenerator.writeStartArray()
+      for (def dup in duplicates){
+        jsonGenerator.writeStringField(dup.key.toString(), dup.value)
+      }
+      jsonGenerator.writeEndArray()
     }
     jsonGenerator.writeEndArray()
     jsonGenerator.writeEndObject()
@@ -327,6 +335,13 @@ class Record{
     String zdbIntegrationUrl = JsonToolkit.fromJson(json, "zdbIntegrationUrl")
     if (zdbIntegrationUrl) {
       result.zdbIntegrationUrl = zdbIntegrationUrl
+    }
+    result.duplicates = [:]
+    Collection duplicates = JsonToolkit.fromJson(json, "duplicates")
+    if (duplicates != null){
+      for (def dup in duplicates){
+        result.duplicates.put(AbstractIdentifier.fromString(dup.key), dup.value)
+      }
     }
     result
   }

@@ -24,7 +24,7 @@ class DataContainer {
   Package pkg
   ObjectNode packageHeader
   Map<String, Record> records
-  Map<AbstractIdentifier, List<Record>> recordsPerId
+  Map<AbstractIdentifier, Set<Record>> recordsPerId
   ArrayNode titles
   ArrayNode tipps
   String curatoryGroup1
@@ -145,19 +145,19 @@ class DataContainer {
 
   void sortAllRecordsPerId(){
     for (Record rec in records.values()){
-      if (rec.zdbId){
+      if (rec.zdbId.identifier){
         addRecordToIdSortation(rec.zdbId, rec)
       }
-      if (rec.ezbId){
+      if (rec.ezbId.identifier){
         addRecordToIdSortation(rec.ezbId, rec)
       }
-      if (rec.doiId){
+      if (rec.doiId.identifier){
         addRecordToIdSortation(rec.doiId, rec)
       }
-      if (rec.onlineIdentifier){
+      if (rec.onlineIdentifier.identifier){
         addRecordToIdSortation(rec.onlineIdentifier, rec)
       }
-      if (rec.printIdentifier){
+      if (rec.printIdentifier.identifier){
         addRecordToIdSortation(rec.printIdentifier, rec)
       }
     }
@@ -165,9 +165,9 @@ class DataContainer {
 
 
   void addRecordToIdSortation(AbstractIdentifier id, Record record){
-    List<Record> recordList = recordsPerId.get(id)
+    Set<Record> recordList = recordsPerId.get(id)
     if (recordList == null){
-      recordList = new ArrayList<>()
+      recordList = new HashSet<>()
       recordsPerId.put(id, recordList)
     }
     recordList.add(record)
