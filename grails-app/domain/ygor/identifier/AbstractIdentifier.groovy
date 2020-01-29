@@ -2,6 +2,8 @@ package ygor.identifier
 
 import ygor.field.FieldKeyMapping
 
+import java.lang.reflect.Constructor
+import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
 
 class AbstractIdentifier {
@@ -27,8 +29,26 @@ class AbstractIdentifier {
     ezbKey = getFirst(fieldKeyMapping.ezbKeys)
   }
 
+
+  private AbstractIdentifier(String identifier){
+    this.identifier = identifier
+  }
+
+
   String toString() {
-    return identifier
+    return this.getClass().getSimpleName().concat(" : ").concat(identifier)
+  }
+
+
+  static AbstractIdentifier fromString(string) throws InstantiationException{
+    try{
+      String[] split = string.split(" : ")
+      Constructor boa = Class.forName(split[0]).getConstructor(String.class)
+      return boa.newInstance(split[1])
+    }
+    catch (Exception e){
+      throw new InstantiationException("Could not create AbstractIdentifier for : ".concat(string))
+    }
   }
 
 
@@ -39,6 +59,27 @@ class AbstractIdentifier {
     } else {
       return null
     }
+  }
+
+
+  @Override
+  boolean equals(Object anotherIdentifier){
+    if (!(anotherIdentifier instanceof AbstractIdentifier)){
+      return false
+    }
+    if (anotherIdentifier.identifier != this.identifier){
+      return false
+    }
+    if (anotherIdentifier.fieldKeyMapping != this.fieldKeyMapping){
+      return false
+    }
+    return true
+  }
+
+
+  @Override
+  int hashCode(){
+    return Objects.hash(identifier, fieldKeyMapping)
   }
 
 }
