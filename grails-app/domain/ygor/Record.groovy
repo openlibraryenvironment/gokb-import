@@ -41,11 +41,13 @@ class Record{
   String zdbIntegrationUrl
   String ezbIntegrationUrl
   List historyEvents
+  Map<AbstractIdentifier, String> duplicates
 
 
   static hasMany = [multiFields       : MultiField,
                     validation        : Status,
-                    historyEvents     : HistoryEvent]
+                    historyEvents     : HistoryEvent,
+                    duplicates        : String]
 
   static constraints = {
   }
@@ -63,6 +65,7 @@ class Record{
     }
     multiFields = [:]
     validation = [:]
+    duplicates = [:]
     historyEvents = []
     for (def ygorMapping in container.ygorMappings) {
       multiFields.put(ygorMapping.key, new MultiField(ygorMapping.value))
@@ -154,6 +157,33 @@ class Record{
   }
 
 
+  void addDuplicates(AbstractIdentifier id, Set<Record> recordUids){
+    for (Record rec in recordUids){
+      if (rec.uid != this.uid && !haveDistinctiveId(this, rec)){
+        duplicates.put(id, rec.uid)
+      }
+    }
+  }
+
+
+  static haveDistinctiveId(Record rec1, Record rec2){
+    if (rec1.zdbId?.identifier != null && rec2.zdbId?.identifier != null &&
+        rec1.zdbId.identifier != rec2.zdbId.identifier){
+      return true
+    }
+    if (rec1.onlineIdentifier?.identifier != null && rec2.onlineIdentifier?.identifier != null &&
+        rec1.onlineIdentifier.identifier != rec2.onlineIdentifier.identifier){
+      return true
+    }
+    if (rec1.printIdentifier?.identifier != null && rec2.printIdentifier?.identifier != null &&
+        rec1.printIdentifier.identifier != rec2.printIdentifier.identifier){
+      return true
+    }
+    // else
+    return false
+  }
+
+
   void addMultiField(MultiField multiField) {
     multiFields.put(multiField.ygorFieldKey, multiField)
   }
@@ -226,6 +256,14 @@ class Record{
     jsonGenerator.writeStartArray()
     for (MultiField mf in multiFields.values()) {
       mf.asJson(jsonGenerator)
+    }
+    if (!duplicates.isEmpty()){
+      jsonGenerator.writeFieldName("duplicates")
+      jsonGenerator.writeStartArray()
+      for (def dup in duplicates){
+        jsonGenerator.writeStringField(dup.key.toString(), dup.value)
+      }
+      jsonGenerator.writeEndArray()
     }
     jsonGenerator.writeEndArray()
     jsonGenerator.writeEndObject()
@@ -315,6 +353,13 @@ class Record{
     String zdbIntegrationUrl = JsonToolkit.fromJson(json, "zdbIntegrationUrl")
     if (zdbIntegrationUrl) {
       result.zdbIntegrationUrl = zdbIntegrationUrl
+    }
+    result.duplicates = [:]
+    Collection duplicates = JsonToolkit.fromJson(json, "duplicates")
+    if (duplicates != null){
+      for (def dup in duplicates){
+        result.duplicates.put(AbstractIdentifier.fromString(dup.key), dup.value)
+      }
     }
     result
   }

@@ -230,7 +230,7 @@ class JsonToolkit {
       return subNode.asInt()
     }
     if (subNode instanceof ArrayNode) {
-      int i = 0 // TODO
+      return subNode.asCollection()
     }
     else if (subNode instanceof ObjectNode) {
       Class clazz = Class.forName("ygor.field.".concat(
