@@ -271,6 +271,25 @@
     }
   },
   {
+    "ygor" : "gokbUuid",
+    "in" : {
+      "kbart" : "gokb_uuid",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:gokb,value)"]
+    },
+    "order" : ["kbart"],
+    "type" : "ID",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "warning"
+    }
+  },
+  {
     "ygor" : "historyEventDate",
     "in" : {
       "kbart" : "",

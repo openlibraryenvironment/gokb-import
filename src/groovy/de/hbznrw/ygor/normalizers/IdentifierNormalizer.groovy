@@ -16,7 +16,7 @@ class IdentifierNormalizer {
     }
     str = StringNormalizer.normalizeString(str, false)
 
-    if (!(type in ["titleId", "onlineIdentifier", "printIdentifier"])) {
+    if (!(type in ["titleId", "onlineIdentifier", "printIdentifier", "gokbUuid"])) {
       str = str.replaceAll(/[\/-]+/, "")
     }
     if (type in ["onlineIdentifier", "printIdentifier"]) {
