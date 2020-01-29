@@ -76,7 +76,7 @@ class Record{
 
   void addIdentifier(AbstractIdentifier identifier) {
     if (identifier instanceof ZdbIdentifier) {
-      if (zdbId && identifier.identifier != zdbId.identifier) {
+      if (zdbId && identifier.identifier.replaceAll("x", "X") != zdbId.identifier.replaceAll("x", "X")) {
         throw new IllegalArgumentException("ZDB id ${identifier} already set to ${zdbId} for record")
       }
       zdbId = identifier
