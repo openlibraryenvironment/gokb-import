@@ -690,6 +690,7 @@
   },
   {
     "ygor" : "publicationTitleRamification",
+    "display" : "021C:l",
     "in" : {
       "kbart" : "",
       "zdb" : ["021C:l"],
