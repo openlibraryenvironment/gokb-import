@@ -811,19 +811,19 @@
     "ygor" : "shortcode",
     "in" : {
       "kbart" : "",
-      "zdb" : "",
+      "zdb" : "033A:p",
       "ezb" : ""
     },
     "out" : {
       "gokb" : ["$TITLE.shortcode"]
     },
-    "order" : [""],
+    "order" : ["zdb"],
     "type" : "String",
     "flags" : {
       "valid" : "ok",
-      "invalid" : "ok",
+      "invalid" : "error",
       "missing" : "ok",
-      "undefined" : "ok"
+      "undefined" : "warning"
     }
   },
   {
