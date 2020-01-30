@@ -77,7 +77,7 @@ class EnrichmentService{
     def pkgNomProvider = pm['pkgNominalProvider'][0]
     if (pkgNomProvider){
       ph.v.nominalProvider.v = pkgNomProvider
-      ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
+      ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v, 1)
     }
     if (pm['pkgTitleId']){
       enrichment.dataContainer.info.namespace_title_id = pm['pkgTitleId'][0]
