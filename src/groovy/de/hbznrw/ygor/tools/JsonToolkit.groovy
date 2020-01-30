@@ -21,8 +21,6 @@ class JsonToolkit {
   private static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
   final private static String ARRAY = "\$ARRAY"
   final private static String COUNT = "\$COUNT"
-  final private static JsonGenerator JSON_GENERATOR = new JsonFactory().createGenerator(new StringWriter())
-
 
   private static def removeMetaClass(def dataStructure) {
     System.out.println(dataStructure?.class)

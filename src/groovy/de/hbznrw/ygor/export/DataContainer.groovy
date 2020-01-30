@@ -49,9 +49,7 @@ class DataContainer {
 
 
   def addRecord(Record record) {
-    if (record.zdbId || record.printIdentifier || record.onlineIdentifier) {
-      records.put(record.uid, record)
-    }
+    records.put(record.uid, record)
   }
 
 
