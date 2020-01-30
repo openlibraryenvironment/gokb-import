@@ -9,6 +9,7 @@ class FieldKeyMapping {
 
   final static ObjectMapper MAPPER = new ObjectMapper()
   String ygorKey
+  String displayName
   List<String> kbartKeys = new ArrayList()
   List<String> zdbKeys = new ArrayList()
   List<String> ezbKeys = new ArrayList()
@@ -72,6 +73,9 @@ class FieldKeyMapping {
           } else if (!StringUtils.isEmpty(mapping.value.toString())) {
             gokb.add(mapping.value)
           }
+          break
+        case "display":
+          displayName = mapping.value
           break
         case "fixed":
           val = mapping.value
@@ -179,6 +183,7 @@ class FieldKeyMapping {
   void asJson(JsonGenerator jsonGenerator) {
     jsonGenerator.writeStartObject()
     jsonGenerator.writeStringField(MappingsContainer.YGOR, ygorKey)
+    jsonGenerator.writeStringField("displayName", displayName)
     jsonGenerator.writeStringField(MappingsContainer.TYPE, type)
     jsonGenerator.writeStringField("value", val)
     jsonGenerator.writeStringField("valueIsFix", String.valueOf(valIsFix))

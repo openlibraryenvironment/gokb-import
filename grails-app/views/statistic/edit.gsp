@@ -62,7 +62,7 @@
                                 <g:set var="status" value="${status}-odd-hover"/>
                             </g:else>
                             <tr class="${status}">
-                                <td class="statistics-cell-key">${multiField.ygorFieldKey}</td>
+                                <td class="statistics-cell-key">${multiField.displayName}</td>
                                 <td class="statistics-cell-value"
                                     contenteditable="true">${multiField.getFirstPrioValue()}</td>
                                 <td class="statistics-cell-source">${multiField.getPrioSource()}</td>
