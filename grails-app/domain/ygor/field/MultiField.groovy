@@ -13,6 +13,7 @@ import java.util.regex.Pattern
 class MultiField {
 
   String ygorFieldKey
+  String displayName
   FieldKeyMapping keyMapping          // TODO: keep in MappingsContainer only and access by ygorFieldKey (?)
   List fields = []
   String type                         // TODO: move to FieldKeyMapping (?)
@@ -32,6 +33,12 @@ class MultiField {
   MultiField(FieldKeyMapping fieldKeyMapping) {
     if (fieldKeyMapping != null) {
       this.ygorFieldKey = fieldKeyMapping.ygorKey
+      if (fieldKeyMapping.displayName != null){
+        this.displayName = fieldKeyMapping.displayName
+      }
+      else{
+        this.displayName = fieldKeyMapping.ygorKey
+      }
       this.type = fieldKeyMapping.type
       keyMapping = fieldKeyMapping
     }
@@ -179,6 +186,7 @@ class MultiField {
   String asJson(JsonGenerator jsonGenerator) {
     jsonGenerator.writeStartObject()
     jsonGenerator.writeStringField("ygorKey", ygorFieldKey)
+    jsonGenerator.writeStringField("displayName", displayName)
     jsonGenerator.writeStringField("status", status)
     jsonGenerator.writeStringField("normalized", normalized)
     jsonGenerator.writeStringField("revised", revised)
@@ -198,6 +206,7 @@ class MultiField {
     if (mapping == null) {
       result.ygorFieldKey = JsonToolkit.fromJson(json, "ygorKey")
     }
+    result.displayName = JsonToolkit.fromJson(json, "displayName")
     result.status = JsonToolkit.fromJson(json, "status")
     result.normalized = JsonToolkit.fromJson(json, "normalized")
     result.revised = JsonToolkit.fromJson(json, "revised")

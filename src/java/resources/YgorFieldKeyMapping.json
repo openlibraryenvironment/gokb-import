@@ -1,6 +1,7 @@
 [
   {
     "ygor" : "accessEndDate",
+    "display" : "access_end_date",
     "in" : {
       "kbart" : "access_end_date",
       "zdb" : "",
@@ -20,6 +21,7 @@
   },
   {
     "ygor" : "accessStartDate",
+    "display" : "access_start_date",
     "in" : {
       "kbart" : "access_start_date",
       "zdb" : "",
@@ -39,6 +41,7 @@
   },
   {
     "ygor" : "accessType",
+    "display" : "access_type",
     "in" : {
       "kbart" : "access_type",
       "zdb" : "",
@@ -58,6 +61,7 @@
   },
   {
     "ygor" : "coverageDepth",
+    "display" : "coverage_depth",
     "in" : {
       "kbart" : "coverage_depth",
       "zdb" : "",
@@ -80,6 +84,7 @@
   },
   {
     "ygor" : "dateFirstIssueOnline",
+    "display" : "date_first_issue_online",
     "in" : {
       "kbart" : "date_first_issue_online",
       "zdb" : "",
@@ -99,6 +104,7 @@
   },
   {
     "ygor" : "dateLastIssueOnline",
+    "display" : "date_last_issue_online",
     "in" : {
       "kbart" : "date_last_issue_online",
       "zdb" : "",
@@ -118,6 +124,7 @@
   },
   {
     "ygor" : "dateMonographPublishedOnline",
+    "display" : "date_monograph_published_online",
     "in" : {
       "kbart" : "date_monograph_published_online",
       "zdb" : "",
@@ -137,6 +144,7 @@
   },
   {
     "ygor" : "dateMonographPublishedPrint",
+    "display" : "date_monograph_published_print",
     "in" : {
       "kbart" : "date_monograph_published_print",
       "zdb" : "",
@@ -156,6 +164,7 @@
   },
   {
     "ygor" : "doi",
+    "display" : "doi_identifier",
     "in" : {
       "kbart" : "doi_identifier",
       "zdb" : "2051:0",
@@ -175,6 +184,7 @@
   },
   {
     "ygor" : "editionNumber",
+    "display" : "monograph_edition",
     "in" : {
       "kbart" : "monograph_edition",
       "zdb" : "",
@@ -196,6 +206,7 @@
   },
   {
     "ygor" : "embargoInfo",
+    "display" : "embargo_info",
     "in" : {
       "kbart" : "embargo_info",
       "zdb" : "",
@@ -215,6 +226,7 @@
   },
   {
     "ygor" : "ezbId",
+    "display" : "EZB ID",
     "in" : {
       "kbart" : "ezb_id",
       "zdb" : "",
@@ -234,6 +246,7 @@
   },
   {
     "ygor" : "firstAuthor",
+    "display" : "first_author",
     "in" : {
       "kbart" : "first_author",
       "zdb" : "",
@@ -253,6 +266,7 @@
   },
   {
     "ygor" : "firstEditor",
+    "display" : "first_editor",
     "in" : {
       "kbart" : "first_editor",
       "zdb" : "",
@@ -272,6 +286,7 @@
   },
   {
     "ygor" : "gokbUuid",
+    "display" : "gokb_uuid",
     "in" : {
       "kbart" : "gokb_uuid",
       "zdb" : "",
@@ -291,6 +306,7 @@
   },
   {
     "ygor" : "historyEventDate",
+    "display" : "039E:H",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:H",
@@ -307,6 +323,7 @@
   },
   {
     "ygor" : "historyEventIdentifier",
+    "display" : "039E:0",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:0",
@@ -323,6 +340,7 @@
   },
   {
     "ygor" : "historyEventRelationType",
+    "display" : "039E:b",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:b",
@@ -339,6 +357,7 @@
   },
   {
     "ygor" : "historyEventPredecessor",
+    "display" : "039E:f",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:f",
@@ -355,6 +374,7 @@
   },
   {
     "ygor" : "historyEventPredecessorOrSuccessor",
+    "display" : "039E:z",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:z",
@@ -371,6 +391,7 @@
   },
   {
     "ygor" : "historyEventSuccessor",
+    "display" : "039E:s",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:s",
@@ -387,6 +408,7 @@
   },
   {
     "ygor" : "historyEventTitle",
+    "display" : "039E:Y",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:Y",
@@ -416,6 +438,7 @@
   },
   {
     "ygor" : "monographEdition",
+    "display" : "monograph_edition",
     "in" : {
       "kbart" : "monograph_edition",
       "zdb" : "",
@@ -439,6 +462,7 @@
   },
   {
     "ygor" : "monographVolume",
+    "display" : "monograph_volume",
     "in" : {
       "kbart" : "monograph_volume",
       "zdb" : "",
@@ -458,6 +482,7 @@
   },
   {
     "ygor" : "notes",
+    "display" : "notes",
     "in" : {
       "kbart" : "notes",
       "zdb" : "",
@@ -477,6 +502,7 @@
   },
   {
     "ygor" : "numFirstIssueOnline",
+    "display" : "num_first_issue_online",
     "in" : {
       "kbart" : "num_first_issue_online",
       "zdb" : "",
@@ -496,6 +522,7 @@
   },
   {
     "ygor" : "numFirstVolOnline",
+    "display" : "num_first_vol_online",
     "in" : {
       "kbart" : "num_first_vol_online",
       "zdb" : "",
@@ -515,6 +542,7 @@
   },
   {
     "ygor" : "numLastIssueOnline",
+    "display" : "num_last_issue_online",
     "in" : {
       "kbart" : "num_last_issue_online",
       "zdb" : "",
@@ -534,6 +562,7 @@
   },
   {
     "ygor" : "numLastVolOnline",
+    "display" : "num_last_vol_online",
     "in" : {
       "kbart" : "num_last_vol_online",
       "zdb" : "",
@@ -553,6 +582,7 @@
   },
   {
     "ygor" : "onlineIdentifier",
+    "display" : "online_identifier",
     "in" : {
       "kbart" : "online_identifier",
       "zdb" : "005I:0",
@@ -572,6 +602,7 @@
   },
   {
     "ygor" : "platformName",
+    "display" : "Platform Name",
     "out" : {
       "gokb" : ["$TIPP.platform.name"]
     },
@@ -585,6 +616,7 @@
   },
   {
     "ygor" : "platformUrl",
+    "display" : "Platform URL",
     "out" : {
       "gokb" : ["$TIPP.platform.primaryUrl"]
     },
@@ -598,6 +630,7 @@
   },
   {
     "ygor" : "printIdentifier",
+    "display" : "print_identifier",
     "in" : {
       "kbart" : "print_identifier",
       "zdb" : "004A:0",
@@ -617,6 +650,7 @@
   },
   {
     "ygor" : "publicationSubTitle",
+    "display" : "021C:a / 021C:r",
     "in" : {
       "kbart" : "",
       "zdb" : ["021C:a", "021C:r"],
@@ -636,6 +670,7 @@
   },
   {
     "ygor" : "publicationTitle",
+    "display" : "021A:a",
     "in" : {
       "kbart" : "publication_title",
       "zdb" : ["021A:a"],
@@ -655,6 +690,7 @@
   },
   {
     "ygor" : "publicationTitleVariation",
+    "display" : "025@:a",
     "in" : {
       "kbart" : "",
       "zdb" : ["025@:a"],
@@ -674,6 +710,7 @@
   },
   {
     "ygor" : "publicationType",
+    "display" : "publication_type",
     "in" : {
       "kbart" : "publication_type",
       "zdb" : "",
@@ -693,6 +730,7 @@
   },
   {
     "ygor" : "publishedFrom",
+    "display" : "011@:a",
     "in" : {
       "kbart" : "",
       "zdb" : "011@:a",
@@ -712,6 +750,7 @@
   },
   {
     "ygor" : "publishedTo",
+    "display" : "011@:b",
     "in" : {
       "kbart" : "",
       "zdb" : "011@:b",
@@ -731,6 +770,7 @@
   },
   {
     "ygor" : "publisherHistoryEndDate",
+    "display" : "033A:h",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:h",
@@ -751,6 +791,7 @@
   },
   {
     "ygor" : "publisherHistoryStartDate",
+    "display" : "033A:h",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:h",
@@ -771,6 +812,7 @@
   },
   {
     "ygor" : "publisherName",
+    "display" : "publisher_name",
     "in" : {
       "kbart" : "publisher_name",
       "zdb" : "033A:n",
@@ -790,6 +832,7 @@
   },
   {
     "ygor" : "publisherPlace",
+    "display" : "033A:p",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:p",
@@ -809,6 +852,7 @@
   },
   {
     "ygor" : "shortcode",
+    "display" : "033A:p",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:p",
@@ -828,6 +872,7 @@
   },
   {
     "ygor" : "titleId",
+    "display" : "title_id",
     "in" : {
       "kbart" : "title_id",
       "zdb" : "",
@@ -847,6 +892,7 @@
   },
   {
     "ygor" : "titleUrl",
+    "display" : "title_url",
     "in" : {
       "kbart" : "title_url",
       "zdb" : "",
@@ -867,6 +913,7 @@
   },
   {
     "ygor" : "zdbId",
+    "display" : "006Z:0",
     "in" : {
       "kbart" : "zdb_id",
       "zdb" : "006Z:0",
