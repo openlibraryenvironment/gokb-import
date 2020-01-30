@@ -4,43 +4,32 @@ A spare hand when needed ..
 
 ### Setup
 
-    $git clone https://github.com/hbz/laser-ygor.git
-    $grails integrate-with --eclipse
-
-Eclipse/GGTS &rarr; Import &rarr; Grails Project
+    $ git clone https://github.com/hbz/laser-ygor.git
 
 ### Config
 
-Upload json result to knowledgebase
+Upload json result to GOKb
 
 	ygor.enableGokbUpload = true|false
 	
 	ygor.gokbApi.xrTitleUri   = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
 	ygor.gokbApi.xrPackageUri = 'http://localhost:8080/gokb/integration/crossReferencePackage'
-	ygor.gokbApi.user = ''
-	ygor.gokbApi.pwd  = ''
-
-Use knowledge base to obtain actual map with platform/provider. Fallback to hardcoded map 
-	
-	ygor.gokbDB.dbUri = 'jdbc:postgresql://localhost:5432/gokb'
-	ygor.gokbDB.user  = ''
-	ygor.gokbDB.pwd   = ''
 	
 ### Running
 
 In _development_ environment
 
-	$grails run-app
+	$ grails run-app
 	
 In _production_ environment
 
-	$grails prod run-app
+	$ grails prod run-app
 
 ### Testing
 
-Current normalizer and validator support
+Current normalizer and validator support - warning: tests are out of date.
 
-	$grails test-app
+	$ grails test-app
 
 Results are generated here
 
