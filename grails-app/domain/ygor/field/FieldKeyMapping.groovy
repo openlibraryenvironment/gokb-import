@@ -16,6 +16,7 @@ class FieldKeyMapping {
   String type
   Set<String> gokb
   String val = ""
+  Set<String> allowedValues = new HashSet<>()
   boolean valIsFix
   boolean keepIfEmpty
   List<String> sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
@@ -30,11 +31,12 @@ class FieldKeyMapping {
   static String[] VALID_FLAG_TYPES = ["valid", "invalid", "missing", "undefined"]
   static String[] VALID_FLAG_STATUS = ["ok", "warning", "error"]
 
-  static hasMany = [kbartKeys : String,
-                    zdbKeys   : String,
-                    ezbKeys   : String,
-                    gokb      : String,
-                    sourcePrio: String]
+  static hasMany = [kbartKeys     : String,
+                    zdbKeys       : String,
+                    ezbKeys       : String,
+                    gokb          : String,
+                    sourcePrio    : String,
+                    allowedValues : String]
 
   FieldKeyMapping() {
     // add explicit default constructor
@@ -70,7 +72,8 @@ class FieldKeyMapping {
           gokb = new HashSet<>()
           if (mapping.value instanceof Collection<?>) {
             gokb.addAll(mapping.value)
-          } else if (!StringUtils.isEmpty(mapping.value.toString())) {
+          }
+          else if (!StringUtils.isEmpty(mapping.value.toString())) {
             gokb.add(mapping.value)
           }
           break
@@ -90,8 +93,17 @@ class FieldKeyMapping {
         case "value":
           if (!mapping.value instanceof String) {
             parseMapping(mapping.value)
-          } else {
+          }
+          else {
             val = mapping.value
+          }
+          break
+        case "allowed":
+          if (mapping.value instanceof Collection<?>) {
+            allowedValues.addAll(mapping.value)
+          }
+          else if (!StringUtils.isEmpty(mapping.value.toString())) {
+            allowedValues.add(mapping.value)
           }
           break
         case "keepIfEmpty":
@@ -229,6 +241,13 @@ class FieldKeyMapping {
       jsonGenerator.writeStringField(flag.key, flag.value)
     }
     jsonGenerator.writeEndObject()
+
+    jsonGenerator.writeFieldName("allowedValues")
+    jsonGenerator.writeStartArray()
+    for (def val in allowedValues){
+      jsonGenerator.writeString(val)
+    }
+    jsonGenerator.writeEndArray()
 
     jsonGenerator.writeEndObject()
   }
