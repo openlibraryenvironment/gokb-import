@@ -41,6 +41,7 @@ class StatisticController{
         ygorVersion = enrichment.ygorVersion
         date = enrichment.date
         filename = enrichment.originName
+        enrichment.dataContainer.markDuplicateIds()
         classifyAllRecords(resultHash)
       }
       else{
@@ -157,6 +158,7 @@ class StatisticController{
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid()){
       if (record.multiFields.get("titleUrl").isCorrect() &&
+          record.duplicates.isEmpty() &&
           (!record.multiFields.get("publicationType").getFirstPrioValue().equals("Serial") || record.zdbIntegrationUrl != null)){
         greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
         yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))

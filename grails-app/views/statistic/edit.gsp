@@ -27,6 +27,12 @@
                         </g:if>
                     </h3>
                 </div>
+                <g:if test="${!record.duplicates.isEmpty()}">
+                    <div class="panel-heading-yellow">
+                        <h3 class="panel-title"><g:message code="statistic.edit.record.duplicateidentifiers"/>
+                        <g:each in="${record.duplicates}" var="rec"> : ${rec.key}</g:each>
+                    </div>
+                </g:if>
 
                 <div class="statistics-data">
                     <table class="statistics-details" id="edit-table">
@@ -56,7 +62,7 @@
                                 <g:set var="status" value="${status}-odd-hover"/>
                             </g:else>
                             <tr class="${status}">
-                                <td class="statistics-cell-key">${multiField.ygorFieldKey}</td>
+                                <td class="statistics-cell-key">${multiField.displayName}</td>
                                 <td class="statistics-cell-value"
                                     contenteditable="true">${multiField.getFirstPrioValue()}</td>
                                 <td class="statistics-cell-source">${multiField.getPrioSource()}</td>

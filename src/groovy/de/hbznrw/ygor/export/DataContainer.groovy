@@ -24,6 +24,7 @@ class DataContainer {
   Package pkg
   ObjectNode packageHeader
   Map<String, Record> records
+  Map<AbstractIdentifier, Set<Record>> recordsPerId
   ArrayNode titles
   ArrayNode tipps
   String curatoryGroup1
@@ -41,15 +42,14 @@ class DataContainer {
     pkg = new Package()
 
     records = [:]
+    recordsPerId = [:]
     titles = new ArrayNode(NODE_FACTORY)
     tipps = new ArrayNode(NODE_FACTORY)
   }
 
 
   def addRecord(Record record) {
-    if (record.zdbId || record.printIdentifier || record.onlineIdentifier) {
-      records.put(record.uid, record)
-    }
+    records.put(record.uid, record)
   }
 
 
@@ -126,5 +126,48 @@ class DataContainer {
       }
     }
     return null
+  }
+
+
+  void markDuplicateIds(){
+    this.sortAllRecordsPerId()
+    for (def idRecs in recordsPerId){
+      if (idRecs.value.size() > 1){
+        for (Record rec in idRecs.value){
+          rec.addDuplicates(idRecs.key, idRecs.value)
+        }
+      }
+    }
+  }
+
+
+  void sortAllRecordsPerId(){
+    for (Record rec in records.values()){
+      if (rec.zdbId.identifier){
+        addRecordToIdSortation(rec.zdbId, rec)
+      }
+      if (rec.ezbId.identifier){
+        addRecordToIdSortation(rec.ezbId, rec)
+      }
+      if (rec.doiId.identifier){
+        addRecordToIdSortation(rec.doiId, rec)
+      }
+      if (rec.onlineIdentifier.identifier){
+        addRecordToIdSortation(rec.onlineIdentifier, rec)
+      }
+      if (rec.printIdentifier.identifier){
+        addRecordToIdSortation(rec.printIdentifier, rec)
+      }
+    }
+  }
+
+
+  void addRecordToIdSortation(AbstractIdentifier id, Record record){
+    Set<Record> recordList = recordsPerId.get(id)
+    if (recordList == null){
+      recordList = new HashSet<>()
+      recordsPerId.put(id, recordList)
+    }
+    recordList.add(record)
   }
 }
