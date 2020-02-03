@@ -1,7 +1,9 @@
 package ygor.field
 
+import antlr.StringUtils
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
+import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.normalizers.CommonNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.Validator
@@ -149,7 +151,20 @@ class MultiField {
 
 
   void validate(String namespace) {
-    status = Validator.validate(type, getFirstPrioValue(), ygorFieldKey, namespace)
+    String value = getFirstPrioValue()
+    if (keyMapping != null && keyMapping.allowedValues != null && !keyMapping.allowedValues.isEmpty()){
+      if (!(value in keyMapping.allowedValues)){
+        // this value is not allowed by the config "allowedValues" in YgorFieldKeyMapping.json
+        if (org.apache.commons.lang.StringUtils.isEmpty(value)){
+          status = Status.MISSING
+        }
+        else{
+          status = Status.INVALID
+        }
+        return
+      }
+    }
+    status = Validator.validate(type, value, ygorFieldKey, namespace)
   }
 
 

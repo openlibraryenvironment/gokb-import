@@ -719,6 +719,9 @@
     "out" : {
       "gokb" : ["$TITLE.type", "$TIPP.title.type"]
     },
+    "value" : {
+      "allowedValues" : ["Monograph", "monograph", "Serial", "serial"]
+    },
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {

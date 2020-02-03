@@ -91,14 +91,14 @@ class FieldKeyMapping {
           parseMapping(mapping.value)
           break
         case "value":
-          if (!mapping.value instanceof String) {
+          if (!(mapping.value instanceof String)) {
             parseMapping(mapping.value)
           }
           else {
             val = mapping.value
           }
           break
-        case "allowed":
+        case "allowedValues":
           if (mapping.value instanceof Collection<?>) {
             allowedValues.addAll(mapping.value)
           }
