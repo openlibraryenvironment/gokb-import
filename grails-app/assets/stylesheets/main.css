@@ -717,6 +717,6 @@ table.dataTable thead .sorting_desc {
 	background-position: right;
 }
 
-#edit-table td:first-child {
+#edit-table td:first-child, #edit-table th:first-child {
 	display: none;
 }
