@@ -1,12 +1,12 @@
 package ygor.field
 
-import antlr.StringUtils
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.normalizers.CommonNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.Validator
+import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
 import java.util.regex.Matcher
@@ -155,7 +155,7 @@ class MultiField {
     if (keyMapping != null && keyMapping.allowedValues != null && !keyMapping.allowedValues.isEmpty()){
       if (!(value in keyMapping.allowedValues)){
         // this value is not allowed by the config "allowedValues" in YgorFieldKeyMapping.json
-        if (org.apache.commons.lang.StringUtils.isEmpty(value)){
+        if (StringUtils.isEmpty(value)){
           status = Status.MISSING
         }
         else{

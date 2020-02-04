@@ -43,6 +43,10 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
 
   private void integrateRecord(MultipleProcessingThread owner, Record record, List<FieldKeyMapping> idMappings){
+    if (!(record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase().equals("serial"))){
+      // Don't integrate monographs (or any other type)
+      return
+    }
     Map<String, String> zdbMatch = getBestMatch(owner, record)
     if (zdbMatch != null && !zdbMatch.isEmpty()){
       record.zdbIntegrationDate = processStart
