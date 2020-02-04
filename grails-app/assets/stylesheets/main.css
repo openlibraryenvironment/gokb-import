@@ -619,7 +619,7 @@ table.statistics-details {
 	border-collapse: collapse;
 }
 
-td.statistics-cell-key, td.statistics-cell-value, td.statistics-cell-source, td.statistics-cell-status {
+td.statistics-cell-key, td.statistics-cell-display, td.statistics-cell-value, td.statistics-cell-source, td.statistics-cell-status {
 	padding: 0px 5px 0px 0px;
 	line-height: 1.8em;
 }
@@ -715,4 +715,8 @@ table.dataTable thead .sorting_desc {
 	background-image: url(../images/sort_desc.png);
 	background-repeat: no-repeat;
 	background-position: right;
+}
+
+#edit-table td:first-child {
+	display: none;
 }

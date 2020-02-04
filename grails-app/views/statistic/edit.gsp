@@ -38,6 +38,7 @@
                     <table class="statistics-details" id="edit-table">
                         <thead>
                         <tr>
+                            <th>internal field name (hidden by css)</th>
                             <th><g:message code="statistic.edit.field"/></th>
                             <th><g:message code="statistic.edit.value"/></th>
                             <th><g:message code="statistic.edit.source"/></th>
@@ -62,7 +63,8 @@
                                 <g:set var="status" value="${status}-odd-hover"/>
                             </g:else>
                             <tr class="${status}">
-                                <td class="statistics-cell-key">${multiField.displayName}</td>
+                                <td class="statistics-cell-key">${multiField.ygorFieldKey}</td>
+                                <td class="statistics-cell-display">${multiField.displayName}</td>
                                 <td class="statistics-cell-value"
                                     contenteditable="true">${multiField.getFirstPrioValue()}</td>
                                 <td class="statistics-cell-source">${multiField.getPrioSource()}</td>
@@ -111,7 +113,8 @@
                     // restore unedited state
                     document.execCommand('undo');
                     target.blur();
-                } else if (event.which == 13 || event.which == 9 /* that is "enter" or "tab" */) {
+                }
+                else if (event.which == 13 || event.which == 9 /* that is "enter" or "tab" */) {
                     // save && send update
                     var valuesArray = Array.prototype.slice.call(values);
                     tableRowIndex = valuesArray.indexOf(valueField);
