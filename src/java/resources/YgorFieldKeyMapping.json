@@ -699,10 +699,10 @@
     "order" : ["zdb"],
     "type" : "Title",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "ok"}]
     }
   },
   {
