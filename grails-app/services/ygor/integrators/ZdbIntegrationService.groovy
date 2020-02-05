@@ -43,7 +43,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
 
   private void integrateRecord(MultipleProcessingThread owner, Record record, List<FieldKeyMapping> idMappings){
-    if (!(record.publicationType.equals("serial"))){
+    if (!(record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase().equals("serial"))){
       // Don't integrate monographs (or any other type)
       return
     }
