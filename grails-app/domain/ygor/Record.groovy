@@ -137,7 +137,7 @@ class Record{
     }
     // check multifields for critical errors
     for (MultiField multiField in multiFields.values()){
-      if (multiField.isCriticallyIncorrect()){
+      if (multiField.isCriticallyIncorrect(publicationType)){
         return false
       }
     }
@@ -241,6 +241,7 @@ class Record{
     jsonGenerator.writeStringField("doiId", doiId?.identifier)
     jsonGenerator.writeStringField("eissn", onlineIdentifier?.identifier)
     jsonGenerator.writeStringField("issn", printIdentifier?.identifier)
+    jsonGenerator.writeStringField("publicationType", publicationType)
     if (ezbIntegrationDate) {
       jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
     }
@@ -354,6 +355,10 @@ class Record{
     String zdbIntegrationUrl = JsonToolkit.fromJson(json, "zdbIntegrationUrl")
     if (zdbIntegrationUrl) {
       result.zdbIntegrationUrl = zdbIntegrationUrl
+    }
+    String publicationType = JsonToolkit.fromJson(json, "publicationType")
+    if (publicationType) {
+      result.publicationType = publicationType
     }
     result.duplicates = [:]
     Collection duplicates = JsonToolkit.fromJson(json, "duplicates")

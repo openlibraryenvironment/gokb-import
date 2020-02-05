@@ -157,7 +157,7 @@ class StatisticController{
   private void classifyRecord(Record record, Enrichment enrichment){
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid()){
-      if (record.multiFields.get("titleUrl").isCorrect() &&
+      if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
           record.duplicates.isEmpty() &&
           (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null)){
         greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)

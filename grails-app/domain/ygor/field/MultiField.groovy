@@ -168,28 +168,28 @@ class MultiField {
   }
 
 
-  boolean isCriticallyIncorrect(){
+  boolean isCriticallyIncorrect(String publicationType){
     if (keyMapping == null){
       return false
     }
-    return "error".equals(keyMapping.flags.get(status))
+    return "error".equals(keyMapping.getFlag(status, publicationType))
   }
 
 
-  boolean isNonCriticallyIncorrect(){
+  boolean isNonCriticallyIncorrect(String publicationType){
     if (keyMapping == null){
       return false
     }
-    return "warning".equals(keyMapping.flags.get(status))
+    return "warning".equals(keyMapping.getFlag(status, publicationType))
   }
 
 
-  boolean isCorrect(){
+  boolean isCorrect(String publicationType){
     if (keyMapping == null){
       // fields without a key mapping cannot be evaluated
       return true
     }
-    return "ok".equals(keyMapping.flags.get(status))
+    return "ok".equals(keyMapping.getFlag(status, publicationType))
   }
 
 

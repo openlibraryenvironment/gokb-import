@@ -47,10 +47,10 @@
                         </thead>
                         <g:set var="lineCounter" value="${0}"/>
                         <g:each in="${record.multiFieldsInGokbOrder()}" var="multiField">
-                            <g:if test="${multiField.isCriticallyIncorrect()}">
+                            <g:if test="${multiField.isCriticallyIncorrect(record.publicationType)}">
                                 <g:set var="status" value="error"/>
                             </g:if>
-                            <g:elseif test="${multiField.isNonCriticallyIncorrect()}">
+                            <g:elseif test="${multiField.isNonCriticallyIncorrect(record.publicationType)}">
                                 <g:set var="status" value="warning"/>
                             </g:elseif>
                             <g:else>

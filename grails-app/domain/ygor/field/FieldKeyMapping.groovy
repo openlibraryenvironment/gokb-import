@@ -20,7 +20,7 @@ class FieldKeyMapping {
   boolean valIsFix
   boolean keepIfEmpty
   List<String> sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
-  Map<String, String> flags = [:]
+  Map<String, Map<String, String>> flags = [:]
 
   static constraints = {
     ygorKey nullable: false
@@ -29,7 +29,6 @@ class FieldKeyMapping {
   }
 
   static String[] VALID_FLAG_TYPES = ["valid", "invalid", "missing", "undefined"]
-  static String[] VALID_FLAG_STATUS = ["ok", "warning", "error"]
 
   static hasMany = [kbartKeys     : String,
                     zdbKeys       : String,
@@ -136,9 +135,23 @@ class FieldKeyMapping {
 
 
   private void addFlag(def mapping){
-    if (mapping.key in VALID_FLAG_TYPES && mapping.value in VALID_FLAG_STATUS){
-      flags.put(mapping.key, mapping.value)
+    if (mapping.key in VALID_FLAG_TYPES){
+      for (def entry in mapping.value){
+        HashMap existing = flags.get(mapping.key)
+        if (existing == null){
+          existing = [:]
+        }
+        for (def pair in entry){
+          existing.put(pair.key, pair.value)
+        }
+        flags.put(mapping.key, existing)
+      }
     }
+  }
+
+
+  String getFlag(String validity, String publicationType){
+    return flags.get(validity)?.get(publicationType)
   }
 
 
@@ -238,7 +251,12 @@ class FieldKeyMapping {
     jsonGenerator.writeFieldName(MappingsContainer.FLAGS)
     jsonGenerator.writeStartObject()
     for (def flag in flags){
-      jsonGenerator.writeStringField(flag.key, flag.value)
+      jsonGenerator.writeFieldName(flag.key)
+      jsonGenerator.writeStartObject()
+      for (pair in flag.value){
+        jsonGenerator.writeStringField(pair.key, pair.value)
+      }
+      jsonGenerator.writeEndObject()
     }
     jsonGenerator.writeEndObject()
 
