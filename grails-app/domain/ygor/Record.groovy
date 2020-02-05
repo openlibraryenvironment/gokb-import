@@ -34,6 +34,7 @@ class Record{
   DoiIdentifier doiId
   OnlineIdentifier onlineIdentifier
   PrintIdentifier printIdentifier
+  String publicationType
   Map multiFields
   Map validation
   String zdbIntegrationDate

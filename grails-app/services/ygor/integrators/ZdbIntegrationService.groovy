@@ -43,7 +43,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
 
   private void integrateRecord(MultipleProcessingThread owner, Record record, List<FieldKeyMapping> idMappings){
-    if (!(record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase().equals("serial"))){
+    if (!(record.publicationType.equals("serial"))){
       // Don't integrate monographs (or any other type)
       return
     }
@@ -78,23 +78,16 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         if (newLinkedRecord.zdbIntegrationDate != null){
           // If there is no zdbIntegrationDate, the integration didn't happen, most probably because there was
           // no match. In this case, we would not add an empty record stub to the result list.
-          copyValueToLinkedRecord("publicationType", record, newLinkedRecord)
+          newLinkedRecord.publicationType = record.publicationType
           result.add(newLinkedRecord)
         }
       }
       else{
-        copyValueToLinkedRecord("publicationType", record, existing)
+        existing.publicationType = record.publicationType
         result.add(existing)
       }
     }
     result
-  }
-
-
-  void copyValueToLinkedRecord(String multiFieldName, Record from, Record to){
-    MultiField fromField = from.multiFields.get(multiFieldName)
-    MultiField toField = to.multiFields.get(multiFieldName)
-    toField.revised = fromField.getFirstPrioValue()
   }
 
 

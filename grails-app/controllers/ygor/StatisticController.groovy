@@ -159,7 +159,7 @@ class StatisticController{
     if (record.isValid()){
       if (record.multiFields.get("titleUrl").isCorrect() &&
           record.duplicates.isEmpty() &&
-          (!record.multiFields.get("publicationType").getFirstPrioValue().equals("Serial") || record.zdbIntegrationUrl != null)){
+          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null)){
         greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
         yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
         redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
