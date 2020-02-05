@@ -99,7 +99,7 @@ class MultiField {
   }
 
 
-  private List<String> getFieldValuesBySource(String source){
+  List<String> getFieldValuesBySource(String source){
     List<String> result = []
     for (Field field in fields){
       if (field.source == source){

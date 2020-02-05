@@ -19,10 +19,10 @@ class Validator {
   static validate(String type, String value, String... additionalParameters) {
     switch (type) {
       case "Title":
-        return isValidString(value)
+        return isValidString(value, 1)
         break
       case "String":
-        return isValidString(value)
+        return isValidString(value, 2)
         break
       case "Abbreviation":
         return isValidAbbreviation(value)
@@ -60,14 +60,16 @@ class Validator {
    * @param str
    * @return
    */
-  static isValidString(String str) {
+  static isValidString(String str, int minimumLength) {
     if (!str || str.trim().equals("")) {
       return Status.MISSING
-    } else if (str.length() < 2) {
+    }
+    else if (str.length() < minimumLength) {
       if (!StringUtils.isNumeric(str)) {
         return Status.INVALID
       }
-    } else if (str.contains("|")) {
+    }
+    else if (str.contains("|")) {
       return Status.UNDEFINED
     }
     return Status.VALID
@@ -142,7 +144,6 @@ class Validator {
     }
     else if (identifierType.equals("gokbUuid")){
       if (str.matches("[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}")){
-        // "Das Feld wird maschinell besetzt und enthält eine bis zu 11 Stellen umfassende Identifikationsnummer mit Prüfziffer."
         return Status.VALID
       }
       else{

@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils
 import ygor.Enrichment
 import ygor.Enrichment.FileType
 import ygor.Record
+import ygor.field.MappingsContainer
 
 @Log4j
 class GokbExporter {
@@ -186,16 +187,28 @@ class GokbExporter {
 
   private static ObjectNode postProcessPublicationTitle(ObjectNode titleNode, Record record){
     String title = titleNode.get("name").asText()
-    for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
-      String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
-      if (!StringUtils.isEmpty(extendedTitle)){
-        if (isRoughlySubString(title, extendedTitle)){
-          titleNode.set("name", new TextNode(extendedTitle))
+    List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
+    if (ramifications != null && !ramifications.isEmpty()){
+      String extendedTitle = title
+      for (String ramification in ramifications){
+        if (!StringUtils.isEmpty(ramification)){
+          extendedTitle = extendedTitle.concat(" / ").concat(ramification)
         }
-        else{
-          titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
+      }
+      titleNode.set("name", new TextNode(extendedTitle))
+    }
+    else{
+      for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
+        String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
+        if (!StringUtils.isEmpty(extendedTitle)){
+          if (isRoughlySubString(title, extendedTitle)){
+            titleNode.set("name", new TextNode(extendedTitle))
+          }
+          else{
+            titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
+          }
+          return titleNode
         }
-        return titleNode
       }
     }
     return titleNode

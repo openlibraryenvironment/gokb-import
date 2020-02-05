@@ -689,6 +689,23 @@
     }
   },
   {
+    "ygor" : "publicationTitleRamification",
+    "display" : "021C:l",
+    "in" : {
+      "kbart" : "",
+      "zdb" : ["021C:l"],
+      "ezb" : ""
+    },
+    "order" : ["zdb"],
+    "type" : "Title",
+    "flags" : {
+      "valid" : "ok",
+      "invalid" : "error",
+      "missing" : "ok",
+      "undefined" : "ok"
+    }
+  },
+  {
     "ygor" : "publicationTitleVariation",
     "display" : "025@:a",
     "in" : {
