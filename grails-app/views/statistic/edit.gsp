@@ -1,4 +1,4 @@
-<%@ page import="de.hbznrw.ygor.tools.JsonToolkit; grails.converters.JSON" %>
+<%@ page import="org.apache.commons.lang.StringUtils; de.hbznrw.ygor.tools.JsonToolkit; grails.converters.JSON" %>
 <meta name="layout" content="enrichment">
 
 <g:set var="displayZDB" value="${true}"/>
@@ -13,6 +13,11 @@
                 <div class="panel-heading-red">
                     <h3 class="panel-title"><g:message code="statistic.edit.record.zdbmatch"/> : <g:message
                             code="${record.multiFields.get("zdbId").status}"/></h3>
+                </div>
+            </g:if>
+            <g:if test="${!record.hasValidPublicationType()}">
+                <div class="panel-heading-red">
+                    <h3 class="panel-title"><g:message code="statistic.edit.record.invalidPublicationType"/></h3>
                 </div>
             </g:if>
             <div/>
@@ -33,7 +38,6 @@
                         <g:each in="${record.duplicates}" var="rec"> : ${rec.key}</g:each>
                     </div>
                 </g:if>
-
                 <div class="statistics-data">
                     <table class="statistics-details" id="edit-table">
                         <thead>

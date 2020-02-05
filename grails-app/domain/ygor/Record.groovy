@@ -132,7 +132,7 @@ class Record{
   boolean isValid() {
     // validate tipp.titleUrl
     MultiField urlMultiField = multiFields.get("titleUrl")
-    if (urlMultiField == null) {
+    if (urlMultiField == null || !hasValidPublicationType()) {
       return false
     }
     // check multifields for critical errors
@@ -145,8 +145,17 @@ class Record{
   }
 
 
+  boolean hasValidPublicationType(){
+    if (publicationType == null || !(publicationType in ["serial", "monograph"])){
+      return false
+    }
+    return true
+  }
+
+
   void validate(String namespace) {
     this.validateMultifields(namespace)
+    publicationType = multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
     RecordValidator.validateCoverage(this)
     RecordValidator.validateHistoryEvent(this)
     RecordValidator.validatePublisherHistory(this)
