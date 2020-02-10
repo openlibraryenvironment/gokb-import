@@ -187,6 +187,10 @@ class EnrichmentService{
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
+      response.'401'= {resp ->
+        log.error("server response: ${resp.statusLine}")
+        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+      }
     }
   }
 
