@@ -298,7 +298,7 @@ class EnrichmentController{
 
 
   def stopProcessingFile = {
-    enrichmentService.stopProcessing(getCurrentEnrichment())
+    getCurrentEnrichment().stop()
     deleteFile()
   }
 
