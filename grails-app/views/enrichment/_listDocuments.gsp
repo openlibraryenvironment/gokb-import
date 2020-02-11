@@ -11,7 +11,6 @@
 <g:form controller="enrichment" action="process">
     <g:hiddenField name="originHash" value="${enrichment?.originHash}" />
     <g:hiddenField name="resultHash" value="${enrichment?.resultHash}" />
-    <g:hiddenField name="dataTyp" value="${session.lastUpdate?.dataTyp}" />
     <g:if test="${enrichment?.status != null}">
         <div class="row" xmlns="http://www.w3.org/1999/html">
             <div class="col-xs-12">
@@ -36,23 +35,6 @@
                                         &rarr; <g:message code="listDocuments.state.finished" />
                                     </g:if>
                                 </em></span>
-                            </span>
-                        </div>
-                        <br />
-                        <div class="input-group">
-                            <span class="input-group-addon"><g:message code="listDocuments.key.mediatype" /></span>
-                            <span class="form-control" >
-                                <g:if test="${session.lastUpdate?.dataTyp == "journals"}">
-                                    <g:message code="listDocuments.mediatype.journal" />
-                                </g:if>
-
-                                <g:if test="${session.lastUpdate?.dataTyp == "database"}">
-                                    <g:message code="listDocuments.mediatype.database" />
-                                </g:if>
-
-                                <g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
-                                    <g:message code="listDocuments.mediatype.ebook" />
-                                </g:if>
                             </span>
                         </div>
                         <br />
@@ -236,29 +218,20 @@
                                             KBART <code><g:message code="listDocuments.enrichment.file" /></code>
                                         </label>
                                     &nbsp;
-                                        <g:if test="${session.lastUpdate?.dataTyp == "journals" || session.lastUpdate?.dataTyp == "database"}">
-                                            <label>
-                                                <g:checkBox name="processOption" required="true" checked="true" value="${ZdbReader.IDENTIFIER}"/>
-                                                ZDB <em>@GBV</em> <code>API</code>
-                                            </label>
-                                            &nbsp;
-                                            <label>
-                                                <g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbReader.IDENTIFIER)}">
-                                                    <g:checkBox name="processOption" checked="true" value="${EzbReader.IDENTIFIER}" />
-                                                </g:if>
-                                                <g:else>
-                                                    <g:checkBox name="processOption" checked="false" value="${EzbReader.IDENTIFIER}" />
-                                                </g:else>
-                                                EZB <code>API</code>
-                                            </label>
-                                            <!--
-                                            &nbsp;
-                                            <label>
-                                            <g:checkBox name="processOption" checked="false" disabled="true" value="${ZdbReader.IDENTIFIER}"/>
-                                            ZDB <code>API</code>
+                                        <label>
+                                            <g:checkBox name="processOption" required="true" checked="true" value="${ZdbReader.IDENTIFIER}"/>
+                                            ZDB <em>@GBV</em> <code>API</code>
                                         </label>
-                                        -->
-                                        </g:if>
+                                        &nbsp;
+                                        <label>
+                                            <g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbReader.IDENTIFIER)}">
+                                                <g:checkBox name="processOption" checked="true" value="${EzbReader.IDENTIFIER}" />
+                                            </g:if>
+                                            <g:else>
+                                                <g:checkBox name="processOption" checked="false" value="${EzbReader.IDENTIFIER}" />
+                                            </g:else>
+                                            EZB <code>API</code>
+                                        </label>
                                     </div>
                                 </span>
                             </div>

@@ -62,7 +62,6 @@ class StatisticController{
             ygorVersion   : ygorVersion,
             date          : date,
             filename      : filename,
-            dataType      : enrichment?.dataType,
             greenRecords  : greenRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
             redRecords    : redRecords[resultHash],
@@ -83,7 +82,6 @@ class StatisticController{
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
-            dataType      : enrichment?.dataType,
             greenRecords  : greenRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
             redRecords    : redRecords[resultHash]
@@ -106,7 +104,6 @@ class StatisticController{
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
-            dataType      : enrichment?.dataType,
             redRecords    : redRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
             greenRecords  : greenRecords[resultHash]
@@ -159,10 +156,10 @@ class StatisticController{
 
   private void classifyRecord(Record record, Enrichment enrichment){
     def multiFieldMap = record.asMultiFieldMap()
-    if (record.isValid(enrichment.dataType)){
-      if (record.multiFields.get("titleUrl").isCorrect() &&
+    if (record.isValid()){
+      if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
           record.duplicates.isEmpty() &&
-          (!record.multiFields.get("publicationType").getFirstPrioValue().equals("Serial") || record.zdbIntegrationUrl != null)){
+          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null)){
         greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
         yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
         redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
@@ -339,7 +336,6 @@ class StatisticController{
             ygorVersion   : en.ygorVersion,
             date          : en.date,
             filename      : en.originName,
-            dataType      : en.dataType,
             greenRecords  : greenRecords[en.resultHash],
             yellowRecords : yellowRecords[en.resultHash],
             redRecords    : redRecords[en.resultHash],
@@ -383,7 +379,6 @@ class StatisticController{
               ygorVersion   : en.ygorVersion,
               date          : en.date,
               filename      : en.originName,
-              dataType      : en.dataType,
               greenRecords  : greenRecords[en.resultHash],
               yellowRecords : yellowRecords[en.resultHash],
               redRecords    : redRecords[en.resultHash],

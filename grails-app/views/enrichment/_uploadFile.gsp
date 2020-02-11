@@ -65,43 +65,6 @@
 
                         <br/>
 
-                        <div class="input-group">
-                            <span class="input-group-addon"><g:message code="uploadFile.mediatype.label"/></span>
-                            <span class="form-control">
-                                <div class="radio">
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.dataTyp == null || session.lastUpdate?.dataTyp == "journals"}">
-                                            <g:radio name="dataTyp" checked="true" value="journals"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="dataTyp" value="journals"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.mediatype.serial"/>
-                                    </label>
-                                    %{--&nbsp;
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.dataTyp == "database"}">
-                                            <g:radio name="dataTyp" checked="true" value="database" />
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="dataTyp" value="database" />
-                                        </g:else>
-                                        Database
-                                    </label>--}%
-                                    &nbsp;
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.dataTyp == "ebooks"}">
-                                            <g:radio name="dataTyp" checked="true" value="ebooks"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="dataTyp" value="ebooks"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.mediatype.monograph"/>
-                                    </label>
-                                </div>
-                            </span>
-                        </div>
-
                         <!-- <br />
 					<div class="input-group">
 						<span class="input-group-addon">Zeichenbegrenzer:</span>

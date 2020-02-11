@@ -34,6 +34,7 @@ class Record{
   DoiIdentifier doiId
   OnlineIdentifier onlineIdentifier
   PrintIdentifier printIdentifier
+  String publicationType
   Map multiFields
   Map validation
   String zdbIntegrationDate
@@ -128,15 +129,15 @@ class Record{
   }
 
 
-  boolean isValid(String type) {
+  boolean isValid() {
     // validate tipp.titleUrl
     MultiField urlMultiField = multiFields.get("titleUrl")
-    if (urlMultiField == null) {
+    if (urlMultiField == null || !hasValidPublicationType()) {
       return false
     }
     // check multifields for critical errors
     for (MultiField multiField in multiFields.values()){
-      if (multiField.isCriticallyIncorrect()){
+      if (multiField.isCriticallyIncorrect(publicationType)){
         return false
       }
     }
@@ -144,8 +145,17 @@ class Record{
   }
 
 
+  boolean hasValidPublicationType(){
+    if (publicationType == null || !(publicationType in ["serial", "monograph"])){
+      return false
+    }
+    return true
+  }
+
+
   void validate(String namespace) {
     this.validateMultifields(namespace)
+    publicationType = multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
     RecordValidator.validateCoverage(this)
     RecordValidator.validateHistoryEvent(this)
     RecordValidator.validatePublisherHistory(this)
@@ -240,6 +250,7 @@ class Record{
     jsonGenerator.writeStringField("doiId", doiId?.identifier)
     jsonGenerator.writeStringField("eissn", onlineIdentifier?.identifier)
     jsonGenerator.writeStringField("issn", printIdentifier?.identifier)
+    jsonGenerator.writeStringField("publicationType", publicationType)
     if (ezbIntegrationDate) {
       jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
     }
@@ -353,6 +364,10 @@ class Record{
     String zdbIntegrationUrl = JsonToolkit.fromJson(json, "zdbIntegrationUrl")
     if (zdbIntegrationUrl) {
       result.zdbIntegrationUrl = zdbIntegrationUrl
+    }
+    String publicationType = JsonToolkit.fromJson(json, "publicationType")
+    if (publicationType) {
+      result.publicationType = publicationType
     }
     result.duplicates = [:]
     Collection duplicates = JsonToolkit.fromJson(json, "duplicates")

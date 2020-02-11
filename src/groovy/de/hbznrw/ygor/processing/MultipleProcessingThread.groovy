@@ -149,10 +149,6 @@ class MultipleProcessingThread extends Thread {
 
 
   private void processUiSettings() {
-    FieldKeyMapping mediumMapping = enrichment.setTitleMediumMapping()
-    enrichment.enrollMappingToRecords(mediumMapping)
-    FieldKeyMapping typeMapping = enrichment.setTitleTypeMapping()
-    enrichment.enrollMappingToRecords(typeMapping)
     FieldKeyMapping tippNameMapping = enrichment.setTippPlatformNameMapping()
     enrichment.enrollMappingToRecords(tippNameMapping)
     FieldKeyMapping tippUrlMapping = enrichment.setTippPlatformUrlMapping()
