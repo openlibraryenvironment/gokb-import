@@ -35,7 +35,8 @@ class KbartReader {
       'title_url',
       'embargo_info',
       'coverage_depth',
-      'notes'
+      'notes',
+      'publication_type'
   ]
 
   static ALIASES = [

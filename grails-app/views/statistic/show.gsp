@@ -4,7 +4,7 @@
 
 <div class="row">
 
-    <g:set var="displayZDB" value="${dataType == null || dataType.toLowerCase() != 'ebooks'}"/>
+    <g:set var="displayZDB" value="true"/>
 
     <div class="col-xs-12">
         <div class="panel panel-default">
@@ -212,10 +212,37 @@
             <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deletefile')}"
                             class="btn btn-danger"/>
         </div>
+        <g:if test="${responseText != null}">
+
+            <div class="modal-info" id="responseModal" tabindex="-1" role="dialog"
+                 aria-labelledby="smallModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title"><g:message code="listDocuments.gokb.response"/></h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="close"/>
+                        </div>
+                        <div class="modal-body">
+                            ${responseText}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="responseModalButton" class="btn btn-default" data-dismiss="modal"><g:message
+                                    code="listDocuments.button.ok"/></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $('#responseModalButton').click(function() {
+                    $("#responseModal").removeClass("in");
+                    $(".modal-backdrop").remove();
+                    $('body').removeClass('modal-open');
+                    $('body').css('padding-right', '');
+                    $("#responseModal").hide();
+                });
+            </script>
+        </g:if>
     </g:form>
-
-
-
 
     <div class="col-xs-12">
         <div class="panel panel-default">

@@ -103,9 +103,8 @@ class EnrichmentController{
     def foQuote = null                  // = request.parameterMap['formatQuote'][0]
     def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
     def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
-    def dataTyp = request.parameterMap['dataTyp'][0]
 
-    setInputFieldDataToLastUpdate(file, foDelimiter, foQuote, foQuoteMode, recordSeparator, dataTyp)
+    setInputFieldDataToLastUpdate(file, foDelimiter, foQuote, foQuoteMode, recordSeparator)
 
     if (file.empty){
       flash.info = null
@@ -137,7 +136,7 @@ class EnrichmentController{
       return
     }
 
-    Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode, dataTyp)
+    Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
     redirect(
         action: 'process',
@@ -153,7 +152,7 @@ class EnrichmentController{
   }
 
 
-  private void setInputFieldDataToLastUpdate(file, String foDelimiter, foQuote, foQuoteMode, String recordSeparator, String dataTyp){
+  private void setInputFieldDataToLastUpdate(file, String foDelimiter, foQuote, foQuoteMode, String recordSeparator){
     if (!request.session.lastUpdate){
       request.session.lastUpdate = [:]
     }
@@ -162,7 +161,6 @@ class EnrichmentController{
     request.session.lastUpdate.foQuote = foQuote
     request.session.lastUpdate.foQuoteMode = foQuoteMode
     request.session.lastUpdate.recordSeparator = recordSeparator
-    request.session.lastUpdate.dataTyp = dataTyp
   }
 
 
@@ -189,7 +187,6 @@ class EnrichmentController{
     if (null == request.session.lastUpdate){
       request.session.lastUpdate = [:]
     }
-    request.session.lastUpdate << [dataTyp: enrichment.dataType]
     Statistics.getRecordsStatisticsBeforeParsing(enrichment)
     enrichment.setCurrentSession()
     enrichment.saveResult()
@@ -254,7 +251,6 @@ class EnrichmentController{
                 'delimiter'  : format.get('delimiter'),
                 'quote'      : format.get('quote'),
                 'quoteMode'  : format.get('quoteMode'),
-                'dataTyp'    : format.get('dataTyp'),
                 'ygorVersion': grailsApplication.config.ygor.version,
                 'ygorType'   : grailsApplication.config.ygor.type
             ]

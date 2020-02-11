@@ -8,6 +8,7 @@ import ygor.Record
 import ygor.field.Field
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
+import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.ZdbIdentifier
 
@@ -52,6 +53,10 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
 
   private void integrateRecord(MultipleProcessingThread owner, Record record, List<FieldKeyMapping> idMappings){
+    if (!(record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase().equals("serial"))){
+      // Don't integrate monographs (or any other type)
+      return
+    }
     Map<String, String> zdbMatch = getBestMatch(owner, record)
     if (zdbMatch != null && !zdbMatch.isEmpty()){
       record.zdbIntegrationDate = processStart
@@ -83,10 +88,12 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         if (newLinkedRecord.zdbIntegrationDate != null){
           // If there is no zdbIntegrationDate, the integration didn't happen, most probably because there was
           // no match. In this case, we would not add an empty record stub to the result list.
+          newLinkedRecord.publicationType = record.publicationType
           result.add(newLinkedRecord)
         }
       }
       else{
+        existing.publicationType = record.publicationType
         result.add(existing)
       }
     }

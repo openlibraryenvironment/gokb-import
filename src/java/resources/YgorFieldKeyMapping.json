@@ -13,10 +13,10 @@
     "order" : ["kbart"],
     "type" : "EndDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -33,10 +33,10 @@
     "order" : ["kbart"],
     "type" : "StartDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -53,10 +53,10 @@
     "order" : ["kbart"],
     "type" : "Abbreviation",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -76,10 +76,10 @@
       "fixed" : "Fulltext"
     },
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -96,10 +96,10 @@
     "order" : ["kbart"],
     "type" : "StartDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "warning", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -116,10 +116,10 @@
     "order" : ["kbart"],
     "type" : "EndDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -136,10 +136,10 @@
     "order" : ["kbart"],
     "type" : "StartDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -156,10 +156,10 @@
     "order" : ["kbart"],
     "type" : "StartDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -176,10 +176,10 @@
     "order" : ["kbart", "zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -198,10 +198,10 @@
     "order" : ["kbart"],
     "type" : "Number",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -218,10 +218,10 @@
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -238,10 +238,10 @@
     "order" : ["ezb", "kbart"],
     "type" : "ID",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -258,10 +258,10 @@
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -278,10 +278,10 @@
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -298,10 +298,10 @@
     "order" : ["kbart"],
     "type" : "ID",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -315,10 +315,10 @@
     "order" : ["zdb"],
     "type" : "Date",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -332,10 +332,10 @@
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -349,10 +349,10 @@
     "order" : ["zdb"],
     "type" : "Abbreviation",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -366,10 +366,10 @@
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -383,10 +383,10 @@
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -400,10 +400,10 @@
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -417,10 +417,10 @@
     "order" : ["zdb"],
     "type" : "Title",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -430,10 +430,10 @@
     },
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -454,10 +454,10 @@
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -474,10 +474,10 @@
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -494,10 +494,10 @@
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -514,10 +514,10 @@
     "order" : ["kbart"],
     "type" : "Number",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "warning", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -534,10 +534,10 @@
     "order" : ["kbart"],
     "type" : "Number",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "warning", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -554,10 +554,10 @@
     "order" : ["kbart"],
     "type" : "Number",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -574,10 +574,10 @@
     "order" : ["kbart"],
     "type" : "Number",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -594,10 +594,10 @@
     "order" : ["kbart", "zdb"],
     "type" : "ID",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "warning", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -608,10 +608,10 @@
     },
     "type" : "Title",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "error",
-      "undefined" : "error"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "error", "monograph" : "error"}],
+      "undefined" : [{"serial" : "error", "monograph" : "error"}]
     }
   },
   {
@@ -622,10 +622,10 @@
     },
     "type" : "URL",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "error",
-      "undefined" : "error"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "error", "monograph" : "error"}],
+      "undefined" : [{"serial" : "error", "monograph" : "error"}]
     }
   },
   {
@@ -642,10 +642,10 @@
     "order" : ["kbart", "zdb"],
     "type" : "ID",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "warning", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -662,10 +662,10 @@
     "order" : ["zdb"],
     "type" : "Title",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -682,10 +682,10 @@
     "order" : ["zdb","kbart","ezb"],
     "type" : "Title",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "error",
-      "undefined" : "error"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "error", "monograph" : "error"}],
+      "undefined" : [{"serial" : "error", "monograph" : "error"}]
     }
   },
   {
@@ -699,10 +699,10 @@
     "order" : ["zdb"],
     "type" : "Title",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "ok"}]
     }
   },
   {
@@ -719,10 +719,10 @@
     "order" : ["zdb"],
     "type" : "Title",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -736,13 +736,16 @@
     "out" : {
       "gokb" : ["$TITLE.type", "$TIPP.title.type"]
     },
+    "value" : {
+      "allowedValues" : ["Monograph", "monograph", "Serial", "serial"]
+    },
     "order" : ["kbart"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "error",
-      "undefined" : "error"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "error", "monograph" : "error"}],
+      "undefined" : [{"serial" : "error", "monograph" : "error"}]
     }
   },
   {
@@ -759,10 +762,10 @@
     "order" : ["zdb"],
     "type" : "StartDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -779,10 +782,10 @@
     "order" : ["zdb"],
     "type" : "EndDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -800,10 +803,10 @@
     "order" : ["zdb"],
     "type" : "EndDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -821,10 +824,10 @@
     "order" : ["zdb"],
     "type" : "StartDate",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -841,10 +844,10 @@
     "order" : ["kbart", "zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -861,10 +864,10 @@
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -881,10 +884,10 @@
     "order" : ["zdb"],
     "type" : "String",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "ok",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
@@ -901,10 +904,10 @@
     "order" : ["kbart"],
     "type" : "ID",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok"}]
     }
   },
   {
@@ -922,10 +925,10 @@
     "type" : "URL",
     "comment" : "The field name 'titleUrl' is misleading from the point of differentiating title vs. TIPP. In fact, it is a TIPP field.",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "error"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "warning", "monograph" : "warning"}],
+      "undefined" : [{"serial" : "error", "monograph" : "error"}]
     }
   },
   {
@@ -942,10 +945,10 @@
     "order" : ["zdb","kbart"],
     "type" : "ID",
     "flags" : {
-      "valid" : "ok",
-      "invalid" : "error",
-      "missing" : "warning",
-      "undefined" : "warning"
+      "valid" : [{"serial" : "ok", "monograph" : "ok"}],
+      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "missing" : [{"serial" : "warning", "monograph" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   }
 ]

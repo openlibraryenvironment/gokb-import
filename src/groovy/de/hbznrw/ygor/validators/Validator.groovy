@@ -142,6 +142,15 @@ class Validator {
         return Status.INVALID
       }
     }
+    else if (identifierType.equals("ezbId")){
+      if (str.matches("[0-9]{1,15}")){
+        // "Das Feld wird maschinell besetzt und enthält eine bis zu 11 Stellen umfassende Identifikationsnummer mit Prüfziffer."
+        return Status.VALID
+      }
+      else{
+        return Status.INVALID
+      }
+    }
     else if (identifierType.equals("gokbUuid")){
       if (str.matches("[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}")){
         return Status.VALID

@@ -55,7 +55,6 @@ class Enrichment{
   String resultName
   String resultHash
   String resultPathName
-  String dataType
 
   File sessionFolder
   String ygorVersion
@@ -83,7 +82,6 @@ class Enrichment{
 
   def process(HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
-    dataType = options.get('dataTyp')
     ygorVersion = options.get('ygorVersion')
 
     dataContainer.info.file = originName
@@ -154,7 +152,6 @@ class Enrichment{
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
     result.append("\"configuration\":{")
-    result.append("\"dataType\":\"").append(dataType).append("\",")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     if (dataContainer.curatoryGroup1 != null){
       result.append("\"curatoryGroup1\":\"").append(dataContainer.curatoryGroup1).append("\",")
@@ -197,7 +194,6 @@ class Enrichment{
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")){
       en.dataContainer.curatoryGroup2 = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")
     }
-    en.dataType = JsonToolkit.fromJson(rootNode, "configuration.dataType")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
     return en
   }
@@ -206,8 +202,6 @@ class Enrichment{
   static Enrichment fromJsonFile(def file){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode)
-    enrichment.setTitleMediumMapping()
-    enrichment.setTitleTypeMapping()
     enrichment.setTippPlatformNameMapping()
     enrichment.setTippPlatformUrlMapping()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
@@ -279,36 +273,6 @@ class Enrichment{
       throw new IOException("Entry is outside of the target dir: " + zipEntry.getName())
     }
     return destFile
-  }
-
-
-  FieldKeyMapping setTitleMediumMapping(){
-    FieldKeyMapping mediumMapping = mappingsContainer.getMapping("medium", MappingsContainer.YGOR)
-    if (dataType == 'ebooks'){
-      mediumMapping.val = "Book"
-    }
-    else if (dataType == 'database'){
-      mediumMapping.val = "Database"
-    }
-    else{
-      mediumMapping.val = "Journal"
-    }
-    return mediumMapping
-  }
-
-
-  FieldKeyMapping setTitleTypeMapping(){
-    FieldKeyMapping typeMapping = mappingsContainer.getMapping("publicationType", MappingsContainer.YGOR)
-    if (dataType == 'ebooks'){
-      typeMapping.val = "Book"
-    }
-    else if (dataType == 'database'){
-      typeMapping.val = "Database"
-    }
-    else{
-      typeMapping.val = "Serial"
-    }
-    return typeMapping
   }
 
 

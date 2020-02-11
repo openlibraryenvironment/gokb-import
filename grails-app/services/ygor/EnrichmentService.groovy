@@ -14,7 +14,7 @@ class EnrichmentService{
   def grailsApplication
   GokbService gokbService
 
-  Enrichment addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp){
+  Enrichment addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode){
     def en = new Enrichment(getSessionFolder(), file.originalFilename)
     en.setStatus(Enrichment.ProcessingState.PREPARE_1)
 
@@ -22,7 +22,6 @@ class EnrichmentService{
     tmp << ['delimiter': delimiter]
     tmp << ['quote': quote]
     tmp << ['quoteMode': quoteMode]
-    tmp << ['dataTyp': dataTyp]
 
     def formats = getSessionFormats()
     formats << ["${en.originHash}": tmp]
@@ -181,6 +180,10 @@ class EnrichmentService{
         else{
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
+      }
+      response.'401'= {resp ->
+        log.error("server response: ${resp.statusLine}")
+        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
       }
     }
   }
