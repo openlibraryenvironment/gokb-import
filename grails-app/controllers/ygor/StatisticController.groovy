@@ -4,6 +4,8 @@ import de.hbznrw.ygor.tools.FileToolkit
 import groovy.util.logging.Log4j
 import ygor.field.MultiField
 
+import java.text.MessageFormat
+
 @Log4j
 class StatisticController{
 
@@ -284,72 +286,20 @@ class StatisticController{
 
 
   def sendPackageFile = {
-    def en = getCurrentEnrichment()
-    if (en){
-      def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY,
-          params.gokbUsername, params.gokbPassword)
-      flash.info = []
-      flash.warning = []
-      flash.error = []
-
-      if (response.JSON){
-        if (response.info[0] != null){
-          if (response.info[0].result == 'ERROR'){
-            flash.warning = [response.info[0].message]
-          }
-          else{
-            flash.info = response.info[0].message
-          }
-          flash.error = []
-
-          response.info[0].errors?.each{ e ->
-            flash.error.add(e.message)
-          }
-        }
-        if (response.warning[0] != null){
-          log.debug("${response.warning[0]}")
-          flash.warning = [response.warning[0].message]
-
-          response.warning[0].errors.each{ e ->
-            flash.warning.add(e.message)
-          }
-        }
-        if (response.error[0] != null){
-          log.warn("ERROR: ${response.error}")
-          flash.error = [response.error[0].message]
-
-          response.error.errors?.each{ e ->
-            flash.error.add(e.message)
-          }
-        }
-      }
-    }
-    else{
-      flash.error = "There was an error authenticating with GOKb!"
-    }
-    render(
-        view: 'show',
-        model: [
-            originHash    : en.originHash,
-            resultHash    : en.resultHash,
-            currentView   : 'statistic',
-            ygorVersion   : en.ygorVersion,
-            date          : en.date,
-            filename      : en.originName,
-            greenRecords  : greenRecords[en.resultHash],
-            yellowRecords : yellowRecords[en.resultHash],
-            redRecords    : redRecords[en.resultHash],
-            status        : en.status
-        ]
-    )
+    sendFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
   }
 
 
+
   def sendTitlesFile = {
+    sendFile(Enrichment.FileType.JSON_TITLES_ONLY)
+  }
+
+
+  private void sendFile(Enrichment.FileType fileType){
     def en = getCurrentEnrichment()
     if (en){
-      def response = enrichmentService.sendFile(en, Enrichment.FileType.JSON_TITLES_ONLY,
-          params.gokbUsername, params.gokbPassword)
+      def response = enrichmentService.sendFile(en, fileType, params.gokbUsername, params.gokbPassword)
       flash.info = []
       flash.warning = []
       List errorList = []
@@ -373,19 +323,47 @@ class StatisticController{
       render(
           view: 'show',
           model: [
-              originHash    : en.originHash,
-              resultHash    : en.resultHash,
-              currentView   : 'statistic',
-              ygorVersion   : en.ygorVersion,
-              date          : en.date,
-              filename      : en.originName,
-              greenRecords  : greenRecords[en.resultHash],
-              yellowRecords : yellowRecords[en.resultHash],
-              redRecords    : redRecords[en.resultHash],
-              status        : en.status
+              originHash   : en.originHash,
+              resultHash   : en.resultHash,
+              currentView  : 'statistic',
+              ygorVersion  : en.ygorVersion,
+              date         : en.date,
+              filename     : en.originName,
+              dataType     : en.dataType,
+              greenRecords : greenRecords[en.resultHash],
+              yellowRecords: yellowRecords[en.resultHash],
+              redRecords   : redRecords[en.resultHash],
+              status       : en.status,
+              responseText : getResponseMessage(response)
           ]
       )
     }
+  }
+
+
+  private String getResponseMessage(List response){
+    for (def outerMap in response){
+      for (def innerMap in outerMap){
+        for (def entry in innerMap.value){
+          if (entry.key.equals("message")){
+            return entry.value
+          }
+          if (entry.key.equals("results")){
+            int ok = 0, error = 0
+            for (resultMap in entry.value){
+              if (resultMap.'result'.equals("OK")){
+                ok++
+              }
+              else if (resultMap.'result'.equals("ERROR")){
+                error++
+              }
+            }
+            return MessageFormat.format("OK: {0}, ERROR: {1}", ok, error)
+          }
+        }
+      }
+    }
+    return ""
   }
 
 
