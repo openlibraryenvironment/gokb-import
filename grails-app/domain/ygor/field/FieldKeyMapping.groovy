@@ -16,10 +16,11 @@ class FieldKeyMapping {
   String type
   Set<String> gokb
   String val = ""
+  Set<String> allowedValues = new HashSet<>()
   boolean valIsFix
   boolean keepIfEmpty
   List<String> sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
-  Map<String, String> flags = [:]
+  Map<String, Map<String, String>> flags = [:]
 
   static constraints = {
     ygorKey nullable: false
@@ -28,13 +29,13 @@ class FieldKeyMapping {
   }
 
   static String[] VALID_FLAG_TYPES = ["valid", "invalid", "missing", "undefined"]
-  static String[] VALID_FLAG_STATUS = ["ok", "warning", "error"]
 
-  static hasMany = [kbartKeys : String,
-                    zdbKeys   : String,
-                    ezbKeys   : String,
-                    gokb      : String,
-                    sourcePrio: String]
+  static hasMany = [kbartKeys     : String,
+                    zdbKeys       : String,
+                    ezbKeys       : String,
+                    gokb          : String,
+                    sourcePrio    : String,
+                    allowedValues : String]
 
   FieldKeyMapping() {
     // add explicit default constructor
@@ -70,7 +71,8 @@ class FieldKeyMapping {
           gokb = new HashSet<>()
           if (mapping.value instanceof Collection<?>) {
             gokb.addAll(mapping.value)
-          } else if (!StringUtils.isEmpty(mapping.value.toString())) {
+          }
+          else if (!StringUtils.isEmpty(mapping.value.toString())) {
             gokb.add(mapping.value)
           }
           break
@@ -88,10 +90,19 @@ class FieldKeyMapping {
           parseMapping(mapping.value)
           break
         case "value":
-          if (!mapping.value instanceof String) {
+          if (!(mapping.value instanceof String)) {
             parseMapping(mapping.value)
-          } else {
+          }
+          else {
             val = mapping.value
+          }
+          break
+        case "allowedValues":
+          if (mapping.value instanceof Collection<?>) {
+            allowedValues.addAll(mapping.value)
+          }
+          else if (!StringUtils.isEmpty(mapping.value.toString())) {
+            allowedValues.add(mapping.value)
           }
           break
         case "keepIfEmpty":
@@ -124,9 +135,23 @@ class FieldKeyMapping {
 
 
   private void addFlag(def mapping){
-    if (mapping.key in VALID_FLAG_TYPES && mapping.value in VALID_FLAG_STATUS){
-      flags.put(mapping.key, mapping.value)
+    if (mapping.key in VALID_FLAG_TYPES){
+      for (def entry in mapping.value){
+        HashMap existing = flags.get(mapping.key)
+        if (existing == null){
+          existing = [:]
+        }
+        for (def pair in entry){
+          existing.put(pair.key, pair.value)
+        }
+        flags.put(mapping.key, existing)
+      }
     }
+  }
+
+
+  String getFlag(String validity, String publicationType){
+    return flags.get(validity)?.get(publicationType)
   }
 
 
@@ -226,9 +251,21 @@ class FieldKeyMapping {
     jsonGenerator.writeFieldName(MappingsContainer.FLAGS)
     jsonGenerator.writeStartObject()
     for (def flag in flags){
-      jsonGenerator.writeStringField(flag.key, flag.value)
+      jsonGenerator.writeFieldName(flag.key)
+      jsonGenerator.writeStartObject()
+      for (pair in flag.value){
+        jsonGenerator.writeStringField(pair.key, pair.value)
+      }
+      jsonGenerator.writeEndObject()
     }
     jsonGenerator.writeEndObject()
+
+    jsonGenerator.writeFieldName("allowedValues")
+    jsonGenerator.writeStartArray()
+    for (def val in allowedValues){
+      jsonGenerator.writeString(val)
+    }
+    jsonGenerator.writeEndArray()
 
     jsonGenerator.writeEndObject()
   }

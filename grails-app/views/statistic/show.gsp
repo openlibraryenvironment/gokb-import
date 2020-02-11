@@ -4,7 +4,7 @@
 
 <div class="row">
 
-    <g:set var="displayZDB" value="${dataType == null || dataType.toLowerCase() != 'ebooks'}"/>
+    <g:set var="displayZDB" value="true"/>
 
     <div class="col-xs-12">
         <div class="panel panel-default">

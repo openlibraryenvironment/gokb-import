@@ -2,9 +2,11 @@ package ygor.field
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
+import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.normalizers.CommonNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.Validator
+import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
 import java.util.regex.Matcher
@@ -149,32 +151,45 @@ class MultiField {
 
 
   void validate(String namespace) {
-    status = Validator.validate(type, getFirstPrioValue(), ygorFieldKey, namespace)
+    String value = getFirstPrioValue()
+    if (keyMapping != null && keyMapping.allowedValues != null && !keyMapping.allowedValues.isEmpty()){
+      if (!(value in keyMapping.allowedValues)){
+        // this value is not allowed by the config "allowedValues" in YgorFieldKeyMapping.json
+        if (StringUtils.isEmpty(value)){
+          status = Status.MISSING
+        }
+        else{
+          status = Status.INVALID
+        }
+        return
+      }
+    }
+    status = Validator.validate(type, value, ygorFieldKey, namespace)
   }
 
 
-  boolean isCriticallyIncorrect(){
+  boolean isCriticallyIncorrect(String publicationType){
     if (keyMapping == null){
       return false
     }
-    return "error".equals(keyMapping.flags.get(status))
+    return "error".equals(keyMapping.getFlag(status, publicationType))
   }
 
 
-  boolean isNonCriticallyIncorrect(){
+  boolean isNonCriticallyIncorrect(String publicationType){
     if (keyMapping == null){
       return false
     }
-    return "warning".equals(keyMapping.flags.get(status))
+    return "warning".equals(keyMapping.getFlag(status, publicationType))
   }
 
 
-  boolean isCorrect(){
+  boolean isCorrect(String publicationType){
     if (keyMapping == null){
       // fields without a key mapping cannot be evaluated
       return true
     }
-    return "ok".equals(keyMapping.flags.get(status))
+    return "ok".equals(keyMapping.getFlag(status, publicationType))
   }
 
 
