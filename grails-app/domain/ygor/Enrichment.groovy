@@ -274,7 +274,7 @@ class Enrichment{
   FieldKeyMapping setTippPlatformNameMapping(){
     FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformNameMapping.val)){
-      platformNameMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.name
+      platformNameMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.name
     }
     platformNameMapping
   }
@@ -283,7 +283,7 @@ class Enrichment{
   FieldKeyMapping setTippPlatformUrlMapping(){
     FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformUrlMapping.val)){
-      platformUrlMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.url
+      platformUrlMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.url
     }
     platformUrlMapping
   }

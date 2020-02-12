@@ -132,24 +132,24 @@ class GokbExporter {
     // this currently parses the old package header
     // TODO: refactor
     log.debug("parsing package header ...")
-    def packageHeader = enrichment.dataContainer.pkg.packageHeader.v
+    def packageHeader = enrichment.dataContainer.pkg.packageHeader
     def result = new ObjectNode(NODE_FACTORY)
 
-    for (String field in ["breakable", "consistent", "fixed", "global", "listVerifiedDate", "listVerifier",
+    for (String field in ["breakable", "consistent", "fixed", "global",
                           "listStatus", "nominalProvider", "paymentType", "scope", "userListVerifier"]) {
-      result.put("${field}", packageHeader."${field}".v)
+      result.put("${field}", (String) packageHeader."${field}")
     }
     setIsil(packageHeader, result)
     if (enrichment.packageName){
       result.put("name", enrichment.packageName)
     }
     else {
-      result.put("name", packageHeader.name.v.v)
+      result.put("name", packageHeader.name)
     }
 
     def nominalPlatform = new ObjectNode(NODE_FACTORY)
-    nominalPlatform.put("name", packageHeader.nominalPlatform.name)
-    nominalPlatform.put("primaryUrl", packageHeader.nominalPlatform.url)
+    nominalPlatform.put("name", (String) packageHeader.nominalPlatform.name)
+    nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
     result.set("nominalPlatform", nominalPlatform)
 
     if (null != enrichment.dataContainer.curatoryGroup1){
@@ -161,12 +161,12 @@ class GokbExporter {
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
     def source = new ObjectNode(NODE_FACTORY)
-    if (packageHeader.source?.v?.name && !StringUtils.isEmpty(packageHeader.source.v.name.v))
-      source.put("name", packageHeader.source.v.name)
-    if (packageHeader.source?.v?.normname && !StringUtils.isEmpty(packageHeader.source.v.normname.v))
-      source.put("normname", packageHeader.source.v.normname)
-    if (packageHeader.source?.v?.url && !StringUtils.isEmpty(packageHeader.source.v.url.v))
-      source.put("url", packageHeader.source.v.url)
+    if (packageHeader.source?.name != null && !StringUtils.isEmpty(packageHeader.source.name))
+      source.put("name", packageHeader.source.name)
+    if (packageHeader.source?.normname != null && !StringUtils.isEmpty(packageHeader.source.normname))
+      source.put("normname", packageHeader.source.normname)
+    if (packageHeader.source?.url != null && !StringUtils.isEmpty(packageHeader.source.url))
+      source.put("url", packageHeader.source.url)
     result.set("source", source)
 
     enrichment.dataContainer.packageHeader = result
@@ -242,7 +242,7 @@ class GokbExporter {
 
 
   private static void setIsil(packageHeader, ObjectNode result) {
-    String isil = packageHeader.isil.v
+    String isil = packageHeader.isil
     if (!StringUtils.isEmpty(isil)) {
       def isilNode = new ObjectNode(NODE_FACTORY)
       isilNode.put("type", "isil")
