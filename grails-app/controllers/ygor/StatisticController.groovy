@@ -329,7 +329,6 @@ class StatisticController{
               ygorVersion  : en.ygorVersion,
               date         : en.date,
               filename     : en.originName,
-              dataType     : en.dataType,
               greenRecords : greenRecords[en.resultHash],
               yellowRecords: yellowRecords[en.resultHash],
               redRecords   : redRecords[en.resultHash],
@@ -358,7 +357,7 @@ class StatisticController{
                 error++
               }
             }
-            return MessageFormat.format("OK: {0}, ERROR: {1}", ok, error)
+            return MessageFormat.format("%s: {0}, %s: {1}", ok, error)
           }
         }
       }

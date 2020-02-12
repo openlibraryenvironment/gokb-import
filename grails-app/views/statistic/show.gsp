@@ -223,7 +223,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="close"/>
                         </div>
                         <div class="modal-body">
-                            ${responseText}
+                            ${String.format(responseText, message(code: 'listDocuments.gokb.response.ok'), message(code: 'listDocuments.gokb.response.error'))}
                         </div>
                         <div class="modal-footer">
                             <button type="button" id="responseModalButton" class="btn btn-default" data-dismiss="modal"><g:message
