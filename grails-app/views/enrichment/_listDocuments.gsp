@@ -179,30 +179,30 @@
 
                         <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_2}">
 
-                            ${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
+                            ${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
                                     message(code:'listDocuments.js.message.noplatformname') +
                                     raw('</div>')}
                             <div class="input-group custom-control">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.platformname" /></span>
-                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.name}</span>
+                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name}</span>
                             </div>
                             <br />
 
-                            ${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">') +
+                            ${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">') +
                                     message(code:'listDocuments.js.message.noplatformurl') +
                                     raw('</div>')}
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em>  <g:message code="listDocuments.key.platformurl" /></span>
-                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.v.nominalPlatform.url}</span>
+                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url}</span>
                             </div>
                             <br />
 
-                            ${enrichment.dataContainer.pkg.packageHeader.v.nominalProvider.v ? '' : raw('<div class="alert alert-danger" role="alert">') +
+                            ${enrichment.dataContainer.pkg.packageHeader.nominalProvider ? '' : raw('<div class="alert alert-danger" role="alert">') +
                                     message(code:'listDocuments.js.message.noprovider') +
                                     raw('</div>')}
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.provider" /></span>
-                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.v.nominalProvider.v}</span>
+                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.nominalProvider}</span>
                             </div>
                             <br />
 

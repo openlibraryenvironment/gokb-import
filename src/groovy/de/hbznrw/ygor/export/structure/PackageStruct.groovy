@@ -8,16 +8,6 @@ class PackageStruct {
     return new Tipp()
   }
 
-  // PackageHeader
-
-  static PackageHeaderSource getNewPackageHeaderSource() {
-    return new PackageHeaderSource()
-  }
-
-  static PackageHeaderNominalPlatform getNewPackageHeaderNominalPlatform() {
-    return new PackageHeaderNominalPlatform()
-  }
-
   // Tipps
 
   static TippCoverage getNewTippCoverage() {
