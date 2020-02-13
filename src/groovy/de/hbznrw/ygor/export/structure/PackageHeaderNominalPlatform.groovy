@@ -1,11 +1,18 @@
 package de.hbznrw.ygor.export.structure
 
-import de.hbznrw.ygor.enums.Status
+import com.fasterxml.jackson.databind.JsonNode
+import de.hbznrw.ygor.tools.JsonToolkit
 
 class PackageHeaderNominalPlatform {
 
-  def name = ""           // value: name part
-  def url = ""           // value: url part
-  def org                     // original value
-  def m = Status.UNDEFINED   // meta information
+  String name
+  String url
+
+  static PackageHeaderNominalPlatform fromJson(JsonNode node, String subField) throws IOException{
+    PackageHeaderNominalPlatform result = new PackageHeaderNominalPlatform()
+    result.name = JsonToolkit.fromJson(node, subField.concat(".name"))
+    result.url = JsonToolkit.fromJson(node, subField.concat(".url"))
+    result
+  }
+
 }
