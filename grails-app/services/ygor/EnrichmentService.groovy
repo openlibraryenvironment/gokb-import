@@ -1,6 +1,5 @@
 package ygor
 
-import de.hbznrw.ygor.validators.Validator
 import de.hbznrw.ygor.export.structure.Pod
 
 import javax.servlet.http.HttpSession
@@ -35,13 +34,13 @@ class EnrichmentService{
 
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
-    enrichment.getAsFile(type)
+    enrichment.getAsFile(type, true)
   }
 
 
   void deleteFileAndFormat(Enrichment enrichment){
     if (enrichment){
-      def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN)
+      def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN, false)
       if (origin){
         origin.delete()
       }
@@ -58,25 +57,18 @@ class EnrichmentService{
       return
     }
     def ph = enrichment.dataContainer.pkg.packageHeader
-    ph.v.name.v = new Pod(pm['pkgTitle'][0])
+    ph.name = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
-    ph.v.isil = new Pod(pm['pkgIsil'][0])
-//        if ("" != pm['pkgVariantName'][0].trim()) {
-//          ph.v.variantNames << new Pod(pm['pkgVariantName'][0])
-//        }
+    ph.isil = pm['pkgIsil']
     if ("" != pm['pkgCuratoryGroup1'][0].trim()){
       enrichment.dataContainer.curatoryGroup1 = (pm['pkgCuratoryGroup1'][0])
     }
     if ("" != pm['pkgCuratoryGroup2'][0].trim()){
       enrichment.dataContainer.curatoryGroup2 = (pm['pkgCuratoryGroup2'][0])
     }
-
     setPlatformMap(pm, ph)
-
-    def pkgNomProvider = pm['pkgNominalProvider'][0]
-    if (pkgNomProvider){
-      ph.v.nominalProvider.v = pkgNomProvider
-      ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v, 1)
+    if (pm['pkgNominalProvider']){
+      ph.nominalProvider = pm['pkgNominalProvider'][0]
     }
     if (pm['pkgTitleId']){
       enrichment.dataContainer.info.namespace_title_id = pm['pkgTitleId'][0]
@@ -100,7 +92,7 @@ class EnrichmentService{
     platforms.each{
       if (it.name == qterm && it.status == "Current" && it.oid == platformID){
         if (pkgNomPlatform){
-          log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
+          log.warn("Multiple platforms found named: ".concat(it.name))
         }
         else{
           log.debug("Setze ${it.name} als nominalPlatform.")
@@ -110,23 +102,17 @@ class EnrichmentService{
     }
 
     if (pkgNomPlatform){
-      setUrlIfValid(pkgNomPlatform.url, ph)
-      ph.v.nominalPlatform.name = pkgNomPlatform.name
-      ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
+      try{
+        URL url = new URL(pkgNomPlatform.url)
+        ph.nominalPlatform.url = pkgNomPlatform.url
+      }
+      catch (MalformedURLException e){
+        ph.nominalPlatform.url = ""
+      }
+      ph.nominalPlatform.name = pkgNomPlatform.name
     }
     else{
       log.error("package platform not set!")
-    }
-  }
-
-
-  private void setUrlIfValid(value, ph){
-    try{
-      URL url = new URL(value)
-      ph.v.nominalPlatform.url = value
-    }
-    catch (MalformedURLException e){
-      ph.v.nominalPlatform.url = ""
     }
   }
 
@@ -138,7 +124,7 @@ class EnrichmentService{
 
   List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
     def result = []
-    def json = enrichment.getAsFile(fileType)
+    def json = enrichment.getAsFile(fileType, true)
     def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
         grailsApplication.config.gokbApi.xrPackageUri :
         (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?

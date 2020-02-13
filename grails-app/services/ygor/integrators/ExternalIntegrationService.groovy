@@ -12,11 +12,19 @@ class ExternalIntegrationService {
 
   MappingsContainer mappingsContainer
   final String mediumTypeKey
+  Status status
 
   protected ExternalIntegrationService(MappingsContainer mappingsContainer) {
     this.mappingsContainer = mappingsContainer
     mediumTypeKey = mappingsContainer.ygorMappings.get("medium").ygorKey
+    status = Status.IDLE
   }
+
+
+  protected void integrate(){
+    status = Status.RUNNING
+  }
+
 
   static void integrateWithExisting(Record item, Map<String, List<String>> readData,
                                     MappingsContainer mappings, String source) {
@@ -37,6 +45,11 @@ class ExternalIntegrationService {
         }
       }
     }
+  }
+
+
+  void interrupt(){
+    status = Status.INTERRUPTING
   }
 
   /**
@@ -83,5 +96,13 @@ class ExternalIntegrationService {
   protected boolean isApiCallMedium(Record record) {
     String medium = record.multiFields.get(mediumTypeKey).getFirstPrioValue()
     return (medium.equals("Journal") || StringUtils.isEmpty(medium))
+  }
+
+
+  static enum Status{
+    IDLE,
+    RUNNING,
+    INTERRUPTING,
+    STOPPED
   }
 }
