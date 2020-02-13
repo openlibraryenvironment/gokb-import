@@ -2,6 +2,6 @@ package de.hbznrw.ygor.export.structure
 
 class Package {
 
-  Pod packageHeader = new Pod(new PackageHeader())
+  PackageHeader packageHeader = new PackageHeader()
   HashMap tipps = [:]
 }
