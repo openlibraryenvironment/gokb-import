@@ -43,12 +43,14 @@ class Record{
   String ezbIntegrationUrl
   List historyEvents
   Map<AbstractIdentifier, String> duplicates
+  List<RecordFlag> flags
 
 
   static hasMany = [multiFields       : MultiField,
                     validation        : Status,
                     historyEvents     : HistoryEvent,
-                    duplicates        : String]
+                    duplicates        : String,
+                    flags             : RecordFlag]
 
   static constraints = {
   }
@@ -75,37 +77,40 @@ class Record{
     ezbIntegrationDate = null
     zdbIntegrationUrl = null
     ezbIntegrationUrl = null
+    flags = []
   }
 
 
   void addIdentifier(AbstractIdentifier identifier) {
     if (identifier instanceof ZdbIdentifier) {
       if (zdbId && identifier.identifier.replaceAll("x", "X") != zdbId.identifier.replaceAll("x", "X")) {
-        throw new IllegalArgumentException("ZDB id ${identifier} already set to ${zdbId} for record")
+        throw new IllegalArgumentException("${identifier} already set to ${zdbId} for record")
       }
       zdbId = identifier
     }
     else if (identifier instanceof EzbIdentifier) {
       if (ezbId && identifier.identifier != ezbId.identifier) {
-        throw new IllegalArgumentException("EZB id ${identifier} already set to ${ezbId} for record")
+        throw new IllegalArgumentException("${identifier} already set to ${ezbId} for record")
       }
       ezbId = identifier
     }
     else if (identifier instanceof DoiIdentifier) {
       if (doiId && identifier.identifier != doiId.identifier) {
-        throw new IllegalArgumentException("DOI ${identifier} already set to ${doiId} for record")
+        throw new IllegalArgumentException("${identifier} already set to ${doiId} for record")
       }
       doiId = identifier
     }
     else if (identifier instanceof OnlineIdentifier) {
       if (onlineIdentifier && identifier.identifier != onlineIdentifier.identifier) {
-        throw new IllegalArgumentException("EISSN ${identifier} already set to ${onlineIdentifier} for record")
+        flags.add(new RecordFlag(Status.MISMATCH, "${onlineIdentifier} %s ${identifier}.",
+            "record.identifier.replace", multiFields.get("onlineIdentifier").keyMapping))
       }
       onlineIdentifier = identifier
     }
     else if (identifier instanceof PrintIdentifier) {
       if (printIdentifier && identifier.identifier != printIdentifier.identifier) {
-        throw new IllegalArgumentException("ISSN ${identifier} already set to ${printIdentifier} for record")
+        flags.add(new RecordFlag(Status.MISMATCH, "${printIdentifier} %s ${identifier}.",
+            "record.identifier.replace", multiFields.get("printIdentifier").keyMapping))
       }
       printIdentifier = identifier
     }
@@ -134,6 +139,12 @@ class Record{
     MultiField urlMultiField = multiFields.get("titleUrl")
     if (urlMultiField == null || !hasValidPublicationType()) {
       return false
+    }
+    // check flags
+    for (def flag in flags){
+      if (flag.isRed()){
+        return false
+      }
     }
     // check multifields for critical errors
     for (MultiField multiField in multiFields.values()){
@@ -204,20 +215,6 @@ class Record{
   }
 
 
-  List<MultiField> getFieldsByPath(String path){
-    List<MultiField> result = []
-    multiFields.each{ key, value ->
-      if (key.contains(path)){
-        // TODO: this criterion works for now, but is not very precise
-        //       possibly, it should be replaced with a check on MultiField.keyMapping.gokb.
-        //       Optionally, use reflection for output sink ("gokb").
-        result.add(value)
-      }
-    }
-    return result
-  }
-
-
   List<MultiField> multiFieldsInGokbOrder(){
     multiFields.values().sort{
       multiField -> (GOKB_FIELD_ORDER.indexOf(multiField.ygorFieldKey) > -1 ?
@@ -229,16 +226,6 @@ class Record{
 
   private void validateMultifields(String namespace) {
     multiFields.each { k, v -> v.validate(namespace) }
-  }
-
-
-  def getCoverage() {
-    false // TODO
-  }
-
-
-  private void processHistoryEvents(){
-    // for () // TODO
   }
 
 
@@ -268,6 +255,7 @@ class Record{
     for (MultiField mf in multiFields.values()) {
       mf.asJson(jsonGenerator)
     }
+    jsonGenerator.writeEndArray()
     if (!duplicates.isEmpty()){
       jsonGenerator.writeFieldName("duplicates")
       jsonGenerator.writeStartArray()
@@ -276,7 +264,14 @@ class Record{
       }
       jsonGenerator.writeEndArray()
     }
-    jsonGenerator.writeEndArray()
+    if (!flags.isEmpty()){
+      jsonGenerator.writeFieldName("flags")
+      jsonGenerator.writeStartArray()
+      for (def flag in flags){
+        flag.asJson(jsonGenerator)
+      }
+      jsonGenerator.writeEndArray()
+    }
     jsonGenerator.writeEndObject()
   }
 
@@ -375,6 +370,11 @@ class Record{
       for (def dup in duplicates){
         result.duplicates.put(AbstractIdentifier.fromString(dup.key), dup.value)
       }
+    }
+    result.flags = []
+    Collection flags = JsonToolkit.fromJson(json, "flags")
+    if (flags != null){
+      result.flags.addAll(flags)
     }
     result
   }
