@@ -18,27 +18,37 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
   FieldKeyMapping zdbIdMapping
   String processStart
+  ZdbReader zdbReader
 
   ZdbIntegrationService(MappingsContainer mappingsContainer) {
     super(mappingsContainer)
+    zdbReader = new ZdbReader()
   }
 
 
   def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
-    zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
-    processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
-    List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
-    List<Record> existingRecords = []
-    existingRecords.addAll(dataContainer.records.values())
-    for (Record record in existingRecords) {
-      if (isApiCallMedium(record)) {
-        integrateRecord(owner, record, idMappings)
+    if (status != Status.INTERRUPTING){
+      super.integrate()
+      zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
+      processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
+      List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
+      List<Record> existingRecords = []
+      existingRecords.addAll(dataContainer.records.values())
+      for (Record record in existingRecords){
+        if (status == Status.INTERRUPTING){
+          status = Status.STOPPED
+          return
+        }
+        if (isApiCallMedium(record)){
+          integrateRecord(owner, record, idMappings)
+        }
+        for (Record linkedRecord in getLinkedRecords(record, owner)){
+          dataContainer.addRecord(linkedRecord)
+        }
+        owner.increaseProgress()
       }
-      for (Record linkedRecord in getLinkedRecords(record, owner)){
-        dataContainer.addRecord(linkedRecord)
-      }
-      owner.increaseProgress()
     }
+    status = Status.IDLE
   }
 
 
@@ -101,7 +111,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
           continue
         }
         String queryString = ZdbReader.getAPIQuery(id.identifier, mapping.kbartKeys.getAt(0))
-        readData = owner.zdbReader.readItemData(queryString)
+        readData = zdbReader.readItemData(queryString)
         if (!readData.isEmpty()) {
           record.zdbIntegrationUrl = queryString
           break

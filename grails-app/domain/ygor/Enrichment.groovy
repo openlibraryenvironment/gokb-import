@@ -3,6 +3,8 @@ package ygor
 import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.GokbExporter
+import de.hbznrw.ygor.export.structure.PackageHeader
+import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
@@ -93,6 +95,11 @@ class Enrichment{
     thread.start()
   }
 
+
+  def stop(){
+    thread.stopEnrichment()
+  }
+
   def setProgress(double progress){
     this.apiProgress = progress
   }
@@ -126,9 +133,9 @@ class Enrichment{
   }
 
 
-  File getAsFile(FileType type){
+  File getAsFile(FileType type, boolean validate){
     // by now, the only export file type is for GOKb, so call GOKbExporter
-    return GokbExporter.getFile(this, type)
+    return GokbExporter.getFile(this, type, validate)
   }
 
 
@@ -154,9 +161,18 @@ class Enrichment{
     if (dataContainer.curatoryGroup2 != null){
       result.append("\"curatoryGroup2\":\"").append(dataContainer.curatoryGroup2).append("\",")
     }
+    if (dataContainer.pkg?.packageHeader?.nominalProvider != null){
+      result.append("\"nominalProvider\":\"").append(dataContainer.pkg.packageHeader.nominalProvider).append("\",")
+    }
+    if (dataContainer.pkg?.packageHeader?.nominalPlatform != null){
+      result.append("\"nominalPlatform\":{")
+      result.append("\"name\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.name).append("\",")
+      result.append("\"url\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.url).append("\"")
+      result.append("},")
+    }
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
-    result.append("}\n}\n")
+    result.append("}}")
     File file = new File(resultPathName)
     file.getParentFile().mkdirs()
     file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
@@ -189,6 +205,9 @@ class Enrichment{
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")){
       en.dataContainer.curatoryGroup2 = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")
     }
+    en.dataContainer.pkg.packageHeader = new PackageHeader()
+    en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
+    en.dataContainer.pkg.packageHeader.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
     return en
   }
@@ -274,7 +293,7 @@ class Enrichment{
   FieldKeyMapping setTippPlatformNameMapping(){
     FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformNameMapping.val)){
-      platformNameMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.name
+      platformNameMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.name
     }
     platformNameMapping
   }
@@ -283,7 +302,7 @@ class Enrichment{
   FieldKeyMapping setTippPlatformUrlMapping(){
     FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformUrlMapping.val)){
-      platformUrlMapping.val = dataContainer.pkg.packageHeader.v.nominalPlatform.url
+      platformUrlMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.url
     }
     platformUrlMapping
   }
