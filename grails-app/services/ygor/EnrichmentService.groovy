@@ -34,13 +34,13 @@ class EnrichmentService{
 
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
-    enrichment.getAsFile(type)
+    enrichment.getAsFile(type, true)
   }
 
 
   void deleteFileAndFormat(Enrichment enrichment){
     if (enrichment){
-      def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN)
+      def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN, false)
       if (origin){
         origin.delete()
       }
@@ -124,7 +124,7 @@ class EnrichmentService{
 
   List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
     def result = []
-    def json = enrichment.getAsFile(fileType)
+    def json = enrichment.getAsFile(fileType, true)
     def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
         grailsApplication.config.gokbApi.xrPackageUri :
         (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?

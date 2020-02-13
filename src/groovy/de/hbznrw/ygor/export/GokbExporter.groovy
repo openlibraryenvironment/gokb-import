@@ -24,8 +24,10 @@ class GokbExporter {
   static GokbFormatter FORMATTER = new GokbFormatter()
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
-  static File getFile(Enrichment enrichment, FileType type) {
-    enrichment.validateContainer()
+  static File getFile(Enrichment enrichment, FileType type, boolean validate) {
+    if (validate){
+      enrichment.validateContainer()
+    }
     switch (type) {
       case FileType.ORIGIN:
         return new File(enrichment.originPathName)

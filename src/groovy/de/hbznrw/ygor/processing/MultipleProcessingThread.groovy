@@ -45,8 +45,8 @@ class MultipleProcessingThread extends Thread {
   private double progressIncrement
 
   private KbartReader kbartReader
-  private ZdbReader zdbReader
-  private EzbReader ezbReader
+  private ZdbIntegrationService zdbIntegrationService
+  private EzbIntegrationService ezbIntegrationService
 
   MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     enrichment = en
@@ -57,8 +57,6 @@ class MultipleProcessingThread extends Thread {
     recordSeparator = options.get('recordSeparator')
     platform = options.get('platform')
     kbartFile = en.originPathName
-    zdbReader = new ZdbReader()
-    ezbReader = new EzbReader()
     this.kbartReader = kbartReader
     zdbKeyMapping = en.mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
     issnKeyMapping = en.mappingsContainer.getMapping("printIdentifier", MappingsContainer.YGOR)
@@ -75,9 +73,10 @@ class MultipleProcessingThread extends Thread {
     if (null == enrichment.originPathName)
       System.exit(0)
     enrichment.setStatus(Enrichment.ProcessingState.WORKING)
-    log.info('Starting MultipleProcessingThread run...')
+    log.info('Starting MultipleProcessingThread integrate... '.concat(String.valueOf(getId())))
     try {
-      // TODO: make sure, Kbart file is processed first
+      ezbIntegrationService = new EzbIntegrationService(enrichment.mappingsContainer)
+      zdbIntegrationService = new ZdbIntegrationService(enrichment.mappingsContainer)
       for (String call : apiCalls) {
         switch (call) {
           case KbartReader.IDENTIFIER:
@@ -88,27 +87,27 @@ class MultipleProcessingThread extends Thread {
             kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)
             break
           case EzbReader.IDENTIFIER:
-            new EzbIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer)
+            ezbIntegrationService.integrate(this, enrichment.dataContainer)
             break
           case ZdbReader.IDENTIFIER:
-            new ZdbIntegrationService(enrichment.mappingsContainer).integrate(this, enrichment.dataContainer)
+            zdbIntegrationService.integrate(this, enrichment.dataContainer)
             break
         }
       }
-      log.info('Done MultipleProcessingThread run.')
+      log.info('Done MultipleProcessingThread '.concat(String.valueOf(getId())))
     }
     catch (YgorProcessingException e) { // TODO Throw it in ...IntegrationService and / or ...Reader
       enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
       enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length() + 2))
       log.error(e.getMessage())
       log.error(e.printStackTrace())
-      log.info('Aborted MultipleProcessingThread run.')
+      log.info('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
       return
     }
     catch (Exception e) {
       enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
       log.error(e.getMessage())
-      log.info('Aborted MultipleProcessingThread run.')
+      log.info('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
       def stacktrace = Throwables.getStackTraceAsString(e).replaceAll("\\p{C}", " ")
       enrichment.setMessage(stacktrace + " ..")
       return
@@ -126,6 +125,20 @@ class MultipleProcessingThread extends Thread {
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
     enrichment.saveResult()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+  }
+
+
+  void stopEnrichment(){
+    log.info('Stopping MultipleProcessingThread '.concat(String.valueOf(getId())))
+    interrupt()
+    if (zdbIntegrationService != null){
+      zdbIntegrationService.interrupt()
+    }
+    if (ezbIntegrationService != null){
+      ezbIntegrationService.interrupt()
+    }
+    isRunning = false
+    log.info('Stopped MultipleProcessingThread '.concat(String.valueOf(getId())))
   }
 
 

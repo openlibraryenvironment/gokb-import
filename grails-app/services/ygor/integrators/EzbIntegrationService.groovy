@@ -12,23 +12,34 @@ import java.text.SimpleDateFormat
 
 class EzbIntegrationService extends ExternalIntegrationService {
 
+  EzbReader ezbReader
+
   EzbIntegrationService(MappingsContainer mappingsContainer) {
     super(mappingsContainer)
+    ezbReader = new EzbReader()
   }
 
 
   def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
-    String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
-    for (Record record in dataContainer.records.values()) {
-      if (isApiCallMedium(record)) {
-        Map<String, String> ezbMatch = getBestMatch(owner, record)
-        if (!ezbMatch.isEmpty()) {
-          record.ezbIntegrationDate = processStart
-          integrateWithExisting(record, ezbMatch, mappingsContainer, MappingsContainer.EZB)
+    if (status != Status.INTERRUPTING){
+      super.integrate()
+      String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
+      for (Record record in dataContainer.records.values()){
+        if (status == Status.INTERRUPTING){
+          status = Status.STOPPED
+          return
         }
+        if (isApiCallMedium(record)){
+          Map<String, String> ezbMatch = getBestMatch(owner, record)
+          if (!ezbMatch.isEmpty()){
+            record.ezbIntegrationDate = processStart
+            integrateWithExisting(record, ezbMatch, mappingsContainer, MappingsContainer.EZB)
+          }
+        }
+        owner.increaseProgress()
       }
-      owner.increaseProgress()
     }
+    status = Status.IDLE
   }
 
 
@@ -38,7 +49,7 @@ class EzbIntegrationService extends ExternalIntegrationService {
       AbstractIdentifier id = record."${key}"
       if (id && !StringUtils.isEmpty(id.identifier)) {
         String queryString = EzbReader.getAPIQuery(id.identifier, owner.zdbKeyMapping.kbartKeys)
-        readData = owner.ezbReader.readItemData(queryString)
+        readData = ezbReader.readItemData(queryString)
         if (!readData.isEmpty()) {
           record.ezbIntegrationUrl = queryString
           break

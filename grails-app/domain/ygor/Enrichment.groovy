@@ -95,6 +95,11 @@ class Enrichment{
     thread.start()
   }
 
+
+  def stop(){
+    thread.stopEnrichment()
+  }
+
   def setProgress(double progress){
     this.apiProgress = progress
   }
@@ -128,9 +133,9 @@ class Enrichment{
   }
 
 
-  File getAsFile(FileType type){
+  File getAsFile(FileType type, boolean validate){
     // by now, the only export file type is for GOKb, so call GOKbExporter
-    return GokbExporter.getFile(this, type)
+    return GokbExporter.getFile(this, type, validate)
   }
 
 
