@@ -734,3 +734,7 @@ table.dataTable thead .sorting_desc {
 	-webkit-overflow-scrolling: touch;
 	outline: 0;
 }
+
+#gokbResponseText {
+	white-space: pre-line
+}

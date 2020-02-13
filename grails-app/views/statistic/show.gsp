@@ -222,7 +222,7 @@
                             <h4 class="modal-title"><g:message code="listDocuments.gokb.response"/></h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="close"/>
                         </div>
-                        <div class="modal-body">
+                        <div id="gokbResponseText" class="modal-body">
                             ${String.format(responseText, message(code: 'listDocuments.gokb.response.ok'), message(code: 'listDocuments.gokb.response.error'))}
                         </div>
                         <div class="modal-footer">
@@ -239,6 +239,7 @@
                     $('body').removeClass('modal-open');
                     $('body').css('padding-right', '');
                     $("#responseModal").hide();
+                    ${flash.info = null}
                 });
             </script>
         </g:if>

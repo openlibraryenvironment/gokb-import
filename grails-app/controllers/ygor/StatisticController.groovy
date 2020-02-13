@@ -349,15 +349,17 @@ class StatisticController{
           }
           if (entry.key.equals("results")){
             int ok = 0, error = 0
+            StringBuilder result = new StringBuilder("%s: {0}\n%s: {1}\n ")
             for (resultMap in entry.value){
               if (resultMap.'result'.equals("OK")){
                 ok++
               }
               else if (resultMap.'result'.equals("ERROR")){
                 error++
+                result.append("\n").append(resultMap.'message')
               }
             }
-            return MessageFormat.format("%s: {0}, %s: {1}", ok, error)
+            return MessageFormat.format(result.toString(), ok, error)
           }
         }
       }
