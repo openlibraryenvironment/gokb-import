@@ -374,7 +374,9 @@ class Record{
     result.flags = []
     Collection flags = JsonToolkit.fromJson(json, "flags")
     if (flags != null){
-      result.flags.addAll(flags)
+      for (def flag in flags){
+        result.flags.addAll(RecordFlag.fromJson(flag))
+      }
     }
     result
   }

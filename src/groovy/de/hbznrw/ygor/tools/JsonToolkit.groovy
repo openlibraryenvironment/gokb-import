@@ -6,15 +6,18 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.*
+import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.format.YgorFormatter
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.InvokerInvocationException
 import ygor.Record
 import ygor.field.HistoryEvent
 import ygor.field.MultiField
+import groovy.util.logging.Log4j
 
 import java.lang.reflect.Method
 
+@Log4j
 class JsonToolkit {
 
   private static ObjectMapper MAPPER = new ObjectMapper()
@@ -252,6 +255,18 @@ class JsonToolkit {
       json = file.newInputStream()?.text
     }
     MAPPER.readTree(json)
+  }
+
+
+  static <T extends Enum<T>> T fromJson(JsonNode json, String subField, Class<T> enumClass){
+    String value = JsonToolkit.fromJson(json, subField).toUpperCase()
+    try{
+      return Enum.valueOf(enumClass, value)
+    }
+    catch (IllegalArgumentException iae){
+      log.debug(String.format("Could not create Enum instance of class %s with value %s", enumClass.getName(), value))
+      return null
+    }
   }
 
 }

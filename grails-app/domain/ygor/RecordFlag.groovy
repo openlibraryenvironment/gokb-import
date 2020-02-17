@@ -64,9 +64,15 @@ class RecordFlag{
 
 
   enum Colour{
-    RED,
-    YELLOW,
-    GREEN
+    RED ("red"),
+    YELLOW ("yellow"),
+    GREEN ("green")
+
+    private colour
+
+    Colour(String colour){
+      this.colour = colour
+    }
   }
 
 
@@ -83,8 +89,8 @@ class RecordFlag{
 
   static RecordFlag fromJson(JsonNode json){
     RecordFlag result = new RecordFlag()
-    result.status = JsonToolkit.fromJson(json, "status")
-    result.colour = JsonToolkit.fromJson(json, "colour")
+    result.status = JsonToolkit.fromJson(json, "status", Status.getClass())
+    result.colour = JsonToolkit.fromJson(json, "colour", Colour.getClass())
     result.text = JsonToolkit.fromJson(json, "text")
     result.messageCode = JsonToolkit.fromJson(json, "messageCode")
     result.ygorFieldKey = JsonToolkit.fromJson(json, "ygorFieldKey")
