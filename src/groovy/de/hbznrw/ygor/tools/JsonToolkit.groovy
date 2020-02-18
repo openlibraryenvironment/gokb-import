@@ -259,7 +259,10 @@ class JsonToolkit {
 
 
   static <T extends Enum<T>> T fromJson(JsonNode json, String subField, Class<T> enumClass){
-    String value = JsonToolkit.fromJson(json, subField).toUpperCase()
+    String value = JsonToolkit.fromJson(json, subField)
+    if (value == null || value.equals("null")){
+      return null
+    }
     try{
       return Enum.valueOf(enumClass, value)
     }

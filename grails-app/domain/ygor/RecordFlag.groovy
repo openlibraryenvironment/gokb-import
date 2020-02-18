@@ -78,7 +78,7 @@ class RecordFlag{
 
   void asJson(JsonGenerator jsonGenerator) {
     jsonGenerator.writeStartObject()
-    jsonGenerator.writeStringField("status", status.toString())
+    jsonGenerator.writeStringField("status", status.toString().toUpperCase())
     jsonGenerator.writeStringField("colour", colour.toString())
     jsonGenerator.writeStringField("text", text)
     jsonGenerator.writeStringField("messageCode", messageCode)
@@ -89,8 +89,8 @@ class RecordFlag{
 
   static RecordFlag fromJson(JsonNode json){
     RecordFlag result = new RecordFlag()
-    result.status = JsonToolkit.fromJson(json, "status", Status.getClass())
-    result.colour = JsonToolkit.fromJson(json, "colour", Colour.getClass())
+    result.status = JsonToolkit.fromJson(json, "status", Status.class)
+    result.colour = JsonToolkit.fromJson(json, "colour", Colour.class)
     result.text = JsonToolkit.fromJson(json, "text")
     result.messageCode = JsonToolkit.fromJson(json, "messageCode")
     result.ygorFieldKey = JsonToolkit.fromJson(json, "ygorFieldKey")
