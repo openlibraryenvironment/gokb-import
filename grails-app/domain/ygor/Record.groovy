@@ -102,15 +102,19 @@ class Record{
     }
     else if (identifier instanceof OnlineIdentifier) {
       if (onlineIdentifier && identifier.identifier != onlineIdentifier.identifier) {
-        flags.add(new RecordFlag(Status.MISMATCH, "${onlineIdentifier} %s ${identifier}.",
-            "record.identifier.replace", multiFields.get("onlineIdentifier").keyMapping))
+        RecordFlag flag = new RecordFlag(Status.MISMATCH, "${onlineIdentifier} %s ${identifier}.",
+            "record.identifier.replace", multiFields.get("onlineIdentifier").keyMapping)
+        flag.setColour(RecordFlag.Colour.YELLOW)
+        flags.add(flag)
       }
       onlineIdentifier = identifier
     }
     else if (identifier instanceof PrintIdentifier) {
       if (printIdentifier && identifier.identifier != printIdentifier.identifier) {
-        flags.add(new RecordFlag(Status.MISMATCH, "${printIdentifier} %s ${identifier}.",
-            "record.identifier.replace", multiFields.get("printIdentifier").keyMapping))
+        RecordFlag flag = new RecordFlag(Status.MISMATCH, "${printIdentifier} %s ${identifier}.",
+            "record.identifier.replace", multiFields.get("printIdentifier").keyMapping)
+        flag.setColour(RecordFlag.Colour.YELLOW)
+        flags.add(flag)
       }
       printIdentifier = identifier
     }
@@ -141,10 +145,8 @@ class Record{
       return false
     }
     // check flags
-    for (def flag in flags){
-      if (flag.isRed()){
-        return false
-      }
+    if (hasFlagOfColour(RecordFlag.Colour.RED)){
+      return false
     }
     // check multifields for critical errors
     for (MultiField multiField in multiFields.values()){
@@ -161,6 +163,16 @@ class Record{
       return false
     }
     return true
+  }
+
+
+  boolean hasFlagOfColour(RecordFlag.Colour colour){
+    for (RecordFlag flag in flags){
+      if (flag.colour.equals(colour)){
+        return true
+      }
+    }
+    return false
   }
 
 

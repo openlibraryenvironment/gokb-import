@@ -24,49 +24,15 @@ class RecordFlag{
   }
 
 
-  boolean isRed(){
-    if (colour != null){
-      return colour.equals(Colour.RED)
-    }
-    return status in [Status.INVALID]
-  }
-
-
-  boolean isYellow(){
-    if (colour != null){
-      return colour.equals(Colour.YELLOW)
-    }
-    return status in [Status.MISMATCH, Status.WARNING]
-  }
-
-
-  boolean isGreen(){
-    if (colour != null){
-      return colour.equals(Colour.GREEN)
-    }
-    return status in [Status.VALID]
-  }
-
-
-  void setRed(){
-    colour = Colour.RED
-  }
-
-
-  void setYellow(){
-    colour = Colour.YELLOW
-  }
-
-
-  void setGreen(){
-    colour = Colour.GREEN
+  void setColour(Colour colour){
+    this.colour = colour
   }
 
 
   enum Colour{
-    RED ("red"),
-    YELLOW ("yellow"),
-    GREEN ("green")
+    RED ("RED"),
+    YELLOW ("YELLOW"),
+    GREEN ("GREEN")
 
     private colour
 
