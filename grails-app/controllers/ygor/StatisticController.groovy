@@ -398,4 +398,19 @@ class StatisticController{
     flash.error = null
     redirect(controller: 'Enrichment', action: 'process')
   }
+
+
+  def rejectFlag(){
+    redirect(controller: 'Enrichment', action: 'process')
+  }
+
+
+  def warnFlag(){
+    redirect(controller: 'Enrichment', action: 'process')
+  }
+
+
+  def approveFlag(){
+    redirect(controller: 'Enrichment', action: 'process')
+  }
 }

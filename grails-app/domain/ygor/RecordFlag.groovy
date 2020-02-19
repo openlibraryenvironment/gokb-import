@@ -13,6 +13,7 @@ class RecordFlag{
   String text
   String messageCode
   String ygorFieldKey
+  String uid
 
 
   RecordFlag(Status status, String text, String messageCode, FieldKeyMapping fieldKeyMapping){
@@ -21,6 +22,7 @@ class RecordFlag{
     this.text = text
     this.messageCode = messageCode
     this.ygorFieldKey = fieldKeyMapping.ygorKey
+    uid = UUID.randomUUID().toString()
   }
 
 
