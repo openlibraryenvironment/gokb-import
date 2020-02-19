@@ -341,6 +341,16 @@ class Record{
   }
 
 
+  RecordFlag getFlag(String uid){
+    for (def flag in flags){
+      if (uid.equals(flag.uid)){
+        return flag
+      }
+    }
+    return null
+  }
+
+
   static Record fromJson(JsonNode json, MappingsContainer mappings) {
     List<AbstractIdentifier> ids = new ArrayList<>()
     ids.add(new ZdbIdentifier(JsonToolkit.fromJson(json, "zdbId"), mappings.getMapping("zdbId", MappingsContainer.YGOR)))

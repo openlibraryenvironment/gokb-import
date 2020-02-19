@@ -400,17 +400,30 @@ class StatisticController{
   }
 
 
-  def rejectFlag(){
-    redirect(controller: 'Enrichment', action: 'process')
-  }
-
-
-  def warnFlag(){
-    redirect(controller: 'Enrichment', action: 'process')
-  }
-
-
-  def approveFlag(){
-    redirect(controller: 'Enrichment', action: 'process')
+  def setFlag() {
+    def record
+    try{
+      Enrichment enrichment = getEnrichment(params.resultHash)
+      String namespace = enrichment.dataContainer.info.namespace_title_id
+      if (enrichment){
+        record = enrichment.dataContainer.records.get(params.record.uid)
+        for (def flagId in params.flags){
+          RecordFlag flag = record.getFlag(flagId.key)
+          flag.setColour(RecordFlag.Colour.valueOf(flagId.value))
+        }
+        record.validate(namespace)
+        classifyAllRecords(params.resultHash)
+      }
+    }
+    catch (Exception e){
+      log.error(e.getMessage())
+      log.error(e.getStackTrace())
+    }
+    render(
+        view: 'edit',
+        model: [resultHash: params.resultHash,
+                record    : record
+        ]
+    )
   }
 }

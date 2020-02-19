@@ -2,25 +2,17 @@
 <div class="panel-heading-${colour}">
     <h3 class="panel-title">${String.format(flag.text, message(code: flag.messageCode))}
     <g:if test="${!colour.equals("red")}">
-        <g:actionSubmit value="${message(code: 'flag.button.reject')}"
-                        class="btn btn-danger"
-                        action="rejectFlag"
-                        params="[flag:flag.uid]"
-                        id="approve-flag"/>
+        <!-- input name="flag.${flag.uid}" value="${flag.uid}" type="hidden" / -->
+        <g:actionSubmit action="setFlag" value="${message(code: 'flag.button.reject')}" class="btn btn-danger"
+                        id="reject-flag" onclick="createHiddenFlagField('${flag.uid}', 'RED')"/>
     </g:if>
     <g:if test="${!colour.equals("yellow")}">
-        <g:actionSubmit value="${message(code: 'flag.button.warn')}"
-                        class="btn btn-warning"
-                        action="warnFlag"
-                        params="[flag:flag.uid]"
-                        id="warn-flag"/>
+        <g:actionSubmit action="setFlag" value="${message(code: 'flag.button.warn')}" class="btn btn-warning"
+                        id="warn-flag" onclick="createHiddenFlagField('${flag.uid}', 'YELLOW')"/>
     </g:if>
     <g:if test="${!colour.equals("green")}">
-        <g:actionSubmit value="${message(code: 'flag.button.approve')}"
-                        class="btn btn-success"
-                        action="approveFlag"
-                        params="[flag:flag.uid]"
-                        id="reject-flag"/>
+        <g:actionSubmit action="setFlag" value="${message(code: 'flag.button.approve')}" class="btn btn-success"
+                        id="approve-flag" onclick="createHiddenFlagField('${flag.uid}', 'GREEN')"/>
     </g:if>
     </h3>
 </div>
