@@ -68,6 +68,13 @@
                             </div>
                             <br />
                             <div class="input-group">
+                                <span class="input-group-addon"><g:message code="listDocuments.key.pkgid" /></span>
+                                <g:select
+                                        name="pkgIdentifier" id="pkgIdentifier" from="${pkg_namespaces}" optionKey="id" optionValue="text" class="form-control">
+                                </g:select>
+                            </div>
+                            <br />
+                            <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.platform" /></span>
                                 <select name="pkgNominalPlatform" id="pkgNominalPlatform"></select>
                             </div>
@@ -77,11 +84,11 @@
                                 <select name="pkgNominalProvider" id="pkgNominalProvider"></select>
                             </div>
                             <br />
-                            <g:if test="${namespaces?.size() > 0}">
+                            <g:if test="${record_namespaces?.size() > 0}">
                                 <div class="input-group">
                                     <span class="input-group-addon"><g:message code="listDocuments.key.namespace" /></span>
                                     <g:select
-                                        name="pkgTitleId" id="pkgTitleId" from="${namespaces}" optionKey="id" optionValue="text" class="form-control">
+                                        name="pkgTitleId" id="pkgTitleId" from="${record_namespaces}" optionKey="id" optionValue="text" class="form-control">
                                     </g:select>
                                     <g:if test="${session.lastUpdate?.parameterMap?.pkgTitleId}">
                                         <script>
