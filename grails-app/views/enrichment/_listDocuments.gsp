@@ -70,8 +70,19 @@
                             <div class="input-group">
                                 <span class="input-group-addon"><g:message code="listDocuments.key.pkgid" /></span>
                                 <g:select
-                                        name="pkgIdentifier" id="pkgIdentifier" from="${pkg_namespaces}" optionKey="id" optionValue="text" class="form-control">
+                                        name="pkgIdNamespace" id="pkgIdNamespace" from="${pkg_namespaces}" optionKey="id" optionValue="text" class="form-control">
                                 </g:select>
+                                <g:if test="${session.lastUpdate?.parameterMap?.pkgIdNamespace}">
+                                    <script>
+                                        $('#pkgIdNamespace').val('${session.lastUpdate?.parameterMap?.pkgIdNamespace[0]}').select();
+                                    </script>
+                                </g:if>
+                                <g:if test="${session.lastUpdate?.parameterMap?.pkgId}">
+                                    <g:textField name="pkgId" size="48" value="${session.lastUpdate.parameterMap.pkgId[0]}" class="form-control" />
+                                </g:if>
+                                <g:else>
+                                    <g:textField name="pkgId" size="48" value="" class="form-control" />
+                                </g:else>
                             </div>
                             <br />
                             <div class="input-group">

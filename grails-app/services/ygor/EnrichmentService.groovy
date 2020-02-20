@@ -60,6 +60,12 @@ class EnrichmentService{
     ph.name = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
     ph.isil = pm['pkgIsil']
+    if ("" != pm['pkgId'][0].trim()){
+      enrichment.dataContainer.pkgId = (pm['pkgId'][0])
+    }
+    if ("" != pm['pkgIdNamespace'][0].trim()){
+      enrichment.dataContainer.pkgIdNamespace = (pm['pkgIdNamespace'][0])
+    }
     if ("" != pm['pkgCuratoryGroup1'][0].trim()){
       enrichment.dataContainer.curatoryGroup1 = (pm['pkgCuratoryGroup1'][0])
     }
