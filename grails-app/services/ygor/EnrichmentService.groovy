@@ -60,8 +60,8 @@ class EnrichmentService{
     ph.name = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
     ph.isil = pm['pkgIsil']
-    if ("" != pm['pkgCuratoryGroup1'][0].trim()){
-      enrichment.dataContainer.curatoryGroup1 = (pm['pkgCuratoryGroup1'][0])
+    if ("" != pm['pkgCuratoryGroup'][0].trim()){
+      enrichment.dataContainer.curatoryGroup = (pm['pkgCuratoryGroup'][0])
     }
     setPlatformMap(pm, ph)
     if (pm['pkgNominalProvider']){

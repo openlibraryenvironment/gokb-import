@@ -155,8 +155,8 @@ class Enrichment{
     }
     result.append("\"configuration\":{")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
-    if (dataContainer.curatoryGroup1 != null){
-      result.append("\"curatoryGroup1\":\"").append(dataContainer.curatoryGroup1).append("\",")
+    if (dataContainer.curatoryGroup != null){
+      result.append("\"curatoryGroup\":\"").append(dataContainer.curatoryGroup).append("\",")
     }
     if (dataContainer.pkg?.packageHeader?.nominalProvider != null){
       result.append("\"nominalProvider\":\"").append(dataContainer.pkg.packageHeader.nominalProvider).append("\",")
@@ -196,8 +196,8 @@ class Enrichment{
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
     en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
-    if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup1")){
-      en.dataContainer.curatoryGroup1 = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup1")
+    if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
+      en.dataContainer.curatoryGroup = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")
     }
     en.dataContainer.pkg.packageHeader = new PackageHeader()
     en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")

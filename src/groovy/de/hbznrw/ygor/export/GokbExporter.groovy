@@ -154,11 +154,8 @@ class GokbExporter {
     nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
     result.set("nominalPlatform", nominalPlatform)
 
-    if (null != enrichment.dataContainer.curatoryGroup1){
-      result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup1))
-    }
-    if (null != enrichment.dataContainer.curatoryGroup2){
-      result.put("curatoryGroup2", (enrichment.dataContainer.curatoryGroup2))
+    if (null != enrichment.dataContainer.curatoryGroup){
+      result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup))
     }
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 

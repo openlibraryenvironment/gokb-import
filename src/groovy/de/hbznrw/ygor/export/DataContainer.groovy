@@ -27,8 +27,7 @@ class DataContainer {
   Map<AbstractIdentifier, Set<Record>> recordsPerId
   ArrayNode titles
   ArrayNode tipps
-  String curatoryGroup1
-  String curatoryGroup2
+  String curatoryGroup
 
 
   DataContainer() {
