@@ -163,17 +163,6 @@
                                     <g:textField name="pkgCuratoryGroup1" size="24" class="form-control" />
                                 </g:else>
                             </div>
-
-                            <div class="input-group">
-                                <span class="input-group-addon"><em>GOKb</em> Curatory Group 2</span>
-                                <g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup2}">
-                                    <g:textField name="pkgCuratoryGroup2" size="24" value="${session.lastUpdate.parameterMap.pkgCuratoryGroup2[0]}" class="form-control" />
-                                </g:if>
-                                <g:else>
-                                    <g:textField name="pkgCuratoryGroup2" size="24" class="form-control" />
-                                </g:else>
-                            </div>
-
                         </g:if>
 
 

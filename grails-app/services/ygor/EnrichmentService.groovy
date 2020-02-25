@@ -63,9 +63,6 @@ class EnrichmentService{
     if ("" != pm['pkgCuratoryGroup1'][0].trim()){
       enrichment.dataContainer.curatoryGroup1 = (pm['pkgCuratoryGroup1'][0])
     }
-    if ("" != pm['pkgCuratoryGroup2'][0].trim()){
-      enrichment.dataContainer.curatoryGroup2 = (pm['pkgCuratoryGroup2'][0])
-    }
     setPlatformMap(pm, ph)
     if (pm['pkgNominalProvider']){
       ph.nominalProvider = pm['pkgNominalProvider'][0]

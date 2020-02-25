@@ -158,9 +158,6 @@ class Enrichment{
     if (dataContainer.curatoryGroup1 != null){
       result.append("\"curatoryGroup1\":\"").append(dataContainer.curatoryGroup1).append("\",")
     }
-    if (dataContainer.curatoryGroup2 != null){
-      result.append("\"curatoryGroup2\":\"").append(dataContainer.curatoryGroup2).append("\",")
-    }
     if (dataContainer.pkg?.packageHeader?.nominalProvider != null){
       result.append("\"nominalProvider\":\"").append(dataContainer.pkg.packageHeader.nominalProvider).append("\",")
     }
@@ -201,9 +198,6 @@ class Enrichment{
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup1")){
       en.dataContainer.curatoryGroup1 = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup1")
-    }
-    if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")){
-      en.dataContainer.curatoryGroup2 = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup2")
     }
     en.dataContainer.pkg.packageHeader = new PackageHeader()
     en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
