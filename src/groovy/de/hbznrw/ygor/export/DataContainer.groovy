@@ -22,6 +22,8 @@ class DataContainer {
 
   Meta info
   Package pkg
+  String  pkgId
+  String  pkgIdNamespace
   ObjectNode packageHeader
   Map<String, Record> records
   Map<AbstractIdentifier, Set<Record>> recordsPerId
