@@ -2,6 +2,7 @@ package ygor
 
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.commons.lang.StringUtils
 
 class GokbService {
 
@@ -150,6 +151,35 @@ class GokbService {
           if (!(r.value in ["issn", "eissn"])) {
             result.add([id: r.value, text: r.value, cat: r.category])
           }
+        }
+      }
+    }
+    catch (Exception e) {
+      log.error(e.getMessage())
+    }
+    result
+  }
+
+
+  def getCuratoryGroupsList() {
+    String cgsUrl = grailsApplication.config.gokbApi.baseUri.toString() + "api/groups"
+    def placeholderCuratoryGroup = messageSource.getMessage('listDocuments.js.placeholder.curatorygroup', null, Locale.default)
+    def result = [[id: '', text: placeholderCuratoryGroup]]
+
+    log.debug("Quering curatory groups via: ${cgsUrl}")
+    try {
+      def json = queryElasticsearch(cgsUrl)
+      if (json?.info?.result) {
+        log.debug("Retrieved curatory groups via: ${cgsUrl}")
+        json.info.result.each { r ->
+          if (!StringUtils.isEmpty(r.name)){
+            result.add([id: r.uuid, text: r.name])
+          }
+        }
+      }
+      if (json?.warning?.result) {
+        if (!StringUtils.isEmpty(r.value)){
+          result.add([id: r.value, text: r.value])
         }
       }
     }

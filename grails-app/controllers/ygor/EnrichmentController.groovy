@@ -22,7 +22,8 @@ class EnrichmentController{
 
 
   def process = {
-    def gokb_ns = gokbService.getNamespaceList()
+    def gokb_ns  = gokbService.getNamespaceList()
+    def gokb_cgs = gokbService.getCuratoryGroupsList()
     render(
         view: 'process',
         params: [
@@ -30,10 +31,11 @@ class EnrichmentController{
             originHash: request.parameterMap.originHash
         ],
         model: [
-            enrichment : getCurrentEnrichment(),
-            gokbService: gokbService,
-            namespaces : gokb_ns,
-            currentView: 'process'
+            enrichment     : getCurrentEnrichment(),
+            gokbService    : gokbService,
+            namespaces     : gokb_ns,
+            curatoryGroups : gokb_cgs,
+            currentView    : 'process'
         ]
     )
   }
