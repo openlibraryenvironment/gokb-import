@@ -116,15 +116,19 @@ class FieldKeyMapping {
           parseMapping(mapping.value)
           break
         case "valid":
+        case "VALID":
           addFlag(mapping)
           break
         case "invalid":
+        case "INVALID":
           addFlag(mapping)
           break
         case "missing":
+        case "MISSING":
           addFlag(mapping)
           break
         case "undefined":
+        case "UNDEFINED":
           addFlag(mapping)
           break
         default:

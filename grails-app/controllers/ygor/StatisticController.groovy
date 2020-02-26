@@ -78,7 +78,7 @@ class StatisticController{
     String resultHash = params['resultHash']
     Enrichment enrichment = getEnrichment(resultHash)
     Record record = enrichment.dataContainer.getRecord(params['record.uid'])
-    classifyRecord(record, enrichment)
+    classifyRecord(record)
     render(
         view: 'show',
         model: [
@@ -100,7 +100,7 @@ class StatisticController{
     for (def field in params['fieldschanged']){
       record.multiFields.get(field.key).revised = field.value
     }
-    classifyRecord(record, enrichment)
+    classifyRecord(record)
     render(
         view: 'show',
         model: [
@@ -156,12 +156,13 @@ class StatisticController{
   }
 
 
-  private void classifyRecord(Record record, Enrichment enrichment){
+  private void classifyRecord(Record record){
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid()){
       if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
           record.duplicates.isEmpty() &&
-          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null)){
+          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null) &&
+          !record.hasFlagOfColour(RecordFlag.Colour.YELLOW)){
         greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
         yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
         redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
@@ -215,7 +216,7 @@ class StatisticController{
     String namespace = enrichment.dataContainer.info.namespace_title_id
     for (Record record in enrichment.dataContainer.records.values()){
       record.validate(namespace)
-      classifyRecord(record, enrichment)
+      classifyRecord(record)
     }
   }
 
@@ -396,5 +397,33 @@ class StatisticController{
     flash.warning = message(code: 'warning.fileNotFound')
     flash.error = null
     redirect(controller: 'Enrichment', action: 'process')
+  }
+
+
+  def setFlag() {
+    def record
+    try{
+      Enrichment enrichment = getEnrichment(params.resultHash)
+      String namespace = enrichment.dataContainer.info.namespace_title_id
+      if (enrichment){
+        record = enrichment.dataContainer.records.get(params.record.uid)
+        for (def flagId in params.flags){
+          RecordFlag flag = record.getFlag(flagId.key)
+          flag.setColour(RecordFlag.Colour.valueOf(flagId.value))
+        }
+        record.validate(namespace)
+        classifyAllRecords(params.resultHash)
+      }
+    }
+    catch (Exception e){
+      log.error(e.getMessage())
+      log.error(e.getStackTrace())
+    }
+    render(
+        view: 'edit',
+        model: [resultHash: params.resultHash,
+                record    : record
+        ]
+    )
   }
 }

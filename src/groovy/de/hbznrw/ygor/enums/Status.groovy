@@ -12,7 +12,9 @@ enum Status {
 
   VALID("valid"),
   INVALID("invalid"),
+  WARNING("warning"),
   MISSING("missing"),
+  MISMATCH("mismatch"),
 
   // parsing crap
   REMOVE_FLAG("remove_flag")
