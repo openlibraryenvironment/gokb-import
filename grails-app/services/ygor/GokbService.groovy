@@ -133,7 +133,7 @@ class GokbService {
     String nsCategory = grailsApplication.config.gokbApi.namespaceCategory ?: null
     String nsUrl = buildUri(nsBase, null, null, null, null, nsCategory)
     def placeholderNamespace = messageSource.getMessage('listDocuments.js.placeholder.namespace', null, Locale.default)
-    def result = [[id: '', text: placeholderNamespace],[id: 'doi', text: 'doi']]
+    def result = [[id: '', text: placeholderNamespace]]
 
     log.debug("Quering namespaces via: ${nsUrl}")
     try {

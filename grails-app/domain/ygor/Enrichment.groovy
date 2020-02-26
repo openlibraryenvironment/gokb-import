@@ -158,6 +158,12 @@ class Enrichment{
     if (dataContainer.curatoryGroup != null){
       result.append("\"curatoryGroup\":\"").append(dataContainer.curatoryGroup).append("\",")
     }
+    if (dataContainer.pkgId != null){
+      result.append("\"pkgId\":\"").append(dataContainer.pkgId).append("\",")
+    }
+    if (dataContainer.pkgIdNamespace != null){
+      result.append("\"pkgIdNamespace\":\"").append(dataContainer.pkgIdNamespace).append("\",")
+    }
     if (dataContainer.pkg?.packageHeader?.nominalProvider != null){
       result.append("\"nominalProvider\":\"").append(dataContainer.pkg.packageHeader.nominalProvider).append("\",")
     }
@@ -196,8 +202,15 @@ class Enrichment{
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
     en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
+
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
       en.dataContainer.curatoryGroup = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")
+    }
+    if (null != JsonToolkit.fromJson(rootNode, "configuration.pkgId")){
+      en.dataContainer.pkgId = JsonToolkit.fromJson(rootNode, "configuration.pkgId")
+    }
+    if (null != JsonToolkit.fromJson(rootNode, "configuration.pkgIdNamespace")){
+      en.dataContainer.pkgIdNamespace = JsonToolkit.fromJson(rootNode, "configuration.pkgIdNamespace")
     }
     en.dataContainer.pkg.packageHeader = new PackageHeader()
     en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")

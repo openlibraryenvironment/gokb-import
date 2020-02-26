@@ -157,6 +157,14 @@ class GokbExporter {
     if (null != enrichment.dataContainer.curatoryGroup){
       result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup))
     }
+    if (!StringUtils.isEmpty(enrichment.dataContainer.pkgId) && !StringUtils.isEmpty(enrichment.dataContainer.pkgIdNamespace)){
+      ArrayNode identifiers = NODE_FACTORY.arrayNode()
+      ObjectNode identifier = NODE_FACTORY.objectNode()
+      identifier.put("type", enrichment.dataContainer.pkgIdNamespace)
+      identifier.put("value", enrichment.dataContainer.pkgId)
+      identifiers.add(identifier)
+      result.set("identifiers", identifiers)
+    }
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
     def source = new ObjectNode(NODE_FACTORY)

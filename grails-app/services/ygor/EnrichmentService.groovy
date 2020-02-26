@@ -63,6 +63,12 @@ class EnrichmentService{
     if (pm['pkgCuratoryGroup']){
       enrichment.dataContainer.curatoryGroup = (pm['pkgCuratoryGroup'][0])
     }
+    if ("" != pm['pkgId'][0].trim()){
+      enrichment.dataContainer.pkgId = (pm['pkgId'][0])
+    }
+    if ("" != pm['pkgIdNamespace'][0].trim()){
+      enrichment.dataContainer.pkgIdNamespace = (pm['pkgIdNamespace'][0])
+    }
     setPlatformMap(pm, ph)
     if (pm['pkgNominalProvider']){
       ph.nominalProvider = pm['pkgNominalProvider'][0]
