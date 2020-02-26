@@ -155,7 +155,9 @@ class GokbExporter {
     result.set("nominalPlatform", nominalPlatform)
 
     if (null != enrichment.dataContainer.curatoryGroup){
-      result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup))
+      ArrayNode curatoryGroups = NODE_FACTORY.arrayNode()
+      curatoryGroups.add(enrichment.dataContainer.curatoryGroup)
+      result.set("curatoryGroups", (curatoryGroups))
     }
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgId) && !StringUtils.isEmpty(enrichment.dataContainer.pkgIdNamespace)){
       ArrayNode identifiers = NODE_FACTORY.arrayNode()
