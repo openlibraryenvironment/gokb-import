@@ -154,6 +154,9 @@ class GokbExporter {
     nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
     result.set("nominalPlatform", nominalPlatform)
 
+    if (null != enrichment.dataContainer.curatoryGroup){
+      result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup))
+    }
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgId) && !StringUtils.isEmpty(enrichment.dataContainer.pkgIdNamespace)){
       ArrayNode identifiers = NODE_FACTORY.arrayNode()
       ObjectNode identifier = NODE_FACTORY.objectNode()
@@ -161,12 +164,6 @@ class GokbExporter {
       identifier.put("value", enrichment.dataContainer.pkgId)
       identifiers.add(identifier)
       result.set("identifiers", identifiers)
-    }
-    if (null != enrichment.dataContainer.curatoryGroup1){
-      result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup1))
-    }
-    if (null != enrichment.dataContainer.curatoryGroup2){
-      result.put("curatoryGroup2", (enrichment.dataContainer.curatoryGroup2))
     }
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
