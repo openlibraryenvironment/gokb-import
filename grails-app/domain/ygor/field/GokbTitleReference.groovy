@@ -22,13 +22,14 @@ class GokbTitleReference{
   OnlineIdentifier onlineIdentifier
   PrintIdentifier printIdentifier
   String publicationTitle
+  String publicationType
 
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
   static constraints = {}
 
 
-  GokbTitleReference(String identifier, Enrichment enrichment){
+  GokbTitleReference(String identifier, Enrichment enrichment, String publicationType){
     Record referencedRecord = enrichment.dataContainer.getRecord(new ZdbIdentifier(identifier,
         enrichment.mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)))
     zdbId = referencedRecord.zdbId
@@ -37,6 +38,7 @@ class GokbTitleReference{
     onlineIdentifier = referencedRecord.onlineIdentifier
     printIdentifier = referencedRecord.printIdentifier
     publicationTitle = referencedRecord.multiFields.get("publicationTitle").getFirstPrioValue()
+    this.publicationType = publicationType
   }
 
 
@@ -62,8 +64,14 @@ class GokbTitleReference{
       result.put("title", publicationTitle)
       ArrayNode identifiers = NODE_FACTORY.arrayNode()
       newIdentifierIntoArrayNode(identifiers, "zdb", zdbId?.identifier)
-      newIdentifierIntoArrayNode(identifiers, "eissn", onlineIdentifier?.identifier)
-      newIdentifierIntoArrayNode(identifiers, "issn", printIdentifier?.identifier)
+      if (publicationType.equals("Serial")){
+        newIdentifierIntoArrayNode(identifiers, "eissn", onlineIdentifier?.identifier)
+        newIdentifierIntoArrayNode(identifiers, "issn", printIdentifier?.identifier)
+      }
+      else if (publicationType.equals("Monograph")){
+        newIdentifierIntoArrayNode(identifiers, "eisbn", onlineIdentifier?.identifier)
+        newIdentifierIntoArrayNode(identifiers, "isbn", printIdentifier?.identifier)
+      }
       result.set("identifiers", identifiers)
     }
   }

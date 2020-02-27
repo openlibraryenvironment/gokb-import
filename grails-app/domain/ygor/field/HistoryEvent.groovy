@@ -40,8 +40,8 @@ class HistoryEvent {
     GokbTitleReference toReference
     try{
       // exceptions can occur if we have a second order link
-      fromReference = new GokbTitleReference(fromId, enrichment)
-      toReference = new GokbTitleReference(toId, enrichment)
+      fromReference = new GokbTitleReference(fromId, enrichment, record.publicationType)
+      toReference = new GokbTitleReference(toId, enrichment, record.publicationType)
     }
     catch (Exception e){
       return
