@@ -44,22 +44,4 @@ class IdentifierNormalizer {
     str
   }
 
-
-  static def fixIdentifier(String id, Class clazz) {
-    if (clazz.equals(OnlineIdentifier.class)) {
-      return fixEISSN(id)
-    }
-    id
-  }
-
-
-  static def fixEISSN(String id) {
-    // set the last character to upper case if it is "x" and if the rest of the eissn is valid
-    if (id.matches("[\\d]{4}-[\\d]{3}x")) {
-      id = id.replace("x", "X")
-      log.info("Set \"x\" to upper case in " + id)
-    }
-    id
-  }
-
 }

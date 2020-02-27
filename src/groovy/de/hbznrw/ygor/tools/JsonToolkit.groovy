@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.*
-import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.format.YgorFormatter
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.InvokerInvocationException
@@ -31,15 +30,18 @@ class JsonToolkit {
       dataStructure.each { key, value ->
         removeMetaClass(value)
       }
-    } else if (dataStructure instanceof Collection) {
+    }
+    else if (dataStructure instanceof Collection) {
       dataStructure.each { item ->
         removeMetaClass(item)
       }
-    } else if (dataStructure.getClass().isArray()) {
+    }
+    else if (dataStructure.getClass().isArray()) {
       dataStructure.each { item ->
         removeMetaClass(item)
       }
-    } else {
+    }
+    else {
       def iter = dataStructure.properties.iterator()
       while (iter.hasNext()) {
         def entry = iter.next()
@@ -75,12 +77,12 @@ class JsonToolkit {
         ArrayList concatKey = Arrays.asList(typeFilter)
         concatKey.addAll(multiField.fields.iterator().next().key)
         upsertIntoJsonNode(result, concatKey, value, multiField.type, formatter, false)
-      } else {
+      }
+      else {
         Set qualifiedKeys = multiField.keyMapping."${target}"
         qualifiedKeys.each { qualifiedKey ->
           ArrayList splitKey = qualifiedKey.split("\\.") as ArrayList
           if (splitKey.size() > 1 && splitKey[0].equals(typeFilter)) {
-            // JsonNode node = getJsonNodeFromSplitString(ARRAY, splittedKey[1..splittedKey.size()-1], multiField.getFirstPrioValue())
             def value = multiField.getFirstPrioValue()
             upsertIntoJsonNode(result, splitKey, value, multiField.type, formatter,
                 multiField.keyMapping.keepIfEmpty)
@@ -109,16 +111,19 @@ class JsonToolkit {
     if (keyPath.size() == 2 && keyPath[1].startsWith("(")) {
       ObjectNode multiLeaf = buildMultiLeaf(keyPath, value)
       putAddNode(keyPath, root, multiLeaf)
-    } else {
+    }
+    else {
       if (keyPath.get(1).equals(ARRAY)) {
         upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
-      } else if (keyPath.get(1).equals(COUNT)) {
+      }
+      else if (keyPath.get(1).equals(COUNT)) {
         // TODO until now, only 1 element in array is supported ==> implement count
         if (root.size() == 0) {
           root.add(new ObjectNode(NODE_FACTORY))
         }
         upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
-      } else {
+      }
+      else {
         JsonNode subNode = getSubNode(keyPath, value, keepIfEmpty)
         subNode = putAddNode(keyPath, root, subNode)
         if (keyPath.size() > 2) {
@@ -150,10 +155,12 @@ class JsonToolkit {
   private static JsonNode putAddNode(ArrayList<String> keyPath, JsonNode root, JsonNode subNode) {
     if (root instanceof ArrayNode) {
       root.add(subNode)
-    } else {
+    }
+    else {
       if (isEmptyNode(root.get(keyPath[1]))) {
         root.put(keyPath[1], subNode)
-      } else {
+      }
+      else {
         subNode = root.get(keyPath[1])
       }
     }
@@ -198,14 +205,16 @@ class JsonToolkit {
           jsonGenerator.writeObjectField(item.key, item.value.asJson(jsonGenerator))
         }
         jsonGenerator.writeEndObject()
-      } else {
+      }
+      else {
         jsonGenerator.writeStartArray()
         for (Object item in (obj as List)) {
           item.asJson(jsonGenerator)
         }
         jsonGenerator.writeEndArray()
       }
-    } else {
+    }
+    else {
       obj.asJson(jsonGenerator)
     }
     jsonGenerator.close()
