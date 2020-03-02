@@ -215,7 +215,9 @@ class EnrichmentController{
   def prepareFile = {
     Enrichment enrichment = getCurrentEnrichment()
     enrichmentService.prepareFile(enrichment, request.parameterMap)
-    request.session.lastUpdate.parameterMap = request.parameterMap
+    if (request.session.lastUpdate != null){
+      request.session.lastUpdate.parameterMap = request.parameterMap
+    }
     redirect(
         action: 'process',
         params: [
