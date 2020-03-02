@@ -220,16 +220,24 @@ class GokbExporter {
     ObjectNode onlineIdentifier = getIdentifierNodeByType(node.get("identifiers"), "onlineIdentifier")
     ObjectNode printIdentifier = getIdentifierNodeByType(node.get("identifiers"), "printIdentifier")
     if (record.publicationType.equals("serial")){
-      onlineIdentifier.remove("type")
-      onlineIdentifier.set("type", new TextNode("eissn"))
-      printIdentifier.remove("type")
-      printIdentifier.set("type", new TextNode("issn"))
+      if (onlineIdentifier != null){
+        onlineIdentifier.remove("type")
+        onlineIdentifier.set("type", new TextNode("eissn"))
+      }
+      if (printIdentifier != null){
+        printIdentifier.remove("type")
+        printIdentifier.set("type", new TextNode("issn"))
+      }
     }
     else if (record.publicationType.equals("monograph")){
-      onlineIdentifier.remove("type")
-      onlineIdentifier.set("type", new TextNode("eisbn"))
-      printIdentifier.remove("type")
-      printIdentifier.set("type", new TextNode("isbn"))
+      if (onlineIdentifier != null){
+        onlineIdentifier.remove("type")
+        onlineIdentifier.set("type", new TextNode("eisbn"))
+      }
+      if (printIdentifier != null){
+        printIdentifier.remove("type")
+        printIdentifier.set("type", new TextNode("isbn"))
+      }
     }
     return node
   }
