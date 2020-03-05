@@ -133,14 +133,6 @@
         <g:hiddenField name="originHash" value="${originHash}"/>
         <g:hiddenField name="resultHash" value="${resultHash}"/>
         <div class="col-xs-12" style="margin-bottom: 20px">
-            <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
-                            class="btn btn-success"/>
-            <g:actionSubmit action="downloadTitlesFile"
-                            value="${message(code: 'listDocuments.button.downloadtitlesfile')}"
-                            class="btn btn-default"/>
-            <g:actionSubmit action="downloadPackageFile"
-                            value="${message(code: 'listDocuments.button.downloadpackagefile')}"
-                            class="btn btn-default"/>
             <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
                 <button type="button" class="btn btn-success" data-toggle="modal" gokbdata="titles"
                         data-target="#credentialsModal"><g:message code="listDocuments.button.titles"/></button>
@@ -183,6 +175,8 @@
                         </div>
                     </div>
                 </div>
+                <br/>
+                <br/>
                 <script>
                     $('#credentialsModal').on('show.bs.modal', function (event) {
                         var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
@@ -206,7 +200,19 @@
                                 data-toggle="tooltip" data-placement="top"
                                 title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}"
                                 disabled="disabled"/>
+                <br/>
+                <br/>
             </g:else>
+            <g:actionSubmit action="downloadTitlesFile"
+                            value="${message(code: 'listDocuments.button.downloadtitlesfile')}"
+                            class="btn btn-default"/>
+            <g:actionSubmit action="downloadPackageFile"
+                            value="${message(code: 'listDocuments.button.downloadpackagefile')}"
+                            class="btn btn-default"/>
+            <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
+                            class="btn btn-default"/>
+            <br/>
+            <br/>
             <g:actionSubmit action="correctFile" value="${message(code: 'listDocuments.button.correctfile')}"
                             class="btn btn-warning"/>
             <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deletefile')}"
