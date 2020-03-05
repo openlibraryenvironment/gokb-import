@@ -218,6 +218,13 @@
             <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deletefile')}"
                             class="btn btn-danger"/>
         </div>
+        <script>
+            var bwidth=0
+            $(".btn").each(function(i,v){
+                if($(v).width()>bwidth) bwidth=$(v).width();
+            });
+            $(".btn").width(bwidth);
+        </script>
         <g:if test="${responseText != null}">
 
             <div class="modal-info" id="responseModal" tabindex="-1" role="dialog"
