@@ -37,11 +37,7 @@ class NumberNormalizer {
     if (!str)
       return str
     String result = new String(StringNormalizer.normalizeString(str, false))
-    result = result.replaceAll(/[\/-]+/, "")
-    if (!(result.matches("^[\\d]+\$"))) {
-      throw new NumberFormatException(str.concat(" does not match simple digit RegEx"))
-    }
-    result
+    result.replaceAll(/[\/-]+/, "")
   }
 
 }
