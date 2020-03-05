@@ -115,9 +115,8 @@ class MultipleProcessingThread extends Thread {
 
     normalize()
     validate()
-    checkIDsUniqueness()
 
-    processUiSettings()                              // set "medium"
+    processUiSettings()
 
     Statistics.getRecordsStatisticsBeforeParsing(enrichment)
     // to enrichment.stats
@@ -153,11 +152,6 @@ class MultipleProcessingThread extends Thread {
     for (Record record : enrichment.dataContainer.records.values()) {
       record.validate(enrichment.dataContainer.info.namespace_title_id)
     }
-  }
-
-
-  private void checkIDsUniqueness() {
-    // TODO
   }
 
 
