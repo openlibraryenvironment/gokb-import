@@ -34,15 +34,9 @@ class StatisticController{
     String resultHash = request.parameterMap.resultHash[0]
     String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
-    String ygorVersion
-    String date
-    String filename
     Enrichment enrichment = getEnrichment(resultHash)
     try{
       if (enrichment){
-        ygorVersion = enrichment.ygorVersion
-        date = enrichment.date
-        filename = enrichment.originName
         enrichment.dataContainer.markDuplicateIds()
         classifyAllRecords(resultHash)
       }
@@ -61,9 +55,9 @@ class StatisticController{
             originHash    : originHash,
             resultHash    : resultHash,
             currentView   : 'statistic',
-            ygorVersion   : ygorVersion,
-            date          : date,
-            filename      : filename,
+            ygorVersion   : enrichment.ygorVersion,
+            date          : enrichment.date,
+            filename      : enrichment.originName,
             greenRecords  : greenRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
             redRecords    : redRecords[resultHash],
@@ -77,6 +71,7 @@ class StatisticController{
     // restore record from dataContainer
     String resultHash = params['resultHash']
     Enrichment enrichment = getEnrichment(resultHash)
+
     Record record = enrichment.dataContainer.getRecord(params['record.uid'])
     classifyRecord(record)
     render(
@@ -86,7 +81,10 @@ class StatisticController{
             currentView   : 'statistic',
             greenRecords  : greenRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
-            redRecords    : redRecords[resultHash]
+            redRecords    : redRecords[resultHash],
+            ygorVersion   : enrichment.ygorVersion,
+            date          : enrichment.date,
+            filename      : enrichment.originName
         ]
     )
   }
@@ -108,7 +106,10 @@ class StatisticController{
             currentView   : 'statistic',
             redRecords    : redRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
-            greenRecords  : greenRecords[resultHash]
+            greenRecords  : greenRecords[resultHash],
+            ygorVersion   : enrichment.ygorVersion,
+            date          : enrichment.date,
+            filename      : enrichment.originName
         ]
     )
   }
