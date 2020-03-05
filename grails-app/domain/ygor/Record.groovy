@@ -247,8 +247,14 @@ class Record{
     jsonGenerator.writeStringField("zdbId", zdbId?.identifier)
     jsonGenerator.writeStringField("ezbId", ezbId?.identifier)
     jsonGenerator.writeStringField("doiId", doiId?.identifier)
-    jsonGenerator.writeStringField("eissn", onlineIdentifier?.identifier)
-    jsonGenerator.writeStringField("issn", printIdentifier?.identifier)
+    if (publicationType.equals("serial")){
+      jsonGenerator.writeStringField("printIdentifier", printIdentifier?.identifier)
+      jsonGenerator.writeStringField("onlineIdentifier", onlineIdentifier?.identifier)
+    }
+    else if (publicationType.equals("monograph")){
+      jsonGenerator.writeStringField("printIdentifier", printIdentifier?.identifier)
+      jsonGenerator.writeStringField("onlineIdentifier", onlineIdentifier?.identifier)
+    }
     jsonGenerator.writeStringField("publicationType", publicationType)
     if (ezbIntegrationDate) {
       jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
@@ -356,8 +362,8 @@ class Record{
     ids.add(new ZdbIdentifier(JsonToolkit.fromJson(json, "zdbId"), mappings.getMapping("zdbId", MappingsContainer.YGOR)))
     ids.add(new EzbIdentifier(JsonToolkit.fromJson(json, "ezbId"), mappings.getMapping("ezbId", MappingsContainer.YGOR)))
     ids.add(new DoiIdentifier(JsonToolkit.fromJson(json, "doiId"), mappings.getMapping("doiId", MappingsContainer.YGOR)))
-    ids.add(new OnlineIdentifier(JsonToolkit.fromJson(json, "eissn"), mappings.getMapping("onlineIdentifier", MappingsContainer.YGOR)))
-    ids.add(new PrintIdentifier(JsonToolkit.fromJson(json, "issn"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
+    ids.add(new OnlineIdentifier(JsonToolkit.fromJson(json, "onlineIdentifier"), mappings.getMapping("onlineIdentifier", MappingsContainer.YGOR)))
+    ids.add(new PrintIdentifier(JsonToolkit.fromJson(json, "printIdentifier"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
     String uid = JsonToolkit.fromJson(json, "uid")
     Record result = new Record(ids, mappings, uid)
     Iterator it = ((ArrayNode) (json.path("multiFields"))).iterator()
