@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.enums.Status
+import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.normalizers.EditionNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.RecordValidator
@@ -123,8 +124,23 @@ class Record{
 
   void normalize(String namespace) {
     EditionNormalizer.normalizeEditionNumber(this)
+    setHistoryEventDateType()
     for (MultiField multiField in multiFields.values()) {
       multiField.normalize(namespace)
+    }
+  }
+
+
+  void setHistoryEventDateType(){
+    MultiField heDate = multiFields.get("historyEventDate")
+    if (!StringUtils.isEmpty(heDate?.getFirstPrioValue())){
+      String heType = multiFields.get("historyEventRelationType")?.getFirstPrioValue()
+      if (heType.equals("s")){
+        heDate.type = DateNormalizer.START_DATE
+      }
+      else if (heType.equals("f")){
+        heDate.type = DateNormalizer.END_DATE
+      }
     }
   }
 

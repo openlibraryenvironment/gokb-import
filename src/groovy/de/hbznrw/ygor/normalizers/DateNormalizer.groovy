@@ -89,6 +89,9 @@ class DateNormalizer {
       if (str.endsWith("-")) {
         str = str.take(str.length() - 1)
       }
+      if (str.endsWith("]")) {
+        str = str.take(str.length() - 1)
+      }
     }
     else if (dateType.equals(END_DATE)) {
       if (str.endsWith("]")) {
