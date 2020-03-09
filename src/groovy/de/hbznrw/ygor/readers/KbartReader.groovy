@@ -47,7 +47,7 @@ class KbartReader {
   KbartReader(Reader kbartFile, String delimiter) throws YgorProcessingException{
     String fileData = kbartFile.getText()
     // remove the BOM from the Data
-    fileData.replace('\uFEFF', '')
+    fileData = fileData.replace('\uFEFF', '')
     // automatic delimiter adaptation
     int maxCount = 0
     String favourite = delimiter;
