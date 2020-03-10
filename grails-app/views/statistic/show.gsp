@@ -30,7 +30,8 @@
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                        id="${record.key}">${record.value.displayTitle}</g:link>
+                                        id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
+                                        "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
                             </td>
                             <g:if test="${displayZDB}">
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
@@ -71,7 +72,8 @@
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.key}">${record.value.displayTitle}</g:link>
+                                            id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
+                                            "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
                                 </td>
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
                                     <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
@@ -111,8 +113,10 @@
                     <g:set var="lineCounter" value="${0}"/>
                     <g:each in="${greenRecords}" var="record">
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                            <td class="statistics-cell"><g:link action="edit" params="[resultHash: resultHash]"
-                                                                id="${record.key}">${record.value.displayTitle}</g:link></td>
+                            <td class="statistics-cell">
+                            <g:link action="edit" params="[resultHash: resultHash]"
+                                    id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
+                                    "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
                             <g:if test="${displayZDB}">
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
                                     <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
