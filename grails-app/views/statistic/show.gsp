@@ -298,6 +298,18 @@
 
 <script>
     $(document).ready(function () {
+        $('.statistics-details').DataTable( {
+            processing: true,
+            serverSide: true,
+            length: 10,
+            ajax: {
+                url: "/ygor/statistic/records"
+            },
+            columns: [
+                // to be done
+                // { data: "", name : "" , title : ""}
+            ]
+        });
         $(".statistics-details").dataTable();
     });
 </script>

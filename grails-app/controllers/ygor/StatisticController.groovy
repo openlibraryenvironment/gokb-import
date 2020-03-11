@@ -58,12 +58,36 @@ class StatisticController{
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName,
-            greenRecords  : greenRecords[resultHash],
-            yellowRecords : yellowRecords[resultHash],
-            redRecords    : redRecords[resultHash],
             status        : enrichment.status
         ]
     )
+  }
+
+
+  def records(){
+    String resultHash = request.parameterMap.resultHash[0]
+    String colour = request.parameterMap.colour[0]
+    if (colour.equals(RecordFlag.Colour.RED)){
+      render(
+        model: [
+          records : redRecords[resultHash]
+        ]
+      )
+    }
+    if (colour.equals(RecordFlag.Colour.YELLOW)){
+      render(
+        model: [
+          records : yellowRecords[resultHash]
+        ]
+      )
+    }
+    if (colour.equals(RecordFlag.Colour.GREEN)){
+      render(
+        model: [
+          records : greenRecords[resultHash]
+        ]
+      )
+    }
   }
 
 
@@ -79,9 +103,6 @@ class StatisticController{
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
-            greenRecords  : greenRecords[resultHash],
-            yellowRecords : yellowRecords[resultHash],
-            redRecords    : redRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName
@@ -104,9 +125,6 @@ class StatisticController{
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
-            redRecords    : redRecords[resultHash],
-            yellowRecords : yellowRecords[resultHash],
-            greenRecords  : greenRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName
@@ -331,9 +349,6 @@ class StatisticController{
               ygorVersion  : en.ygorVersion,
               date         : en.date,
               filename     : en.originName,
-              greenRecords : greenRecords[en.resultHash],
-              yellowRecords: yellowRecords[en.resultHash],
-              redRecords   : redRecords[en.resultHash],
               status       : en.status,
               responseText : getResponseMessage(response)
           ]
