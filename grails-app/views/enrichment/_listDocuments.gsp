@@ -296,7 +296,7 @@
                             var ygorDocumentStatus${enrichment.resultHash} = function(){
                                 jQuery.ajax({
                                     type:       'GET',
-                                    url:         '${grailsApplication.config.grails.app.context}/enrichment/ajaxGetStatus',
+                                    url:         '${grailsApplication.config.grails.app.context}/statistic/ajaxGetStatus',
                                     data:        'originHash=${enrichment.originHash}',
                                     data:        'resultHash=${enrichment.resultHash}',
 

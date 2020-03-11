@@ -332,14 +332,6 @@ class EnrichmentController{
   }
 
 
-  def ajaxGetStatus = {
-    def en = getCurrentEnrichment()
-    if (en){
-      render '{"status":"' + en.getStatus() + '", "message":"' + en.getMessage() + '", "progress":' + en.getProgress().round() + '}'
-    }
-  }
-
-
   Enrichment getCurrentEnrichment(){
     if (!request.parameterMap['resultHash'] || !(String) request.parameterMap['resultHash'][0]){
       return new Enrichment()
