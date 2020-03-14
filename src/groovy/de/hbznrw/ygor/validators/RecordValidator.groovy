@@ -1,16 +1,14 @@
 package de.hbznrw.ygor.validators
 
 import de.hbznrw.ygor.enums.Status
+import de.hbznrw.ygor.normalizers.DateNormalizer
 import ygor.Record
+import ygor.RecordFlag
 import ygor.field.MultiField
 
 class RecordValidator {
 
   static validateCoverage(Record record) {
-    // startDate
-    // endDate
-    // startVolume
-    // endVolume
 
     MultiField startDate = record.getMultiField("dateFirstIssueOnline")
     MultiField endDate = record.getMultiField("dateLastIssueOnline")
@@ -21,19 +19,24 @@ class RecordValidator {
     if (!(startDate.getPrioValues().size() == endDate.getPrioValues().size()
           == startVolume.getPrioValues().size() == endVolume.getPrioValues().size())){
       record.addValidation("coverage", Status.REMOVE_FLAG)
+      // this has no effect currently
     }
 
-    // remove due to parsing or data error
-    if (startDate.getFirstPrioValue() == endDate.getFirstPrioValue() &&
-        startVolume.getFirstPrioValue() == endVolume.getFirstPrioValue() &&
-        startDate.getFirstPrioValue() == startVolume.getFirstPrioValue()) {
-      record.addValidation("coverage", Status.REMOVE_FLAG)
-    }
-    else {
-      record.addValidation("coverage", Status.UNDEFINED)
-    }
 
+    // remove due data error
+    Date startDateTime = DateNormalizer.formatDateTime(startDate.getFirstPrioValue())
+    Date endDateTime = DateNormalizer.formatDateTime(endDate.getFirstPrioValue())
+    if (startDateTime != null && endDateTime != null && startDateTime > endDateTime) {
+      RecordFlag flag = record.getFlagWithErrorCode(RecordFlag.ErrorCode.ISSUE_ONLINE_DATES_ORDER)
+      if (flag == null){
+        flag = new RecordFlag(Status.INVALID, "${endDate.keyMapping.ygorKey} ${endDate.getFirstPrioValue()} %s",
+            'record.date.order', endDate.keyMapping, RecordFlag.ErrorCode.ISSUE_ONLINE_DATES_ORDER)
+      }
+      flag.setColour(RecordFlag.Colour.RED)
+      record.putFlag(flag)
+    }
   }
+
 
   static validateHistoryEvent(Record record) {
     // date
