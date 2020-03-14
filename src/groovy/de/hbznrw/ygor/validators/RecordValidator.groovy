@@ -26,14 +26,19 @@ class RecordValidator {
     // remove due data error
     Date startDateTime = DateNormalizer.formatDateTime(startDate.getFirstPrioValue())
     Date endDateTime = DateNormalizer.formatDateTime(endDate.getFirstPrioValue())
-    if (startDateTime != null && endDateTime != null && startDateTime > endDateTime) {
-      RecordFlag flag = record.getFlagWithErrorCode(RecordFlag.ErrorCode.ISSUE_ONLINE_DATES_ORDER)
-      if (flag == null){
-        flag = new RecordFlag(Status.INVALID, "${endDate.keyMapping.ygorKey} ${endDate.getFirstPrioValue()} %s",
-            'record.date.order', endDate.keyMapping, RecordFlag.ErrorCode.ISSUE_ONLINE_DATES_ORDER)
+    if (startDateTime != null && endDateTime != null){
+      if (startDateTime > endDateTime){
+        RecordFlag flag = record.getFlagWithErrorCode(RecordFlag.ErrorCode.ISSUE_ONLINE_DATES_ORDER)
+        if (flag == null){
+          flag = new RecordFlag(Status.INVALID, "${endDate.keyMapping.ygorKey} ${endDate.getFirstPrioValue()} %s",
+              'record.date.order', endDate.keyMapping, RecordFlag.ErrorCode.ISSUE_ONLINE_DATES_ORDER)
+        }
+        flag.setColour(RecordFlag.Colour.RED)
+        record.putFlag(flag)
       }
-      flag.setColour(RecordFlag.Colour.RED)
-      record.putFlag(flag)
+      else{
+        record.flags.remove(RecordFlag.ErrorCode.ISSUE_ONLINE_DATES_ORDER)
+      }
     }
   }
 
