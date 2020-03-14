@@ -15,6 +15,7 @@ import de.hbznrw.ygor.validators.RecordValidator
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.grails.io.support.ClassPathResource
+import ygor.RecordFlag.ErrorCode
 import ygor.field.HistoryEvent
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -44,7 +45,7 @@ class Record{
   String ezbIntegrationUrl
   List historyEvents
   Map<AbstractIdentifier, String> duplicates
-  List<RecordFlag> flags
+  Map<ErrorCode, RecordFlag> flags
 
 
   static hasMany = [multiFields       : MultiField,
@@ -78,7 +79,7 @@ class Record{
     ezbIntegrationDate = null
     zdbIntegrationUrl = null
     ezbIntegrationUrl = null
-    flags = []
+    flags = [:]
   }
 
 
@@ -104,18 +105,18 @@ class Record{
     else if (identifier instanceof OnlineIdentifier) {
       if (onlineIdentifier && identifier.identifier != onlineIdentifier.identifier) {
         RecordFlag flag = new RecordFlag(Status.MISMATCH, "${onlineIdentifier} %s ${identifier}.",
-            "record.identifier.replace", multiFields.get("onlineIdentifier").keyMapping)
+            "record.identifier.replace", multiFields.get("onlineIdentifier").keyMapping, ErrorCode.ONLINE_ID_REPLACED)
         flag.setColour(RecordFlag.Colour.YELLOW)
-        flags.add(flag)
+        flags.put(flag.errorCode, flag)
       }
       onlineIdentifier = identifier
     }
     else if (identifier instanceof PrintIdentifier) {
       if (printIdentifier && identifier.identifier != printIdentifier.identifier) {
         RecordFlag flag = new RecordFlag(Status.MISMATCH, "${printIdentifier} %s ${identifier}.",
-            "record.identifier.replace", multiFields.get("printIdentifier").keyMapping)
+            "record.identifier.replace", multiFields.get("printIdentifier").keyMapping, ErrorCode.PRINT_ID_REPLACED)
         flag.setColour(RecordFlag.Colour.YELLOW)
-        flags.add(flag)
+        flags.put(flag.errorCode, flag)
       }
       printIdentifier = identifier
     }
@@ -183,12 +184,17 @@ class Record{
 
 
   boolean hasFlagOfColour(RecordFlag.Colour colour){
-    for (RecordFlag flag in flags){
+    for (RecordFlag flag in flags.values()){
       if (flag.colour.equals(colour)){
         return true
       }
     }
     return false
+  }
+
+
+  RecordFlag putFlag(RecordFlag flag){
+    flags.put(flag.errorCode, flag)
   }
 
 
@@ -230,6 +236,16 @@ class Record{
     }
     // else
     return false
+  }
+
+
+  RecordFlag getFlagWithErrorCode(ErrorCode errorCode){
+    for (RecordFlag flag in flags){
+      if (flag.errorCode?.equals(errorCode)){
+        return flag
+      }
+    }
+    return null
   }
 
 
@@ -301,7 +317,7 @@ class Record{
     if (!flags.isEmpty()){
       jsonGenerator.writeFieldName("flags")
       jsonGenerator.writeStartArray()
-      for (def flag in flags){
+      for (def flag in flags.values()){
         flag.asJson(jsonGenerator)
       }
       jsonGenerator.writeEndArray()
@@ -364,7 +380,7 @@ class Record{
 
 
   RecordFlag getFlag(String uid){
-    for (def flag in flags){
+    for (def flag in flags.values()){
       if (uid.equals(flag.uid)){
         return flag
       }
@@ -415,11 +431,12 @@ class Record{
         result.duplicates.put(AbstractIdentifier.fromString(dup.key), dup.value)
       }
     }
-    result.flags = []
+    result.flags = [:]
     Collection flags = JsonToolkit.fromJson(json, "flags")
     if (flags != null){
       for (def flag in flags){
-        result.flags.addAll(RecordFlag.fromJson(flag))
+        RecordFlag rf = RecordFlag.fromJson(flag)
+        result.flags.put(rf.errorCode, rf)
       }
     }
     result

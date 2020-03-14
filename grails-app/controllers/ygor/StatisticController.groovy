@@ -207,6 +207,7 @@ class StatisticController{
 
 
   private void classifyAllRecords(String resultHash){
+
     greenRecords[resultHash] = new HashMap<>()
     yellowRecords[resultHash] = new HashMap<>()
     redRecords[resultHash] = new HashMap<>()
@@ -216,6 +217,7 @@ class StatisticController{
     }
     String namespace = enrichment.dataContainer.info.namespace_title_id
     for (Record record in enrichment.dataContainer.records.values()){
+      record.normalize(namespace)
       record.validate(namespace)
       classifyRecord(record)
     }
