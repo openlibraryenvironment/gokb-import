@@ -231,7 +231,7 @@
                                         </label>
                                     &nbsp;
                                         <label>
-                                            <g:checkBox name="processOption" required="true" checked="true" value="${ZdbReader.IDENTIFIER}"/>
+                                            <g:checkBox name="processOption" checked="true" value="${ZdbReader.IDENTIFIER}"/>
                                             ZDB <em>@GBV</em> <code>API</code>
                                         </label>
                                         &nbsp;
