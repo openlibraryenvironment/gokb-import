@@ -67,7 +67,7 @@ class GokbExporter {
         record.deriveHistoryEventObjects(enrichment)
         ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
         title = postProcessPublicationTitle(title, record)
-        title = postProcessIssnIsbn(title, record)
+        title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
         titles.add(title)
       }
     }
@@ -87,7 +87,7 @@ class GokbExporter {
     for (Record record in enrichment.dataContainer.records.values()) {
       if (record.isValid()){
         ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
-        tipp = postProcessIssnIsbn(tipp, record)
+        tipp = postProcessIssnIsbn(tipp, record, FileType.JSON_PACKAGE_ONLY)
         tipps.add(tipp)
       }
     }
@@ -216,9 +216,20 @@ class GokbExporter {
     return titleNode
   }
 
-  private static ObjectNode postProcessIssnIsbn(ObjectNode node, Record record){
-    ObjectNode onlineIdentifier = getIdentifierNodeByType(node.get("identifiers"), "onlineIdentifier")
-    ObjectNode printIdentifier = getIdentifierNodeByType(node.get("identifiers"), "printIdentifier")
+  private static ObjectNode postProcessIssnIsbn(ObjectNode node, Record record, FileType type){
+    ObjectNode onlineIdentifier
+    ObjectNode printIdentifier
+    if (type.equals(FileType.JSON_TITLES_ONLY)){
+      onlineIdentifier = getIdentifierNodeByType(node.get("identifiers"), "onlineIdentifier")
+      printIdentifier = getIdentifierNodeByType(node.get("identifiers"), "printIdentifier")
+    }
+    else if (type.equals(FileType.JSON_PACKAGE_ONLY)){
+      onlineIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "onlineIdentifier")
+      printIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "printIdentifier")
+    }
+    else{
+      return node
+    }
     if (record.publicationType.equals("serial")){
       if (onlineIdentifier != null){
         onlineIdentifier.remove("type")
