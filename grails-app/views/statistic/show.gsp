@@ -2,6 +2,8 @@
 
 <meta name="layout" content="enrichment">
 
+<p class="lead">${packageName}</p>
+
 <div class="row">
 
     <g:set var="displayZDB" value="true"/>

@@ -61,7 +61,8 @@ class StatisticController{
             greenRecords  : greenRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
             redRecords    : redRecords[resultHash],
-            status        : enrichment.status
+            status        : enrichment.status,
+            packageName   : enrichment.packageName
         ]
     )
   }
