@@ -36,6 +36,7 @@
                         <g:each in="${record.duplicates}" var="rec"> : ${rec.key}</g:each>
                     </div>
                 </g:if>
+                <g:render template="flags" collection="${record.flags.values()}" var="flag"/>
                 <g:if test="${(record.publicationType.equals("serial") && record.zdbIntegrationUrl == null)}">
                     <div class="panel-heading-yellow">
                         <h3 class="panel-title"><g:message code="statistic.edit.record.missingZdbAlignment"/>
@@ -82,14 +83,13 @@
                     </table>
                 </div>
             </div>
-            <g:link controller="statistic" action="cancel" params="[resultHash: resultHash]" id="${record.uid}">
-                <g:actionSubmit action="cancel" value="${message(code: 'statistic.edit.cancel')}"
-                                class="btn btn-default"/>
+            <g:link controller="statistic" action="cancel" params="[resultHash: resultHash]">
+                <g:actionSubmit action="cancel" value="${message(code: 'statistic.edit.cancel')}" class="btn btn-default"/>
             </g:link>
             <g:link controller="statistic" action="save" params='[resultHash: resultHash, record: record.uid]'
                     id="commitchanges">
-                <g:actionSubmit action="save" value="${message(code: 'statistic.edit.save')}" class="btn btn-success"
-                                onclick="changesToHiddenInputFields()" id="saveChanges"/>
+                <g:actionSubmit action="save" value="${message(code: 'statistic.edit.save')}"
+                                class="btn btn-success" onclick="changesToHiddenInputFields()" id="saveChanges"/>
             </g:link>
         </g:form>
     </div>
@@ -193,5 +193,13 @@
         return input;
     }
 
+
+    function createHiddenFlagField(uid, colour) {
+        let input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "flags." + uid);
+        input.setAttribute("value", colour);
+        document.querySelector('.statistics-data').appendChild(input)
+    }
 
 </script>

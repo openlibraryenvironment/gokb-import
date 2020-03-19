@@ -22,13 +22,14 @@ class DataContainer {
 
   Meta info
   Package pkg
+  String  pkgId
+  String  pkgIdNamespace
   ObjectNode packageHeader
   Map<String, Record> records
   Map<AbstractIdentifier, Set<Record>> recordsPerId
   ArrayNode titles
   ArrayNode tipps
-  String curatoryGroup1
-  String curatoryGroup2
+  String curatoryGroup
 
 
   DataContainer() {

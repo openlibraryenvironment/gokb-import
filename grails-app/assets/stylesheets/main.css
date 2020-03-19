@@ -92,6 +92,17 @@ a.link-icon-header:before{
 	margin-top:-2px;
 }
 
+#approve-flag, #warn-flag, #reject-flag{
+	height:32px;
+	padding-left:3px;
+	padding-right:3px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-top: -13px;
+	margin-bottom: -11px;
+	border: 0px;
+}
+
 a:visited {
 	color: #609;
 }

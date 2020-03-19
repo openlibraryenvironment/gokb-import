@@ -8,12 +8,14 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.enums.Status
+import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.normalizers.EditionNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.validators.RecordValidator
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.grails.io.support.ClassPathResource
+import ygor.RecordFlag.ErrorCode
 import ygor.field.HistoryEvent
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -43,12 +45,14 @@ class Record{
   String ezbIntegrationUrl
   List historyEvents
   Map<AbstractIdentifier, String> duplicates
+  Map<ErrorCode, RecordFlag> flags
 
 
   static hasMany = [multiFields       : MultiField,
                     validation        : Status,
                     historyEvents     : HistoryEvent,
-                    duplicates        : String]
+                    duplicates        : String,
+                    flags             : RecordFlag]
 
   static constraints = {
   }
@@ -75,37 +79,44 @@ class Record{
     ezbIntegrationDate = null
     zdbIntegrationUrl = null
     ezbIntegrationUrl = null
+    flags = [:]
   }
 
 
   void addIdentifier(AbstractIdentifier identifier) {
     if (identifier instanceof ZdbIdentifier) {
       if (zdbId && identifier.identifier.replaceAll("x", "X") != zdbId.identifier.replaceAll("x", "X")) {
-        throw new IllegalArgumentException("ZDB id ${identifier} already set to ${zdbId} for record")
+        throw new IllegalArgumentException("${identifier} already set to ${zdbId} for record")
       }
       zdbId = identifier
     }
     else if (identifier instanceof EzbIdentifier) {
       if (ezbId && identifier.identifier != ezbId.identifier) {
-        throw new IllegalArgumentException("EZB id ${identifier} already set to ${ezbId} for record")
+        throw new IllegalArgumentException("${identifier} already set to ${ezbId} for record")
       }
       ezbId = identifier
     }
     else if (identifier instanceof DoiIdentifier) {
       if (doiId && identifier.identifier != doiId.identifier) {
-        throw new IllegalArgumentException("DOI ${identifier} already set to ${doiId} for record")
+        throw new IllegalArgumentException("${identifier} already set to ${doiId} for record")
       }
       doiId = identifier
     }
     else if (identifier instanceof OnlineIdentifier) {
       if (onlineIdentifier && identifier.identifier != onlineIdentifier.identifier) {
-        throw new IllegalArgumentException("EISSN ${identifier} already set to ${onlineIdentifier} for record")
+        RecordFlag flag = new RecordFlag(Status.MISMATCH, "${onlineIdentifier} %s ${identifier}.",
+            "record.identifier.replace", multiFields.get("onlineIdentifier").keyMapping, ErrorCode.ONLINE_ID_REPLACED)
+        flag.setColour(RecordFlag.Colour.YELLOW)
+        flags.put(flag.errorCode, flag)
       }
       onlineIdentifier = identifier
     }
     else if (identifier instanceof PrintIdentifier) {
       if (printIdentifier && identifier.identifier != printIdentifier.identifier) {
-        throw new IllegalArgumentException("ISSN ${identifier} already set to ${printIdentifier} for record")
+        RecordFlag flag = new RecordFlag(Status.MISMATCH, "${printIdentifier} %s ${identifier}.",
+            "record.identifier.replace", multiFields.get("printIdentifier").keyMapping, ErrorCode.PRINT_ID_REPLACED)
+        flag.setColour(RecordFlag.Colour.YELLOW)
+        flags.put(flag.errorCode, flag)
       }
       printIdentifier = identifier
     }
@@ -114,8 +125,23 @@ class Record{
 
   void normalize(String namespace) {
     EditionNormalizer.normalizeEditionNumber(this)
+    setHistoryEventDateType()
     for (MultiField multiField in multiFields.values()) {
       multiField.normalize(namespace)
+    }
+  }
+
+
+  void setHistoryEventDateType(){
+    MultiField heDate = multiFields.get("historyEventDate")
+    if (!StringUtils.isEmpty(heDate?.getFirstPrioValue())){
+      String heType = multiFields.get("historyEventRelationType")?.getFirstPrioValue()
+      if (heType.equals("s")){
+        heDate.type = DateNormalizer.START_DATE
+      }
+      else if (heType.equals("f")){
+        heDate.type = DateNormalizer.END_DATE
+      }
     }
   }
 
@@ -135,6 +161,10 @@ class Record{
     if (urlMultiField == null || !hasValidPublicationType()) {
       return false
     }
+    // check flags
+    if (hasFlagOfColour(RecordFlag.Colour.RED)){
+      return false
+    }
     // check multifields for critical errors
     for (MultiField multiField in multiFields.values()){
       if (multiField.isCriticallyIncorrect(publicationType)){
@@ -150,6 +180,21 @@ class Record{
       return false
     }
     return true
+  }
+
+
+  boolean hasFlagOfColour(RecordFlag.Colour colour){
+    for (RecordFlag flag in flags.values()){
+      if (flag.colour.equals(colour)){
+        return true
+      }
+    }
+    return false
+  }
+
+
+  RecordFlag putFlag(RecordFlag flag){
+    flags.put(flag.errorCode, flag)
   }
 
 
@@ -194,6 +239,16 @@ class Record{
   }
 
 
+  RecordFlag getFlagWithErrorCode(ErrorCode errorCode){
+    for (RecordFlag flag in flags){
+      if (flag.errorCode?.equals(errorCode)){
+        return flag
+      }
+    }
+    return null
+  }
+
+
   void addMultiField(MultiField multiField) {
     multiFields.put(multiField.ygorFieldKey, multiField)
   }
@@ -201,20 +256,6 @@ class Record{
 
   MultiField getMultiField(def ygorFieldKey) {
     multiFields.get(ygorFieldKey)
-  }
-
-
-  List<MultiField> getFieldsByPath(String path){
-    List<MultiField> result = []
-    multiFields.each{ key, value ->
-      if (key.contains(path)){
-        // TODO: this criterion works for now, but is not very precise
-        //       possibly, it should be replaced with a check on MultiField.keyMapping.gokb.
-        //       Optionally, use reflection for output sink ("gokb").
-        result.add(value)
-      }
-    }
-    return result
   }
 
 
@@ -232,24 +273,20 @@ class Record{
   }
 
 
-  def getCoverage() {
-    false // TODO
-  }
-
-
-  private void processHistoryEvents(){
-    // for () // TODO
-  }
-
-
   String asJson(JsonGenerator jsonGenerator) {
     jsonGenerator.writeStartObject()
     jsonGenerator.writeStringField("uid", uid)
     jsonGenerator.writeStringField("zdbId", zdbId?.identifier)
     jsonGenerator.writeStringField("ezbId", ezbId?.identifier)
     jsonGenerator.writeStringField("doiId", doiId?.identifier)
-    jsonGenerator.writeStringField("eissn", onlineIdentifier?.identifier)
-    jsonGenerator.writeStringField("issn", printIdentifier?.identifier)
+    if (publicationType.equals("serial")){
+      jsonGenerator.writeStringField("printIdentifier", printIdentifier?.identifier)
+      jsonGenerator.writeStringField("onlineIdentifier", onlineIdentifier?.identifier)
+    }
+    else if (publicationType.equals("monograph")){
+      jsonGenerator.writeStringField("printIdentifier", printIdentifier?.identifier)
+      jsonGenerator.writeStringField("onlineIdentifier", onlineIdentifier?.identifier)
+    }
     jsonGenerator.writeStringField("publicationType", publicationType)
     if (ezbIntegrationDate) {
       jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
@@ -268,6 +305,7 @@ class Record{
     for (MultiField mf in multiFields.values()) {
       mf.asJson(jsonGenerator)
     }
+    jsonGenerator.writeEndArray()
     if (!duplicates.isEmpty()){
       jsonGenerator.writeFieldName("duplicates")
       jsonGenerator.writeStartArray()
@@ -276,7 +314,14 @@ class Record{
       }
       jsonGenerator.writeEndArray()
     }
-    jsonGenerator.writeEndArray()
+    if (!flags.isEmpty()){
+      jsonGenerator.writeFieldName("flags")
+      jsonGenerator.writeStartArray()
+      for (def flag in flags.values()){
+        flag.asJson(jsonGenerator)
+      }
+      jsonGenerator.writeEndArray()
+    }
     jsonGenerator.writeEndObject()
   }
 
@@ -334,13 +379,23 @@ class Record{
   }
 
 
+  RecordFlag getFlag(String uid){
+    for (def flag in flags.values()){
+      if (uid.equals(flag.uid)){
+        return flag
+      }
+    }
+    return null
+  }
+
+
   static Record fromJson(JsonNode json, MappingsContainer mappings) {
     List<AbstractIdentifier> ids = new ArrayList<>()
     ids.add(new ZdbIdentifier(JsonToolkit.fromJson(json, "zdbId"), mappings.getMapping("zdbId", MappingsContainer.YGOR)))
     ids.add(new EzbIdentifier(JsonToolkit.fromJson(json, "ezbId"), mappings.getMapping("ezbId", MappingsContainer.YGOR)))
     ids.add(new DoiIdentifier(JsonToolkit.fromJson(json, "doiId"), mappings.getMapping("doiId", MappingsContainer.YGOR)))
-    ids.add(new OnlineIdentifier(JsonToolkit.fromJson(json, "eissn"), mappings.getMapping("onlineIdentifier", MappingsContainer.YGOR)))
-    ids.add(new PrintIdentifier(JsonToolkit.fromJson(json, "issn"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
+    ids.add(new OnlineIdentifier(JsonToolkit.fromJson(json, "onlineIdentifier"), mappings.getMapping("onlineIdentifier", MappingsContainer.YGOR)))
+    ids.add(new PrintIdentifier(JsonToolkit.fromJson(json, "printIdentifier"), mappings.getMapping("printIdentifier", MappingsContainer.YGOR)))
     String uid = JsonToolkit.fromJson(json, "uid")
     Record result = new Record(ids, mappings, uid)
     Iterator it = ((ArrayNode) (json.path("multiFields"))).iterator()
@@ -374,6 +429,14 @@ class Record{
     if (duplicates != null){
       for (def dup in duplicates){
         result.duplicates.put(AbstractIdentifier.fromString(dup.key), dup.value)
+      }
+    }
+    result.flags = [:]
+    Collection flags = JsonToolkit.fromJson(json, "flags")
+    if (flags != null){
+      for (def flag in flags){
+        RecordFlag rf = RecordFlag.fromJson(flag)
+        result.flags.put(rf.errorCode, rf)
       }
     }
     result

@@ -113,11 +113,7 @@ class MultipleProcessingThread extends Thread {
       return
     }
 
-    normalize()
-    validate()
-    checkIDsUniqueness()
-
-    processUiSettings()                              // set "medium"
+    processUiSettings()
 
     Statistics.getRecordsStatisticsBeforeParsing(enrichment)
     // to enrichment.stats
@@ -139,25 +135,6 @@ class MultipleProcessingThread extends Thread {
     }
     isRunning = false
     log.info('Stopped MultipleProcessingThread '.concat(String.valueOf(getId())))
-  }
-
-
-  private void normalize() {
-    for (Record record : enrichment.dataContainer.records.values()) {
-      record.normalize(enrichment.dataContainer.info.namespace_title_id)
-    }
-  }
-
-
-  private void validate() {
-    for (Record record : enrichment.dataContainer.records.values()) {
-      record.validate(enrichment.dataContainer.info.namespace_title_id)
-    }
-  }
-
-
-  private void checkIDsUniqueness() {
-    // TODO
   }
 
 

@@ -30,7 +30,8 @@
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                        id="${record.key}">${record.value.displayTitle}</g:link>
+                                        id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
+                                        "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
                             </td>
                             <g:if test="${displayZDB}">
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
@@ -71,7 +72,8 @@
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.key}">${record.value.displayTitle}</g:link>
+                                            id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
+                                            "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
                                 </td>
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
                                     <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
@@ -111,8 +113,10 @@
                     <g:set var="lineCounter" value="${0}"/>
                     <g:each in="${greenRecords}" var="record">
                         <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                            <td class="statistics-cell"><g:link action="edit" params="[resultHash: resultHash]"
-                                                                id="${record.key}">${record.value.displayTitle}</g:link></td>
+                            <td class="statistics-cell">
+                            <g:link action="edit" params="[resultHash: resultHash]"
+                                    id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
+                                    "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
                             <g:if test="${displayZDB}">
                                 <td><g:if test="${record.value.zdbIntegrationUrl}">
                                     <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
@@ -133,14 +137,6 @@
         <g:hiddenField name="originHash" value="${originHash}"/>
         <g:hiddenField name="resultHash" value="${resultHash}"/>
         <div class="col-xs-12" style="margin-bottom: 20px">
-            <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
-                            class="btn btn-success"/>
-            <g:actionSubmit action="downloadTitlesFile"
-                            value="${message(code: 'listDocuments.button.downloadtitlesfile')}"
-                            class="btn btn-default"/>
-            <g:actionSubmit action="downloadPackageFile"
-                            value="${message(code: 'listDocuments.button.downloadpackagefile')}"
-                            class="btn btn-default"/>
             <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
                 <button type="button" class="btn btn-success" data-toggle="modal" gokbdata="titles"
                         data-target="#credentialsModal"><g:message code="listDocuments.button.titles"/></button>
@@ -183,6 +179,8 @@
                         </div>
                     </div>
                 </div>
+                <br/>
+                <br/>
                 <script>
                     $('#credentialsModal').on('show.bs.modal', function (event) {
                         var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
@@ -206,12 +204,31 @@
                                 data-toggle="tooltip" data-placement="top"
                                 title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}"
                                 disabled="disabled"/>
+                <br/>
+                <br/>
             </g:else>
+            <g:actionSubmit action="downloadTitlesFile"
+                            value="${message(code: 'listDocuments.button.downloadtitlesfile')}"
+                            class="btn btn-default"/>
+            <g:actionSubmit action="downloadPackageFile"
+                            value="${message(code: 'listDocuments.button.downloadpackagefile')}"
+                            class="btn btn-default"/>
+            <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
+                            class="btn btn-default"/>
+            <br/>
+            <br/>
             <g:actionSubmit action="correctFile" value="${message(code: 'listDocuments.button.correctfile')}"
                             class="btn btn-warning"/>
             <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deletefile')}"
                             class="btn btn-danger"/>
         </div>
+        <script>
+            var bwidth=0
+            $(".btn").each(function(i,v){
+                if($(v).width()>bwidth) bwidth=$(v).width();
+            });
+            $(".btn").width(bwidth);
+        </script>
         <g:if test="${responseText != null}">
 
             <div class="modal-info" id="responseModal" tabindex="-1" role="dialog"

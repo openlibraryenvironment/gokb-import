@@ -67,6 +67,7 @@ class GokbExporter {
         record.deriveHistoryEventObjects(enrichment)
         ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
         title = postProcessPublicationTitle(title, record)
+        title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
         titles.add(title)
       }
     }
@@ -85,7 +86,9 @@ class GokbExporter {
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (Record record in enrichment.dataContainer.records.values()) {
       if (record.isValid()){
-        tipps.add(JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER))
+        ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        tipp = postProcessIssnIsbn(tipp, record, FileType.JSON_PACKAGE_ONLY)
+        tipps.add(tipp)
       }
     }
     tipps = removeEmptyFields(tipps)
@@ -154,11 +157,18 @@ class GokbExporter {
     nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
     result.set("nominalPlatform", nominalPlatform)
 
-    if (null != enrichment.dataContainer.curatoryGroup1){
-      result.put("curatoryGroup1", (enrichment.dataContainer.curatoryGroup1))
+    if (null != enrichment.dataContainer.curatoryGroup){
+      ArrayNode curatoryGroups = NODE_FACTORY.arrayNode()
+      curatoryGroups.add(enrichment.dataContainer.curatoryGroup)
+      result.set("curatoryGroups", (curatoryGroups))
     }
-    if (null != enrichment.dataContainer.curatoryGroup2){
-      result.put("curatoryGroup2", (enrichment.dataContainer.curatoryGroup2))
+    if (!StringUtils.isEmpty(enrichment.dataContainer.pkgId) && !StringUtils.isEmpty(enrichment.dataContainer.pkgIdNamespace)){
+      ArrayNode identifiers = NODE_FACTORY.arrayNode()
+      ObjectNode identifier = NODE_FACTORY.objectNode()
+      identifier.put("type", enrichment.dataContainer.pkgIdNamespace)
+      identifier.put("value", enrichment.dataContainer.pkgId)
+      identifiers.add(identifier)
+      result.set("identifiers", identifiers)
     }
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
@@ -204,6 +214,53 @@ class GokbExporter {
       }
     }
     return titleNode
+  }
+
+  private static ObjectNode postProcessIssnIsbn(ObjectNode node, Record record, FileType type){
+    ObjectNode onlineIdentifier
+    ObjectNode printIdentifier
+    if (type.equals(FileType.JSON_TITLES_ONLY)){
+      onlineIdentifier = getIdentifierNodeByType(node.get("identifiers"), "onlineIdentifier")
+      printIdentifier = getIdentifierNodeByType(node.get("identifiers"), "printIdentifier")
+    }
+    else if (type.equals(FileType.JSON_PACKAGE_ONLY)){
+      onlineIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "onlineIdentifier")
+      printIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "printIdentifier")
+    }
+    else{
+      return node
+    }
+    if (record.publicationType.equals("serial")){
+      if (onlineIdentifier != null){
+        onlineIdentifier.remove("type")
+        onlineIdentifier.set("type", new TextNode("eissn"))
+      }
+      if (printIdentifier != null){
+        printIdentifier.remove("type")
+        printIdentifier.set("type", new TextNode("issn"))
+      }
+    }
+    else if (record.publicationType.equals("monograph")){
+      if (onlineIdentifier != null){
+        onlineIdentifier.remove("type")
+        onlineIdentifier.set("type", new TextNode("eisbn"))
+      }
+      if (printIdentifier != null){
+        printIdentifier.remove("type")
+        printIdentifier.set("type", new TextNode("isbn"))
+      }
+    }
+    return node
+  }
+
+
+  private static ObjectNode getIdentifierNodeByType(ArrayNode identifiers, String type){
+    for (ObjectNode identifier in identifiers){
+      if (identifier.get("type").asText().equals(type)){
+        return identifier
+      }
+    }
+    return null
   }
 
 

@@ -27,6 +27,7 @@
   "precedingPublicationTitleId",
   "accessType",
   "accessStartDate",
+  "accessEndDate",
   "doi_identifier",
   "ezbId",
   "zdbId",

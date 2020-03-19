@@ -589,7 +589,9 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:eissn,value)", "$TIPP.title.identifiers.$ARRAY.(type:eissn,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:onlineIdentifier,value)",
+        "$TIPP.title.identifiers.$ARRAY.(type:onlineIdentifier,value)"
+      ]
     },
     "order" : ["kbart", "zdb"],
     "type" : "ID",
@@ -637,7 +639,9 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:isbn,value)", "$TIPP.title.identifiers.$ARRAY.(type:isbn,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:printIdentifier,value)",
+        "$TIPP.title.identifiers.$ARRAY.(type:printIdentifier,value)"
+      ]
     },
     "order" : ["kbart", "zdb"],
     "type" : "ID",
