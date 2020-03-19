@@ -85,7 +85,8 @@ class StatisticController{
             redRecords    : redRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
-            filename      : enrichment.originName
+            filename      : enrichment.originName,
+            packageName   : enrichment.packageName
         ]
     )
   }
@@ -110,7 +111,8 @@ class StatisticController{
             greenRecords  : greenRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
-            filename      : enrichment.originName
+            filename      : enrichment.originName,
+            packageName   : enrichment.packageName
         ]
     )
   }
@@ -338,7 +340,8 @@ class StatisticController{
               yellowRecords: yellowRecords[en.resultHash],
               redRecords   : redRecords[en.resultHash],
               status       : en.status,
-              responseText : getResponseMessage(response)
+              responseText : getResponseMessage(response),
+              packageName  : en.packageName
           ]
       )
     }
