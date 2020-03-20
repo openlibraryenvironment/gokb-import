@@ -164,6 +164,9 @@ class Enrichment{
     if (dataContainer.pkgIdNamespace != null){
       result.append("\"pkgIdNamespace\":\"").append(dataContainer.pkgIdNamespace).append("\",")
     }
+    if (dataContainer.isil != null){
+      result.append("\"isil\":\"").append(dataContainer.isil).append("\",")
+    }
     if (dataContainer.pkg?.packageHeader?.nominalProvider != null){
       result.append("\"nominalProvider\":\"").append(dataContainer.pkg.packageHeader.nominalProvider).append("\",")
     }
@@ -211,6 +214,9 @@ class Enrichment{
     }
     if (null != JsonToolkit.fromJson(rootNode, "configuration.pkgIdNamespace")){
       en.dataContainer.pkgIdNamespace = JsonToolkit.fromJson(rootNode, "configuration.pkgIdNamespace")
+    }
+    if (null != JsonToolkit.fromJson(rootNode, "configuration.isil")){
+      en.dataContainer.isil = JsonToolkit.fromJson(rootNode, "configuration.isil")
     }
     en.dataContainer.pkg.packageHeader = new PackageHeader()
     en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")

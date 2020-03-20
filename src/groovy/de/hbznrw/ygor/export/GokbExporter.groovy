@@ -144,7 +144,7 @@ class GokbExporter {
                           "listStatus", "nominalProvider", "paymentType", "scope", "userListVerifier"]) {
       result.put("${field}", (String) packageHeader."${field}")
     }
-    setIsil(packageHeader, result)
+    setIsil(enrichment.dataContainer, result)
     if (enrichment.packageName){
       result.put("name", enrichment.packageName)
     }
@@ -300,12 +300,11 @@ class GokbExporter {
   }
 
 
-  private static void setIsil(packageHeader, ObjectNode result) {
-    String isil = packageHeader.isil
-    if (!StringUtils.isEmpty(isil)) {
+  private static void setIsil(DataContainer dc, ObjectNode result) {
+    if (!StringUtils.isEmpty(dc.isil)) {
       def isilNode = new ObjectNode(NODE_FACTORY)
       isilNode.put("type", "isil")
-      isilNode.put("value", isil)
+      isilNode.put("value", dc.isil)
       def idsArray = new ArrayNode(NODE_FACTORY)
       idsArray.add(isilNode)
       result.set("identifiers", idsArray)
