@@ -4,15 +4,27 @@
 
 <p class="lead">${packageName}</p>
 
-<g:if test="${responseText != null}">
+<g:if test="${"true".equals(response_exists)}">
     <div>
         <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
             <g:message code="listDocuments.gokb.response"/>
         </button>
         <div class="collapse in" id="btn-accord">
-            <table>
-                <tr><td>${String.format(responseText, message(code: 'listDocuments.gokb.response.ok'), message(code: 'listDocuments.gokb.response.error'))}</td></tr>
-                <tr><td>Line 2</td></tr>
+            <table class="table">
+                <tbody>
+                    <g:if test="${null != response_message}">
+                        <tr><td>${message(code: 'listDocuments.gokb.response.message')}</td><td>${response_message}</td></tr>
+                    </g:if>
+                    <g:if test="${null != response_ok}">
+                        <tr><td>${message(code: 'listDocuments.gokb.response.ok')}</td><td>${response_ok}</td></tr>
+                    </g:if>
+                    <g:if test="${null != response_error}">
+                        <tr><td>${message(code: 'listDocuments.gokb.response.error')}</td><td>${response_error}</td></tr>
+                    </g:if>
+                    <g:each in="${error_details}" var="detail">
+                        <tr><td></td><td>${detail}</td></tr>
+                    </g:each>
+                </tbody>
             </table>
         </div>
     </div>
@@ -181,7 +193,7 @@
                                                 code="listDocuments.gokb.password"/></span>
                                         <g:passwordField name="gokbPassword" size="24" class="form-control"/>
                                     </div>
-
+                                    <br/>
                                     <div align="right">
                                         <button type="button" class="btn btn-default btn-same-width" data-dismiss="modal"><g:message
                                                 code="listDocuments.button.cancel"/></button>
