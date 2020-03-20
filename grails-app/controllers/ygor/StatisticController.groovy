@@ -2,9 +2,10 @@ package ygor
 
 import de.hbznrw.ygor.tools.FileToolkit
 import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
 import ygor.field.MultiField
-
-import java.text.MessageFormat
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 @Log4j
 class StatisticController{
@@ -61,7 +62,8 @@ class StatisticController{
             greenRecords  : greenRecords[resultHash],
             yellowRecords : yellowRecords[resultHash],
             redRecords    : redRecords[resultHash],
-            status        : enrichment.status
+            status        : enrichment.status,
+            packageName   : enrichment.packageName
         ]
     )
   }
@@ -84,7 +86,8 @@ class StatisticController{
             redRecords    : redRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
-            filename      : enrichment.originName
+            filename      : enrichment.originName,
+            packageName   : enrichment.packageName
         ]
     )
   }
@@ -109,7 +112,8 @@ class StatisticController{
             greenRecords  : greenRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
-            filename      : enrichment.originName
+            filename      : enrichment.originName,
+            packageName   : enrichment.packageName
         ]
     )
   }
@@ -207,7 +211,6 @@ class StatisticController{
 
 
   private void classifyAllRecords(String resultHash){
-
     greenRecords[resultHash] = new HashMap<>()
     yellowRecords[resultHash] = new HashMap<>()
     redRecords[resultHash] = new HashMap<>()
@@ -324,49 +327,131 @@ class StatisticController{
         flash.info = "Total: ${total}, Errors: ${errors}"
         flash.error = errorList
       }
+      Map model = [
+          originHash   : en.originHash,
+          resultHash   : en.resultHash,
+          currentView  : 'statistic',
+          ygorVersion  : en.ygorVersion,
+          date         : en.date,
+          filename     : en.originName,
+          greenRecords : greenRecords[en.resultHash],
+          yellowRecords: yellowRecords[en.resultHash],
+          redRecords   : redRecords[en.resultHash],
+          status       : en.status,
+          packageName  : en.packageName
+      ]
+      model.putAll(getResponseMapped(response, fileType))
       render(
           view: 'show',
-          model: [
-              originHash   : en.originHash,
-              resultHash   : en.resultHash,
-              currentView  : 'statistic',
-              ygorVersion  : en.ygorVersion,
-              date         : en.date,
-              filename     : en.originName,
-              greenRecords : greenRecords[en.resultHash],
-              yellowRecords: yellowRecords[en.resultHash],
-              redRecords   : redRecords[en.resultHash],
-              status       : en.status,
-              responseText : getResponseMessage(response)
-          ]
+          model: model
       )
     }
   }
 
 
-  private String getResponseMessage(List response){
-    for (def outerMap in response){
-      for (def innerMap in outerMap){
-        for (def entry in innerMap.value){
-          if (entry.key.equals("message")){
-            return entry.value
+  private Map getResponseMapped(List response, Enrichment.FileType fileType){
+    if (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY)){
+      return getTitlesResponseMapped(response)
+    }
+    if (fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY)){
+      return getPackageResponseMapped(response)
+    }
+    // else
+    return [:]
+  }
+
+
+  private Map getTitlesResponseMapped(List response){
+    Map result = [:]
+    List errorDetails = []
+    result.put("response_exists", "true")
+    int ok = 0, error = 0
+    for (Map outerMap in response){
+      for (Map innerMap in outerMap.values()){
+        for (Map record in innerMap.get("results")){
+          if (record.get("result").equals("OK")){
+            ok++
           }
-          if (entry.key.equals("results")){
-            int ok = 0, error = 0
-            for (resultMap in entry.value){
-              if (resultMap.'result'.equals("OK")){
-                ok++
-              }
-              else if (resultMap.'result'.equals("ERROR")){
-                error++
-              }
-            }
-            return MessageFormat.format("%s: {0}, %s: {1}", ok, error)
+          else if (record.get("result").equals("ERROR")){
+            error++
+            errorDetails.add(getRecordError(record))
           }
         }
       }
     }
-    return ""
+    result.put("response_ok", ok.toString())
+    result.put("response_error", error.toString())
+    result.put("error_details", errorDetails)
+    return result
+  }
+
+
+  private String getRecordError(Map record){
+    StringBuilder result = new StringBuilder()
+    if (record.get("message") != null){
+      result.append(record.get("message"))
+    }
+    result.toString()
+  }
+
+
+  private Map<String, String> getPackageResponseMapped(List response){
+    Map<String, String> result = new HashMap<>()
+    List<String> errorDetails = []
+    result.put("response_exists", "true")
+    int ok = 0, error = 0
+    for (Map outerMap in response){
+      for (Map innerMap in outerMap.values()){
+        if (!StringUtils.isEmpty(innerMap.get("message"))){
+          result.put("response_message", innerMap.get("message"))
+        }
+        if (innerMap.get("result").equals("OK") && innerMap.get("errors").isEmpty()){
+          ok = extractNumberFromResponse(innerMap.get("message"), "with", "TIPPs")
+        }
+        else {
+          for (def entry in innerMap.value){
+            if (entry.key.equals("message")){
+              result.put("response_message", innerMap.get("message"))
+            }
+            if (entry.key.equals("results")){
+              for (resultMap in entry.value){
+                if (resultMap.'result'.equals("OK")){
+                  ok++
+                }
+                else if (resultMap.'result'.equals("ERROR")){
+                  error++
+                  errorDetails.add(resultMap.'message')
+                }
+              }
+            }
+            if (entry.key.equals("errors")){
+              for (resultMap in entry.value){
+                error++
+                errorDetails.add(resultMap.'message')
+              }
+            }
+          }
+        }
+        result.put("response_ok", ok.toString())
+        result.put("response_error", error.toString())
+        result.put("error_details", errorDetails)
+      }
+    }
+    return result
+  }
+
+
+  private Integer extractNumberFromResponse(String response, String prefix, String suffix){
+    final Pattern p = Pattern.compile(prefix.concat("[\\s]*([0-9]+)[\\s]*").concat(suffix))
+    Matcher m = p.matcher(response)
+    m.find()
+    try {
+      return Integer.valueOf(m.group(1))
+    }
+    catch (Exception e){
+      log.error("Could not extract number from GOKb response message. ".concat(e.getMessage()))
+      return null
+    }
   }
 
 

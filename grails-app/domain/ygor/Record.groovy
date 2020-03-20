@@ -240,7 +240,7 @@ class Record{
 
 
   RecordFlag getFlagWithErrorCode(ErrorCode errorCode){
-    for (RecordFlag flag in flags){
+    for (RecordFlag flag in flags.values()){
       if (flag.errorCode?.equals(errorCode)){
         return flag
       }

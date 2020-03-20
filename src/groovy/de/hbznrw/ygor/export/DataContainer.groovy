@@ -24,6 +24,7 @@ class DataContainer {
   Package pkg
   String  pkgId
   String  pkgIdNamespace
+  String  isil
   ObjectNode packageHeader
   Map<String, Record> records
   Map<AbstractIdentifier, Set<Record>> recordsPerId
