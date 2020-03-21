@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.normalizers
 
+import groovy.util.logging.Log4j
+
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -9,18 +11,20 @@ import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+
+@Log4j
 class DateNormalizer {
 
-  static final String START_DATE = "StartDate"
-  static final String END_DATE = "EndDate"
-  static final Pattern BRACKET_PATTERN = Pattern.compile("^\\[(.*)]\$")
-  static final Pattern DATE_SPAN_PATTERN = Pattern.compile(
+  static String START_DATE = "StartDate"
+  static String END_DATE = "EndDate"
+  static Pattern BRACKET_PATTERN = Pattern.compile("^\\[(.*)]-?\$")
+  static Pattern DATE_SPAN_PATTERN = Pattern.compile(
       "^([\\d]{4}-[\\d]{4})|" +
       "([\\d]{4}-[\\d]{2}-[\\d]{4}-[\\d]{2})|" +
       "([\\d]{4}(-[\\d]{2}){2}-[\\d]{4}(-[\\d]{2}){2})|" +
       "([\\d]{2}\\.[\\d]{4}-[\\d]{2}\\.[\\d]{4})|" +
       "(([\\d]{2}\\.){2}[\\d]{4}-([\\d]{2}\\.){2}[\\d]{4})\$")
-  static final Pattern DATE_SPAN_GROUPER =
+  static Pattern DATE_SPAN_GROUPER =
       Pattern.compile("(([\\d]{2}\\.){0,2}[\\d]{4}(-[\\d]{2}){0,2})-(([\\d]{2}\\.){0,2}[\\d]{4}(-[\\d]{2}){0,2})")
 
   static SimpleDateFormat YYYY = new SimpleDateFormat("yyyy")
@@ -28,23 +32,20 @@ class DateNormalizer {
   static SimpleDateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd")
   static SimpleDateFormat MM_YYYY = new SimpleDateFormat("MM.yyyy")
   static SimpleDateFormat DD_MM_YYYY = new SimpleDateFormat("dd.MM.yyyy")
-  static List<SimpleDateFormat> KNOWN_DATE_FORMATS = new ArrayList()
-  static{
-    // the order is important
-    KNOWN_DATE_FORMATS.add(YYYY_MM_DD)
-    KNOWN_DATE_FORMATS.add(DD_MM_YYYY)
-    KNOWN_DATE_FORMATS.add(YYYY_MM)
-    KNOWN_DATE_FORMATS.add(MM_YYYY)
-    KNOWN_DATE_FORMATS.add(YYYY)
-  }
+  static String YEAR = "^[0-9]{4}\$"
+  static String YEAR_MM = "^[0-9]{4}-[0-9]{2}\$"
+  static String YEAR_MM_DD = "^[0-9]{4}-[0-9]{2}-[0-9]{2}\$"
+  static String MM_YEAR = "^[0-9]{2}.[0-9]{4}\$"
+  static String DD_MM_YEAR = "^[0-9]{2}.[0-9]{2}.[0-9]{4}\$"
+
   static SimpleDateFormat TARGET_FORMAT = YYYY_MM_DD
-  static DateTimeFormatter TARGET_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  static DateTimeFormatter TARGET_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
 
   static String normalizeDate(String str, String dateType) {
     if (!str) {
       return str
     }
-
     str = removeBlanksAndBrackets(str)
     str = pickPartFromDateSpan(str, dateType)
     str = completeEndDate(str, dateType)
@@ -69,11 +70,30 @@ class DateNormalizer {
 
 
   static Date formatDateTime(String date){
-    for (SimpleDateFormat pattern : KNOWN_DATE_FORMATS) {
-      try {
-        return new Date(pattern.parse(date).getTime())
-      }
-      catch (ParseException pe) {}
+    SimpleDateFormat format
+    if (date.matches(YEAR)){
+      format = YYYY
+    }
+    else if (date.matches(YEAR_MM)){
+      format = YYYY_MM
+    }
+    else if (date.matches(YEAR_MM_DD)){
+      format = YYYY_MM_DD
+    }
+    else if (date.matches(MM_YEAR)){
+      format = MM_YYYY
+    }
+    else if (date.matches(DD_MM_YEAR)){
+      format = DD_MM_YYYY
+    }
+    else{
+      return null
+    }
+    try {
+      return new Date(format.parse(date).getTime())
+    }
+    catch (Exception pe) {
+      log.error("Could not parse ".concat(date).concat(" as Date."))
     }
     return null
   }
