@@ -54,7 +54,7 @@ class RecordFlag{
     jsonGenerator.writeStringField("messageCode", messageCode)
     jsonGenerator.writeStringField("ygorFieldKey", ygorFieldKey)
     jsonGenerator.writeStringField("uid", uid)
-    jsonGenerator.writeStringField("errorCode", errorCode)
+    jsonGenerator.writeStringField("errorCode", errorCode.toString())
     jsonGenerator.writeEndObject()
   }
 
@@ -67,7 +67,7 @@ class RecordFlag{
     result.messageCode = JsonToolkit.fromJson(json, "messageCode")
     result.ygorFieldKey = JsonToolkit.fromJson(json, "ygorFieldKey")
     result.uid = JsonToolkit.fromJson(json, "uid")
-    result.errorCode = JsonToolkit.fromJson(json, "errorCode")
+    result.errorCode = JsonToolkit.fromJson(json, "errorCode", ErrorCode.class)
     result
   }
 
