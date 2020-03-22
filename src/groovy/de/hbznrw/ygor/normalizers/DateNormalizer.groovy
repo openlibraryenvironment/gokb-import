@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.normalizers
 
 import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -49,7 +50,10 @@ class DateNormalizer {
     str = removeBlanksAndBrackets(str)
     str = pickPartFromDateSpan(str, dateType)
     str = completeEndDate(str, dateType)
-    str = TARGET_FORMAT.format(formatDateTime(str))
+    Date date = formatDateTime(str)
+    if (date != null){
+      str = TARGET_FORMAT.format(date)
+    }
     str
   }
 
@@ -86,13 +90,10 @@ class DateNormalizer {
     else if (date.matches(DD_MM_YEAR)){
       format = DD_MM_YYYY
     }
-    else{
-      return null
-    }
     try {
       return new Date(format.parse(date).getTime())
     }
-    catch (Exception pe) {
+    catch (Exception exception) {
       log.error("Could not parse ".concat(date).concat(" as Date."))
     }
     return null
