@@ -161,7 +161,7 @@ class StatisticController{
   }
 
 
-  private void classifyRecord(Record record){
+  synchronized private void classifyRecord(Record record){
     def multiFieldMap = record.asMultiFieldMap()
     if (record.isValid()){
       if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
@@ -210,7 +210,7 @@ class StatisticController{
   }
 
 
-  private void classifyAllRecords(String resultHash){
+  synchronized private void classifyAllRecords(String resultHash){
     greenRecords[resultHash] = new HashMap<>()
     yellowRecords[resultHash] = new HashMap<>()
     redRecords[resultHash] = new HashMap<>()
@@ -500,7 +500,7 @@ class StatisticController{
           flag.setColour(RecordFlag.Colour.valueOf(flagId.value))
         }
         record.validate(namespace)
-        classifyAllRecords(params.resultHash)
+        classifyRecord(record)
       }
     }
     catch (Exception e){
