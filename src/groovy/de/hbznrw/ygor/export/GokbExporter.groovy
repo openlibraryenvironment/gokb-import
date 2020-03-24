@@ -139,12 +139,13 @@ class GokbExporter {
     log.debug("parsing package header ...")
     def packageHeader = enrichment.dataContainer.pkg.packageHeader
     def result = new ObjectNode(NODE_FACTORY)
+    def identifiers = new ArrayNode(NODE_FACTORY)
 
     for (String field in ["breakable", "consistent", "fixed", "global",
                           "listStatus", "nominalProvider", "paymentType", "scope", "userListVerifier"]) {
       result.put("${field}", (String) packageHeader."${field}")
     }
-    setIsil(enrichment.dataContainer, result)
+    setIsil(enrichment.dataContainer, identifiers)
     if (enrichment.packageName){
       result.put("name", enrichment.packageName)
     }
@@ -162,14 +163,7 @@ class GokbExporter {
       curatoryGroups.add(enrichment.dataContainer.curatoryGroup)
       result.set("curatoryGroups", (curatoryGroups))
     }
-    if (!StringUtils.isEmpty(enrichment.dataContainer.pkgId) && !StringUtils.isEmpty(enrichment.dataContainer.pkgIdNamespace)){
-      ArrayNode identifiers = NODE_FACTORY.arrayNode()
-      ObjectNode identifier = NODE_FACTORY.objectNode()
-      identifier.put("type", enrichment.dataContainer.pkgIdNamespace)
-      identifier.put("value", enrichment.dataContainer.pkgId)
-      identifiers.add(identifier)
-      result.set("identifiers", identifiers)
-    }
+    setPkgId(enrichment.dataContainer, identifiers)
     result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
 
     def source = new ObjectNode(NODE_FACTORY)
@@ -180,6 +174,8 @@ class GokbExporter {
     if (packageHeader.source?.url != null && !StringUtils.isEmpty(packageHeader.source.url))
       source.put("url", packageHeader.source.url)
     result.set("source", source)
+
+    result.set("identifiers", identifiers)
 
     enrichment.dataContainer.packageHeader = result
     log.debug("parsing package header finished")
@@ -300,14 +296,22 @@ class GokbExporter {
   }
 
 
-  private static void setIsil(DataContainer dc, ObjectNode result) {
+  private static void setPkgId(DataContainer dataContainer, ArrayNode identifiers){
+    if (!StringUtils.isEmpty(dataContainer.pkgId) && !StringUtils.isEmpty(dataContainer.pkgIdNamespace)){
+      ObjectNode identifier = NODE_FACTORY.objectNode()
+      identifier.put("type", dataContainer.pkgIdNamespace)
+      identifier.put("value", dataContainer.pkgId)
+      identifiers.add(identifier)
+    }
+  }
+
+
+  private static void setIsil(DataContainer dc, ArrayNode identifiers) {
     if (!StringUtils.isEmpty(dc.isil)) {
       def isilNode = new ObjectNode(NODE_FACTORY)
       isilNode.put("type", "isil")
       isilNode.put("value", dc.isil)
-      def idsArray = new ArrayNode(NODE_FACTORY)
-      idsArray.add(isilNode)
-      result.set("identifiers", idsArray)
+      identifiers.add(isilNode)
     }
   }
 
