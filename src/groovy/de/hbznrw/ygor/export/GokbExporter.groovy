@@ -243,11 +243,11 @@ class GokbExporter {
     else if (record.publicationType.equals("monograph")){
       if (onlineIdentifier != null){
         onlineIdentifier.remove("type")
-        onlineIdentifier.set("type", new TextNode("eisbn"))
+        onlineIdentifier.set("type", new TextNode("isbn"))
       }
       if (printIdentifier != null){
         printIdentifier.remove("type")
-        printIdentifier.set("type", new TextNode("isbn"))
+        printIdentifier.set("type", new TextNode("pisbn"))
       }
     }
     return node
