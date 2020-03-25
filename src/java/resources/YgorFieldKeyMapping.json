@@ -357,7 +357,7 @@
   },
   {
     "ygor" : "historyEventPredecessor",
-    "display" : "Vorgänger-Nachfolger-Bez. Vorgänger (039E:f) \n",
+    "display" : "Vorgänger-Nachfolger-Bez. Vorgänger (039E:f)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:f",
