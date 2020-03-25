@@ -141,7 +141,7 @@
                     var valuesArray = Array.prototype.slice.call(values);
                     tableRowIndex = valuesArray.indexOf(valueField);
                     const rowKey = keys.item(tableRowIndex).innerHTML;
-                    const value = target.innerHTML;
+                    var value = target.innerHTML.toString().replace("<br>","").replace("&nbsp;","");
                     jQuery.ajax({
                         method: "POST",
                         url: '${grailsApplication.config.grails.app.context}/statistic/update',
@@ -158,6 +158,7 @@
                             const recordJson = JSON.parse(data.record)
                             const sourceField = valueField.nextElementSibling;
                             sourceField.innerHTML = recordJson[rowKey]["source"];
+                            valueField.innerHTML = recordJson[rowKey]["value"];
                             const statusField = sourceField.nextElementSibling;
                             statusField.innerHTML = getValidationMessage(validationMessages, recordJson[rowKey]["status"]);
                             window.location.reload(true);
