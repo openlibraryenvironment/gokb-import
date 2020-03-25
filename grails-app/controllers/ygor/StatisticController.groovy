@@ -409,21 +409,7 @@ class StatisticController{
           ok = extractNumberFromResponse(innerMap.get("message"), "with", "TIPPs")
         }
         else {
-          for (def entry in innerMap.value){
-            if (entry.key.equals("message")){
-              result.put("response_message", innerMap.get("message"))
-            }
-            if (entry.key.equals("results")){
-              for (resultMap in entry.value){
-                if (resultMap.'result'.equals("OK")){
-                  ok++
-                }
-                else if (resultMap.'result'.equals("ERROR")){
-                  error++
-                  errorDetails.add(resultMap.'message')
-                }
-              }
-            }
+          for (def entry in innerMap){
             if (entry.key.equals("errors")){
               for (resultMap in entry.value){
                 error++
@@ -432,7 +418,9 @@ class StatisticController{
             }
           }
         }
-        result.put("response_ok", ok.toString())
+        if (ok > 0){
+          result.put("response_ok", ok.toString())
+        }
         result.put("response_error", error.toString())
         result.put("error_details", errorDetails)
       }
