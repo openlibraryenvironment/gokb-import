@@ -306,7 +306,7 @@
   },
   {
     "ygor" : "historyEventDate",
-    "display" : "039E:H",
+    "display" : "Vorgänger-Nachfolger-Bez. (039E:H)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:H",
@@ -323,7 +323,7 @@
   },
   {
     "ygor" : "historyEventIdentifier",
-    "display" : "039E:0",
+    "display" : "Vorgänger-Nachfolger-Bez. Identnummer DNB (039E:0)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:0",
@@ -340,7 +340,7 @@
   },
   {
     "ygor" : "historyEventRelationType",
-    "display" : "039E:b",
+    "display" : "Vorgänger-Nachfolger-Bez. Art (039E:b)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:b",
@@ -357,7 +357,7 @@
   },
   {
     "ygor" : "historyEventPredecessor",
-    "display" : "039E:f",
+    "display" : "Vorgänger-Nachfolger-Bez. Vorgänger (039E:f) \n",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:f",
@@ -374,7 +374,7 @@
   },
   {
     "ygor" : "historyEventPredecessorOrSuccessor",
-    "display" : "039E:z",
+    "display" : "Vorgänger-Nachfolger-Bez. (039E:z) ",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:z",
@@ -391,7 +391,7 @@
   },
   {
     "ygor" : "historyEventSuccessor",
-    "display" : "039E:s",
+    "display" : "Vorgänger-Nachfolger-Bez. Nachfolger (039E:s) ",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:s",
@@ -408,7 +408,7 @@
   },
   {
     "ygor" : "historyEventTitle",
-    "display" : "039E:Y",
+    "display" : "Vorgänger-Nachfolger-Bez. Titel (039E:Y)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:Y",
@@ -654,7 +654,7 @@
   },
   {
     "ygor" : "publicationSubTitle",
-    "display" : "021C:a / 021C:r",
+    "display" : "Unterreihentitel (021C:a / 021C:r)",
     "in" : {
       "kbart" : "",
       "zdb" : ["021C:a", "021C:r"],
@@ -674,7 +674,7 @@
   },
   {
     "ygor" : "publicationTitle",
-    "display" : "021A:a",
+    "display" : "publication_title",
     "in" : {
       "kbart" : "publication_title",
       "zdb" : ["021A:a"],
@@ -683,7 +683,7 @@
     "out" : {
       "gokb" : ["$TITLE.name", "$TIPP.title.name"]
     },
-    "order" : ["zdb","kbart","ezb"],
+    "order" : ["kbart","zdb","ezb"],
     "type" : "Title",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
@@ -694,7 +694,7 @@
   },
   {
     "ygor" : "publicationTitleRamification",
-    "display" : "021C:l",
+    "display" : "Unterreihe (021C:l)",
     "in" : {
       "kbart" : "",
       "zdb" : ["021C:l"],
@@ -711,7 +711,7 @@
   },
   {
     "ygor" : "publicationTitleVariation",
-    "display" : "025@:a",
+    "display" : "Ansetzungssachtitel (025@:a)",
     "in" : {
       "kbart" : "",
       "zdb" : ["025@:a"],
@@ -794,7 +794,7 @@
   },
   {
     "ygor" : "publisherHistoryEndDate",
-    "display" : "033A:h",
+    "display" : "Veröffentlichungsdatierung Ende (033A:h)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:h",
@@ -815,7 +815,7 @@
   },
   {
     "ygor" : "publisherHistoryStartDate",
-    "display" : "033A:h",
+    "display" : "Veröffentlichungsdatierung Anfang (033A:h)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:h",
@@ -856,7 +856,7 @@
   },
   {
     "ygor" : "publisherPlace",
-    "display" : "033A:p",
+    "display" : "Veröffentlichung Erscheinungsort (033A:p)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:p",
@@ -876,7 +876,7 @@
   },
   {
     "ygor" : "shortcode",
-    "display" : "033A:p",
+    "display" : "Veröffentlichung Shortcode (033A:p)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:p",
@@ -925,7 +925,7 @@
     "out" : {
       "gokb" : ["$TIPP.url"]
     },
-    "order" : ["ezb","kbart"],
+    "order" : ["kbart","ezb"],
     "type" : "URL",
     "comment" : "The field name 'titleUrl' is misleading from the point of differentiating title vs. TIPP. In fact, it is a TIPP field.",
     "flags" : {
@@ -937,7 +937,7 @@
   },
   {
     "ygor" : "zdbId",
-    "display" : "006Z:0",
+    "display" : "ZDB-ID (006Z:0)",
     "in" : {
       "kbart" : "zdb_id",
       "zdb" : "006Z:0",
