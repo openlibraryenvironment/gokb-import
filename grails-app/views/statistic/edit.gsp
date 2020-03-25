@@ -99,7 +99,22 @@
     $(document).ready(function () {
         $("#edit-table").dataTable({
             "paging": false,
-            "ordering": false
+            "ordering": false,
+            "bInfo" : false,
+            "language": {
+                "lengthMenu": "${message(code: 'datatables.lengthMenu')}",
+                "zeroRecords": "",
+                "info": "${message(code: 'datatables.pageOfPages')}",
+                "infoEmpty": "${message(code: 'datatables.noRecordsAvailable')}",
+                "infoFiltered": "${message(code: 'datatables.filteredFromMax')}",
+                "search": "${message(code: 'datatables.search')}",
+                "paginate": {
+                    "first": "${message(code: 'datatables.first')}",
+                    "last": "${message(code: 'datatables.last')}",
+                    "next": "${message(code: 'datatables.next')}",
+                    "previous": "${message(code: 'datatables.previous')}"
+                }
+            }
             // "order": [[ 3, "asc" ]]  // in case we want to order by status
         });
     });
