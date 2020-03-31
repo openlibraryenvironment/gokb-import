@@ -697,7 +697,7 @@
     "display" : "Unterreihe (021C:l)",
     "in" : {
       "kbart" : "",
-      "zdb" : ["021C:l"],
+      "zdb" : [],
       "ezb" : ""
     },
     "order" : ["zdb"],
