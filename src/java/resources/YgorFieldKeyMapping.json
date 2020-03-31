@@ -657,11 +657,11 @@
     "display" : "Unterreihentitel (021C:a / 021C:r)",
     "in" : {
       "kbart" : "",
-      "zdb" : ["021C:a", "021C:r"],
+      "zdb" : [],
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
+      "gokb" : []
     },
     "order" : ["zdb"],
     "type" : "Title",
