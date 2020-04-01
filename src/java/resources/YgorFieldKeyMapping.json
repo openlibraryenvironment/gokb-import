@@ -714,7 +714,7 @@
     "display" : "Ansetzungssachtitel (025@:a)",
     "in" : {
       "kbart" : "",
-      "zdb" : ["025@:a"],
+      "zdb" : [],
       "ezb" : ""
     },
     "out" : {
