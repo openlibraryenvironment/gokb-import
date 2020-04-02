@@ -369,7 +369,7 @@ class Record{
 
 
   String getDisplayTitle(){
-    List<String> titleFieldNames = ["publicationTitleVariation", "publicationSubTitle", "publicationTitle"]
+    List<String> titleFieldNames = ["publicationTitle", "publicationTitleVariation", "publicationSubTitle"]
     for (String displayTitleCandidateFieldNames in titleFieldNames){
       String value = multiFields.get(displayTitleCandidateFieldNames).getFirstPrioValue()
       if (!StringUtils.isEmpty(value)){
