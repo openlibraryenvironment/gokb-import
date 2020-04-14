@@ -345,29 +345,6 @@ class Record{
   }
 
 
-  Map<String, String> asMultiFieldMap() {
-    Map<String, String> result = [:]
-    result.put("uid", uid)
-    if (ezbIntegrationDate) {
-      result.put("ezbIntegrationDate", ezbIntegrationDate)
-    }
-    if (ezbIntegrationUrl) {
-      result.put("ezbIntegrationUrl", ezbIntegrationUrl)
-    }
-    if (zdbIntegrationDate) {
-      result.put("zdbIntegrationDate", zdbIntegrationDate)
-    }
-    if (zdbIntegrationUrl) {
-      result.put("zdbIntegrationUrl", zdbIntegrationUrl)
-    }
-    for (def multiField in multiFields) {
-      result.put(multiField.key, multiField.value.getFirstPrioValue())
-    }
-    result.put("displayTitle", this.getDisplayTitle())
-    result
-  }
-
-
   String getDisplayTitle(){
     List<String> titleFieldNames = ["publicationTitle", "publicationTitleVariation", "publicationSubTitle"]
     for (String displayTitleCandidateFieldNames in titleFieldNames){

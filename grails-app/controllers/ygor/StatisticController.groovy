@@ -20,9 +20,9 @@ class StatisticController{
 
   def grailsApplication
   EnrichmentService enrichmentService
-  Map<String, Map<String, Map<String, String>>> greenRecords = new HashMap<>()
-  Map<String, Map<String, Map<String, String>>> yellowRecords = new HashMap<>()
-  Map<String, Map<String, Map<String, String>>> redRecords = new HashMap<>()
+  Map<String, Map<String, List<String>>> greenRecords = new HashMap<>()
+  Map<String, Map<String, List<String>>> yellowRecords = new HashMap<>()
+  Map<String, Map<String, List<String>>> redRecords = new HashMap<>()
 
   def index(){
     render(
@@ -49,7 +49,6 @@ class StatisticController{
       log.error(e.getMessage())
       log.error(e.getStackTrace())
     }
-
     render(
         view: 'show',
         model: [
@@ -72,27 +71,35 @@ class StatisticController{
   def records(){
     String resultHash = request.parameterMap.resultHash[0]
     String colour = request.parameterMap.colour[0]
-    if (colour.equals(RecordFlag.Colour.RED)){
-      render(
-        model: [
-          records : redRecords[resultHash]
-        ]
-      )
+    String pageIndex = request.parameterMap.pageIndex[0]
+    String size = request.parameterMap.size[0]
+    Map records
+    switch (colour){
+      case RecordFlag.Colour.RED:
+        records = redRecords[resultHash]
+        break
+      case RecordFlag.Colour.YELLOW:
+        records = yellowRecords[resultHash]
+        break
+      case RecordFlag.Colour.GREEN:
+        records = greenRecords[resultHash]
+        break
+      default:
+        records = null
     }
-    if (colour.equals(RecordFlag.Colour.YELLOW)){
-      render(
-        model: [
-          records : yellowRecords[resultHash]
-        ]
-      )
+    List resultData = []
+    int from = pageIndex * size
+    int to = (pageIndex+1) * size
+    records.eachWithIndex{TreeMap.Entry<String, Map<String, String>> entry, int i ->
+      if (i >= from && i < to){
+        resultData.add(entry.value)
+      }
     }
-    if (colour.equals(RecordFlag.Colour.GREEN)){
-      render(
-        model: [
-          records : greenRecords[resultHash]
-        ]
-      )
-    }
+    render(
+      model: [
+        records : resultData
+      ]
+    )
   }
 
 
@@ -126,6 +133,7 @@ class StatisticController{
       record.multiFields.get(field.key).revised = field.value
     }
     classifyRecord(record)
+    // TODO: sort records in case of having changed the record's title
     render(
         view: 'show',
         model: [
@@ -183,26 +191,27 @@ class StatisticController{
 
 
   synchronized private void classifyRecord(Record record){
-    def multiFieldMap = record.asMultiFieldMap()
+    String key = record.displayTitle.concat(record.uid)
+    List<String> values = [record.displayTitle, record.zdbIntegrationUrl, record.zdbId, record.onlineIdentifier]
     if (record.isValid()){
       if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
           record.duplicates.isEmpty() &&
           (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null) &&
           !record.hasFlagOfColour(RecordFlag.Colour.YELLOW)){
-        greenRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-        yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
-        redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+        greenRecords[params['resultHash']].put(key, values)
+        yellowRecords[params['resultHash']].remove(key)
+        redRecords[params['resultHash']].remove(key)
       }
       else{
-        yellowRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-        greenRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
-        redRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+        yellowRecords[params['resultHash']].put(key, values)
+        greenRecords[params['resultHash']].remove(key)
+        redRecords[params['resultHash']].remove(key)
       }
     }
     else{
-      redRecords[params['resultHash']].put(multiFieldMap.get("uid"), multiFieldMap)
-      yellowRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
-      greenRecords[params['resultHash']].remove(multiFieldMap.get("uid"))
+      redRecords[params['resultHash']].put(key,values)
+      yellowRecords[params['resultHash']].remove(key)
+      greenRecords[params['resultHash']].remove(key)
     }
   }
 
@@ -214,9 +223,9 @@ class StatisticController{
       return enrichments.get(resultHash)
     }
     // else get new Enrichment
-    redRecords[resultHash] = new HashMap<>()
-    yellowRecords[resultHash] = new HashMap<>()
-    greenRecords[resultHash] = new HashMap<>()
+    redRecords[resultHash] = new TreeMap<>()
+    yellowRecords[resultHash] = new TreeMap<>()
+    greenRecords[resultHash] = new TreeMap<>()
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
@@ -232,9 +241,9 @@ class StatisticController{
 
 
   synchronized private void classifyAllRecords(String resultHash){
-    greenRecords[resultHash] = new HashMap<>()
-    yellowRecords[resultHash] = new HashMap<>()
-    redRecords[resultHash] = new HashMap<>()
+    greenRecords[resultHash] = new TreeMap<>()
+    yellowRecords[resultHash] = new TreeMap<>()
+    redRecords[resultHash] = new TreeMap<>()
     Enrichment enrichment = getEnrichment(resultHash)
     if (enrichment == null){
       return
