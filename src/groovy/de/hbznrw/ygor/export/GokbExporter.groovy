@@ -209,6 +209,7 @@ class GokbExporter {
         }
       }
     }
+    titleNode.set("name", new TextNode(title))    // Disabled ramification and subtitle enrichment temporarily, delete line to roll back
     return titleNode
   }
 

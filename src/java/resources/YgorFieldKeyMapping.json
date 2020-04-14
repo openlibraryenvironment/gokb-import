@@ -512,7 +512,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error"}],
@@ -532,7 +532,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error"}],
@@ -552,7 +552,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
@@ -572,7 +572,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
@@ -657,11 +657,11 @@
     "display" : "Unterreihentitel (021C:a / 021C:r)",
     "in" : {
       "kbart" : "",
-      "zdb" : [],
+      "zdb" : ["021C:a", "021C:r"],
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"],
     },
     "order" : ["zdb"],
     "type" : "Title",
@@ -697,7 +697,7 @@
     "display" : "Unterreihe (021C:l)",
     "in" : {
       "kbart" : "",
-      "zdb" : [],
+      "zdb" : ["021C:l"],
       "ezb" : ""
     },
     "order" : ["zdb"],
@@ -714,7 +714,7 @@
     "display" : "Ansetzungssachtitel (025@:a)",
     "in" : {
       "kbart" : "",
-      "zdb" : [],
+      "zdb" : ["025@:a"],
       "ezb" : ""
     },
     "out" : {
@@ -754,7 +754,7 @@
   },
   {
     "ygor" : "publishedFrom",
-    "display" : "011@:a",
+    "display" : "Erscheinungszeitraum Startjahr (011@:a)",
     "in" : {
       "kbart" : "",
       "zdb" : "011@:a",
@@ -767,14 +767,14 @@
     "type" : "StartDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "publishedTo",
-    "display" : "011@:b",
+    "display" : "Erscheinungszeitraum Startjahr (011@:b)",
     "in" : {
       "kbart" : "",
       "zdb" : "011@:b",
@@ -787,7 +787,7 @@
     "type" : "EndDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
@@ -808,7 +808,7 @@
     "type" : "EndDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
@@ -829,7 +829,7 @@
     "type" : "StartDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
@@ -869,7 +869,7 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
@@ -889,7 +889,7 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
