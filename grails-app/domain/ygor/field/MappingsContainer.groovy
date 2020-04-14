@@ -20,7 +20,7 @@ class MappingsContainer {
   final public static String GOKB = "gokb"
   final public static String TYPE = "type"
   final public static String FLAGS = "flags"
-  final public static DEFAULT_SOURCE_PRIO = [ZDB, KBART, EZB]
+  final public static DEFAULT_SOURCE_PRIO = [KBART, ZDB, EZB]
 
   final private static JsonSlurper SLURPY = new JsonSlurper()
   private static String DEFAULT_MAPPINGS_FILE = "resources/YgorFieldKeyMapping.json"

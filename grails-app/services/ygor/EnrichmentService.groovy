@@ -59,7 +59,9 @@ class EnrichmentService{
     def ph = enrichment.dataContainer.pkg.packageHeader
     ph.name = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
-    ph.isil = pm['pkgIsil']
+    if (pm['pkgIsil'] && pm['pkgIsil'][0]){
+      enrichment.dataContainer.isil = pm['pkgIsil'][0]
+    }
     if (pm['pkgCuratoryGroup']){
       enrichment.dataContainer.curatoryGroup = (pm['pkgCuratoryGroup'][0])
     }
@@ -82,7 +84,6 @@ class EnrichmentService{
 
   private void setPlatformMap(Map pm, ph){
     log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
-
     def tmp = pm['pkgNominalPlatform'][0].split(';')
     def platformID = tmp[0]
     def qterm = tmp[1]

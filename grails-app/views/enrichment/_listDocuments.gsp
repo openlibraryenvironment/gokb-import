@@ -50,10 +50,10 @@
                             <div class="input-group">
                                 <span class="input-group-addon"><g:message code="listDocuments.key.title" /></span>
                                 <g:if test="${session.lastUpdate?.parameterMap?.pkgTitle}">
-                                    <g:textField name="pkgTitle" size="48" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" />
+                                    <g:textField name="pkgTitle" size="48" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" required="true"/>
                                 </g:if>
                                 <g:else>
-                                    <g:textField name="pkgTitle" size="48" placeholder="Munchhausen Verlag: Science Journals: hbz: 1999" class="form-control" />
+                                    <g:textField name="pkgTitle" size="48" placeholder="Munchhausen Verlag: Science Journals: hbz: 1999" class="form-control" required="true"/>
                                 </g:else>
                             </div>
                             <br />
@@ -87,12 +87,12 @@
                             <br />
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.platform" /></span>
-                                <select name="pkgNominalPlatform" id="pkgNominalPlatform"></select>
+                                <select name="pkgNominalPlatform" id="pkgNominalPlatform" required></select>
                             </div>
                             <br />
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.provider" /></span>
-                                <select name="pkgNominalProvider" id="pkgNominalProvider"></select>
+                                <select name="pkgNominalProvider" id="pkgNominalProvider" required></select>
                             </div>
                             <br />
                             <g:if test="${record_namespaces?.size() > 0}">
@@ -112,7 +112,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><em>GOKb</em> Curatory Group</span>
                                     <g:select name="pkgCuratoryGroup" id="pkgCuratoryGroup" from="${curatoryGroups}"
-                                              optionKey="text" optionValue="text" class="form-control"/>
+                                              optionKey="text" optionValue="text" class="form-control" required="true"/>
                                     <g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup}">
                                         <script>
                                             $('#pkgCuratoryGroup').val('${session.lastUpdate?.parameterMap?.pkgCuratoryGroup[0]}').select();
@@ -231,7 +231,7 @@
                                         </label>
                                     &nbsp;
                                         <label>
-                                            <g:checkBox name="processOption" required="true" checked="true" value="${ZdbReader.IDENTIFIER}"/>
+                                            <g:checkBox name="processOption" checked="true" value="${ZdbReader.IDENTIFIER}"/>
                                             ZDB <em>@GBV</em> <code>API</code>
                                         </label>
                                         &nbsp;

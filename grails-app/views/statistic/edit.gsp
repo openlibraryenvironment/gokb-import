@@ -36,7 +36,7 @@
                         <g:each in="${record.duplicates}" var="rec"> : ${rec.key}</g:each>
                     </div>
                 </g:if>
-                <g:render template="flags" collection="${record.flags}" var="flag"/>
+                <g:render template="flags" collection="${record.flags.values()}" var="flag"/>
                 <g:if test="${(record.publicationType.equals("serial") && record.zdbIntegrationUrl == null)}">
                     <div class="panel-heading-yellow">
                         <h3 class="panel-title"><g:message code="statistic.edit.record.missingZdbAlignment"/>
@@ -99,7 +99,22 @@
     $(document).ready(function () {
         $("#edit-table").dataTable({
             "paging": false,
-            "ordering": false
+            "ordering": false,
+            "bInfo" : false,
+            "language": {
+                "lengthMenu": "${message(code: 'datatables.lengthMenu')}",
+                "zeroRecords": "",
+                "info": "${message(code: 'datatables.pageOfPages')}",
+                "infoEmpty": "${message(code: 'datatables.noRecordsAvailable')}",
+                "infoFiltered": "${message(code: 'datatables.filteredFromMax')}",
+                "search": "${message(code: 'datatables.search')}",
+                "paginate": {
+                    "first": "${message(code: 'datatables.first')}",
+                    "last": "${message(code: 'datatables.last')}",
+                    "next": "${message(code: 'datatables.next')}",
+                    "previous": "${message(code: 'datatables.previous')}"
+                }
+            }
             // "order": [[ 3, "asc" ]]  // in case we want to order by status
         });
     });
@@ -126,7 +141,7 @@
                     var valuesArray = Array.prototype.slice.call(values);
                     tableRowIndex = valuesArray.indexOf(valueField);
                     const rowKey = keys.item(tableRowIndex).innerHTML;
-                    const value = target.innerHTML;
+                    var value = target.innerHTML.toString().replace("<br>","").replace("&nbsp;","");
                     jQuery.ajax({
                         method: "POST",
                         url: '${grailsApplication.config.grails.app.context}/statistic/update',
@@ -143,6 +158,7 @@
                             const recordJson = JSON.parse(data.record)
                             const sourceField = valueField.nextElementSibling;
                             sourceField.innerHTML = recordJson[rowKey]["source"];
+                            valueField.innerHTML = recordJson[rowKey]["value"];
                             const statusField = sourceField.nextElementSibling;
                             statusField.innerHTML = getValidationMessage(validationMessages, recordJson[rowKey]["status"]);
                             window.location.reload(true);

@@ -14,14 +14,16 @@ class RecordFlag{
   String messageCode
   String ygorFieldKey
   String uid
+  ErrorCode errorCode
 
 
-  RecordFlag(Status status, String text, String messageCode, FieldKeyMapping fieldKeyMapping){
+  RecordFlag(Status status, String text, String messageCode, FieldKeyMapping fieldKeyMapping, ErrorCode errorCode){
     this.status = status
     this.colour = null
     this.text = text
     this.messageCode = messageCode
     this.ygorFieldKey = fieldKeyMapping.ygorKey
+    this.errorCode = errorCode
     uid = UUID.randomUUID().toString()
   }
 
@@ -52,6 +54,7 @@ class RecordFlag{
     jsonGenerator.writeStringField("messageCode", messageCode)
     jsonGenerator.writeStringField("ygorFieldKey", ygorFieldKey)
     jsonGenerator.writeStringField("uid", uid)
+    jsonGenerator.writeStringField("errorCode", errorCode.toString())
     jsonGenerator.writeEndObject()
   }
 
@@ -64,7 +67,15 @@ class RecordFlag{
     result.messageCode = JsonToolkit.fromJson(json, "messageCode")
     result.ygorFieldKey = JsonToolkit.fromJson(json, "ygorFieldKey")
     result.uid = JsonToolkit.fromJson(json, "uid")
+    result.errorCode = JsonToolkit.fromJson(json, "errorCode", ErrorCode.class)
     result
+  }
+
+
+  enum ErrorCode{
+    ISSUE_ONLINE_DATES_ORDER,
+    ONLINE_ID_REPLACED,
+    PRINT_ID_REPLACED
   }
 
 }

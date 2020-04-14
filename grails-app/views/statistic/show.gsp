@@ -2,6 +2,35 @@
 
 <meta name="layout" content="enrichment">
 
+<p class="lead">${packageName}</p>
+
+<g:if test="${"true".equals(response_exists)}">
+    <div>
+        <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
+            <g:message code="listDocuments.gokb.response"/>
+        </button>
+        <div class="collapse in" id="btn-accord">
+            <table class="table">
+                <tbody>
+                    <g:if test="${null != response_message}">
+                        <tr><td>${message(code: 'listDocuments.gokb.response.message')}</td><td>${response_message}</td></tr>
+                    </g:if>
+                    <g:if test="${null != response_ok}">
+                        <tr><td>${message(code: 'listDocuments.gokb.response.ok')}</td><td>${response_ok}</td></tr>
+                    </g:if>
+                    <g:if test="${null != response_error}">
+                        <tr><td>${message(code: 'listDocuments.gokb.response.error')}</td><td>${response_error}</td></tr>
+                    </g:if>
+                    <g:each in="${error_details}" var="detail">
+                        <tr><td></td><td>${detail}</td></tr>
+                    </g:each>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br/>
+</g:if>
+
 <div class="row">
 
     <g:set var="displayZDB" value="true"/>
@@ -138,9 +167,9 @@
         <g:hiddenField name="resultHash" value="${resultHash}"/>
         <div class="col-xs-12" style="margin-bottom: 20px">
             <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-                <button type="button" class="btn btn-success" data-toggle="modal" gokbdata="titles"
+                <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
                         data-target="#credentialsModal"><g:message code="listDocuments.button.titles"/></button>
-                <button type="button" class="btn btn-success" data-toggle="modal" gokbdata="package"
+                <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
                         data-target="#credentialsModal"><g:message code="listDocuments.button.package"/></button>
 
                 <div class="modal fade" id="credentialsModal" role="dialog">
@@ -164,12 +193,12 @@
                                                 code="listDocuments.gokb.password"/></span>
                                         <g:passwordField name="gokbPassword" size="24" class="form-control"/>
                                     </div>
-
+                                    <br/>
                                     <div align="right">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal"><g:message
+                                        <button type="button" class="btn btn-default btn-same-width" data-dismiss="modal"><g:message
                                                 code="listDocuments.button.cancel"/></button>
                                         <g:actionSubmit action="" value="${message(code: 'listDocuments.button.send')}"
-                                                        class="btn btn-success"
+                                                        class="btn btn-success btn-same-width"
                                                         name="cred-modal-btn-send" data-toggle="tooltip"
                                                         data-placement="top"
                                                         title="JavaScript ${message(code: 'technical.required')}."/>
@@ -195,12 +224,12 @@
             <g:else>
                 <g:actionSubmit action="sendPackageFile"
                                 value="${message(code: 'listDocuments.button.sendPackageFile')}"
-                                class="btn btn-success disabled"
+                                class="btn btn-success disabled btn-same-width"
                                 data-toggle="tooltip" data-placement="top"
                                 title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}"
                                 disabled="disabled"/>
                 <g:actionSubmit action="sendTitlesFile" value="${message(code: 'listDocuments.button.sendTitlesFile')}"
-                                class="btn btn-success disabled"
+                                class="btn btn-success disabled btn-same-width"
                                 data-toggle="tooltip" data-placement="top"
                                 title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}"
                                 disabled="disabled"/>
@@ -209,56 +238,26 @@
             </g:else>
             <g:actionSubmit action="downloadTitlesFile"
                             value="${message(code: 'listDocuments.button.downloadtitlesfile')}"
-                            class="btn btn-default"/>
+                            class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadPackageFile"
                             value="${message(code: 'listDocuments.button.downloadpackagefile')}"
-                            class="btn btn-default"/>
+                            class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
-                            class="btn btn-default"/>
+                            class="btn btn-default btn-same-width"/>
             <br/>
             <br/>
             <g:actionSubmit action="correctFile" value="${message(code: 'listDocuments.button.correctfile')}"
-                            class="btn btn-warning"/>
+                            class="btn btn-warning btn-same-width"/>
             <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deletefile')}"
-                            class="btn btn-danger"/>
+                            class="btn btn-danger btn-same-width"/>
         </div>
         <script>
             var bwidth=0
-            $(".btn").each(function(i,v){
+            $(".btn-same-width").each(function(i,v){
                 if($(v).width()>bwidth) bwidth=$(v).width();
             });
-            $(".btn").width(bwidth);
+            $(".btn-same-width").width(bwidth);
         </script>
-        <g:if test="${responseText != null}">
-
-            <div class="modal-info" id="responseModal" tabindex="-1" role="dialog"
-                 aria-labelledby="smallModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title"><g:message code="listDocuments.gokb.response"/></h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="close"/>
-                        </div>
-                        <div class="modal-body">
-                            ${String.format(responseText, message(code: 'listDocuments.gokb.response.ok'), message(code: 'listDocuments.gokb.response.error'))}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="responseModalButton" class="btn btn-default" data-dismiss="modal"><g:message
-                                    code="listDocuments.button.ok"/></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <script>
-                $('#responseModalButton').click(function() {
-                    $("#responseModal").removeClass("in");
-                    $(".modal-backdrop").remove();
-                    $('body').removeClass('modal-open');
-                    $('body').css('padding-right', '');
-                    $("#responseModal").hide();
-                });
-            </script>
-        </g:if>
     </g:form>
 
     <div class="col-xs-12">
@@ -310,6 +309,21 @@
                 // { data: "", name : "" , title : ""}
             ]
         });
-        $(".statistics-details").dataTable();
+        $(".statistics-details").dataTable({
+            "language": {
+                "lengthMenu": "${message(code: 'datatables.lengthMenu')}",
+                "zeroRecords": "",
+                "info": "${message(code: 'datatables.pageOfPages')}",
+                "infoEmpty": "${message(code: 'datatables.noRecordsAvailable')}",
+                "infoFiltered": "${message(code: 'datatables.filteredFromMax')}",
+                "search": "${message(code: 'datatables.search')}",
+                "paginate": {
+                    "first": "${message(code: 'datatables.first')}",
+                    "last": "${message(code: 'datatables.last')}",
+                    "next": "${message(code: 'datatables.next')}",
+                    "previous": "${message(code: 'datatables.previous')}"
+                }
+            }
+        });
     });
 </script>

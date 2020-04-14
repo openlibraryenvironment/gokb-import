@@ -306,7 +306,7 @@
   },
   {
     "ygor" : "historyEventDate",
-    "display" : "039E:H",
+    "display" : "Vorgänger-Nachfolger-Bez. (039E:H)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:H",
@@ -316,14 +316,14 @@
     "type" : "Date",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "historyEventIdentifier",
-    "display" : "039E:0",
+    "display" : "Vorgänger-Nachfolger-Bez. Identnummer DNB (039E:0)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:0",
@@ -333,14 +333,14 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "historyEventRelationType",
-    "display" : "039E:b",
+    "display" : "Vorgänger-Nachfolger-Bez. Art (039E:b)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:b",
@@ -350,14 +350,14 @@
     "type" : "Abbreviation",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "historyEventPredecessor",
-    "display" : "039E:f",
+    "display" : "Vorgänger-Nachfolger-Bez. Vorgänger (039E:f)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:f",
@@ -367,14 +367,14 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "historyEventPredecessorOrSuccessor",
-    "display" : "039E:z",
+    "display" : "Vorgänger-Nachfolger-Bez. (039E:z) ",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:z",
@@ -384,14 +384,14 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "historyEventSuccessor",
-    "display" : "039E:s",
+    "display" : "Vorgänger-Nachfolger-Bez. Nachfolger (039E:s) ",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:s",
@@ -401,14 +401,14 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "historyEventTitle",
-    "display" : "039E:Y",
+    "display" : "Vorgänger-Nachfolger-Bez. Titel (039E:Y)",
     "in" : {
       "kbart" : "",
       "zdb" : "039E:Y",
@@ -418,7 +418,7 @@
     "type" : "Title",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
@@ -512,7 +512,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error"}],
@@ -532,7 +532,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error"}],
@@ -552,7 +552,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
@@ -572,7 +572,7 @@
       "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
     },
     "order" : ["kbart"],
-    "type" : "Number",
+    "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
       "invalid" : [{"serial" : "ok", "monograph" : "ok"}],
@@ -654,14 +654,14 @@
   },
   {
     "ygor" : "publicationSubTitle",
-    "display" : "021C:a / 021C:r",
+    "display" : "Unterreihentitel (021C:a / 021C:r)",
     "in" : {
       "kbart" : "",
       "zdb" : ["021C:a", "021C:r"],
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
+      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"],
     },
     "order" : ["zdb"],
     "type" : "Title",
@@ -674,7 +674,7 @@
   },
   {
     "ygor" : "publicationTitle",
-    "display" : "021A:a",
+    "display" : "publication_title",
     "in" : {
       "kbart" : "publication_title",
       "zdb" : ["021A:a"],
@@ -683,7 +683,7 @@
     "out" : {
       "gokb" : ["$TITLE.name", "$TIPP.title.name"]
     },
-    "order" : ["zdb","kbart","ezb"],
+    "order" : ["kbart","zdb","ezb"],
     "type" : "Title",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
@@ -694,7 +694,7 @@
   },
   {
     "ygor" : "publicationTitleRamification",
-    "display" : "021C:l",
+    "display" : "Unterreihe (021C:l)",
     "in" : {
       "kbart" : "",
       "zdb" : ["021C:l"],
@@ -711,7 +711,7 @@
   },
   {
     "ygor" : "publicationTitleVariation",
-    "display" : "025@:a",
+    "display" : "Ansetzungssachtitel (025@:a)",
     "in" : {
       "kbart" : "",
       "zdb" : ["025@:a"],
@@ -754,7 +754,7 @@
   },
   {
     "ygor" : "publishedFrom",
-    "display" : "011@:a",
+    "display" : "Erscheinungszeitraum Startjahr (011@:a)",
     "in" : {
       "kbart" : "",
       "zdb" : "011@:a",
@@ -767,14 +767,14 @@
     "type" : "StartDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "publishedTo",
-    "display" : "011@:b",
+    "display" : "Erscheinungszeitraum Startjahr (011@:b)",
     "in" : {
       "kbart" : "",
       "zdb" : "011@:b",
@@ -787,14 +787,14 @@
     "type" : "EndDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "publisherHistoryEndDate",
-    "display" : "033A:h",
+    "display" : "Veröffentlichungsdatierung Ende (033A:h)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:h",
@@ -808,14 +808,14 @@
     "type" : "EndDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "publisherHistoryStartDate",
-    "display" : "033A:h",
+    "display" : "Veröffentlichungsdatierung Anfang (033A:h)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:h",
@@ -829,7 +829,7 @@
     "type" : "StartDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
@@ -856,7 +856,7 @@
   },
   {
     "ygor" : "publisherPlace",
-    "display" : "033A:p",
+    "display" : "Veröffentlichung Erscheinungsort (033A:p)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:p",
@@ -869,14 +869,14 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
   },
   {
     "ygor" : "shortcode",
-    "display" : "033A:p",
+    "display" : "Veröffentlichung Shortcode (033A:p)",
     "in" : {
       "kbart" : "",
       "zdb" : "033A:p",
@@ -889,7 +889,7 @@
     "type" : "String",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning"}],
       "missing" : [{"serial" : "ok", "monograph" : "ok"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning"}]
     }
@@ -925,7 +925,7 @@
     "out" : {
       "gokb" : ["$TIPP.url"]
     },
-    "order" : ["ezb","kbart"],
+    "order" : ["kbart","ezb"],
     "type" : "URL",
     "comment" : "The field name 'titleUrl' is misleading from the point of differentiating title vs. TIPP. In fact, it is a TIPP field.",
     "flags" : {
@@ -937,7 +937,7 @@
   },
   {
     "ygor" : "zdbId",
-    "display" : "006Z:0",
+    "display" : "ZDB-ID (006Z:0)",
     "in" : {
       "kbart" : "zdb_id",
       "zdb" : "006Z:0",
