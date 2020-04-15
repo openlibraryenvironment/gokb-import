@@ -35,7 +35,7 @@
     <g:set var="lineCounter" value="${0}"/>
     <g:set var="displayZDB" value="true"/>
 
-    <g:if test="${!(redRecords.isEmpty())}">
+    <g:if test="${redRecords != null && !(redRecords.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-red">
@@ -82,13 +82,12 @@
         </div>
     </g:if>
 
-    <g:if test="${displayZDB && !(yellowRecords.isEmpty())}">
+    <g:if test="${displayZDB && yellowRecords != null && !(yellowRecords.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-yellow">
                     <h3 class="panel-title">${yellowRecords.size} <g:message code="statistic.show.records.yellow"/></h3>
                 </div>
-
                 <div class="statistics-data">
                     <table id="yellow-records"class="statistics-details">
                         <thead><tr>
@@ -125,7 +124,7 @@
         </div>
     </g:if>
 
-    <g:if test="${!(greenRecords.isEmpty())}">
+    <g:if test="${greenRecords != null && !(greenRecords.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-green">

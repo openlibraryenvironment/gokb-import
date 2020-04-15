@@ -100,7 +100,8 @@ class StatisticController{
             String title = value.getAt(0)
             String uid = value.getAt(4)
             if (!(StringUtils.isEmpty(title)) && !(StringUtils.isEmpty(uid))){
-              value[0] = "<a href=\"/ygor/statistic/edit/".concat(uid).concat("?resultHash=").concat(resultHash).concat("\"/>")
+              value[0] = "<a href=\"/ygor/statistic/edit/".concat(uid).concat("?resultHash=").concat(resultHash)
+                  .concat("\">").concat(title).concat("</a>")
             }
           }
           if (value.size() > 1){
@@ -129,6 +130,9 @@ class StatisticController{
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
+            greenRecords  : greenRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
+            redRecords    : redRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName,
@@ -153,6 +157,9 @@ class StatisticController{
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
+            greenRecords  : greenRecords[resultHash],
+            yellowRecords : yellowRecords[resultHash],
+            redRecords    : redRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName,
