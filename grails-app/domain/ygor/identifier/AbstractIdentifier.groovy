@@ -36,6 +36,9 @@ class AbstractIdentifier {
 
 
   String toString() {
+    if (identifier == null){
+      return ""
+    }
     return this.getClass().getSimpleName().concat(" : ").concat(identifier)
   }
 

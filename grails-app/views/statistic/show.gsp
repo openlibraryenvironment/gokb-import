@@ -32,83 +32,46 @@
 </g:if>
 
 <div class="row">
-
+    <g:set var="lineCounter" value="${0}"/>
     <g:set var="displayZDB" value="true"/>
 
-    <div class="col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading-red">
-                <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.red"/></h3>
-            </div>
-
-            <div class="statistics-data">
-                <table class="statistics-details">
-                    <thead>
-                    <tr>
-                        <th>Title</th>
-                        <g:if test="${displayZDB}">
-                            <th>ZDB</th>
-                            <th>ZDB ID</th>
-                        </g:if>
-                        <th>eISSN</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <g:set var="lineCounter" value="${0}"/>
-                    <g:each in="${redRecords}" var="record">
-                        <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                            <td class="statistics-cell">
-                                <g:link action="edit" params="[resultHash: resultHash]"
-                                        id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
-                                        "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
-                            </td>
-                            <g:if test="${displayZDB}">
-                                <td><g:if test="${record.value.zdbIntegrationUrl}">
-                                    <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
-                                </g:if></td>
-                                <td class="statistics-cell">${record.value.zdbId}<br/></td>
-                            </g:if>
-                            <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
-                        </tr>
-                        <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                    </g:each>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <g:if test="${displayZDB}">
+    <g:if test="${!(redRecords.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
-                <div class="panel-heading-yellow">
-                    <h3 class="panel-title">${yellowRecords.size} <g:message code="statistic.show.records.yellow"/></h3>
+                <div class="panel-heading-red">
+                    <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.red"/></h3>
                 </div>
 
                 <div class="statistics-data">
-                    <table class="statistics-details">
-                        <thead>
-                        <tr>
+                    <table id="red-records" class="statistics-details">
+                        <thead><tr>
                             <th>Title</th>
-                            <th>ZDB</th>
-                            <th>ZDB ID</th>
+                            <g:if test="${displayZDB}">
+                                <th>ZDB</th>
+                                <th>ZDB ID</th>
+                            </g:if>
                             <th>eISSN</th>
-                        </tr>
-                        </thead>
+                        </tr></thead>
                         <tbody>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${yellowRecords}" var="record">
+                        <g:each in="${redRecords}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
-                                            "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
+                                            id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
+                                            "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
                                 </td>
-                                <td><g:if test="${record.value.zdbIntegrationUrl}">
-                                    <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
+                                <g:if test="${displayZDB}">
+                                    <td><g:if test="${record.value.getAt(1)}">
+                                        <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                    </g:if></td>
+                                    <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
+                                        ${record.value.getAt(2)}<br/>
+                                    </g:if></td>
+                                </g:if>
+                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
+                                    >${record.value.getAt(3)}<br/>
                                 </g:if></td>
-                                <td class="statistics-cell">${record.value.zdbId}<br/></td>
-                                <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
                         </g:each>
@@ -119,48 +82,92 @@
         </div>
     </g:if>
 
+    <g:if test="${displayZDB && !(yellowRecords.isEmpty())}">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading-yellow">
+                    <h3 class="panel-title">${yellowRecords.size} <g:message code="statistic.show.records.yellow"/></h3>
+                </div>
 
-    <div class="col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading-green">
-                <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.green"/></h3>
-            </div>
-
-            <div class="statistics-data">
-                <table class="statistics-details">
-                    <thead>
-                    <tr>
-                        <th>Title</th>
-                        <g:if test="${displayZDB}">
+                <div class="statistics-data">
+                    <table id="yellow-records"class="statistics-details">
+                        <thead><tr>
+                            <th>Title</th>
                             <th>ZDB</th>
                             <th>ZDB ID</th>
-                        </g:if>
-                        <th>eISSN</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <g:set var="lineCounter" value="${0}"/>
-                    <g:each in="${greenRecords}" var="record">
-                        <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                            <td class="statistics-cell">
-                            <g:link action="edit" params="[resultHash: resultHash]"
-                                    id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.displayTitle) ?
-                                    "<"+message(code: 'missing')+">" : record.value.displayTitle}</g:link>
-                            <g:if test="${displayZDB}">
-                                <td><g:if test="${record.value.zdbIntegrationUrl}">
-                                    <a href="${record.value.zdbIntegrationUrl}" class="link-icon"></a>
+                            <th>eISSN</th>
+                        </tr></thead>
+                        <tbody>
+                        <g:set var="lineCounter" value="${0}"/>
+                        <g:each in="${yellowRecords}" var="record">
+                            <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                                <td class="statistics-cell">
+                                    <g:link action="edit" params="[resultHash: resultHash]"
+                                            id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
+                                            "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                </td>
+                                <td><g:if test="${record.value.getAt(1)}">
+                                    <a href="${record.value.getAt(1)}" class="link-icon"></a>
                                 </g:if></td>
-                                <td class="statistics-cell">${record.value.zdbId}<br/></td>
-                            </g:if>
-                            <td class="statistics-cell">${record.value.onlineIdentifier}<br/></td>
-                        </tr>
-                        <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                    </g:each>
-                    </tbody>
-                </table>
+                                <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
+                                    ${record.value.getAt(2)}<br/>
+                                </g:if></td>
+                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
+                                    ${record.value.getAt(3)}<br/>
+                                </g:if></td>
+                            </tr>
+                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                        </g:each>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    </g:if>
+
+    <g:if test="${!(greenRecords.isEmpty())}">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading-green">
+                    <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.green"/></h3>
+                </div>
+
+                <div class="statistics-data">
+                    <table id="green-records" class="statistics-details">
+                        <thead><tr>
+                            <th>Title</th>
+                            <th>ZDB</th>
+                            <th>ZDB ID</th>
+                            <th>eISSN</th>
+                        </tr></thead>
+                        <tbody>
+                        <g:set var="lineCounter" value="${0}"/>
+                        <g:each in="${greenRecords}" var="record">
+                            <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                                <td class="statistics-cell">
+                                <g:link action="edit" params="[resultHash: resultHash]"
+                                        id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
+                                        "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                <g:if test="${displayZDB}">
+                                    <td><g:if test="${record.value.getAt(1)}">
+                                        <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                    </g:if></td>
+                                    <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
+                                        ${record.value.getAt(2)}<br/>
+                                    </g:if></td>
+                                </g:if>
+                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
+                                    ${record.value.getAt(3)}<br/>
+                                </g:if></td>
+                            </tr>
+                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                        </g:each>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </g:if>
 
     <g:form>
         <g:hiddenField name="originHash" value="${originHash}"/>
@@ -297,33 +304,77 @@
 
 <script>
     $(document).ready(function () {
-        $('.statistics-details').DataTable( {
-            processing: true,
-            serverSide: true,
-            length: 10,
+        $('#red-records').DataTable( {
             ajax: {
-                url: "/ygor/statistic/records"
+                url: "/ygor/statistic/records?resultHash=${resultHash}&colour=RED"
             },
-            columns: [
-                // to be done
-                // { data: "", name : "" , title : ""}
+            serverSide: true, stateSave: true, order: [1, "asc"], length: 10,
+            draw: 1,
+            language: {
+                lengthMenu: "${message(code: 'datatables.lengthMenu')}",
+                zeroRecords: "",
+                info: "${message(code: 'datatables.pageOfPages')}",
+                infoEmpty: "${message(code: 'datatables.noRecordsAvailable')}",
+                infoFiltered: "${message(code: 'datatables.filteredFromMax')}",
+                search: "${message(code: 'datatables.search')}",
+                paginate: {
+                    first: "${message(code: 'datatables.first')}",
+                    last: "${message(code: 'datatables.last')}",
+                    next: "${message(code: 'datatables.next')}",
+                    previous: "${message(code: 'datatables.previous')}"
+                }
+            },
+            "columns": [
+                { "type": "string" }, { "type": "html" }, { "type": "string" }, { "type": "string" }
             ]
         });
-        $(".statistics-details").dataTable({
-            "language": {
-                "lengthMenu": "${message(code: 'datatables.lengthMenu')}",
-                "zeroRecords": "",
-                "info": "${message(code: 'datatables.pageOfPages')}",
-                "infoEmpty": "${message(code: 'datatables.noRecordsAvailable')}",
-                "infoFiltered": "${message(code: 'datatables.filteredFromMax')}",
-                "search": "${message(code: 'datatables.search')}",
-                "paginate": {
-                    "first": "${message(code: 'datatables.first')}",
-                    "last": "${message(code: 'datatables.last')}",
-                    "next": "${message(code: 'datatables.next')}",
-                    "previous": "${message(code: 'datatables.previous')}"
+        $('#yellow-records').DataTable( {
+            ajax: {
+                url: "/ygor/statistic/records?resultHash=${resultHash}&colour=YELLOW"
+            },
+            serverSide: true, stateSave: true, order: [1, "asc"], length: 10,
+            draw: 1,
+            language: {
+                lengthMenu: "${message(code: 'datatables.lengthMenu')}",
+                zeroRecords: "",
+                info: "${message(code: 'datatables.pageOfPages')}",
+                infoEmpty: "${message(code: 'datatables.noRecordsAvailable')}",
+                infoFiltered: "${message(code: 'datatables.filteredFromMax')}",
+                search: "${message(code: 'datatables.search')}",
+                paginate: {
+                    first: "${message(code: 'datatables.first')}",
+                    last: "${message(code: 'datatables.last')}",
+                    next: "${message(code: 'datatables.next')}",
+                    previous: "${message(code: 'datatables.previous')}"
                 }
-            }
+            },
+            "columns": [
+                { "type": "html" }, { "type": "html" }, { "type": "string" }, { "type": "string" }
+            ]
+        });
+        $('#green-records').dataTable( {
+            ajax: {
+                url: "/ygor/statistic/records?resultHash=${resultHash}&colour=GREEN"
+            },
+            serverSide: true, stateSave: true, order: [1, "asc"], length: 10,
+            draw: 1,
+            language: {
+                lengthMenu: "${message(code: 'datatables.lengthMenu')}",
+                zeroRecords: "",
+                info: "${message(code: 'datatables.pageOfPages')}",
+                infoEmpty: "${message(code: 'datatables.noRecordsAvailable')}",
+                infoFiltered: "${message(code: 'datatables.filteredFromMax')}",
+                search: "${message(code: 'datatables.search')}",
+                paginate: {
+                    first: "${message(code: 'datatables.first')}",
+                    last: "${message(code: 'datatables.last')}",
+                    next: "${message(code: 'datatables.next')}",
+                    previous: "${message(code: 'datatables.previous')}"
+                }
+            },
+            "columns": [
+                { "type": "string" }, { "type": "html" }, { "type": "string" }, { "type": "string" }
+            ]
         });
     });
 </script>

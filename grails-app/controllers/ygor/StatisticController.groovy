@@ -1,5 +1,6 @@
 package ygor
 
+import com.google.gson.Gson
 import de.hbznrw.ygor.tools.FileToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
@@ -71,35 +72,48 @@ class StatisticController{
   def records(){
     String resultHash = request.parameterMap.resultHash[0]
     String colour = request.parameterMap.colour[0]
-    String pageIndex = request.parameterMap.pageIndex[0]
-    String size = request.parameterMap.size[0]
+    int pageIndex = Integer.valueOf(request.parameterMap.start[0])
+    int size = Integer.valueOf(request.parameterMap.length[0])
+    int draw = Integer.valueOf(request.parameterMap.draw[0])
     Map records
     switch (colour){
-      case RecordFlag.Colour.RED:
+      case RecordFlag.Colour.RED.toString():
         records = redRecords[resultHash]
         break
-      case RecordFlag.Colour.YELLOW:
+      case RecordFlag.Colour.YELLOW.toString():
         records = yellowRecords[resultHash]
         break
-      case RecordFlag.Colour.GREEN:
+      case RecordFlag.Colour.GREEN.toString():
         records = greenRecords[resultHash]
         break
       default:
         records = null
     }
     List resultData = []
-    int from = pageIndex * size
-    int to = (pageIndex+1) * size
-    records.eachWithIndex{TreeMap.Entry<String, Map<String, String>> entry, int i ->
-      if (i >= from && i < to){
-        resultData.add(entry.value)
+    if (records != null){
+      int from = pageIndex
+      int to = pageIndex + size
+      records.eachWithIndex{TreeMap.Entry<String, Map<String, String>> entry, int i ->
+        if (i >= from && i < to){
+          def value = entry.value
+          if (value.size() > 4){
+            String title = value.getAt(0)
+            String uid = value.getAt(4)
+            if (!(StringUtils.isEmpty(title)) && !(StringUtils.isEmpty(uid))){
+              value[0] = "<a href=\"/ygor/statistic/edit/".concat(uid).concat("?resultHash=").concat(resultHash).concat("\"/>")
+            }
+          }
+          if (value.size() > 1){
+            String linkValue = value.getAt(1)
+            if (!(StringUtils.isEmpty(linkValue))){
+              value[1] = "<a class=\"link-icon\" href=\"".concat(linkValue).concat("\"/>")
+            }
+          }
+          resultData.add(value)
+        }
       }
     }
-    render(
-      model: [
-        records : resultData
-      ]
-    )
+    render "{\"recordsTotal\":${records.size()},\"recordsFiltered\":${records.size()},\"draw\":${pageIndex},\"data\":".concat(new Gson().toJson(resultData)).concat("}")
   }
 
 
@@ -192,7 +206,13 @@ class StatisticController{
 
   synchronized private void classifyRecord(Record record){
     String key = record.displayTitle.concat(record.uid)
-    List<String> values = [record.displayTitle, record.zdbIntegrationUrl, record.zdbId, record.onlineIdentifier]
+    List<String> values = [
+        valOrEmpty(record.displayTitle),
+        valOrEmpty(record.zdbIntegrationUrl),
+        valOrEmpty(record.zdbId),
+        valOrEmpty(record.onlineIdentifier),
+        valOrEmpty(record.uid)
+    ]
     if (record.isValid()){
       if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
           record.duplicates.isEmpty() &&
@@ -213,6 +233,14 @@ class StatisticController{
       yellowRecords[params['resultHash']].remove(key)
       greenRecords[params['resultHash']].remove(key)
     }
+  }
+
+
+  private String valOrEmpty(def val){
+    if (val == null || val.equals("null")){
+      return ""
+    }
+    return val.toString()
   }
 
 
