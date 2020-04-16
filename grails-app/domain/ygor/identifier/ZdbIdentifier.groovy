@@ -4,6 +4,8 @@ import ygor.field.FieldKeyMapping
 
 class ZdbIdentifier extends AbstractIdentifier {
 
+  static mapWith = "none" // disable persisting into database
+
   static constraints = {
     // TODO: check ZdbID format
   }

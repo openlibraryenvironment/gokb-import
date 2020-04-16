@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonGenerator
 
 class Field {
 
+  static mapWith = "none" // disable persisting into database
+
   String source
   String key
   int index

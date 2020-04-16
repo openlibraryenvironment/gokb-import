@@ -8,6 +8,8 @@ import java.util.regex.Pattern
 
 class AbstractIdentifier {
 
+  static mapWith = "none" // disable persisting into database
+
   String identifier
   FieldKeyMapping fieldKeyMapping
   String kbartKey
@@ -36,6 +38,9 @@ class AbstractIdentifier {
 
 
   String toString() {
+    if (identifier == null){
+      return ""
+    }
     return this.getClass().getSimpleName().concat(" : ").concat(identifier)
   }
 

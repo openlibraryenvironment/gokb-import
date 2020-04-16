@@ -13,6 +13,8 @@ import ygor.identifier.ZdbIdentifier
 @Log4j
 class MappingsContainer {
 
+  static mapWith = "none" // disable persisting into database
+
   final public static String YGOR = "ygor"
   final public static String KBART = "kbart"
   final public static String ZDB = "zdb"

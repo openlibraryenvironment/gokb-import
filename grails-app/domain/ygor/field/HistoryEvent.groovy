@@ -10,6 +10,8 @@ import ygor.Record
 
 class HistoryEvent {
 
+  static mapWith = "none" // disable persisting into database
+
   // fields from ZDB API:
   // historyEventDate     : 039E:H --> GOKb: "$TITLE.historyEvents.$ARRAY.$COUNT.date"
   // historyEventRelationType : 039E:b --> GOKb:

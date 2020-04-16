@@ -30,6 +30,8 @@ import java.util.zip.ZipInputStream
 
 class Enrichment{
 
+  static mapWith = "none" // disable persisting into database
+
   static enum FileType {
     ORIGIN,
     RESULT,

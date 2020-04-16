@@ -23,6 +23,8 @@ import ygor.identifier.*
 
 class Record{
 
+  static mapWith = "none" // disable persisting into database
+
   static ObjectMapper MAPPER = new ObjectMapper()
   static List<String> GOKB_FIELD_ORDER = []
   static {
@@ -342,29 +344,6 @@ class Record{
     jsonGenerator.writeEndObject()
     jsonGenerator.close()
     writer.toString()
-  }
-
-
-  Map<String, String> asMultiFieldMap() {
-    Map<String, String> result = [:]
-    result.put("uid", uid)
-    if (ezbIntegrationDate) {
-      result.put("ezbIntegrationDate", ezbIntegrationDate)
-    }
-    if (ezbIntegrationUrl) {
-      result.put("ezbIntegrationUrl", ezbIntegrationUrl)
-    }
-    if (zdbIntegrationDate) {
-      result.put("zdbIntegrationDate", zdbIntegrationDate)
-    }
-    if (zdbIntegrationUrl) {
-      result.put("zdbIntegrationUrl", zdbIntegrationUrl)
-    }
-    for (def multiField in multiFields) {
-      result.put(multiField.key, multiField.value.getFirstPrioValue())
-    }
-    result.put("displayTitle", this.getDisplayTitle())
-    result
   }
 
 
