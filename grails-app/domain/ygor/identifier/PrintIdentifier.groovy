@@ -4,6 +4,8 @@ import ygor.field.FieldKeyMapping
 
 class PrintIdentifier extends AbstractIdentifier {
 
+  static mapWith = "none" // disable persisting into database
+
   static constraints = {
     fieldKeyMapping nullable: false
 

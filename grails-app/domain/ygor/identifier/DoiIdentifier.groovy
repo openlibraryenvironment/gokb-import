@@ -4,6 +4,8 @@ import ygor.field.FieldKeyMapping
 
 class DoiIdentifier extends AbstractIdentifier {
 
+  static mapWith = "none" // disable persisting into database
+
   static constraints = {
     fieldKeyMapping nullable: false
 

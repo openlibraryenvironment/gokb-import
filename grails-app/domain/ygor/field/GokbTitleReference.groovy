@@ -16,6 +16,9 @@ import ygor.identifier.ZdbIdentifier
 
 
 class GokbTitleReference{
+
+  static mapWith = "none" // disable persisting into database
+
   ZdbIdentifier zdbId
   EzbIdentifier ezbId
   DoiIdentifier doiIdentifier

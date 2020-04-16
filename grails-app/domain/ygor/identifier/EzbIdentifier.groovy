@@ -4,6 +4,8 @@ import ygor.field.FieldKeyMapping
 
 class EzbIdentifier extends AbstractIdentifier {
 
+  static mapWith = "none" // disable persisting into database
+
   static constraints = {
   }
 

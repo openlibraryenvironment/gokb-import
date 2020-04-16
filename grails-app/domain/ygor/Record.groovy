@@ -23,6 +23,8 @@ import ygor.identifier.*
 
 class Record{
 
+  static mapWith = "none" // disable persisting into database
+
   static ObjectMapper MAPPER = new ObjectMapper()
   static List<String> GOKB_FIELD_ORDER = []
   static {

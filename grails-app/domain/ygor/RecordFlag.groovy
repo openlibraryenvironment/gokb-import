@@ -8,6 +8,8 @@ import ygor.field.FieldKeyMapping
 
 class RecordFlag{
 
+  static mapWith = "none" // disable persisting into database
+
   Status status
   Colour colour
   String text

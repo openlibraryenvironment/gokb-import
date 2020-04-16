@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils
 
 class FieldKeyMapping {
 
+  static mapWith = "none" // disable persisting into database
+
   final static ObjectMapper MAPPER = new ObjectMapper()
   String ygorKey
   String displayName

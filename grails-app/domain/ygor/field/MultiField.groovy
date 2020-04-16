@@ -14,6 +14,8 @@ import java.util.regex.Pattern
 
 class MultiField {
 
+  static mapWith = "none" // disable persisting into database
+
   String ygorFieldKey
   String displayName
   FieldKeyMapping keyMapping          // TODO: keep in MappingsContainer only and access by ygorFieldKey (?)
