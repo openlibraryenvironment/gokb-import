@@ -80,7 +80,7 @@ class Enrichment{
     originPathName = this.sessionFolder.getPath() + File.separator + originHash
     resultHash = FileToolkit.getMD5Hash(originName + Math.random())
     resultPathName = sessionFolder.getPath() + File.separator + resultHash
-    dataContainer = new DataContainer(sessionFolder)
+    dataContainer = new DataContainer(sessionFolder, resultPathName)
   }
 
 
