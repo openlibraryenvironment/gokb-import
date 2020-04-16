@@ -31,6 +31,10 @@ class Record{
     MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
     GOKB_FIELD_ORDER.addAll(new JsonSlurper().parseText(new ClassPathResource("/resources/GokbOutputFieldOrder.json").file.text))
   }
+  static JsonFactory JSON_FACTORY = new JsonFactory()
+  static{
+    JSON_FACTORY.enable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+  }
 
   String uid
   ZdbIdentifier zdbId
@@ -421,4 +425,18 @@ class Record{
     result
   }
 
+
+  void save(File resultFolder){
+    JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(new StringWriter())
+    File targetFile = new File(resultFolder.toString().concat("_").concat(uid))
+    PrintWriter writer = new PrintWriter(targetFile, "UTF-8")
+    writer.println(this.asJson(jsonGenerator))
+    writer.close()
+    jsonGenerator.close()
+  }
+
+
+  static Record load(File resultFolder, String uid, MappingsContainer mappings){
+    return fromJson(JsonToolkit.jsonNodeFromFile(new File(resultFolder.toString().concat("_").concat(uid))), mappings)
+  }
 }

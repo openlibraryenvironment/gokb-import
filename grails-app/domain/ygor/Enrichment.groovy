@@ -80,7 +80,8 @@ class Enrichment{
     originPathName = this.sessionFolder.getPath() + File.separator + originHash
     resultHash = FileToolkit.getMD5Hash(originName + Math.random())
     resultPathName = sessionFolder.getPath() + File.separator + resultHash
-    dataContainer = new DataContainer(sessionFolder, resultPathName)
+    mappingsContainer = new MappingsContainer()
+    dataContainer = new DataContainer(sessionFolder, resultPathName, mappingsContainer)
   }
 
 
@@ -91,7 +92,6 @@ class Enrichment{
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
 
-    mappingsContainer = new MappingsContainer()
     thread = new MultipleProcessingThread(this, options, kbartReader)
     date = LocalDateTime.now().toString()
     thread.start()
@@ -325,7 +325,8 @@ class Enrichment{
 
   void enrollMappingToRecords(FieldKeyMapping mapping){
     MultiField multiField = new MultiField(mapping)
-    for (Record record in dataContainer.records.values()){
+    for (String recId in dataContainer.records){
+      Record record = Record.load(resultPathName, recId, mappingsContainer)
       multiField.validate(dataContainer.info.namespace_title_id)
       record.addMultiField(multiField)
     }

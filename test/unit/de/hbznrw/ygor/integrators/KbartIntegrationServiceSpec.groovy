@@ -23,7 +23,7 @@ class KbartIntegrationServiceSpec /*extends HibernateSpec implements ServiceUnit
 
   def setup() {
     kbartFileSimple = "test/resources/KbartIntegrationServiceSpec.kbartFileSimple.csv"
-    data = new DataContainer(new File("foo").mkdirs(), "resultHashDummy") // parameters to be specified
+    data = new DataContainer(new File("foo").mkdirs(), "resultHashDummy", null) // parameters to be specified
     container = new MappingsContainer()
     configuration = new KbartReaderConfiguration("comma", null, null, null)
     true

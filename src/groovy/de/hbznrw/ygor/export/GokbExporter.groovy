@@ -62,7 +62,8 @@ class GokbExporter {
   static ArrayNode extractTitles(Enrichment enrichment) {
     log.debug("extracting titles ...")
     ArrayNode titles = new ArrayNode(NODE_FACTORY)
-    for (Record record in enrichment.dataContainer.records.values()) {
+    for (String recId in enrichment.dataContainer.records){
+      Record record = Record.load(enrichment.dataContainer.resultFolder, recId, enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
         record.deriveHistoryEventObjects(enrichment)
         ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
@@ -84,7 +85,8 @@ class GokbExporter {
   static ArrayNode extractTipps(Enrichment enrichment) {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
-    for (Record record in enrichment.dataContainer.records.values()) {
+    for (String recId in enrichment.dataContainer.records) {
+      Record record = Record.load(enrichment.resultPathName, recId, enrichment.mappingsContainer)
       if (record.isValid()){
         ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
         tipp = postProcessIssnIsbn(tipp, record, FileType.JSON_PACKAGE_ONLY)

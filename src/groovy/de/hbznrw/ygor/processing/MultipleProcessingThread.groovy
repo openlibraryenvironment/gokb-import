@@ -9,7 +9,6 @@ import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
 import groovy.util.logging.Log4j
 import ygor.Enrichment
-import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.identifier.OnlineIdentifier

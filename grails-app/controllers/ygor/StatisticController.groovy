@@ -284,7 +284,8 @@ class StatisticController{
       return
     }
     String namespace = enrichment.dataContainer.info.namespace_title_id
-    for (Record record in enrichment.dataContainer.records.values()){
+    for (String recId in enrichment.dataContainer.records){
+      Record record = Record.load(enrichment.resultPathName, recId, enrichment.mappingsContainer)
       record.normalize(namespace)
       record.validate(namespace)
       classifyRecord(record)
