@@ -1,7 +1,6 @@
 package de.hbznrw.ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
-import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
@@ -24,7 +23,7 @@ class KbartIntegrationServiceSpec /*extends HibernateSpec implements ServiceUnit
 
   def setup() {
     kbartFileSimple = "test/resources/KbartIntegrationServiceSpec.kbartFileSimple.csv"
-    data = new DataContainer()
+    data = new DataContainer(new File("foo").mkdirs()) // to be specified
     container = new MappingsContainer()
     configuration = new KbartReaderConfiguration("comma", null, null, null)
     true

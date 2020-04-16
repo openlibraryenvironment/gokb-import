@@ -31,9 +31,14 @@ class DataContainer {
   ArrayNode titles
   ArrayNode tipps
   String curatoryGroup
+  File sessionFolder
 
 
-  DataContainer() {
+  DataContainer(File sessionFolder) {
+    if (!sessionFolder.isDirectory()){
+      throw new IOException("Could not read from record directory.")
+    }
+    this.sessionFolder = sessionFolder
     info = new Meta(
         date: new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),
         api: [],
@@ -79,10 +84,7 @@ class DataContainer {
 
 
   static DataContainer fromJson(File sessionFolder, String resultHash, MappingsContainer mappings) throws IOException{
-    DataContainer result = new DataContainer()
-    if (!sessionFolder.isDirectory()){
-      throw new IOException("Could not read from record directory.")
-    }
+    DataContainer result = new DataContainer(sessionFolder)
     for (File file : sessionFolder.listFiles(new RecordFileFilter(resultHash))) {
       Record rec = Record.fromJson(JsonToolkit.jsonNodeFromFile(file), mappings)
       result.records.put(rec.uid, rec)
