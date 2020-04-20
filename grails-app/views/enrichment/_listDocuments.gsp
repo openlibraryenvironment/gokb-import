@@ -4,7 +4,6 @@
         import="ygor.Enrichment"
         import="ygor.GokbService"
         import="de.hbznrw.ygor.export.structure.TitleStruct"
-        import="de.hbznrw.ygor.export.structure.PackageStruct"
         import="de.hbznrw.ygor.readers.*"
 %>
 

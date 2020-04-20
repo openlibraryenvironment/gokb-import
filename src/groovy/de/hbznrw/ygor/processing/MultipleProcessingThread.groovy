@@ -118,7 +118,7 @@ class MultipleProcessingThread extends Thread {
     // to enrichment.stats
 
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
-    enrichment.saveResult()
+    enrichment.save()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
   }
 

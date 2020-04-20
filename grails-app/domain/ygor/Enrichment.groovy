@@ -141,9 +141,9 @@ class Enrichment{
   }
 
 
-  void saveResult(){
+  void save(){
     StringWriter result = new StringWriter()
-    result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
+    result.append("{\"sessionFolder\":\"").append(sessionFolder.absolusavetePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
     result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
     result.append("\"date\":\"").append(date).append("\",")
@@ -181,14 +181,14 @@ class Enrichment{
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
     result.append("}}")
-    File file = new File(resultPathName)
+    File file = new File(resultPathName.concat(File.separator).concat(resultHash))
     file.getParentFile().mkdirs()
     file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
 
     // write records into separate files named <resultHash>_<recordUid>
     for (def record in dataContainer.records){
-      new File(resultPathName.concat("_").concat(record.key))
-              .write(JsonOutput.prettyPrint(JsonToolkit.toJson(record.value)), "UTF-8")
+      new File(resultPathName.concat("_").concat(record))
+              .write(JsonOutput.prettyPrint(JsonToolkit.toJson(record)), "UTF-8")
     }
   }
 

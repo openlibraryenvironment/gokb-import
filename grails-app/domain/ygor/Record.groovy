@@ -90,6 +90,9 @@ class Record{
 
 
   void addIdentifier(AbstractIdentifier identifier) {
+    if (identifier.identifier == null){
+      return
+    }
     if (identifier instanceof ZdbIdentifier) {
       if (zdbId && identifier.identifier.replaceAll("x", "X") != zdbId.identifier.replaceAll("x", "X")) {
         throw new IllegalArgumentException("${identifier} already set to ${zdbId} for record")
@@ -206,7 +209,6 @@ class Record{
 
   void validate(String namespace) {
     this.validateMultifields(namespace)
-    publicationType = multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
     RecordValidator.validateCoverage(this)
     RecordValidator.validateHistoryEvent(this)
     RecordValidator.validatePublisherHistory(this)
@@ -427,16 +429,19 @@ class Record{
 
 
   void save(File resultFolder){
-    JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(new StringWriter())
+    StringWriter stringWriter = new StringWriter()
+    JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(stringWriter)
     File targetFile = new File(resultFolder.toString().concat("_").concat(uid))
-    PrintWriter writer = new PrintWriter(targetFile, "UTF-8")
-    writer.println(this.asJson(jsonGenerator))
-    writer.close()
+    this.asJson(jsonGenerator)
     jsonGenerator.close()
+    PrintWriter printWriter = new PrintWriter(targetFile, "UTF-8")
+    printWriter.println(stringWriter.toString())
+    printWriter.close()
+    stringWriter.close()
   }
 
 
-  static Record load(File resultFolder, String uid, MappingsContainer mappings){
-    return fromJson(JsonToolkit.jsonNodeFromFile(new File(resultFolder.toString().concat("_").concat(uid))), mappings)
+  static Record load(String resultPathName, String uid, MappingsContainer mappings){
+    return fromJson(JsonToolkit.jsonNodeFromFile(new File(resultPathName.concat("_").concat(uid))), mappings)
   }
 }

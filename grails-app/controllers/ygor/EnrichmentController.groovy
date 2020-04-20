@@ -195,7 +195,7 @@ class EnrichmentController{
     }
     Statistics.getRecordsStatisticsBeforeParsing(enrichment)
     enrichment.setCurrentSession()
-    enrichment.saveResult()
+    enrichment.save()
 
     redirect(
         controller: 'Statistic',

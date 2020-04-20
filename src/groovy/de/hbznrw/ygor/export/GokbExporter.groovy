@@ -42,7 +42,7 @@ class GokbExporter {
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
       case FileType.JSON_OO_RAW:
-        enrichment.saveResult()
+        enrichment.save()
         return new File(enrichment.resultPathName)
     }
     return null
@@ -63,7 +63,7 @@ class GokbExporter {
     log.debug("extracting titles ...")
     ArrayNode titles = new ArrayNode(NODE_FACTORY)
     for (String recId in enrichment.dataContainer.records){
-      Record record = Record.load(enrichment.dataContainer.resultFolder, recId, enrichment.dataContainer.mappingsContainer)
+      Record record = Record.load(enrichment.dataContainer.resultFolder.toString(), recId, enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
         record.deriveHistoryEventObjects(enrichment)
         ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)

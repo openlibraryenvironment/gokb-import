@@ -74,7 +74,7 @@ class DataContainer {
     }
     try {
       if (id instanceof String && UUID.fromString(id)){
-        return Record.load(resultFolder, id, mappingsContainer)
+        return Record.load(resultFolder.toString(), id, mappingsContainer)
       }
     }
     catch(IllegalArgumentException iae) {
@@ -86,7 +86,7 @@ class DataContainer {
 
   void validateRecords() {
     for (String recId in records) {
-      Record record = Record.load(resultFolder, recId, mappingsContainer)
+      Record record = Record.load(resultFolder.toString(), recId, mappingsContainer)
       record.validate(info.namespace_title_id)
     }
   }
@@ -108,7 +108,7 @@ class DataContainer {
      */
     if (identifier instanceof ZdbIdentifier){
       for (String recId in records){
-        Record record = Record.load(resultFolder, recId, mappingsContainer)
+        Record record = Record.load(resultFolder.toString(), recId, mappingsContainer)
         if (identifier.identifier.equals(record.zdbId?.identifier)){
           return record
         }
@@ -164,7 +164,7 @@ class DataContainer {
 
   void sortAllRecordsPerId(){
     for (String recId in records){
-      Record rec = Record.load(resultFolder, recId, mappingsContainer)
+      Record rec = Record.load(resultFolder.toString(), recId, mappingsContainer)
       if (rec.zdbId.identifier){
         addRecordToIdSortation(rec.zdbId, rec)
       }
