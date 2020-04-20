@@ -144,6 +144,7 @@ class DataContainer {
 
 
   void sortAllRecordsPerId(){
+    recordsPerId = [:]
     for (Record rec in records.values()){
       if (rec.zdbId.identifier){
         addRecordToIdSortation(rec.zdbId, rec)
@@ -171,5 +172,17 @@ class DataContainer {
       recordsPerId.put(id, recordList)
     }
     recordList.add(record)
+  }
+
+
+  void removeRecordFromIdSortation(AbstractIdentifier id, Record record){
+    Set<Record> recordList = recordsPerId.get(id)
+    if (recordList == null){
+      return
+    }
+    recordList.remove(record)
+    if (recordList.isEmpty()){
+      recordsPerId.remove(id)
+    }
   }
 }
