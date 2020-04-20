@@ -96,7 +96,7 @@ class DataContainer {
     DataContainer result = new DataContainer(sessionFolder, resultHash, mappings)
     for (File file : sessionFolder.listFiles(new RecordFileFilter(resultHash))) {
       Record rec = Record.fromJson(JsonToolkit.jsonNodeFromFile(file), mappings)
-      result.records.put(rec.uid, rec)
+      result.records.add(rec.uid)
     }
     result
   }
@@ -164,20 +164,20 @@ class DataContainer {
 
   void sortAllRecordsPerId(){
     for (String recId in records){
-      Record rec = Record.load(resultFolder.toString(), recId, mappingsContainer)
-      if (rec.zdbId.identifier){
+      Record rec = Record.load(sessionFolder.toString().concat(File.separator).concat(resultFolder.toString()), recId, mappingsContainer)
+      if (rec.zdbId?.identifier){
         addRecordToIdSortation(rec.zdbId, rec)
       }
-      if (rec.ezbId.identifier){
+      if (rec.ezbId?.identifier){
         addRecordToIdSortation(rec.ezbId, rec)
       }
-      if (rec.doiId.identifier){
+      if (rec.doiId?.identifier){
         addRecordToIdSortation(rec.doiId, rec)
       }
-      if (rec.onlineIdentifier.identifier){
+      if (rec.onlineIdentifier?.identifier){
         addRecordToIdSortation(rec.onlineIdentifier, rec)
       }
-      if (rec.printIdentifier.identifier){
+      if (rec.printIdentifier?.identifier){
         addRecordToIdSortation(rec.printIdentifier, rec)
       }
     }

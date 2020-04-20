@@ -265,9 +265,15 @@ class StatisticController{
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
         if (file.getName() == resultHash){
-          Enrichment enrichment = Enrichment.fromJsonFile(file)
-          enrichmentService.addSessionEnrichment(enrichment)
-          return enrichment
+          if (file.isDirectory()){
+            for (def innerFile in file.listFiles()){
+              if (innerFile.getName() == resultHash){
+                Enrichment enrichment = Enrichment.fromJsonFile(innerFile)
+                enrichmentService.addSessionEnrichment(enrichment)
+                return enrichment
+              }
+            }
+          }
         }
       }
     }
