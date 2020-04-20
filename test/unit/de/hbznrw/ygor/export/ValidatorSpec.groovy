@@ -86,19 +86,12 @@ class ValidatorSpec extends Specification {
 
     where:
     raw1           | raw2                 | result
-    "1234-5678"    | TitleStruct.EISSN    | Status.IDENTIFIER_IS_VALID
-    "12345-678"    | TitleStruct.EISSN    | Status.IDENTIFIER_IS_INVALID
-    "12345678"     | TitleStruct.EISSN    | Status.IDENTIFIER_IS_INVALID
-    "1234-56789"   | TitleStruct.EISSN    | Status.IDENTIFIER_IS_INVALID
-    "1234-56X"     | TitleStruct.ISSN     | Status.IDENTIFIER_IS_INVALID
-    "1234-567X"    | TitleStruct.ISSN     | Status.IDENTIFIER_IS_VALID
     "1234-X"       | ZdbReader.IDENTIFIER | Status.IDENTIFIER_IS_VALID
     "1234-5X"      | ZdbReader.IDENTIFIER | Status.IDENTIFIER_IS_INVALID
     "1234678910-X" | ZdbReader.IDENTIFIER | Status.IDENTIFIER_IS_VALID
     "23"           | EzbReader.IDENTIFIER | Status.IDENTIFIER_IS_INVALID
     "1234254"      | EzbReader.IDENTIFIER | Status.IDENTIFIER_IS_VALID
     "1234678910-X" | "unkown identifier"  | Status.IDENTIFIER_IN_UNKNOWN_STATE
-    ""             | TitleStruct.EISSN    | Status.IDENTIFIER_IS_MISSING
     null           | EzbReader.IDENTIFIER | Status.IDENTIFIER_IS_MISSING
   }
 
