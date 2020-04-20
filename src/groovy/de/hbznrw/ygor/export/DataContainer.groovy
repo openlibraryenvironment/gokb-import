@@ -146,21 +146,26 @@ class DataContainer {
   void sortAllRecordsPerId(){
     recordsPerId = [:]
     for (Record rec in records.values()){
-      if (rec.zdbId.identifier){
-        addRecordToIdSortation(rec.zdbId, rec)
-      }
-      if (rec.ezbId.identifier){
-        addRecordToIdSortation(rec.ezbId, rec)
-      }
-      if (rec.doiId.identifier){
-        addRecordToIdSortation(rec.doiId, rec)
-      }
-      if (rec.onlineIdentifier.identifier){
-        addRecordToIdSortation(rec.onlineIdentifier, rec)
-      }
-      if (rec.printIdentifier.identifier){
-        addRecordToIdSortation(rec.printIdentifier, rec)
-      }
+      sortRecordPerId(rec)
+    }
+  }
+
+
+  private void sortRecordPerId(Record rec){
+    if (rec.zdbId.identifier){
+      addRecordToIdSortation(rec.zdbId, rec)
+    }
+    if (rec.ezbId.identifier){
+      addRecordToIdSortation(rec.ezbId, rec)
+    }
+    if (rec.doiId.identifier){
+      addRecordToIdSortation(rec.doiId, rec)
+    }
+    if (rec.onlineIdentifier.identifier){
+      addRecordToIdSortation(rec.onlineIdentifier, rec)
+    }
+    if (rec.printIdentifier.identifier){
+      addRecordToIdSortation(rec.printIdentifier, rec)
     }
   }
 

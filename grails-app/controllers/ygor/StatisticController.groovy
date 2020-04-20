@@ -4,7 +4,16 @@ import com.google.gson.Gson
 import de.hbznrw.ygor.tools.FileToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
+import ygor.field.FieldKeyMapping
+import ygor.field.MappingsContainer
 import ygor.field.MultiField
+import ygor.identifier.AbstractIdentifier
+import ygor.identifier.DoiIdentifier
+import ygor.identifier.EzbIdentifier
+import ygor.identifier.OnlineIdentifier
+import ygor.identifier.PrintIdentifier
+import ygor.identifier.ZdbIdentifier
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -21,9 +30,6 @@ class StatisticController{
 
   def grailsApplication
   EnrichmentService enrichmentService
-  Map<String, Map<String, List<String>>> greenRecords = new HashMap<>()
-  Map<String, Map<String, List<String>>> yellowRecords = new HashMap<>()
-  Map<String, Map<String, List<String>>> redRecords = new HashMap<>()
 
   def index(){
     render(
@@ -37,18 +43,6 @@ class StatisticController{
     String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
-    try{
-      if (enrichment){
-        classifyAllRecords(resultHash)
-      }
-      else{
-        throw new EmptyStackException()
-      }
-    }
-    catch (Exception e){
-      log.error(e.getMessage())
-      log.error(e.getStackTrace())
-    }
     render(
         view: 'show',
         model: [
@@ -58,9 +52,9 @@ class StatisticController{
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName,
-            greenRecords  : greenRecords[resultHash],
-            yellowRecords : yellowRecords[resultHash],
-            redRecords    : redRecords[resultHash],
+            greenRecords  : enrichment.greenRecords,
+            yellowRecords : enrichment.yellowRecords,
+            redRecords    : enrichment.redRecords,
             status        : enrichment.status,
             packageName   : enrichment.packageName
         ]
@@ -75,15 +69,16 @@ class StatisticController{
     int size = Integer.valueOf(request.parameterMap.length[0])
     int draw = Integer.valueOf(request.parameterMap.draw[0])
     Map records
+    Enrichment enrichment = getCurrentEnrichment()
     switch (colour){
       case RecordFlag.Colour.RED.toString():
-        records = redRecords[resultHash]
+        records = enrichment.redRecords
         break
       case RecordFlag.Colour.YELLOW.toString():
-        records = yellowRecords[resultHash]
+        records = enrichment.yellowRecords
         break
       case RecordFlag.Colour.GREEN.toString():
-        records = greenRecords[resultHash]
+        records = enrichment.greenRecords
         break
       default:
         records = null
@@ -123,15 +118,15 @@ class StatisticController{
     Enrichment enrichment = getEnrichment(resultHash)
 
     Record record = enrichment.dataContainer.getRecord(params['record.uid'])
-    classifyRecord(record)
+    enrichment.classifyRecord(record)
     render(
         view: 'show',
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
-            greenRecords  : greenRecords[resultHash],
-            yellowRecords : yellowRecords[resultHash],
-            redRecords    : redRecords[resultHash],
+            greenRecords  : enrichment.greenRecords,
+            yellowRecords : enrichment.yellowRecords,
+            redRecords    : enrichment.redRecords,
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName,
@@ -147,24 +142,56 @@ class StatisticController{
     Enrichment enrichment = getEnrichment(resultHash)
     Record record = enrichment.dataContainer.records[params['record.uid']]
     for (def field in params['fieldschanged']){
-      record.multiFields.get(field.key).revised = field.value
+      MultiField multiField = record.multiFields.get(field.key)
+      FieldKeyMapping fkm = enrichment.mappingsContainer.getMapping(field.key, MappingsContainer.YGOR)
+      switch (field.key){
+        case ZdbIdentifier.fieldKeyMapping.ygorKey:
+          upsertRecordIdentifier(record.zdbId, ZdbIdentifier.class, fkm, field.value)
+          break
+        case EzbIdentifier.fieldKeyMapping.ygorKey:
+          upsertRecordIdentifier(record.ezbId, EzbIdentifier.class, fkm, field.value)
+          break
+        case DoiIdentifier.fieldKeyMapping.ygorKey:
+          upsertRecordIdentifier(record.doiId, DoiIdentifier.class, fkm, field.value)
+          break
+        case OnlineIdentifier.fieldKeyMapping.ygorKey:
+          upsertRecordIdentifier(record.onlineIdentifier, OnlineIdentifier.class, fkm, field.value)
+          break
+        case PrintIdentifier.fieldKeyMapping.ygorKey:
+          upsertRecordIdentifier(record.printIdentifier, PrintIdentifier.class, fkm, field.value)
+          break
+      }
+      multiField.revised = field.value
     }
-    classifyRecord(record)
+    enrichment.classifyRecord(record)
     // TODO: sort records in case of having changed the record's title
     render(
         view: 'show',
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
-            greenRecords  : greenRecords[resultHash],
-            yellowRecords : yellowRecords[resultHash],
-            redRecords    : redRecords[resultHash],
+            greenRecords  : enrichment.greenRecords[resultHash],
+            yellowRecords : enrichment.yellowRecords[resultHash],
+            redRecords    : enrichment.redRecords[resultHash],
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName,
             packageName   : enrichment.packageName
         ]
     )
+  }
+
+
+  private void upsertRecordIdentifier(Enrichment enrichment, Record record, AbstractIdentifier identifier, Class clazz,
+                                      FieldKeyMapping fkm, String id){
+    if (identifier != null){
+      enrichment.dataContainer.removeRecordFromIdSortation(identifier, record)
+      identifier.identifier = id
+    }
+    else{
+      identifier = clazz.newInstance(id, fkm)
+    }
+    enrichment.dataContainer.addRecordToIdSortation(identifier, record)
   }
 
 
@@ -210,46 +237,6 @@ class StatisticController{
   }
 
 
-  synchronized private void classifyRecord(Record record){
-    String key = record.displayTitle.concat(record.uid)
-    List<String> values = [
-        valOrEmpty(record.displayTitle),
-        valOrEmpty(record.zdbIntegrationUrl),
-        valOrEmpty(record.zdbId),
-        valOrEmpty(record.onlineIdentifier),
-        valOrEmpty(record.uid)
-    ]
-    if (record.isValid()){
-      if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
-          record.duplicates.isEmpty() &&
-          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null) &&
-          !record.hasFlagOfColour(RecordFlag.Colour.YELLOW)){
-        greenRecords[params['resultHash']].put(key, values)
-        yellowRecords[params['resultHash']].remove(key)
-        redRecords[params['resultHash']].remove(key)
-      }
-      else{
-        yellowRecords[params['resultHash']].put(key, values)
-        greenRecords[params['resultHash']].remove(key)
-        redRecords[params['resultHash']].remove(key)
-      }
-    }
-    else{
-      redRecords[params['resultHash']].put(key,values)
-      yellowRecords[params['resultHash']].remove(key)
-      greenRecords[params['resultHash']].remove(key)
-    }
-  }
-
-
-  private String valOrEmpty(def val){
-    if (val == null || val.equals("null")){
-      return ""
-    }
-    return val.toString()
-  }
-
-
   private Enrichment getEnrichment(String resultHash){
     // get enrichment if existing
     def enrichments = enrichmentService.getSessionEnrichments()
@@ -257,37 +244,20 @@ class StatisticController{
       return enrichments.get(resultHash)
     }
     // else get new Enrichment
-    redRecords[resultHash] = new TreeMap<>()
-    yellowRecords[resultHash] = new TreeMap<>()
-    greenRecords[resultHash] = new TreeMap<>()
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
         if (file.getName() == resultHash){
           Enrichment enrichment = Enrichment.fromJsonFile(file)
           enrichmentService.addSessionEnrichment(enrichment)
+          enrichment.redRecords = new TreeMap<>()
+          enrichment.yellowRecords = new TreeMap<>()
+          enrichment.greenRecords = new TreeMap<>()
           return enrichment
         }
       }
     }
     return null
-  }
-
-
-  synchronized private void classifyAllRecords(String resultHash){
-    greenRecords[resultHash] = new TreeMap<>()
-    yellowRecords[resultHash] = new TreeMap<>()
-    redRecords[resultHash] = new TreeMap<>()
-    Enrichment enrichment = getEnrichment(resultHash)
-    if (enrichment == null){
-      return
-    }
-    String namespace = enrichment.dataContainer.info.namespace_title_id
-    for (Record record in enrichment.dataContainer.records.values()){
-      record.normalize(namespace)
-      record.validate(namespace)
-      classifyRecord(record)
-    }
   }
 
 
@@ -398,9 +368,9 @@ class StatisticController{
           ygorVersion  : en.ygorVersion,
           date         : en.date,
           filename     : en.originName,
-          greenRecords : greenRecords[en.resultHash],
-          yellowRecords: yellowRecords[en.resultHash],
-          redRecords   : redRecords[en.resultHash],
+          greenRecords : en.greenRecords[en.resultHash],
+          yellowRecords: en.yellowRecords[en.resultHash],
+          redRecords   : en.redRecords[en.resultHash],
           status       : en.status,
           packageName  : en.packageName
       ]
@@ -552,7 +522,7 @@ class StatisticController{
           flag.setColour(RecordFlag.Colour.valueOf(flagId.value))
         }
         record.validate(namespace)
-        classifyRecord(record)
+        enrichment.classifyRecord(record)
       }
     }
     catch (Exception e){

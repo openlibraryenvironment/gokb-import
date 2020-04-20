@@ -69,6 +69,10 @@ class Enrichment{
   def dataContainer
   def stats
 
+  Map<String, List<String>> greenRecords = new HashMap<>()
+  Map<String, List<String>> yellowRecords = new HashMap<>()
+  Map<String, List<String>> redRecords = new HashMap<>()
+
   static constraints = {
   }
 
@@ -338,4 +342,58 @@ class Enrichment{
     originPathName = sessionFolder.absolutePath + File.separator + originHash
     resultPathName = sessionFolder.absolutePath + File.separator + resultHash
   }
+
+
+  synchronized void classifyAllRecords(){
+    greenRecords = new TreeMap<>()
+    yellowRecords = new TreeMap<>()
+    redRecords = new TreeMap<>()
+    String namespace = dataContainer.info.namespace_title_id
+    for (Record record in dataContainer.records.values()){
+      record.normalize(namespace)
+      record.validate(namespace)
+      classifyRecord(record)
+    }
+  }
+
+
+  synchronized void classifyRecord(Record record){
+    String key = record.displayTitle.concat(record.uid)
+    List<String> values = [
+        valOrEmpty(record.displayTitle),
+        valOrEmpty(record.zdbIntegrationUrl),
+        valOrEmpty(record.zdbId),
+        valOrEmpty(record.onlineIdentifier),
+        valOrEmpty(record.uid)
+    ]
+    if (record.isValid()){
+      if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
+          record.duplicates.isEmpty() &&
+          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null) &&
+          !record.hasFlagOfColour(RecordFlag.Colour.YELLOW)){
+        greenRecords.put(key, values)
+        yellowRecords.remove(key)
+        redRecords.remove(key)
+      }
+      else{
+        yellowRecords.put(key, values)
+        greenRecords.remove(key)
+        redRecords.remove(key)
+      }
+    }
+    else{
+      redRecords.put(key,values)
+      yellowRecords.remove(key)
+      greenRecords.remove(key)
+    }
+  }
+
+
+  private String valOrEmpty(def val){
+    if (val == null || val.equals("null")){
+      return ""
+    }
+    return val.toString()
+  }
+
 }
