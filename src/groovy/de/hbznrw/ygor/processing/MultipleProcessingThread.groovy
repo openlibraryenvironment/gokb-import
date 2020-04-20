@@ -120,6 +120,7 @@ class MultipleProcessingThread extends Thread {
 
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
     enrichment.saveResult()
+    enrichment.dataContainer.markDuplicateIds()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
   }
 

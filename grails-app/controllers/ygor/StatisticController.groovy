@@ -39,7 +39,6 @@ class StatisticController{
     Enrichment enrichment = getEnrichment(resultHash)
     try{
       if (enrichment){
-        enrichment.dataContainer.markDuplicateIds()
         classifyAllRecords(resultHash)
       }
       else{
