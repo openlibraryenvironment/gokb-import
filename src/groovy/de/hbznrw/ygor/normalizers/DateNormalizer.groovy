@@ -33,11 +33,13 @@ class DateNormalizer {
   static SimpleDateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd")
   static SimpleDateFormat MM_YYYY = new SimpleDateFormat("MM.yyyy")
   static SimpleDateFormat DD_MM_YYYY = new SimpleDateFormat("dd.MM.yyyy")
+  static SimpleDateFormat YYYY_MM_DD_HH_mm_SS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
   static String YEAR = "^[0-9]{4}\$"
   static String YEAR_MM = "^[0-9]{4}-[0-9]{2}\$"
   static String YEAR_MM_DD = "^[0-9]{4}-[0-9]{2}-[0-9]{2}\$"
   static String MM_YEAR = "^[0-9]{2}.[0-9]{4}\$"
   static String DD_MM_YEAR = "^[0-9]{2}.[0-9]{2}.[0-9]{4}\$"
+  static String YEAR_MM_DD_HH_mm_SS = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z\$"
 
   static SimpleDateFormat TARGET_FORMAT = YYYY_MM_DD
   static DateTimeFormatter TARGET_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -89,6 +91,9 @@ class DateNormalizer {
     }
     else if (date.matches(DD_MM_YEAR)){
       format = DD_MM_YYYY
+    }
+    else if (date.matches(YEAR_MM_DD_HH_mm_SS)){
+      format = YYYY_MM_DD_HH_mm_SS
     }
     try {
       return new Date(format.parse(date).getTime())
