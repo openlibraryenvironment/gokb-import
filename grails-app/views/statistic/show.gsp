@@ -58,7 +58,7 @@
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
+                                            id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
                                             "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
                                 </td>
                                 <g:if test="${displayZDB}">
@@ -70,7 +70,7 @@
                                     </g:if></td>
                                 </g:if>
                                 <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
-                                    >${record.value.getAt(3)}<br/>
+                                    ${record.value.getAt(3)}<br/>
                                 </g:if></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -102,7 +102,7 @@
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
+                                            id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
                                             "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
                                 </td>
                                 <td><g:if test="${record.value.getAt(1)}">
@@ -145,7 +145,7 @@
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                        id="${record.key}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
+                                        id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
                                         "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
                                 <g:if test="${displayZDB}">
                                     <td><g:if test="${record.value.getAt(1)}">
@@ -324,7 +324,22 @@
                 }
             },
             "columns": [
-                { "type": "string" }, { "type": "html" }, { "type": "string" }, { "type": "string" }
+                {
+                    "type": "string",
+                    "width": "67%"
+                },
+                {
+                    "type": "html",
+                    "width": "8%"
+                },
+                {
+                    "type": "string",
+                    "width": "11%"
+                },
+                {
+                    "type": "string",
+                    "width": "14%"
+                }
             ]
         });
         $('#yellow-records').DataTable( {
@@ -348,7 +363,22 @@
                 }
             },
             "columns": [
-                { "type": "html" }, { "type": "html" }, { "type": "string" }, { "type": "string" }
+                {
+                    "type": "string",
+                    "width": "67%"
+                },
+                {
+                    "type": "html",
+                    "width": "8%"
+                },
+                {
+                    "type": "string",
+                    "width": "11%"
+                },
+                {
+                    "type": "string",
+                    "width": "14%"
+                }
             ]
         });
         $('#green-records').dataTable( {
@@ -372,7 +402,22 @@
                 }
             },
             "columns": [
-                { "type": "string" }, { "type": "html" }, { "type": "string" }, { "type": "string" }
+                {
+                    "type": "string",
+                    "width": "67%"
+                },
+                {
+                    "type": "html",
+                    "width": "8%"
+                },
+                {
+                    "type": "string",
+                    "width": "11%"
+                },
+                {
+                    "type": "string",
+                    "width": "14%"
+                }
             ]
         });
     });
