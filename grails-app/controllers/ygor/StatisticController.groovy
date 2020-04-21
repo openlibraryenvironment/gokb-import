@@ -88,9 +88,9 @@ class StatisticController{
     if (records != null){
       int from = pageIndex
       int to = pageIndex + size
-      records.eachWithIndex{TreeMap.Entry<String, Map<String, String>> entry, int i ->
+      int i = 0
+      records.forEach(){key, value ->
         if (i >= from && i < to){
-          def value = entry.value
           if (value.size() > 4){
             String title = value.getAt(0)
             String uid = value.getAt(4)
@@ -106,6 +106,7 @@ class StatisticController{
             }
           }
           resultData.add(value)
+          i++
         }
       }
     }
