@@ -30,6 +30,7 @@ class StatisticController{
 
   def grailsApplication
   EnrichmentService enrichmentService
+  List<String> enrichmentsUploading = []
 
   def index(){
     render(
@@ -247,9 +248,13 @@ class StatisticController{
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
-        if (file.getName() == resultHash){
+        if (file.getName() == resultHash && !enrichmentsUploading.contains(resultHash)){
+          enrichmentsUploading.add(resultHash)
+          log.info("getting enrichment from file... ".concat(resultHash))
           Enrichment enrichment = Enrichment.fromJsonFile(file)
           enrichmentService.addSessionEnrichment(enrichment)
+          log.info("getting enrichment from file... ".concat(resultHash).concat(" finished."))
+          enrichmentsUploading.remove(resultHash)
           return enrichment
         }
       }
