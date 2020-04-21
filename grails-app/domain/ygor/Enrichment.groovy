@@ -159,6 +159,15 @@ class Enrichment{
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
+    if (greenRecords != null && !greenRecords.isEmpty()){
+      result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
+    }
+    if (yellowRecords != null && !yellowRecords.isEmpty()){
+      result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
+    }
+    if (redRecords != null && !redRecords.isEmpty()){
+      result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
+    }
     result.append("\"configuration\":{")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     if (dataContainer.curatoryGroup != null){
@@ -228,6 +237,9 @@ class Enrichment{
     en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
     en.dataContainer.pkg.packageHeader.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
+    en.greenRecords = JsonToolkit.fromJsonNode(rootNode.get("greenRecords"))
+    en.yellowRecords = JsonToolkit.fromJsonNode(rootNode.get("yellowRecords"))
+    en.redRecords = JsonToolkit.fromJsonNode(rootNode.get("redRecords"))
     return en
   }
 

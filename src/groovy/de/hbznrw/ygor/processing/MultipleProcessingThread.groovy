@@ -9,7 +9,6 @@ import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
 import groovy.util.logging.Log4j
 import ygor.Enrichment
-import ygor.Record
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.identifier.OnlineIdentifier
@@ -119,9 +118,9 @@ class MultipleProcessingThread extends Thread {
     // to enrichment.stats
 
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
-    enrichment.saveResult()
     enrichment.dataContainer.markDuplicateIds()
     enrichment.classifyAllRecords()
+    enrichment.saveResult()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
   }
 

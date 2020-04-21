@@ -8,7 +8,6 @@ import ygor.Record
 import ygor.field.Field
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
-import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
 import ygor.identifier.ZdbIdentifier
 

@@ -250,9 +250,6 @@ class StatisticController{
         if (file.getName() == resultHash){
           Enrichment enrichment = Enrichment.fromJsonFile(file)
           enrichmentService.addSessionEnrichment(enrichment)
-          enrichment.redRecords = new TreeMap<>()
-          enrichment.yellowRecords = new TreeMap<>()
-          enrichment.greenRecords = new TreeMap<>()
           return enrichment
         }
       }

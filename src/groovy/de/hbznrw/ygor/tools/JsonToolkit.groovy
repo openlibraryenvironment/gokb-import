@@ -3,9 +3,11 @@ package de.hbznrw.ygor.tools
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.*
+import com.google.gson.Gson
 import de.hbznrw.ygor.format.YgorFormatter
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.InvokerInvocationException
@@ -21,6 +23,7 @@ class JsonToolkit {
 
   private static ObjectMapper MAPPER = new ObjectMapper()
   private static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
+  private static Gson GSON = new Gson()
   final private static String ARRAY = "\$ARRAY"
   final private static String COUNT = "\$COUNT"
 
@@ -222,6 +225,16 @@ class JsonToolkit {
   }
 
 
+  synchronized static String mapToJson(Map<?, ?> map) {
+    try{
+      return GSON.toJson(map)
+    }
+    catch (Exception e){
+      return null
+    }
+  }
+
+
   /**
    * Requires a fromJson(JsonNode) method for the desired object(s) class
    */
@@ -277,6 +290,16 @@ class JsonToolkit {
     }
     catch (IllegalArgumentException iae){
       log.debug(String.format("Could not create Enum instance of class %s with value %s", enumClass.getName(), value))
+      return null
+    }
+  }
+
+
+  synchronized static Map<?, ?> fromJsonNode(JsonNode mapNode){
+    try{
+      MAPPER.convertValue(mapNode, new TypeReference<Map<String, Object>>(){})
+    }
+    catch (Exception e){
       return null
     }
   }
