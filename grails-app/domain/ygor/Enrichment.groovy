@@ -146,6 +146,7 @@ class Enrichment{
 
 
   void saveResult(){
+    log.info("Saving enrichment...")
     StringWriter result = new StringWriter()
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
@@ -203,6 +204,7 @@ class Enrichment{
       new File(resultPathName.concat("_").concat(record.key))
               .write(JsonOutput.prettyPrint(JsonToolkit.toJson(record.value)), "UTF-8")
     }
+    log.info("Saving enrichment finished.")
   }
 
 
@@ -357,6 +359,7 @@ class Enrichment{
 
 
   synchronized void classifyAllRecords(){
+    log.info("Classifying all records...")
     greenRecords = new TreeMap<>()
     yellowRecords = new TreeMap<>()
     redRecords = new TreeMap<>()
@@ -366,13 +369,14 @@ class Enrichment{
       record.validate(namespace)
       classifyRecord(record)
     }
+    log.info("Classifying all records finished.")
   }
 
 
   synchronized void classifyRecord(Record record){
     String key = record.displayTitle.concat(record.uid)
     List<String> values = [
-        valOrEmpty(record.displayTitle),
+        valOrEmpty(record.displayTitle.size() > 100 ? record.displayTitle.substring(0,100).concat("...") : record.displayTitle),
         valOrEmpty(record.zdbIntegrationUrl),
         valOrEmpty(record.zdbId),
         valOrEmpty(record.onlineIdentifier),
