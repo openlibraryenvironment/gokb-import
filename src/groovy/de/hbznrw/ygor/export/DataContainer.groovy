@@ -152,19 +152,19 @@ class DataContainer {
 
 
   private void sortRecordPerId(Record rec){
-    if (rec.zdbId.identifier){
+    if (rec.zdbId?.identifier){
       addRecordToIdSortation(rec.zdbId, rec)
     }
-    if (rec.ezbId.identifier){
+    if (rec.ezbId?.identifier){
       addRecordToIdSortation(rec.ezbId, rec)
     }
-    if (rec.doiId.identifier){
+    if (rec.doiId?.identifier){
       addRecordToIdSortation(rec.doiId, rec)
     }
-    if (rec.onlineIdentifier.identifier){
+    if (rec.onlineIdentifier?.identifier){
       addRecordToIdSortation(rec.onlineIdentifier, rec)
     }
-    if (rec.printIdentifier.identifier){
+    if (rec.printIdentifier?.identifier){
       addRecordToIdSortation(rec.printIdentifier, rec)
     }
   }
