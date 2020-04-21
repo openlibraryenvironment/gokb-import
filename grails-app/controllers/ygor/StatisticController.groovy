@@ -42,6 +42,9 @@ class StatisticController{
   def show(){
     String resultHash = request.parameterMap.resultHash[0]
     String originHash = request.parameterMap.originHash[0]
+    if (enrichmentsUploading.contains(resultHash)){
+      return null
+    }
     log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
     render(
