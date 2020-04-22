@@ -12,17 +12,17 @@ class ExternalIntegrationService {
 
   MappingsContainer mappingsContainer
   final String mediumTypeKey
-  Status status
+  IntegrationStatus status
 
   protected ExternalIntegrationService(MappingsContainer mappingsContainer) {
     this.mappingsContainer = mappingsContainer
     mediumTypeKey = mappingsContainer.ygorMappings.get("medium").ygorKey
-    status = Status.IDLE
+    status = IntegrationStatus.IDLE
   }
 
 
   protected void integrate(){
-    status = Status.RUNNING
+    status = IntegrationStatus.RUNNING
   }
 
 
@@ -49,7 +49,7 @@ class ExternalIntegrationService {
 
 
   void interrupt(){
-    status = Status.INTERRUPTING
+    status = IntegrationStatus.INTERRUPTING
   }
 
   /**
@@ -98,11 +98,11 @@ class ExternalIntegrationService {
     return (medium.equals("Journal") || StringUtils.isEmpty(medium))
   }
 
-
-  enum Status{
+  enum IntegrationStatus{
     IDLE,
     RUNNING,
     INTERRUPTING,
     STOPPED
   }
+
 }

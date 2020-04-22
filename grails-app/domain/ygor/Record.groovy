@@ -428,10 +428,10 @@ class Record{
   }
 
 
-  void save(String resultFolder){
+  void save(String enrichmentFolder, String resultHash){
     StringWriter stringWriter = new StringWriter()
     JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(stringWriter)
-    File targetFile = new File(resultFolder.concat("_").concat(uid))
+    File targetFile = new File(enrichmentFolder.concat(resultHash).concat("_").concat(uid))
     this.asJson(jsonGenerator)
     jsonGenerator.close()
     PrintWriter printWriter = new PrintWriter(targetFile, "UTF-8")
@@ -441,8 +441,8 @@ class Record{
   }
 
 
-  static Record load(String resultPathName, String uid, MappingsContainer mappings){
-    return fromJson(JsonToolkit.jsonNodeFromFile(new File(resultPathName.concat("_").concat(uid))), mappings)
+  static Record load(String enrichmentFolder, String resultHash, String uid, MappingsContainer mappings){
+    return fromJson(JsonToolkit.jsonNodeFromFile(new File(enrichmentFolder.concat(resultHash).concat("_").concat(uid))), mappings)
   }
 
 }

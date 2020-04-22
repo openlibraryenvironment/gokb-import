@@ -58,7 +58,7 @@ class Enrichment{
 
   String resultName
   String resultHash
-  String resultPathName
+  String enrichmentFolder
 
   File sessionFolder
   String ygorVersion
@@ -83,9 +83,10 @@ class Enrichment{
     originHash = FileToolkit.getMD5Hash(originName + Math.random())
     originPathName = this.sessionFolder.getPath() + File.separator + originHash
     resultHash = FileToolkit.getMD5Hash(originName + Math.random())
-    resultPathName = sessionFolder.getPath() + File.separator + resultHash
+    enrichmentFolder = sessionFolder.getPath() + File.separator + resultHash + File.separator
+    new File(enrichmentFolder).mkdirs()
     mappingsContainer = new MappingsContainer()
-    dataContainer = new DataContainer(sessionFolder, resultPathName, mappingsContainer)
+    dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
   }
 
 
@@ -155,7 +156,7 @@ class Enrichment{
     result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
-    result.append("\"resultPathName\":\"").append(resultPathName).append("\",")
+    result.append("\"enrichmentFolder\":\"").append(enrichmentFolder).append("\",")
     String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
@@ -195,7 +196,7 @@ class Enrichment{
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
     result.append("}}")
-    File file = new File(resultPathName.concat(File.separator).concat(resultHash))
+    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
     file.getParentFile().mkdirs()
     file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
     log.info("Saving enrichment finished.")
@@ -211,11 +212,11 @@ class Enrichment{
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
-    en.resultPathName = JsonToolkit.fromJson(rootNode, "resultPathName")
+    en.enrichmentFolder = JsonToolkit.fromJson(rootNode, "enrichmentFolder")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
     if (loadRecordData){
-      en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
+      en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer)
     }
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
 
@@ -259,7 +260,7 @@ class Enrichment{
     ZipEntry zipEntry = zis.getNextEntry()
     Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
     File sessionFolder = new File(configMap.get("sessionFolder"))
-    File configFile = new File(configMap.get("resultPathName"))
+    File configFile = new File(configMap.get("enrichmentFolder"))
     zipEntry = zis.getNextEntry()
     while (zipEntry != null) {
       File nextFile = getNextFileFromZip(sessionFolder, zipEntry)
@@ -340,7 +341,7 @@ class Enrichment{
   void enrollMappingToRecords(FieldKeyMapping mapping){
     MultiField multiField = new MultiField(mapping)
     for (String recId in dataContainer.records){
-      Record record = Record.load(resultPathName, recId, mappingsContainer)
+      Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
       multiField.validate(dataContainer.info.namespace_title_id)
       record.addMultiField(multiField)
     }
@@ -351,7 +352,7 @@ class Enrichment{
   void setCurrentSession(){
     sessionFolder = new File(Holders.config.ygor.uploadLocation + File.separator + SessionToolkit.getSession().id)
     originPathName = sessionFolder.absolutePath + File.separator + originHash
-    resultPathName = sessionFolder.absolutePath + File.separator + resultHash
+    enrichmentFolder = sessionFolder.absolutePath + File.separator + resultHash
   }
 
 
@@ -362,11 +363,11 @@ class Enrichment{
     redRecords = new TreeMap<>()
     String namespace = dataContainer.info.namespace_title_id
     for (String recId in dataContainer.records){
-      Record record = Record.load(resultPathName, recId, mappingsContainer)
+      Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
       record.normalize(namespace)
       record.validate(namespace)
       classifyRecord(record)
-      record.save(resultPathName)
+      record.save(enrichmentFolder, resultHash)
     }
     log.info("Classifying all records finished.")
   }

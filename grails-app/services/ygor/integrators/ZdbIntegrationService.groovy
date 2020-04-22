@@ -26,15 +26,15 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
 
   def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
-    if (status != Status.INTERRUPTING){
+    if (status != IntegrationStatus.INTERRUPTING){
       super.integrate()
       zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
       processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
       List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
       for (String recId in dataContainer.records){
-        Record record = Record.load(dataContainer.resultFolder.toString(), recId, dataContainer.mappingsContainer)
-        if (status == Status.INTERRUPTING){
-          status = Status.STOPPED
+        Record record = Record.load(dataContainer.enrichmentFolder, dataContainer.resultHash, recId, dataContainer.mappingsContainer)
+        if (status == IntegrationStatus.INTERRUPTING){
+          status = IntegrationStatus.STOPPED
           return
         }
         if (isApiCallMedium(record)){
@@ -42,13 +42,13 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         }
         for (Record linkedRecord in getLinkedRecords(record, owner)){
           dataContainer.addRecord(linkedRecord)
-          linkedRecord.save(dataContainer.resultFolder.absolutePath)
+          linkedRecord.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
         }
-        record.save(dataContainer.resultFolder.absolutePath)
+        record.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
         owner.increaseProgress()
       }
     }
-    status = Status.IDLE
+    status = IntegrationStatus.IDLE
   }
 
 

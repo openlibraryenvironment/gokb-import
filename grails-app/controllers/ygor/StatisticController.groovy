@@ -146,9 +146,9 @@ class StatisticController{
     // write record into dataContainer
     String resultHash = request.parameterMap['resultHash'][0]
     Enrichment enrichment = getEnrichment(resultHash)
-    String resultPathName = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash)
-    Record record = Record.load(resultPathName, params['record.uid'], enrichment.mappingsContainer)
-      for (def field in params['fieldschanged']){
+    String enrichmentFolder = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash).concat(File.separator)
+    Record record = Record.load(enrichmentFolder, resultHash, params['record.uid'], enrichment.mappingsContainer)
+    for (def field in params['fieldschanged']){
       MultiField multiField = record.multiFields.get(field.key)
       FieldKeyMapping fkm = enrichment.mappingsContainer.getMapping(field.key, MappingsContainer.YGOR)
       switch (field.key){
@@ -170,7 +170,7 @@ class StatisticController{
       }
       multiField.revised = field.value
     }
-    record.save(resultPathName)
+    record.save(enrichmentFolder, resultHash)
     enrichment.classifyRecord(record)
     // TODO: sort records in case of having changed the record's title
     render(
@@ -206,8 +206,8 @@ class StatisticController{
   def edit(){
     String resultHash = request.parameterMap['resultHash'][0]
     Enrichment enrichment = getEnrichment(resultHash)
-    String resultPathName = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash)
-    Record record = Record.load(resultPathName, params.id, enrichment.mappingsContainer)
+    String enrichmentFolder = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash).concat(File.separator)
+    Record record = Record.load(enrichmentFolder, resultHash, params.id, enrichment.mappingsContainer)
     [
         resultHash: resultHash,
         record    : record
@@ -256,12 +256,16 @@ class StatisticController{
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
-        if (file.getName() == resultHash){
-          log.info("getting enrichment from file... ".concat(resultHash))
-          Enrichment enrichment = Enrichment.fromJsonFile(file, false)
-          enrichmentService.addSessionEnrichment(enrichment)
-          log.info("getting enrichment from file... ".concat(resultHash).concat(" finished."))
-          return enrichment
+        if (file.isDirectory() && file.getName() == resultHash){
+          for (def subFile in file.listFiles()){
+            if (subFile.getName() == resultHash){
+              log.info("getting enrichment from file... ".concat(resultHash))
+              Enrichment enrichment = Enrichment.fromJsonFile(subFile, false)
+              enrichmentService.addSessionEnrichment(enrichment)
+              log.info("getting enrichment from file... ".concat(resultHash).concat(" finished."))
+              return enrichment
+            }
+          }
         }
       }
     }
