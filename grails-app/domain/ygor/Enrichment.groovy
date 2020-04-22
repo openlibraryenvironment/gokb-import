@@ -161,15 +161,9 @@ class Enrichment{
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
-    if (greenRecords != null && !greenRecords.isEmpty()){
-      result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
-    }
-    if (yellowRecords != null && !yellowRecords.isEmpty()){
-      result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
-    }
-    if (redRecords != null && !redRecords.isEmpty()){
-      result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
-    }
+    result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
+    result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
+    result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
     result.append("\"configuration\":{")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     if (dataContainer.curatoryGroup != null){

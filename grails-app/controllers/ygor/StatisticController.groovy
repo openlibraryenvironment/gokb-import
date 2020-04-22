@@ -152,20 +152,21 @@ class StatisticController{
       MultiField multiField = record.multiFields.get(field.key)
       FieldKeyMapping fkm = enrichment.mappingsContainer.getMapping(field.key, MappingsContainer.YGOR)
       switch (field.key){
-        case ZdbIdentifier.fieldKeyMapping.ygorKey:
-          upsertRecordIdentifier(record.zdbId, ZdbIdentifier.class, fkm, field.value)
+        // TODO : replace hard coded YGOR keys
+        case "zdbId":
+          upsertRecordIdentifier(enrichment, record, record.zdbId, ZdbIdentifier.class, fkm, field.value)
           break
-        case EzbIdentifier.fieldKeyMapping.ygorKey:
-          upsertRecordIdentifier(record.ezbId, EzbIdentifier.class, fkm, field.value)
+        case "ezbId":
+          upsertRecordIdentifier(enrichment, record, record.ezbId, EzbIdentifier.class, fkm, field.value)
           break
-        case DoiIdentifier.fieldKeyMapping.ygorKey:
-          upsertRecordIdentifier(record.doiId, DoiIdentifier.class, fkm, field.value)
+        case "doiId":
+          upsertRecordIdentifier(enrichment, record, record.doiId, DoiIdentifier.class, fkm, field.value)
           break
-        case OnlineIdentifier.fieldKeyMapping.ygorKey:
-          upsertRecordIdentifier(record.onlineIdentifier, OnlineIdentifier.class, fkm, field.value)
+        case "onlineIdentifier":
+          upsertRecordIdentifier(enrichment, record, record.onlineIdentifier, OnlineIdentifier.class, fkm, field.value)
           break
-        case PrintIdentifier.fieldKeyMapping.ygorKey:
-          upsertRecordIdentifier(record.printIdentifier, PrintIdentifier.class, fkm, field.value)
+        case "printIdentifier":
+          upsertRecordIdentifier(enrichment, record, record.printIdentifier, PrintIdentifier.class, fkm, field.value)
           break
       }
       multiField.revised = field.value
@@ -178,9 +179,9 @@ class StatisticController{
         model: [
             resultHash    : resultHash,
             currentView   : 'statistic',
-            greenRecords  : enrichment.greenRecords[resultHash],
-            yellowRecords : enrichment.yellowRecords[resultHash],
-            redRecords    : enrichment.redRecords[resultHash],
+            greenRecords  : enrichment.greenRecords,
+            yellowRecords : enrichment.yellowRecords,
+            redRecords    : enrichment.redRecords,
             ygorVersion   : enrichment.ygorVersion,
             date          : enrichment.date,
             filename      : enrichment.originName,
@@ -219,17 +220,18 @@ class StatisticController{
     def resultHash = params.resultHash
     def value = params.value
     def key = params.key
-    def uid = params.uid
     Record record
 
     try{
       Enrichment enrichment = getEnrichment(resultHash)
       String namespace = enrichment.dataContainer.info.namespace_title_id
       if (enrichment){
-        record = enrichment.dataContainer.records.get(uid)
+        String enrichmentFolder = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash).concat(File.separator)
+        record = Record.load(enrichmentFolder, resultHash, params['uid'], enrichment.mappingsContainer)
         MultiField multiField = record.multiFields.get(key)
         multiField.revised = value.trim()
         record.validate(namespace)
+        record.save(enrichmentFolder, resultHash)
       }
       else{
         throw new EmptyStackException()
@@ -375,9 +377,9 @@ class StatisticController{
           ygorVersion  : en.ygorVersion,
           date         : en.date,
           filename     : en.originName,
-          greenRecords : en.greenRecords[en.resultHash],
-          yellowRecords: en.yellowRecords[en.resultHash],
-          redRecords   : en.redRecords[en.resultHash],
+          greenRecords : en.greenRecords,
+          yellowRecords: en.yellowRecords,
+          redRecords   : en.redRecords,
           status       : en.status,
           packageName  : en.packageName
       ]

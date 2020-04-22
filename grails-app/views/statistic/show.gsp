@@ -174,9 +174,9 @@
         <div class="col-xs-12" style="margin-bottom: 20px">
             <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
                 <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
-                        data-target="#credentialsModal"><g:message code="listDocuments.button.titles"/></button>
+                        data-target="#credentialsModal"><g:message code="listDocuments.button.sendTitlesFile"/></button>
                 <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
-                        data-target="#credentialsModal"><g:message code="listDocuments.button.package"/></button>
+                        data-target="#credentialsModal"><g:message code="listDocuments.button.sendPackageFile"/></button>
 
                 <div class="modal fade" id="credentialsModal" role="dialog">
                     <div class="modal-dialog">
@@ -243,18 +243,18 @@
                 <br/>
             </g:else>
             <g:actionSubmit action="downloadTitlesFile"
-                            value="${message(code: 'listDocuments.button.downloadtitlesfile')}"
+                            value="${message(code: 'listDocuments.button.downloadTitlesFile')}"
                             class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadPackageFile"
-                            value="${message(code: 'listDocuments.button.downloadpackagefile')}"
+                            value="${message(code: 'listDocuments.button.downloadPackageFile')}"
                             class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
                             class="btn btn-default btn-same-width"/>
             <br/>
             <br/>
-            <g:actionSubmit action="correctFile" value="${message(code: 'listDocuments.button.correctfile')}"
+            <g:actionSubmit action="correctFile" value="${message(code: 'listDocuments.button.correctFile')}"
                             class="btn btn-warning btn-same-width"/>
-            <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deletefile')}"
+            <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deleteFile')}"
                             class="btn btn-danger btn-same-width"/>
         </div>
         <script>
