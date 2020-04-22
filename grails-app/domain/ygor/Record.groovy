@@ -421,4 +421,9 @@ class Record{
     result
   }
 
+
+  static Record load(String resultPathName, String uid, MappingsContainer mappings){
+    return fromJson(JsonToolkit.jsonNodeFromFile(new File(resultPathName.concat("_").concat(uid))), mappings)
+  }
+
 }

@@ -203,7 +203,8 @@ class StatisticController{
   def edit(){
     String resultHash = request.parameterMap['resultHash'][0]
     Enrichment enrichment = getEnrichment(resultHash)
-    Record record = enrichment.dataContainer.getRecord(params.id)
+    String resultPathName = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash)
+    Record record = Record.load(resultPathName, params.id, enrichment.mappingsContainer)
     [
         resultHash: resultHash,
         record    : record
