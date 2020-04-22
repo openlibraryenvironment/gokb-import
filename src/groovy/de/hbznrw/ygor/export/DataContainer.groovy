@@ -86,15 +86,19 @@ class DataContainer {
     for (String recId in records) {
       Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
       record.validate(info.namespace_title_id)
+      record.save(enrichmentFolder, resultHash)
     }
   }
 
 
-  static DataContainer fromJson(File sessionFolder, String enrichmentFolder, String resultHash, MappingsContainer mappings) throws IOException{
+  static DataContainer fromJson(File sessionFolder, String enrichmentFolder, String resultHash,
+                                MappingsContainer mappings, boolean loadRecordData) throws IOException{
     DataContainer result = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappings)
-    for (File file : sessionFolder.listFiles(new RecordFileFilter(resultHash))) {
-      Record rec = Record.fromJson(JsonToolkit.jsonNodeFromFile(file), mappings)
-      result.records.add(rec.uid)
+    if (loadRecordData){
+      for (File file : sessionFolder.listFiles(new RecordFileFilter(resultHash))) {
+        Record rec = Record.fromJson(JsonToolkit.jsonNodeFromFile(file), mappings)
+        result.records.add(rec.uid)
+      }
     }
     result
   }

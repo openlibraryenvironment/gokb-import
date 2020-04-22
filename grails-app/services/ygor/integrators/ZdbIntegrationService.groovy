@@ -31,6 +31,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
       zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
       processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
       List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
+      Map<String, Record> linkedRecords = new HashMap<>()
       for (String recId in dataContainer.records){
         Record record = Record.load(dataContainer.enrichmentFolder, dataContainer.resultHash, recId, dataContainer.mappingsContainer)
         if (status == IntegrationStatus.INTERRUPTING){
@@ -41,11 +42,13 @@ class ZdbIntegrationService extends ExternalIntegrationService {
           integrateRecord(owner, record, idMappings)
         }
         for (Record linkedRecord in getLinkedRecords(record, owner)){
-          dataContainer.addRecord(linkedRecord)
-          linkedRecord.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
+          linkedRecords.put(linkedRecord.uid, linkedRecord)
         }
         record.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
         owner.increaseProgress()
+      }
+      for (Record linkedRecord in linkedRecords.values()){
+        linkedRecord.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
       }
     }
     status = IntegrationStatus.IDLE

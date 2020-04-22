@@ -209,9 +209,8 @@ class Enrichment{
     en.enrichmentFolder = JsonToolkit.fromJson(rootNode, "enrichmentFolder")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
-    if (loadRecordData){
-      en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer)
-    }
+    en.dataContainer =
+        DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer, loadRecordData)
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
