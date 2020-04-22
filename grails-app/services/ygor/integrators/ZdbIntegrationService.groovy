@@ -31,9 +31,8 @@ class ZdbIntegrationService extends ExternalIntegrationService {
       zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
       processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
       List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
-      List<Record> existingRecords = []
-      existingRecords.addAll(dataContainer.records.values())
-      for (Record record in existingRecords){
+      for (String recId in dataContainer.records){
+        Record record = Record.load(dataContainer.resultFolder.toString(), recId, dataContainer.mappingsContainer)
         if (status == Status.INTERRUPTING){
           status = Status.STOPPED
           return
@@ -43,7 +42,9 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         }
         for (Record linkedRecord in getLinkedRecords(record, owner)){
           dataContainer.addRecord(linkedRecord)
+          linkedRecord.save(dataContainer.resultFolder.absolutePath)
         }
+        record.save(dataContainer.resultFolder.absolutePath)
         owner.increaseProgress()
       }
     }

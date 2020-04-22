@@ -24,7 +24,8 @@ class EzbIntegrationService extends ExternalIntegrationService {
     if (status != Status.INTERRUPTING){
       super.integrate()
       String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
-      for (Record record in dataContainer.records.values()){
+      for (String recId in dataContainer.records){
+        Record record = Record.load(dataContainer.resultFolder.toString(), recId, mappingsContainer)
         if (status == Status.INTERRUPTING){
           status = Status.STOPPED
           return

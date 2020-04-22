@@ -99,7 +99,7 @@ class ExternalIntegrationService {
   }
 
 
-  static enum Status{
+  enum Status{
     IDLE,
     RUNNING,
     INTERRUPTING,

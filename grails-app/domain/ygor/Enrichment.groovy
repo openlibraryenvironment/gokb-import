@@ -84,7 +84,8 @@ class Enrichment{
     originPathName = this.sessionFolder.getPath() + File.separator + originHash
     resultHash = FileToolkit.getMD5Hash(originName + Math.random())
     resultPathName = sessionFolder.getPath() + File.separator + resultHash
-    dataContainer = new DataContainer()
+    mappingsContainer = new MappingsContainer()
+    dataContainer = new DataContainer(sessionFolder, resultPathName, mappingsContainer)
   }
 
 
@@ -95,7 +96,6 @@ class Enrichment{
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
 
-    mappingsContainer = new MappingsContainer()
     thread = new MultipleProcessingThread(this, options, kbartReader)
     date = LocalDateTime.now().toString()
     thread.start()
@@ -145,7 +145,7 @@ class Enrichment{
   }
 
 
-  void saveResult(){
+  void save(){
     log.info("Saving enrichment...")
     StringWriter result = new StringWriter()
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
@@ -195,15 +195,9 @@ class Enrichment{
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
     result.append("}}")
-    File file = new File(resultPathName)
+    File file = new File(resultPathName.concat(File.separator).concat(resultHash))
     file.getParentFile().mkdirs()
     file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
-
-    // write records into separate files named <resultHash>_<recordUid>
-    for (def record in dataContainer.records){
-      new File(resultPathName.concat("_").concat(record.key))
-              .write(JsonOutput.prettyPrint(JsonToolkit.toJson(record.value)), "UTF-8")
-    }
     log.info("Saving enrichment finished.")
   }
 
@@ -345,7 +339,8 @@ class Enrichment{
 
   void enrollMappingToRecords(FieldKeyMapping mapping){
     MultiField multiField = new MultiField(mapping)
-    for (Record record in dataContainer.records.values()){
+    for (String recId in dataContainer.records){
+      Record record = Record.load(resultPathName, recId, mappingsContainer)
       multiField.validate(dataContainer.info.namespace_title_id)
       record.addMultiField(multiField)
     }
@@ -366,10 +361,12 @@ class Enrichment{
     yellowRecords = new TreeMap<>()
     redRecords = new TreeMap<>()
     String namespace = dataContainer.info.namespace_title_id
-    for (Record record in dataContainer.records.values()){
+    for (String recId in dataContainer.records){
+      Record record = Record.load(resultPathName, recId, mappingsContainer)
       record.normalize(namespace)
       record.validate(namespace)
       classifyRecord(record)
+      record.save(resultPathName)
     }
     log.info("Classifying all records finished.")
   }

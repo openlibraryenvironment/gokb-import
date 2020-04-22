@@ -26,14 +26,26 @@ class DataContainer {
   String  pkgIdNamespace
   String  isil
   ObjectNode packageHeader
-  Map<String, Record> records
+  List<String> records
   Map<AbstractIdentifier, Set<Record>> recordsPerId
   ArrayNode titles
   ArrayNode tipps
   String curatoryGroup
+  File sessionFolder
+  File resultFolder
+  MappingsContainer mappingsContainer
 
 
-  DataContainer() {
+  DataContainer(File sessionFolder, String resultFolder, MappingsContainer mappingsContainer) {
+    if (!sessionFolder.isDirectory()){
+      throw new IOException("Could not read from record directory.")
+    }
+    this.sessionFolder = sessionFolder.absoluteFile
+    this.resultFolder = new File(resultFolder)
+    if (!this.resultFolder.exists()){
+      this.resultFolder.mkdir()
+    }
+    this.mappingsContainer = mappingsContainer
     info = new Meta(
         date: new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),
         api: [],
@@ -43,7 +55,7 @@ class DataContainer {
     )
     pkg = new Package()
 
-    records = [:]
+    records = []
     recordsPerId = [:]
     titles = new ArrayNode(NODE_FACTORY)
     tipps = new ArrayNode(NODE_FACTORY)
@@ -51,7 +63,8 @@ class DataContainer {
 
 
   def addRecord(Record record) {
-    records.put(record.uid, record)
+    record.save(resultFolder.absolutePath)
+    records.add(record.uid)
   }
 
 
@@ -61,7 +74,7 @@ class DataContainer {
     }
     try {
       if (id instanceof String && UUID.fromString(id)){
-        return records.get(id)
+        return Record.load(resultFolder.toString(), id, mappingsContainer)
       }
     }
     catch(IllegalArgumentException iae) {
@@ -72,56 +85,62 @@ class DataContainer {
 
 
   void validateRecords() {
-    for (Record record in records.values()) {
+    for (String recId in records) {
+      Record record = Record.load(resultFolder.toString(), recId, mappingsContainer)
       record.validate(info.namespace_title_id)
     }
   }
 
 
   static DataContainer fromJson(File sessionFolder, String resultHash, MappingsContainer mappings) throws IOException{
-    DataContainer result = new DataContainer()
-    if (!sessionFolder.isDirectory()){
-      throw new IOException("Could not read from record directory.")
-    }
+    DataContainer result = new DataContainer(sessionFolder, resultHash, mappings)
     for (File file : sessionFolder.listFiles(new RecordFileFilter(resultHash))) {
       Record rec = Record.fromJson(JsonToolkit.jsonNodeFromFile(file), mappings)
-      result.records.put(rec.uid, rec)
+      result.records.add(rec.uid)
     }
     result
   }
 
 
   private Record getRecordFromIdentifier(AbstractIdentifier identifier){
+    /* TODO refactor this
+            general idea: replace by use of recordsPerId
+     */
     if (identifier instanceof ZdbIdentifier){
-      for (Record record in records.values()){
+      for (String recId in records){
+        Record record = Record.load(resultFolder.toString(), recId, mappingsContainer)
         if (identifier.identifier.equals(record.zdbId?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof EzbIdentifier){
-      for (Record record in records.values()){
+      for (String recId in records){
+        Record record = Record.load(resultFolder, recId, mappingsContainer)
         if (identifier.identifier.equals(record.ezbId?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof DoiIdentifier){
-      for (Record record in records.values()){
+      for (String recId in records){
+        Record record = Record.load(resultFolder, recId, mappingsContainer)
         if (identifier.identifier.equals(record.doiId?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof OnlineIdentifier){
-      for (Record record in records.values()){
+      for (String recId in records){
+        Record record = Record.load(resultFolder, recId, mappingsContainer)
         if (identifier.identifier.equals(record.onlineIdentifier?.identifier)){
           return record
         }
       }
     }
     if (identifier instanceof PrintIdentifier){
-      for (Record record in records.values()){
+      for (String recId in records){
+        Record record = Record.load(resultFolder, recId, mappingsContainer)
         if (identifier.identifier.equals(record.printIdentifier?.identifier)){
           return record
         }
@@ -145,7 +164,8 @@ class DataContainer {
 
   void sortAllRecordsPerId(){
     recordsPerId = [:]
-    for (Record rec in records.values()){
+    for (String recId in records){
+      Record rec = Record.load(resultFolder.toString(), recId, mappingsContainer)
       sortRecordPerId(rec)
     }
   }

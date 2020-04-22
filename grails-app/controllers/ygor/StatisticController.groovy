@@ -27,7 +27,9 @@ class StatisticController{
       return file.isDirectory()
     }
   }
-
+  static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
+  static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
+  static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
   def grailsApplication
   EnrichmentService enrichmentService
   List<String> enrichmentsUploading = []
@@ -166,7 +168,7 @@ class StatisticController{
       }
       multiField.revised = field.value
     }
-    record.save(new File(resultPathName))
+    record.save(resultPathName)
     enrichment.classifyRecord(record)
     // TODO: sort records in case of having changed the record's title
     render(
@@ -265,11 +267,6 @@ class StatisticController{
     }
     return null
   }
-
-
-  static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
-  static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
-  static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
 
 
   def deleteFile = {

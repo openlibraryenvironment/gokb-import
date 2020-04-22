@@ -55,6 +55,7 @@ class KbartIntegrationService {
         multiField.addField(new Field(MappingsContainer.KBART, key, value))
         record.addMultiField(multiField)
       }
+      record.publicationType = record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
       data.addRecord(record)
       owner.increaseProgress()
       item = reader.readItemData(null, null)
