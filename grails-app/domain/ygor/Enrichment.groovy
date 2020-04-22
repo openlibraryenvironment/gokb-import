@@ -208,7 +208,7 @@ class Enrichment{
   }
 
 
-  static Enrichment fromRawJson(JsonNode rootNode){
+  static Enrichment fromRawJson(JsonNode rootNode, boolean loadRecordData){
     String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
     String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
     def en = new Enrichment(new File(sessionFolder), originalFileName)
@@ -220,7 +220,9 @@ class Enrichment{
     en.resultPathName = JsonToolkit.fromJson(rootNode, "resultPathName")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
-    en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
+    if (loadRecordData){
+      en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
+    }
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
@@ -246,9 +248,9 @@ class Enrichment{
   }
 
 
-  static Enrichment fromJsonFile(def file){
+  static Enrichment fromJsonFile(def file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
-    Enrichment enrichment = Enrichment.fromRawJson(rootNode)
+    Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
     enrichment.setTippPlatformNameMapping()
     enrichment.setTippPlatformUrlMapping()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
@@ -274,7 +276,7 @@ class Enrichment{
     zis.close()
 
     List<File> recordFiles = sessionFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
-    Enrichment enrichment = fromJsonFile(configFile)
+    Enrichment enrichment = fromJsonFile(configFile, true)
     for (File RecordFile in recordFiles){
       Record record = Record.fromJson(JsonToolkit.jsonNodeFromFile(RecordFile), enrichment.mappingsContainer)
       enrichment.dataContainer.records.put(record.uid, record)

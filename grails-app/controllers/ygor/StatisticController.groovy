@@ -255,7 +255,7 @@ class StatisticController{
         if (file.getName() == resultHash && !enrichmentsUploading.contains(resultHash)){
           enrichmentsUploading.add(resultHash)
           log.info("getting enrichment from file... ".concat(resultHash))
-          Enrichment enrichment = Enrichment.fromJsonFile(file)
+          Enrichment enrichment = Enrichment.fromJsonFile(file, false)
           enrichmentService.addSessionEnrichment(enrichment)
           log.info("getting enrichment from file... ".concat(resultHash).concat(" finished."))
           enrichmentsUploading.remove(resultHash)
