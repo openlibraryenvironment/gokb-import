@@ -32,7 +32,7 @@ class StatisticController{
   static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
   def grailsApplication
   EnrichmentService enrichmentService
-  List<String> enrichmentsUploading = []
+  Set<String> enrichmentsUploading = []
 
   def index(){
     render(
@@ -43,12 +43,14 @@ class StatisticController{
 
   def show(){
     String resultHash = request.parameterMap.resultHash[0]
-    String originHash = request.parameterMap.originHash[0]
     if (enrichmentsUploading.contains(resultHash)){
       return null
     }
+    enrichmentsUploading.add(resultHash)
+    String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
+    enrichmentsUploading.remove(resultHash)
     render(
         view: 'show',
         model: [
@@ -254,13 +256,11 @@ class StatisticController{
     File uploadLocation = new File(grailsApplication.config.ygor.uploadLocation)
     for (def dir in uploadLocation.listFiles(DIRECTORY_FILTER)){
       for (def file in dir.listFiles()){
-        if (file.getName() == resultHash && !enrichmentsUploading.contains(resultHash)){
-          enrichmentsUploading.add(resultHash)
+        if (file.getName() == resultHash){
           log.info("getting enrichment from file... ".concat(resultHash))
           Enrichment enrichment = Enrichment.fromJsonFile(file, false)
           enrichmentService.addSessionEnrichment(enrichment)
           log.info("getting enrichment from file... ".concat(resultHash).concat(" finished."))
-          enrichmentsUploading.remove(resultHash)
           return enrichment
         }
       }
