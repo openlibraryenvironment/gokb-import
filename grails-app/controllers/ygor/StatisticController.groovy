@@ -121,9 +121,6 @@ class StatisticController{
     // restore record from dataContainer
     String resultHash = params['resultHash']
     Enrichment enrichment = getEnrichment(resultHash)
-
-    Record record = enrichment.dataContainer.getRecord(params['record.uid'])
-    enrichment.classifyRecord(record)
     render(
         view: 'show',
         model: [
@@ -143,10 +140,11 @@ class StatisticController{
 
   def save(){
     // write record into dataContainer
-    String resultHash = params['resultHash']
+    String resultHash = request.parameterMap['resultHash'][0]
     Enrichment enrichment = getEnrichment(resultHash)
-    Record record = enrichment.dataContainer.records[params['record.uid']]
-    for (def field in params['fieldschanged']){
+    String resultPathName = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash)
+    Record record = Record.load(resultPathName, params['record.uid'], enrichment.mappingsContainer)
+      for (def field in params['fieldschanged']){
       MultiField multiField = record.multiFields.get(field.key)
       FieldKeyMapping fkm = enrichment.mappingsContainer.getMapping(field.key, MappingsContainer.YGOR)
       switch (field.key){
@@ -168,6 +166,7 @@ class StatisticController{
       }
       multiField.revised = field.value
     }
+    record.save(new File(resultPathName))
     enrichment.classifyRecord(record)
     // TODO: sort records in case of having changed the record's title
     render(
