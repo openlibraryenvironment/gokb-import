@@ -3,9 +3,11 @@ package de.hbznrw.ygor.tools
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.*
+import com.google.gson.Gson
 import de.hbznrw.ygor.format.YgorFormatter
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.InvokerInvocationException
@@ -15,14 +17,19 @@ import ygor.field.MultiField
 import groovy.util.logging.Log4j
 
 import java.lang.reflect.Method
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 @Log4j
 class JsonToolkit {
 
   private static ObjectMapper MAPPER = new ObjectMapper()
   private static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
+  private static Gson GSON = new Gson()
   final private static String ARRAY = "\$ARRAY"
   final private static String COUNT = "\$COUNT"
+
+  final private static Pattern QUOTES_PATTERN = Pattern.compile("[\"'](.*)[\"']")
 
   private static def removeMetaClass(def dataStructure) {
     System.out.println(dataStructure?.class)
@@ -222,6 +229,32 @@ class JsonToolkit {
   }
 
 
+  synchronized static String mapToJson(Map<?, ?> map) {
+    try{
+      return GSON.toJson(map)
+    }
+    catch (Exception e){
+      return null
+    }
+  }
+
+
+  synchronized static String listToJson(List<?> list) {
+    try{
+      return GSON.toJson(list)
+    }
+    catch (Exception e){
+      return null
+    }
+  }
+
+
+  synchronized static List listFromJson(String jsonString, Class targetType){
+    return MAPPER.readValue(jsonString, MAPPER.getTypeFactory().constructCollectionType(List.class, targetType))
+  }
+
+
+
   /**
    * Requires a fromJson(JsonNode) method for the desired object(s) class
    */
@@ -240,7 +273,16 @@ class JsonToolkit {
       return subNode.asInt()
     }
     if (subNode instanceof ArrayNode) {
-      return subNode.asCollection()
+      List<String> result = new ArrayList<>()
+      for (JsonNode arrayItemNode in subNode.asCollection()){
+        String arrayItemText = arrayItemNode.toString()
+        Matcher matcher = QUOTES_PATTERN.matcher(arrayItemText)
+        if (matcher.matches()){
+          arrayItemText = matcher.group(1)
+        }
+        result.add(arrayItemText)
+      }
+      return result
     }
     else if (subNode instanceof ObjectNode) {
       Class clazz = Class.forName("ygor.field.".concat(
@@ -277,6 +319,16 @@ class JsonToolkit {
     }
     catch (IllegalArgumentException iae){
       log.debug(String.format("Could not create Enum instance of class %s with value %s", enumClass.getName(), value))
+      return null
+    }
+  }
+
+
+  synchronized static Map<?, ?> fromJsonNode(JsonNode mapNode){
+    try{
+      MAPPER.convertValue(mapNode, new TypeReference<Map<String, Object>>(){})
+    }
+    catch (Exception e){
       return null
     }
   }

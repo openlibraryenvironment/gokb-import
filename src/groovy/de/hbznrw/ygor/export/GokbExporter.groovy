@@ -33,17 +33,17 @@ class GokbExporter {
         return new File(enrichment.originPathName)
       case FileType.JSON_PACKAGE_ONLY:
         ObjectNode result = GokbExporter.extractPackage(enrichment)
-        def file = new File(enrichment.resultPathName + ".package.json")
+        def file = new File(enrichment.enrichmentFolder + ".package.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
       case FileType.JSON_TITLES_ONLY:
         ArrayNode result = GokbExporter.extractTitles(enrichment)
-        def file = new File(enrichment.resultPathName + ".titles.json")
+        def file = new File(enrichment.enrichmentFolder + ".titles.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
       case FileType.JSON_OO_RAW:
-        enrichment.saveResult()
-        return new File(enrichment.resultPathName)
+        enrichment.save()
+        return new File(enrichment.enrichmentFolder)
     }
     return null
   }
@@ -62,7 +62,8 @@ class GokbExporter {
   static ArrayNode extractTitles(Enrichment enrichment) {
     log.debug("extracting titles ...")
     ArrayNode titles = new ArrayNode(NODE_FACTORY)
-    for (Record record in enrichment.dataContainer.records.values()) {
+    for (String recId in enrichment.dataContainer.records){
+      Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId, enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
         record.deriveHistoryEventObjects(enrichment)
         ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
@@ -84,7 +85,8 @@ class GokbExporter {
   static ArrayNode extractTipps(Enrichment enrichment) {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
-    for (Record record in enrichment.dataContainer.records.values()) {
+    for (String recId in enrichment.dataContainer.records) {
+      Record record = Record.load(enrichment.enrichmentFolder, enrichment.resultHash, recId, enrichment.mappingsContainer)
       if (record.isValid()){
         ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
         tipp = postProcessIssnIsbn(tipp, record, FileType.JSON_PACKAGE_ONLY)

@@ -102,34 +102,12 @@ class NormalizerSpec extends Specification {
 
     where:
     raw                                 | result
-    ["12345678", TitleStruct.EISSN]     | "1234-5678"
-    ["1234/5678", TitleStruct.EISSN]    | "1234-5678"
-    ["1234567", TitleStruct.EISSN]      | "1234567"
-    ["123456789", TitleStruct.EISSN]    | "123456789"
-    ["33445XXX", TitleStruct.ISSN]      | "3344-5XXX"
-    ["3344--YYYY", TitleStruct.ISSN]    | "3344-YYYY"
     ["1234-567X", ZdbReader.IDENTIFIER] | "1234567-X"
     ["12345", ZdbReader.IDENTIFIER]     | "1234-5"
     [null, null]                        | null
     ["", ""]                            | ""
 
     // TODO: not implemented DataNormalizer.normIdentifier(", EzbReader.IDENTIFIER)
-  }
-
-  void "normIdentifier(ArrayList list, Object type)"() {
-
-    given:
-    def list1 = ["12345678", "1234-88XX", "999966"]
-    def list2 = [null, "1234-88XX", "999966"]
-    def result1 = "1234-5678|1234-88XX|999966"
-    def result2 = "null|1234-88XX|999966"
-
-    expect:
-    println "${list1} -> ${result1}"
-    println "${list2} -> ${result2}"
-
-    IdentifierNormalizer.normIdentifier(list1, TitleStruct.EISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result1
-    IdentifierNormalizer.normIdentifier(list2, TitleStruct.ISSN, DataMapper.IDENTIFIER_NAMESPACES[0]) == result2
   }
 
   void "normDate(String str, Object dateType)"() {
@@ -263,34 +241,6 @@ class NormalizerSpec extends Specification {
     ["https://google.de/", "http://google.com/", "ftp://yahoo.de?q=1"] | false         | "https://google.de/|http://google.com/|ftp://yahoo.de?q=1"
   }
 
-  void "parseDate(String str, Object dateType)"() {
-
-    when:
-    println "${raw}, ${DateNormalizer.START_DATE} -> ${resultStartDate}"
-    println "${raw}, ${DateNormalizer.END_DATE} -> ${resultEndDate}"
-
-
-    then:
-    DateNormalizer.parseDate(raw, DateNormalizer.START_DATE) == resultStartDate
-    DateNormalizer.parseDate(raw, DateNormalizer.END_DATE) == resultEndDate
-
-    where:
-    raw             | resultStartDate | resultEndDate
-    "05"            | ["2005", null]  | ["2005", null]
-    "2022"          | ["2022", null]  | ["2022", null]
-    "2022,5"        | ["2022", "5"]   | ["2022", "5"]
-    "2010/11"       | ["2010", null]  | ["2011", null]
-    "10/11"         | ["2010", null]  | ["2011", null]
-    "15-16"         | ["2015", null]  | ["2016", null]
-    "1997-1998"     | ["1997", null]  | ["1998", null]
-    "1991/1992"     | ["1991", null]  | ["1992", null]
-    "1991,11/1992"  | ["1991", "11"]  | ["1992", null]
-    "1997-1998, 2"  | ["1997", null]  | ["1998", "2"]
-    "1997,5-1998,2" | ["1997", "5"]   | ["1998", "2"]
-    //"11.2005,5-7.2008,2"                    | ["2005", "5"]   | ["2008", "2"]
-    "1991,5/1992"   | ["1991", "5"]   | ["1992", null]
-    "1.1981/82"     | ["1981", null]  | ["1982", null]
-  }
 
   void "parseCoverageVolume(String str)"() {
 

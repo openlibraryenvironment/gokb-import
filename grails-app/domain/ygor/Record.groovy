@@ -31,6 +31,10 @@ class Record{
     MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
     GOKB_FIELD_ORDER.addAll(new JsonSlurper().parseText(new ClassPathResource("/resources/GokbOutputFieldOrder.json").file.text))
   }
+  static JsonFactory JSON_FACTORY = new JsonFactory()
+  static{
+    JSON_FACTORY.enable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+  }
 
   String uid
   ZdbIdentifier zdbId
@@ -86,6 +90,9 @@ class Record{
 
 
   void addIdentifier(AbstractIdentifier identifier) {
+    if (identifier.identifier == null){
+      return
+    }
     if (identifier instanceof ZdbIdentifier) {
       if (zdbId && identifier.identifier.replaceAll("x", "X") != zdbId.identifier.replaceAll("x", "X")) {
         throw new IllegalArgumentException("${identifier} already set to ${zdbId} for record")
@@ -202,7 +209,6 @@ class Record{
 
   void validate(String namespace) {
     this.validateMultifields(namespace)
-    publicationType = multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
     RecordValidator.validateCoverage(this)
     RecordValidator.validateHistoryEvent(this)
     RecordValidator.validatePublisherHistory(this)
@@ -419,6 +425,24 @@ class Record{
       }
     }
     result
+  }
+
+
+  void save(String enrichmentFolder, String resultHash){
+    StringWriter stringWriter = new StringWriter()
+    JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(stringWriter)
+    File targetFile = new File(enrichmentFolder.concat(resultHash).concat("_").concat(uid))
+    this.asJson(jsonGenerator)
+    jsonGenerator.close()
+    PrintWriter printWriter = new PrintWriter(targetFile, "UTF-8")
+    printWriter.println(stringWriter.toString())
+    printWriter.close()
+    stringWriter.close()
+  }
+
+
+  static Record load(String enrichmentFolder, String resultHash, String uid, MappingsContainer mappings){
+    return fromJson(JsonToolkit.jsonNodeFromFile(new File(enrichmentFolder.concat(resultHash).concat("_").concat(uid))), mappings)
   }
 
 }

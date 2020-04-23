@@ -21,7 +21,7 @@ class KbartIntegrationService {
   }
 
 
-  def integrate(MultipleProcessingThread owner, DataContainer data,
+  def integrate(MultipleProcessingThread owner, DataContainer dataContainer,
                 KbartReaderConfiguration kbartReaderConfiguration) {
     KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
     List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
@@ -55,7 +55,9 @@ class KbartIntegrationService {
         multiField.addField(new Field(MappingsContainer.KBART, key, value))
         record.addMultiField(multiField)
       }
-      data.addRecord(record)
+      record.publicationType = record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
+      dataContainer.addRecord(record)
+      record.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
       owner.increaseProgress()
       item = reader.readItemData(null, null)
     }

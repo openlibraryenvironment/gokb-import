@@ -41,6 +41,14 @@ class AbstractIdentifier {
     if (identifier == null){
       return ""
     }
+    return identifier
+  }
+
+
+  String toExtendedString() {
+    if (identifier == null){
+      return ""
+    }
     return this.getClass().getSimpleName().concat(" : ").concat(identifier)
   }
 

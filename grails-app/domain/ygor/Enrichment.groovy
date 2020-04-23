@@ -58,7 +58,7 @@ class Enrichment{
 
   String resultName
   String resultHash
-  String resultPathName
+  String enrichmentFolder
 
   File sessionFolder
   String ygorVersion
@@ -68,6 +68,10 @@ class Enrichment{
   MappingsContainer mappingsContainer
   def dataContainer
   def stats
+
+  Map<String, List<String>> greenRecords = new HashMap<>()
+  Map<String, List<String>> yellowRecords = new HashMap<>()
+  Map<String, List<String>> redRecords = new HashMap<>()
 
   static constraints = {
   }
@@ -79,8 +83,10 @@ class Enrichment{
     originHash = FileToolkit.getMD5Hash(originName + Math.random())
     originPathName = this.sessionFolder.getPath() + File.separator + originHash
     resultHash = FileToolkit.getMD5Hash(originName + Math.random())
-    resultPathName = sessionFolder.getPath() + File.separator + resultHash
-    dataContainer = new DataContainer()
+    enrichmentFolder = sessionFolder.getPath() + File.separator + resultHash + File.separator
+    new File(enrichmentFolder).mkdirs()
+    mappingsContainer = new MappingsContainer()
+    dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
   }
 
 
@@ -91,7 +97,6 @@ class Enrichment{
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
 
-    mappingsContainer = new MappingsContainer()
     thread = new MultipleProcessingThread(this, options, kbartReader)
     date = LocalDateTime.now().toString()
     thread.start()
@@ -141,7 +146,8 @@ class Enrichment{
   }
 
 
-  void saveResult(){
+  void save(){
+    log.info("Saving enrichment...")
     StringWriter result = new StringWriter()
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
@@ -150,11 +156,15 @@ class Enrichment{
     result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
-    result.append("\"resultPathName\":\"").append(resultPathName).append("\",")
+    result.append("\"enrichmentFolder\":\"").append(enrichmentFolder).append("\",")
     String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
+    result.append("\"records\":").append(JsonToolkit.listToJson(dataContainer.records)).append(",")
+    result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
+    result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
+    result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
     result.append("\"configuration\":{")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     if (dataContainer.curatoryGroup != null){
@@ -181,19 +191,14 @@ class Enrichment{
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
     result.append("}}")
-    File file = new File(resultPathName)
+    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
     file.getParentFile().mkdirs()
     file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
-
-    // write records into separate files named <resultHash>_<recordUid>
-    for (def record in dataContainer.records){
-      new File(resultPathName.concat("_").concat(record.key))
-              .write(JsonOutput.prettyPrint(JsonToolkit.toJson(record.value)), "UTF-8")
-    }
+    log.info("Saving enrichment finished.")
   }
 
 
-  static Enrichment fromRawJson(JsonNode rootNode){
+  static Enrichment fromRawJson(JsonNode rootNode, boolean loadRecordData){
     String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
     String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
     def en = new Enrichment(new File(sessionFolder), originalFileName)
@@ -202,10 +207,12 @@ class Enrichment{
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
-    en.resultPathName = JsonToolkit.fromJson(rootNode, "resultPathName")
+    en.enrichmentFolder = JsonToolkit.fromJson(rootNode, "enrichmentFolder")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
-    en.dataContainer = DataContainer.fromJson(en.sessionFolder, en.resultHash, en.mappingsContainer)
+    en.dataContainer =
+        DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer, loadRecordData)
+    en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
@@ -224,13 +231,16 @@ class Enrichment{
     en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
     en.dataContainer.pkg.packageHeader.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
+    en.greenRecords = JsonToolkit.fromJsonNode(rootNode.get("greenRecords"))
+    en.yellowRecords = JsonToolkit.fromJsonNode(rootNode.get("yellowRecords"))
+    en.redRecords = JsonToolkit.fromJsonNode(rootNode.get("redRecords"))
     return en
   }
 
 
-  static Enrichment fromJsonFile(def file){
+  static Enrichment fromJsonFile(def file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
-    Enrichment enrichment = Enrichment.fromRawJson(rootNode)
+    Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
     enrichment.setTippPlatformNameMapping()
     enrichment.setTippPlatformUrlMapping()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
@@ -245,7 +255,7 @@ class Enrichment{
     ZipEntry zipEntry = zis.getNextEntry()
     Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
     File sessionFolder = new File(configMap.get("sessionFolder"))
-    File configFile = new File(configMap.get("resultPathName"))
+    File configFile = new File(configMap.get("enrichmentFolder"))
     zipEntry = zis.getNextEntry()
     while (zipEntry != null) {
       File nextFile = getNextFileFromZip(sessionFolder, zipEntry)
@@ -256,7 +266,7 @@ class Enrichment{
     zis.close()
 
     List<File> recordFiles = sessionFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
-    Enrichment enrichment = fromJsonFile(configFile)
+    Enrichment enrichment = fromJsonFile(configFile, true)
     for (File RecordFile in recordFiles){
       Record record = Record.fromJson(JsonToolkit.jsonNodeFromFile(RecordFile), enrichment.mappingsContainer)
       enrichment.dataContainer.records.put(record.uid, record)
@@ -325,7 +335,8 @@ class Enrichment{
 
   void enrollMappingToRecords(FieldKeyMapping mapping){
     MultiField multiField = new MultiField(mapping)
-    for (Record record in dataContainer.records.values()){
+    for (String recId in dataContainer.records){
+      Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
       multiField.validate(dataContainer.info.namespace_title_id)
       record.addMultiField(multiField)
     }
@@ -336,6 +347,64 @@ class Enrichment{
   void setCurrentSession(){
     sessionFolder = new File(Holders.config.ygor.uploadLocation + File.separator + SessionToolkit.getSession().id)
     originPathName = sessionFolder.absolutePath + File.separator + originHash
-    resultPathName = sessionFolder.absolutePath + File.separator + resultHash
+    enrichmentFolder = sessionFolder.absolutePath + File.separator + resultHash
   }
+
+
+  synchronized void classifyAllRecords(){
+    log.info("Classifying all records...")
+    greenRecords = new TreeMap<>()
+    yellowRecords = new TreeMap<>()
+    redRecords = new TreeMap<>()
+    String namespace = dataContainer.info.namespace_title_id
+    for (String recId in dataContainer.records){
+      Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
+      record.normalize(namespace)
+      record.validate(namespace)
+      classifyRecord(record)
+      record.save(enrichmentFolder, resultHash)
+    }
+    log.info("Classifying all records finished.")
+  }
+
+
+  synchronized void classifyRecord(Record record){
+    String key = record.displayTitle.concat(record.uid)
+    List<String> values = [
+        valOrEmpty(record.displayTitle.size() > 100 ? record.displayTitle.substring(0,100).concat("...") : record.displayTitle),
+        valOrEmpty(record.zdbIntegrationUrl),
+        valOrEmpty(record.zdbId),
+        valOrEmpty(record.onlineIdentifier),
+        valOrEmpty(record.uid)
+    ]
+    if (record.isValid()){
+      if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
+          record.duplicates.isEmpty() &&
+          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null) &&
+          !record.hasFlagOfColour(RecordFlag.Colour.YELLOW)){
+        greenRecords.put(key, values)
+        yellowRecords.remove(key)
+        redRecords.remove(key)
+      }
+      else{
+        yellowRecords.put(key, values)
+        greenRecords.remove(key)
+        redRecords.remove(key)
+      }
+    }
+    else{
+      redRecords.put(key,values)
+      yellowRecords.remove(key)
+      greenRecords.remove(key)
+    }
+  }
+
+
+  private String valOrEmpty(def val){
+    if (val == null || val.equals("null")){
+      return ""
+    }
+    return val.toString()
+  }
+
 }

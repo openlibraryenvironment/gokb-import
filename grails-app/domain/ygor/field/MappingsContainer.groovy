@@ -6,9 +6,6 @@ import groovy.json.JsonSlurper
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.grails.io.support.ClassPathResource
-import ygor.identifier.OnlineIdentifier
-import ygor.identifier.PrintIdentifier
-import ygor.identifier.ZdbIdentifier
 
 @Log4j
 class MappingsContainer {
@@ -127,11 +124,6 @@ class MappingsContainer {
     if (type == EZB) {
       return ezbMappings.get(key)
     }
-  }
-
-
-  def getAllIdFieldKeyMappings() {
-    [ZdbIdentifier.fieldKeyMapping, PrintIdentifier.fieldKeyMapping, OnlineIdentifier.fieldKeyMapping]
   }
 
 
