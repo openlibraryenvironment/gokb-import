@@ -17,6 +17,8 @@ import ygor.field.MultiField
 import groovy.util.logging.Log4j
 
 import java.lang.reflect.Method
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 @Log4j
 class JsonToolkit {
@@ -26,6 +28,8 @@ class JsonToolkit {
   private static Gson GSON = new Gson()
   final private static String ARRAY = "\$ARRAY"
   final private static String COUNT = "\$COUNT"
+
+  final private static Pattern QUOTES_PATTERN = Pattern.compile("[\"'](.*)[\"']")
 
   private static def removeMetaClass(def dataStructure) {
     System.out.println(dataStructure?.class)
@@ -235,6 +239,22 @@ class JsonToolkit {
   }
 
 
+  synchronized static String listToJson(List<?> list) {
+    try{
+      return GSON.toJson(list)
+    }
+    catch (Exception e){
+      return null
+    }
+  }
+
+
+  synchronized static List listFromJson(String jsonString, Class targetType){
+    return MAPPER.readValue(jsonString, MAPPER.getTypeFactory().constructCollectionType(List.class, targetType))
+  }
+
+
+
   /**
    * Requires a fromJson(JsonNode) method for the desired object(s) class
    */
@@ -253,7 +273,16 @@ class JsonToolkit {
       return subNode.asInt()
     }
     if (subNode instanceof ArrayNode) {
-      return subNode.asCollection()
+      List<String> result = new ArrayList<>()
+      for (JsonNode arrayItemNode in subNode.asCollection()){
+        String arrayItemText = arrayItemNode.toString()
+        Matcher matcher = QUOTES_PATTERN.matcher(arrayItemText)
+        if (matcher.matches()){
+          arrayItemText = matcher.group(1)
+        }
+        result.add(arrayItemText)
+      }
+      return result
     }
     else if (subNode instanceof ObjectNode) {
       Class clazz = Class.forName("ygor.field.".concat(

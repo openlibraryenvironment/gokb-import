@@ -161,6 +161,7 @@ class Enrichment{
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
+    result.append("\"records\":").append(JsonToolkit.listToJson(dataContainer.records)).append(",")
     result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
     result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
     result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
@@ -211,6 +212,7 @@ class Enrichment{
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
     en.dataContainer =
         DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer, loadRecordData)
+    en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
