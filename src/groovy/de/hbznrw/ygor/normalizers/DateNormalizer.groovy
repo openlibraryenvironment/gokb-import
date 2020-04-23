@@ -76,6 +76,9 @@ class DateNormalizer {
 
 
   static Date formatDateTime(String date){
+    if (StringUtils.isEmpty(date)){
+      return null
+    }
     SimpleDateFormat format
     if (date.matches(YEAR)){
       format = YYYY
