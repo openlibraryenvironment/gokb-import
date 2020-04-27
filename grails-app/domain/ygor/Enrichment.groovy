@@ -352,7 +352,7 @@ class Enrichment{
 
 
   synchronized void classifyAllRecords(){
-    log.info("Classifying all records...")
+    log.debug("Classifying all records ...")
     greenRecords = new TreeMap<>()
     yellowRecords = new TreeMap<>()
     redRecords = new TreeMap<>()
@@ -364,7 +364,7 @@ class Enrichment{
       classifyRecord(record)
       record.save(enrichmentFolder, resultHash)
     }
-    log.info("Classifying all records finished.")
+    log.debug("Classifying all records finished")
   }
 
 

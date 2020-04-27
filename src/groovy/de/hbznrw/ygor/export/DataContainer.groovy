@@ -7,6 +7,7 @@ import de.hbznrw.ygor.export.structure.Meta
 import de.hbznrw.ygor.export.structure.Package
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.RecordFileFilter
+import groovy.util.logging.Log4j
 import ygor.Record
 import ygor.field.MappingsContainer
 import ygor.identifier.AbstractIdentifier
@@ -16,6 +17,7 @@ import ygor.identifier.OnlineIdentifier
 import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
+@Log4j
 class DataContainer {
 
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
@@ -153,6 +155,7 @@ class DataContainer {
 
 
   void markDuplicateIds(){
+    log.debug("marking duplicate IDs ...")
     this.sortAllRecordsPerId()
     for (def idRecs in recordsPerId){
       if (idRecs.value.size() > 1){
@@ -161,6 +164,7 @@ class DataContainer {
         }
       }
     }
+    log.debug("marking duplicate IDs finished")
   }
 
 
