@@ -370,7 +370,7 @@ class StatisticController{
         flash.info = "Total: ${total}, Errors: ${errors}"
         flash.error = errorList
       }
-      Map model = [
+      render(
           originHash   : en.originHash,
           resultHash   : en.resultHash,
           currentView  : 'statistic',
@@ -381,13 +381,21 @@ class StatisticController{
           yellowRecords: en.yellowRecords,
           redRecords   : en.redRecords,
           status       : en.status,
-          packageName  : en.packageName
-      ]
-      model.putAll(getResponseMapped(response, fileType))
-      render(
-          view: 'show',
-          model: model
+          packageName  : en.packageName,
+          view         : 'show',
+          jobId        : getJobId(response)
       )
+    }
+  }
+
+
+  private int getJobId(ArrayList response){
+    for (def responseItem in response){
+      for (def value in responseItem.values()){
+        for (def v in value.values()){
+          return v
+        }
+      }
     }
   }
 
