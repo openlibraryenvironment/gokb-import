@@ -14,6 +14,7 @@ import ygor.identifier.OnlineIdentifier
 import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
+import java.util.concurrent.FutureTask
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -75,7 +76,6 @@ class StatisticController{
     String colour = request.parameterMap.colour[0]
     int pageIndex = Integer.valueOf(request.parameterMap.start[0])
     int size = Integer.valueOf(request.parameterMap.length[0])
-    int draw = Integer.valueOf(request.parameterMap.draw[0])
     Map records
     Enrichment enrichment = getCurrentEnrichment()
     switch (colour){
@@ -336,27 +336,38 @@ class StatisticController{
 
 
   def sendPackageFile = {
-    sendFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
+    FutureTask futureTask = sendFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
+    render(futureTask.id)
   }
 
 
 
   def sendTitlesFile = {
-    sendFile(Enrichment.FileType.JSON_TITLES_ONLY)
+    FutureTask futureTask = sendFile(Enrichment.FileType.JSON_TITLES_ONLY)
+    render(futureTask.id)
   }
 
 
-  private void sendFile(Enrichment.FileType fileType){
+  private int sendFile(Enrichment.FileType fileType){
     def en = getCurrentEnrichment()
     if (en){
-      def response = enrichmentService.sendFile(en, fileType, params.gokbUsername, params.gokbPassword)
+      FutureTask response = enrichmentService.sendFile(en, fileType, params.gokbUsername, params.gokbPassword)
+      return 0
+    }
+  }
+
+
+  def renderResponse(){
+    int jobId = params.jobId
+    def en = getCurrentEnrichment()
+    if (en){
       flash.info = []
       flash.warning = []
       List errorList = []
       def total = 0
       def errors = 0
       log.debug("sendTitlesFile response: ${response}")
-      if (response.info){
+      if (response){
         log.debug("json class: ${response.info.class}")
         def info_objects = response.info.results
         info_objects[0].each{ robj ->

@@ -8,6 +8,8 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
 
+import java.util.concurrent.FutureTask
+
 class EnrichmentService{
 
   def grailsApplication
@@ -126,8 +128,7 @@ class EnrichmentService{
   }
 
 
-  List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
-    def result = []
+  FutureTask sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
     def json = enrichment.getAsFile(fileType, true)
     def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
         grailsApplication.config.gokbApi.xrPackageUri :
@@ -135,18 +136,21 @@ class EnrichmentService{
             grailsApplication.config.gokbApi.xrTitleUri :
             null
         )
-    result << exportFileToGOKb(enrichment, json, uri, user, pwd)
-    result
+    exportFileToGOKb(enrichment, json, uri, user, pwd)
   }
 
 
-  private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
+  private FutureTask exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
     log.info("exportFile: " + enrichment.resultHash + " -> " + url)
 
-    def http = new HTTPBuilder(url)
+    def http = new AsyncHTTPBuilder(
+        uri : url,
+        poolSize : 4,
+        contentType : ContentType.JSON
+    )
     http.auth.basic user, pwd
 
-    http.request(Method.POST, ContentType.JSON){ req ->
+    http.request(Method.POST){ req ->
       headers.'User-Agent' = 'ygor'
 
       body = json.getText()
