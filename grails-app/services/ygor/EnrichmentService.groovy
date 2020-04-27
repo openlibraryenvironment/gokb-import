@@ -135,6 +135,7 @@ class EnrichmentService{
             grailsApplication.config.gokbApi.xrTitleUri :
             null
         )
+    uri = uri.concat("?async=true")
     result << exportFileToGOKb(enrichment, json, uri, user, pwd)
     result
   }
