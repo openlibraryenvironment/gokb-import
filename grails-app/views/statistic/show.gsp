@@ -4,32 +4,69 @@
 
 <p class="lead">${packageName}</p>
 
-<g:if test="${"true".equals(response_exists)}">
+
     <div>
         <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
             <g:message code="listDocuments.gokb.response"/>
         </button>
         <div class="collapse in" id="btn-accord">
-            <table class="table">
+            <table class="table" id="feedbackTable">
                 <tbody>
-                    <g:if test="${null != response_message}">
-                        <tr><td>${message(code: 'listDocuments.gokb.response.message')}</td><td>${response_message}</td></tr>
-                    </g:if>
-                    <g:if test="${null != response_ok}">
-                        <tr><td>${message(code: 'listDocuments.gokb.response.ok')}</td><td>${response_ok}</td></tr>
-                    </g:if>
-                    <g:if test="${null != response_error}">
-                        <tr><td>${message(code: 'listDocuments.gokb.response.error')}</td><td>${response_error}</td></tr>
-                    </g:if>
-                    <g:each in="${error_details}" var="detail">
-                        <tr><td></td><td>${detail}</td></tr>
-                    </g:each>
+                    <script>
+                        function getJobInfo() {
+                            console.log("uploadStatus resultHash: ${resultHash}");
+                            console.log("grails data : " + "${response_ok}")
+                            jQuery.ajax({
+                                type: 'GET',
+                                url: '${grailsApplication.config.grails.app.context}/statistic/getJobInfo',
+                                id: '${jobId}',
+                                data: 'jobId=${jobId}',
+                                success: function (data) {
+                                    if (data != null && !jQuery.isEmptyObject(data)) {
+                                        if (data["response_finished"] == "true") {
+                                            let feedbackTable = document.getElementById("feedbackTable").getElementsByTagName('tbody')[0];
+                                            let rowTexts = [];
+                                            rowTexts.push("${message(code: 'listDocuments.gokb.response.ok')} : " + data["response_ok"]);
+                                            rowTexts.push("${message(code: 'listDocuments.gokb.response.error')} : " + data["response_error"]);
+                                            for (let text in rowTexts) {
+                                                feedbackTable.insertRow().insertCell(0).appendChild(document.createTextNode(text));
+                                            }
+                                            clearInterval(jobInfo${resultHash});
+                                            return;
+                                        }
+                                        else {
+                                            console.log("success RH: ${resultHash}");
+                                            jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', progress);
+                                            jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + progress + '%');
+                                            jQuery('#progress-${resultHash} > .progress-bar').text(progress + '%');
+                                        }
+                                    }
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                    console.error("ERROR - Could not get job info, failing Ajax request.");
+                                    console.error(textStatus + " : " + errorThrown);
+                                    console.error(data);
+                                    clearInterval(jobInfo${resultHash});
+                                }
+                            });
+                        }
+                        let jobInfo${resultHash} = function () {
+                            let rows = document.getElementById("feedbackTable").getElementsByTagName("tr")
+                            if (rows.length == 0){
+                                return getJobInfo()
+                            }
+                        }
+                        if ("${jobId}" != "") {
+                            let data = {}
+                            setInterval(jobInfo${resultHash}, 2000);
+                        }
+                    </script>
                 </tbody>
             </table>
         </div>
     </div>
     <br/>
-</g:if>
+
 
 <div class="row">
     <g:set var="lineCounter" value="${0}"/>
