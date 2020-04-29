@@ -453,21 +453,23 @@ class StatisticController{
   private Map getResponseSorted(Map response){
     Map result = [:]
     List errorDetails = []
-    result.put("response_finished", "true")
     result.put("response_exists", "true")
-    int ok = 0, error = 0
-    for (Map resultItem in response.get("job_result")?.get("results")){
-      if (resultItem.get("result").equals("OK")){
-        ok++
+    if (response.get("finished") == "true"){
+      int ok = 0, error = 0
+      for (Map resultItem in response.get("job_result")?.get("results")){
+        if (resultItem.get("result").equals("OK")){
+          ok++
+        }
+        else if (resultItem.get("result").equals("ERROR")){
+          error++
+          errorDetails.add(getRecordError(resultItem))
+        }
       }
-      else if (resultItem.get("result").equals("ERROR")){
-        error++
-        errorDetails.add(getRecordError(resultItem))
-      }
+      result.put("response_ok", ok.toString())
+      result.put("response_error", error.toString())
+      result.put("error_details", errorDetails)
+      result.put("response_finished", "true")
     }
-    result.put("response_ok", ok.toString())
-    result.put("response_error", error.toString())
-    result.put("error_details", errorDetails)
     return result
   }
 
