@@ -6,7 +6,6 @@ import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.PackageHeader
 import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
 import de.hbznrw.ygor.processing.MultipleProcessingThread
-import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.FileToolkit
 import de.hbznrw.ygor.tools.JsonToolkit
@@ -90,7 +89,7 @@ class Enrichment{
   }
 
 
-  def process(HashMap options, KbartReader kbartReader) throws YgorProcessingException{
+  def process(HashMap options, KbartReader kbartReader) throws Exception{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')
 
@@ -116,7 +115,7 @@ class Enrichment{
   }
 
   def setMessage(String message){
-    this.apiMessage = message
+    apiMessage = message
   }
 
   String getMessage(){
