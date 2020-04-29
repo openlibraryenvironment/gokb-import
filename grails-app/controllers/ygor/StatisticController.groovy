@@ -49,11 +49,11 @@ class StatisticController{
     if (enrichmentsUploading.contains(resultHash)){
       return null
     }
-    enrichmentsUploading.add(resultHash)
+    enrichmentsUploading.add(resultHash.toString())
     String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
-    enrichmentsUploading.remove(resultHash)
+    enrichmentsUploading.remove(resultHash.toString())
     render(
         view: 'show',
         model: [
