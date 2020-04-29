@@ -13,9 +13,11 @@
             <table class="table" id="feedbackTable">
                 <tbody>
                     <script>
-                        function getJobInfo() {
-                            console.log("uploadStatus resultHash: ${resultHash}");
-                            console.log("grails data : " + "${response_ok}")
+                        var data = {}
+                        var feedbackTable = document.getElementById("feedbackTable").getElementsByTagName('tbody')[0];
+                        var rowTexts = new Map();
+                        var jobInfoHandle = setInterval( function(){
+                            console.log("get jobInfo of resultHash: ${resultHash}");
                             jQuery.ajax({
                                 type: 'GET',
                                 url: '${grailsApplication.config.grails.app.context}/statistic/getJobInfo',
@@ -24,14 +26,13 @@
                                 success: function (data) {
                                     if (data != null && !jQuery.isEmptyObject(data)) {
                                         if (data["response_finished"] == "true") {
-                                            let feedbackTable = document.getElementById("feedbackTable").getElementsByTagName('tbody')[0];
-                                            let rowTexts = [];
-                                            rowTexts.push("${message(code: 'listDocuments.gokb.response.ok')} : " + data["response_ok"]);
-                                            rowTexts.push("${message(code: 'listDocuments.gokb.response.error')} : " + data["response_error"]);
-                                            for (let text in rowTexts) {
-                                                feedbackTable.insertRow().insertCell(0).appendChild(document.createTextNode(text));
+                                            rowTexts.set("${message(code: 'listDocuments.gokb.response.ok')}", data["response_ok"]);
+                                            rowTexts.set("${message(code: 'listDocuments.gokb.response.error')}", data["response_error"]);
+                                            let count=1;
+                                            for (let errorDetail of data["error_details"]){
+                                                rowTexts.set(count.toString(), errorDetail);
+                                                count++;
                                             }
-                                            clearInterval(jobInfo${resultHash});
                                             return;
                                         }
                                         else {
@@ -39,6 +40,7 @@
                                             jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', progress);
                                             jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + progress + '%');
                                             jQuery('#progress-${resultHash} > .progress-bar').text(progress + '%');
+                                            getJobInfo()
                                         }
                                     }
                                 },
@@ -46,20 +48,18 @@
                                     console.error("ERROR - Could not get job info, failing Ajax request.");
                                     console.error(textStatus + " : " + errorThrown);
                                     console.error(data);
-                                    clearInterval(jobInfo${resultHash});
+                                    clearInterval(jobInfoHandle);
                                 }
                             });
-                        }
-                        let jobInfo${resultHash} = function () {
-                            let rows = document.getElementById("feedbackTable").getElementsByTagName("tr")
-                            if (rows.length == 0){
-                                return getJobInfo()
+                            if (rowTexts.size > 0){
+                                for (let text of rowTexts.entries()) {
+                                    let row = feedbackTable.insertRow()
+                                    row.insertCell(0).appendChild(document.createTextNode(text[0]));
+                                    row.insertCell(1).appendChild(document.createTextNode(text[1]));
+                                }
+                                clearInterval(jobInfoHandle);
                             }
-                        }
-                        if ("${jobId}" != "") {
-                            let data = {}
-                            setInterval(jobInfo${resultHash}, 2000);
-                        }
+                        }, 2000);
                     </script>
                 </tbody>
             </table>
