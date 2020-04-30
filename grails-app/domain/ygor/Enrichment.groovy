@@ -16,6 +16,7 @@ import grails.util.Holders
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
+import org.springframework.web.multipart.commons.CommonsMultipartFile
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -251,7 +252,7 @@ class Enrichment{
   static Enrichment fromZipFile(def zipFile, String sessionFoldersRoot) throws IOException{
     JsonSlurper slurpy = new JsonSlurper()
     byte[] buffer = new byte[1024]
-    ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile.fileItem.tempFile))
+    ZipInputStream zis = new ZipInputStream(zipFile.getInputStream())
     ZipEntry zipEntry = zis.getNextEntry()
     Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
     File sessionFolder = new File(configMap.get("sessionFolder"))
@@ -269,7 +270,7 @@ class Enrichment{
     Enrichment enrichment = fromJsonFile(configFile, true)
     for (File RecordFile in recordFiles){
       Record record = Record.fromJson(JsonToolkit.jsonNodeFromFile(RecordFile), enrichment.mappingsContainer)
-      enrichment.dataContainer.records.put(record.uid, record)
+      enrichment.dataContainer.records.add(record.uid)
     }
     enrichment
   }
