@@ -16,7 +16,6 @@ import grails.util.Holders
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
-import org.springframework.web.multipart.commons.CommonsMultipartFile
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -255,18 +254,18 @@ class Enrichment{
     ZipInputStream zis = new ZipInputStream(zipFile.getInputStream())
     ZipEntry zipEntry = zis.getNextEntry()
     Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
-    File sessionFolder = new File(configMap.get("sessionFolder"))
-    File configFile = new File(configMap.get("enrichmentFolder"))
+    File enrichmentFolder = new File(configMap.get("enrichmentFolder"))
+    File configFile = new File(enrichmentFolder.absolutePath.concat(File.separator).concat(configMap.get("resultHash")))
     zipEntry = zis.getNextEntry()
     while (zipEntry != null) {
-      File nextFile = getNextFileFromZip(sessionFolder, zipEntry)
+      File nextFile = getNextFileFromZip(enrichmentFolder, zipEntry)
       writeIntoFileOutputStream(nextFile, zis, buffer)
       zipEntry = zis.getNextEntry()
     }
     zis.closeEntry()
     zis.close()
 
-    List<File> recordFiles = sessionFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
+    List<File> recordFiles = enrichmentFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
     Enrichment enrichment = fromJsonFile(configFile, true)
     for (File RecordFile in recordFiles){
       Record record = Record.fromJson(JsonToolkit.jsonNodeFromFile(RecordFile), enrichment.mappingsContainer)
@@ -284,13 +283,15 @@ class Enrichment{
     configFile.createNewFile()
     writeIntoFileOutputStream(configFile, zis, new byte[1024])
     Map<?,?> configMap = slurpy.parseText(configFile.text)
-    File sessionFolder = new File(configMap.get("sessionFolder"))
-    if (sessionFolder.exists()){
-      Paths.get(configMap.get("sessionFolder")).deleteDir()
+    String newEnrichmentFolder = configMap.get("sessionFolder").concat(File.separator).concat(configMap.get("resultHash").concat(File.separator))
+    Path newEnrichmentPath = Paths.get(newEnrichmentFolder)
+    File enrichmentFolder = new File(newEnrichmentFolder)
+    if (enrichmentFolder.exists()){
+      newEnrichmentPath.deleteDir()
     }
-    sessionFolder.mkdirs()
-    Path fullResultPath = Paths.get(configMap.get("sessionFolder").concat(File.separator).concat(configMap.get("resultHash")))
-    Files.move(configFile.toPath(), fullResultPath, StandardCopyOption.REPLACE_EXISTING)
+    enrichmentFolder.mkdirs()
+    Files.move(configFile.toPath(), Paths.get(newEnrichmentFolder.concat(File.separator)
+        .concat(configMap.get("resultHash"))), StandardCopyOption.REPLACE_EXISTING)
     return configMap
   }
 
@@ -349,6 +350,7 @@ class Enrichment{
     sessionFolder = new File(Holders.config.ygor.uploadLocation + File.separator + SessionToolkit.getSession().id)
     originPathName = sessionFolder.absolutePath + File.separator + originHash
     enrichmentFolder = sessionFolder.absolutePath + File.separator + resultHash
+    dataContainer.enrichmentFolder = enrichmentFolder + File.separator
   }
 
 
