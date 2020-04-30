@@ -35,18 +35,19 @@ class FileToolkit {
   }
 
 
-  static File zipFiles(File folder, String resultHash) throws IOException{
-    if (!folder.isDirectory()){
+  static File zipFiles(File sessionFolder, String resultHash) throws IOException{
+    if (!sessionFolder.isDirectory()){
       throw new IOException("Could not read from session directory.")
     }
-    File resultZip = new File(folder.getAbsolutePath().concat(File.separator).concat(resultHash).concat(".zip"))
+    File enrichmentFolder = new File(sessionFolder.getAbsolutePath().concat(File.separator).concat(resultHash))
+    File resultZip = new File(enrichmentFolder.getAbsolutePath().concat(".zip"))
     ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(resultZip))
     // zip header and configuration file
-    File configFile = new File(folder.getAbsolutePath().concat(File.separator).concat(resultHash))
+    File configFile = new File(enrichmentFolder.getAbsolutePath().concat(File.separator).concat(resultHash))
     zos.putNextEntry(new ZipEntry(configFile.getName()))
     streamByteArray(configFile, zos)
     // zip record files
-    for (File record : folder.listFiles(new RecordFileFilter(resultHash))) {
+    for (File record : enrichmentFolder.listFiles(new RecordFileFilter(resultHash))) {
       ZipEntry ze = new ZipEntry(record.getName())
       zos.putNextEntry(ze)
       streamByteArray(record, zos)
