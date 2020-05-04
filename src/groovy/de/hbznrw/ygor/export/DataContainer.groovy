@@ -48,7 +48,6 @@ class DataContainer {
     info = new Meta(
         date: new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),
         api: [],
-        stats: [:],
         stash: [:],
         namespace_title_id: ""
     )

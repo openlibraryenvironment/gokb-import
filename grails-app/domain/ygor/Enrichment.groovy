@@ -67,7 +67,6 @@ class Enrichment{
   def thread
   MappingsContainer mappingsContainer
   def dataContainer
-  def stats
 
   Map<String, List<String>> greenRecords = new HashMap<>()
   Map<String, List<String>> yellowRecords = new HashMap<>()
