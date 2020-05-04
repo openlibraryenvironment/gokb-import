@@ -30,11 +30,6 @@ class FileToolkit {
   }
 
 
-  static Resource getResourceByClassPath(String path) {
-    Holders.getGrailsApplication().parentContext.getResource('classpath:' + path)
-  }
-
-
   static File zipFiles(File sessionFolder, String resultHash) throws IOException{
     if (!sessionFolder.isDirectory()){
       throw new IOException("Could not read from session directory.")

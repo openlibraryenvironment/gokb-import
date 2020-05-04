@@ -193,7 +193,6 @@ class EnrichmentController{
     if (null == request.session.lastUpdate){
       request.session.lastUpdate = [:]
     }
-    Statistics.getRecordsStatisticsBeforeParsing(enrichment)
     enrichment.setCurrentSession()
     enrichment.save()
 
