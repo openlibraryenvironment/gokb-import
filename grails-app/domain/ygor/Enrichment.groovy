@@ -249,49 +249,44 @@ class Enrichment{
 
   static Enrichment fromZipFile(def zipFile, String sessionFoldersRoot) throws IOException{
     JsonSlurper slurpy = new JsonSlurper()
-    byte[] buffer = new byte[1024]
     ZipInputStream zis = new ZipInputStream(zipFile.getInputStream())
     ZipEntry zipEntry = zis.getNextEntry()
     Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
+    def (File enrichmentFolder, File configFile) = getRecordFiles(configMap, zis)
+    zis.closeEntry()
+    zis.close()
+    List<File> recordFiles = enrichmentFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
+    Enrichment enrichment = fromJsonFile(configFile, true)
+    for (File recordFile in recordFiles){
+      enrichment.dataContainer.records.add(JsonToolkit.fromJson(JsonToolkit.jsonNodeFromFile(recordFile), "uid"))
+    }
+    enrichment
+  }
+
+  private static List getRecordFiles(Map configMap, ZipInputStream zis){
+    ZipEntry zipEntry
     File enrichmentFolder = new File(configMap.get("enrichmentFolder"))
     File configFile = new File(enrichmentFolder.absolutePath.concat(File.separator).concat(configMap.get("resultHash")))
     zipEntry = zis.getNextEntry()
-    while (zipEntry != null) {
+    byte[] buffer = new byte[1024]
+    while (zipEntry != null){
       File nextFile = getNextFileFromZip(enrichmentFolder, zipEntry)
       writeIntoFileOutputStream(nextFile, zis, buffer)
       zipEntry = zis.getNextEntry()
     }
-    zis.closeEntry()
-    zis.close()
-
-    List<File> recordFiles = enrichmentFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
-    Enrichment enrichment = fromJsonFile(configFile, true)
-    for (File RecordFile in recordFiles){
-      Record record = Record.fromJson(JsonToolkit.jsonNodeFromFile(RecordFile), enrichment.mappingsContainer)
-      enrichment.dataContainer.records.add(record.uid)
-    }
-    enrichment
+    [enrichmentFolder, configFile]
   }
 
 
   private static Map getConfigMap(ZipEntry configZipEntry, ZipInputStream zis,
                                   JsonSlurper slurpy, String sessionFoldersRoot) throws IOException{
-    File tmpFile = new File(sessionFoldersRoot.concat(File.separator).concat(UUID.randomUUID().toString()))
-    File configFile = getNextFileFromZip(tmpFile, configZipEntry)
-    Files.createDirectories(configFile.parentFile.toPath())
+    File destinationDir = new File(sessionFoldersRoot.concat(File.separator).concat(SessionToolkit.getSession().id)
+                                                     .concat(File.separator).concat(configZipEntry.getName()))
+    Files.createDirectories(destinationDir.toPath())
+    File configFile = getNextFileFromZip(destinationDir, configZipEntry)
     configFile.createNewFile()
     writeIntoFileOutputStream(configFile, zis, new byte[1024])
-    Map<?,?> configMap = slurpy.parseText(configFile.text)
-    String newEnrichmentFolder = configMap.get("sessionFolder").concat(File.separator).concat(configMap.get("resultHash").concat(File.separator))
-    Path newEnrichmentPath = Paths.get(newEnrichmentFolder)
-    File enrichmentFolder = new File(newEnrichmentFolder)
-    if (enrichmentFolder.exists()){
-      newEnrichmentPath.deleteDir()
-    }
-    enrichmentFolder.mkdirs()
-    Files.move(configFile.toPath(), Paths.get(newEnrichmentFolder.concat(File.separator)
-        .concat(configMap.get("resultHash"))), StandardCopyOption.REPLACE_EXISTING)
-    return configMap
+    slurpy.parseText(configFile.text)
   }
 
 
@@ -347,7 +342,6 @@ class Enrichment{
 
   void setCurrentSession(){
     sessionFolder = new File(Holders.config.ygor.uploadLocation + File.separator + SessionToolkit.getSession().id)
-    originPathName = sessionFolder.absolutePath + File.separator + originHash
     enrichmentFolder = sessionFolder.absolutePath + File.separator + resultHash
     dataContainer.enrichmentFolder = enrichmentFolder + File.separator
   }

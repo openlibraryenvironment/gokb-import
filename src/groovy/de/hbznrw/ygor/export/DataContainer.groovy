@@ -83,7 +83,7 @@ class DataContainer {
 
   void validateRecords() {
     for (String recId in records) {
-      Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
+      Record record = Record.load(enrichmentFolder.concat(File.separator), resultHash, recId, mappingsContainer)
       record.validate(info.namespace_title_id)
       record.save(enrichmentFolder, resultHash)
     }
