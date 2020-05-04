@@ -14,9 +14,6 @@
 				<li <g:if test="${currentView == 'process'}">class="active"</g:if>>
 					<g:link controller="enrichment" action="process" params="[flash.error = null, flash.warning = null]">${message(code: 'navigation.menue.enrichment')}</g:link>
 				</li>
-				<li <g:if test="${currentView == 'statistic'}">class="active"</g:if>>
-					<a href="${grailsApplication.config.grails.app.context}/statistic/index"><g:message code="navigation.menue.stats" /></a>
-				</li>
 				<!--<li><a href="zevport">ZevPort-Export</a></li>-->
 				<!-- <li <g:if test="${currentView == 'config'}">class="active"</g:if>>
 					<a href="${grailsApplication.config.grails.app.context}/enrichment/config"><g:message code="navigation.menue.config" /></a>
