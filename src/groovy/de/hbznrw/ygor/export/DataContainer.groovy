@@ -50,7 +50,6 @@ class DataContainer {
     info = new Meta(
         date: new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT+1')),
         api: [],
-        stats: [:],
         stash: [:],
         namespace_title_id: ""
     )
@@ -86,7 +85,7 @@ class DataContainer {
 
   void validateRecords() {
     for (String recId in records) {
-      Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
+      Record record = Record.load(enrichmentFolder.concat(File.separator), resultHash, recId, mappingsContainer)
       record.validate(info.namespace_title_id)
       record.save(enrichmentFolder, resultHash)
     }

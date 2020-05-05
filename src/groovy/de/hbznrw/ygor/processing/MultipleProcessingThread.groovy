@@ -115,9 +115,6 @@ class MultipleProcessingThread extends Thread {
 
     processUiSettings()
 
-    Statistics.getRecordsStatisticsBeforeParsing(enrichment)
-    // to enrichment.stats
-
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
     enrichment.dataContainer.markDuplicateIds()
     enrichment.classifyAllRecords()

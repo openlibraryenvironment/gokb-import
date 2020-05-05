@@ -415,34 +415,35 @@ class StatisticController{
     http.auth.basic gokbUsername, gokbPassword
 
     http.request(Method.GET, ContentType.JSON){ req ->
-        response.success = { response, resultMap ->
-          if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-            if (response.status < 400){
-              result.putAll(getResponseSorted(resultMap))
-            }
-            else{
-              result.put('warning': resultMap)
-            }
+      response.success = { response, resultMap ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (response.status < 400){
+            result.putAll(getResponseSorted(resultMap))
           }
           else{
-            result.putAll(handleAuthenticationError(response))
+            result.put('warning': resultMap)
           }
         }
-        response.failure = { response, resultMap ->
-          log.error("GOKb server response: ${response.statusLine}")
-          if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-            result.put('error': resultMap)
-          }
-          else{
-            result.putAll(handleAuthenticationError(response))
-          }
+        else{
+          result.putAll(handleAuthenticationError(response))
         }
-        response.'401'= {resp ->
-          result.putAll(handleAuthenticationError(resp))
+      }
+      response.failure = { response, resultMap ->
+        log.error("GOKb server response: ${response.statusLine}")
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          result.put('error': resultMap)
         }
+        else{
+          result.putAll(handleAuthenticationError(response))
+        }
+      }
+      response.'401'= {resp ->
+        result.putAll(handleAuthenticationError(resp))
+      }
     }
     render result as JSON
   }
+
 
   private Map handleAuthenticationError(response){
     log.error("GOKb server response: ${response.statusLine}")
@@ -453,8 +454,8 @@ class StatisticController{
   private Map getResponseSorted(Map response){
     Map result = [:]
     List errorDetails = []
-    result.put("response_exists", "true")
-    if (response.get("finished") == "true"){
+    result.put("response_exists", true)
+    if (response.get("finished") == true){
       int ok = 0, error = 0
       for (Map resultItem in response.get("job_result")?.get("results")){
         if (resultItem.get("result").equals("OK")){

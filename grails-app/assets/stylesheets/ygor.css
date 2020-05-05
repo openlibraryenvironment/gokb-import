@@ -106,10 +106,6 @@ select#processIndex {
 	color: #ccc;
 }
 
-#statistics-substats span > span {
-	padding: 0px 5px;
-	font-weight: bold;
-}
 #statistics table thead tr th:nth-of-type(1) {
 	width: 30%;
 }
