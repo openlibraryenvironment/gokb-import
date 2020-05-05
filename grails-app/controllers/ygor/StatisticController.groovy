@@ -441,7 +441,7 @@ class StatisticController{
   private Map<String, String> getPackageResponseMapped(List response){
     Map<String, String> result = new HashMap<>()
     List<String> errorDetails = []
-    result.put("response_exists", "true")
+    result.put("response_exists", true)
     int ok = 0, error = 0
     for (Map outerMap in response){
       for (Map innerMap in outerMap.values()){
