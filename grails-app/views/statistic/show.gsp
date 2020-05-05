@@ -4,8 +4,7 @@
 
 <p class="lead">${packageName}</p>
 
-
-    <div>
+    <div id="showUploadResults" hidden="hidden" >
         <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
             <g:message code="listDocuments.gokb.response"/>
         </button>
@@ -32,6 +31,9 @@
                                             for (let errorDetail of data["error_details"]){
                                                 rowTexts.set(count.toString(), errorDetail);
                                                 count++;
+                                            }
+                                            if (data["response_exists"] == "true"){
+                                                document.getElementById('showUploadResults').removeAttribute("hidden");
                                             }
                                             return;
                                         }
@@ -64,8 +66,8 @@
                 </tbody>
             </table>
         </div>
+        <br/>
     </div>
-    <br/>
 
 
 <div class="row">
