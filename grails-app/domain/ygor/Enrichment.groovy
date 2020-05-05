@@ -21,8 +21,6 @@ import ygor.field.MultiField
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -159,7 +157,7 @@ class Enrichment{
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
-    result.append("\"records\":").append(JsonToolkit.listToJson(dataContainer.records)).append(",")
+    result.append("\"records\":").append(JsonToolkit.setToJson(dataContainer.records)).append(",")
     result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
     result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
     result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")

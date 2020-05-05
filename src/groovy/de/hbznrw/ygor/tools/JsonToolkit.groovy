@@ -239,6 +239,16 @@ class JsonToolkit {
   }
 
 
+  synchronized static String setToJson(Set<?> set) {
+    try{
+      return GSON.toJson(new ArrayList(set))
+    }
+    catch (Exception e){
+      return null
+    }
+  }
+
+
   synchronized static String listToJson(List<?> list) {
     try{
       return GSON.toJson(list)

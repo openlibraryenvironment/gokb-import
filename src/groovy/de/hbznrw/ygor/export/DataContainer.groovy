@@ -28,7 +28,7 @@ class DataContainer {
   String  pkgIdNamespace
   String  isil
   ObjectNode packageHeader
-  List<String> records
+  Set<String> records
   Map<AbstractIdentifier, Set<Record>> recordsPerId
   ArrayNode titles
   ArrayNode tipps
