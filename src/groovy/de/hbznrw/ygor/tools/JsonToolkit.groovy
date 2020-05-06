@@ -244,6 +244,7 @@ class JsonToolkit {
       return GSON.toJson(new ArrayList(set))
     }
     catch (Exception e){
+      log.warn("Could not transform set to Json: ".concat(set.toString()))
       return null
     }
   }
@@ -254,6 +255,7 @@ class JsonToolkit {
       return GSON.toJson(list)
     }
     catch (Exception e){
+      log.warn("Could not transform list to Json: ".concat(list.toString()))
       return null
     }
   }
