@@ -6,7 +6,6 @@ import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.PackageHeader
 import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
 import de.hbznrw.ygor.processing.MultipleProcessingThread
-import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.FileToolkit
 import de.hbznrw.ygor.tools.JsonToolkit
@@ -22,8 +21,6 @@ import ygor.field.MultiField
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -89,7 +86,7 @@ class Enrichment{
   }
 
 
-  def process(HashMap options, KbartReader kbartReader) throws YgorProcessingException{
+  def process(HashMap options, KbartReader kbartReader) throws Exception{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')
 
@@ -115,7 +112,7 @@ class Enrichment{
   }
 
   def setMessage(String message){
-    this.apiMessage = message
+    apiMessage = message
   }
 
   String getMessage(){
@@ -160,7 +157,7 @@ class Enrichment{
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
-    result.append("\"records\":").append(JsonToolkit.listToJson(dataContainer.records)).append(",")
+    result.append("\"records\":").append(JsonToolkit.setToJson(dataContainer.records)).append(",")
     result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
     result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
     result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
@@ -251,16 +248,19 @@ class Enrichment{
     JsonSlurper slurpy = new JsonSlurper()
     ZipInputStream zis = new ZipInputStream(zipFile.getInputStream())
     ZipEntry zipEntry = zis.getNextEntry()
-    Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
-    def (File enrichmentFolder, File configFile) = getRecordFiles(configMap, zis)
-    zis.closeEntry()
-    zis.close()
-     List<File> recordFiles = enrichmentFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
-    Enrichment enrichment = fromJsonFile(configFile, true)
-    for (File recordFile in recordFiles){
-      enrichment.dataContainer.records.add(JsonToolkit.fromJson(JsonToolkit.jsonNodeFromFile(recordFile), "uid"))
+    if (zipEntry != null){
+      Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
+      def (File enrichmentFolder, File configFile) = getRecordFiles(configMap, zis)
+      zis.closeEntry()
+      zis.close()
+      List<File> recordFiles = enrichmentFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
+      Enrichment enrichment = fromJsonFile(configFile, true)
+      for (File recordFile in recordFiles){
+        enrichment.dataContainer.records.add(JsonToolkit.fromJson(JsonToolkit.jsonNodeFromFile(recordFile), "uid"))
+      }
+      return enrichment
     }
-    enrichment
+    return null
   }
 
   private static List getRecordFiles(Map configMap, ZipInputStream zis){
@@ -353,7 +353,7 @@ class Enrichment{
 
 
   synchronized void classifyAllRecords(){
-    log.info("Classifying all records...")
+    log.debug("Classifying all records ...")
     greenRecords = new TreeMap<>()
     yellowRecords = new TreeMap<>()
     redRecords = new TreeMap<>()
@@ -365,7 +365,7 @@ class Enrichment{
       classifyRecord(record)
       record.save(enrichmentFolder, resultHash)
     }
-    log.info("Classifying all records finished.")
+    log.debug("Classifying all records finished")
   }
 
 

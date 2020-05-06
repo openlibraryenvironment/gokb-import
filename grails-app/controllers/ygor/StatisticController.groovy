@@ -2,7 +2,11 @@ package ygor
 
 import com.google.gson.Gson
 import de.hbznrw.ygor.tools.FileToolkit
+import grails.converters.JSON
 import groovy.util.logging.Log4j
+import groovyx.net.http.ContentType
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.Method
 import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
@@ -27,12 +31,12 @@ class StatisticController{
       return file.isDirectory()
     }
   }
-  static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
-  static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
-  static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
+  final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
   def grailsApplication
   EnrichmentService enrichmentService
   Set<String> enrichmentsUploading = []
+  String gokbUsername
+  String gokbPassword
 
   def index(){
     render(
@@ -46,11 +50,11 @@ class StatisticController{
     if (enrichmentsUploading.contains(resultHash)){
       return null
     }
-    enrichmentsUploading.add(resultHash)
+    enrichmentsUploading.add(resultHash.toString())
     String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
-    enrichmentsUploading.remove(resultHash)
+    enrichmentsUploading.remove(resultHash.toString())
     render(
         view: 'show',
         model: [
@@ -347,6 +351,8 @@ class StatisticController{
 
 
   private void sendFile(Enrichment.FileType fileType){
+    gokbUsername = params.gokbUsername
+    gokbPassword = params.gokbPassword
     def en = getCurrentEnrichment()
     if (en){
       def response = enrichmentService.sendFile(en, fileType, params.gokbUsername, params.gokbPassword)
@@ -355,7 +361,7 @@ class StatisticController{
       List errorList = []
       def total = 0
       def errors = 0
-      log.debug("sendTitlesFile response: ${response}")
+      log.debug("sendFile response: ${response}")
       if (response.info){
         log.debug("json class: ${response.info.class}")
         def info_objects = response.info.results
@@ -370,62 +376,150 @@ class StatisticController{
         flash.info = "Total: ${total}, Errors: ${errors}"
         flash.error = errorList
       }
-      Map model = [
-          originHash   : en.originHash,
-          resultHash   : en.resultHash,
-          currentView  : 'statistic',
-          ygorVersion  : en.ygorVersion,
-          date         : en.date,
-          filename     : en.originName,
-          greenRecords : en.greenRecords,
-          yellowRecords: en.yellowRecords,
-          redRecords   : en.redRecords,
-          status       : en.status,
-          packageName  : en.packageName
-      ]
-      model.putAll(getResponseMapped(response, fileType))
       render(
-          view: 'show',
-          model: model
+          view         : 'show',
+          model: [
+              originHash   : en.originHash,
+              resultHash   : en.resultHash,
+              currentView  : 'statistic',
+              ygorVersion  : en.ygorVersion,
+              date         : en.date,
+              filename     : en.originName,
+              greenRecords : en.greenRecords,
+              yellowRecords: en.yellowRecords,
+              redRecords   : en.redRecords,
+              status       : en.status.toString(),
+              packageName  : en.packageName,
+              jobId        : getJobId(response)
+          ]
       )
     }
   }
 
 
-  private Map getResponseMapped(List response, Enrichment.FileType fileType){
-    if (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY)){
-      return getTitlesResponseMapped(response)
+  private String getJobId(ArrayList response){
+    for (def responseItem in response){
+      for (def value in responseItem.values()){
+        return String.valueOf(value.get("job_id"))
+      }
     }
-    if (fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY)){
-      return getPackageResponseMapped(response)
-    }
-    // else
-    return [:]
   }
 
 
-  private Map getTitlesResponseMapped(List response){
-    Map result = [:]
-    List errorDetails = []
-    result.put("response_exists", "true")
-    int ok = 0, error = 0
-    for (Map outerMap in response){
-      for (Map innerMap in outerMap.values()){
-        for (Map record in innerMap.get("results")){
-          if (record.get("result").equals("OK")){
-            ok++
+  def getJobInfo = {
+    if (gokbUsername == null || gokbPassword == null){
+      return null
+    }
+    def uri = grailsApplication.config.gokbApi.xrJobInfo.concat(params.jobId)
+    def http = new HTTPBuilder(uri)
+    Map<String, Object> result = new HashMap<>()
+    result["jobId"] = params.jobId
+    http.auth.basic gokbUsername, gokbPassword
+
+    http.request(Method.GET, ContentType.JSON){ req ->
+      response.success = { response, resultMap ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (response.status < 400){
+            if (resultMap.result.equals("ERROR")){
+              result.put('error', resultMap.message)
+            }
+            else{
+              result.putAll(getResponseSorted(resultMap))
+            }
           }
-          else if (record.get("result").equals("ERROR")){
-            error++
-            errorDetails.add(getRecordError(record))
+          else{
+            result.put('warning': resultMap)
           }
         }
+        else{
+          result.putAll(handleAuthenticationError(response))
+        }
+      }
+      response.failure = { response, resultMap ->
+        log.error("GOKb server response: ${response.statusLine}")
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          result.put('error': resultMap)
+        }
+        else{
+          result.putAll(handleAuthenticationError(response))
+        }
+      }
+      response.'401'= {resp ->
+        result.putAll(handleAuthenticationError(resp))
+      }
+    }
+    render result as JSON
+  }
+
+
+  private Map handleAuthenticationError(response){
+    log.error("GOKb server response: ${response.statusLine}")
+    return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+  }
+
+
+  private Map getResponseSorted(Map response){
+    Map result = [:]
+    result.put("response_exists", "true")
+    if (response.get("finished") == true){
+      response.remove("progress")
+      result.put("response_finished", "true")
+      if (response.get("job_result")?.get("pkgId") != null){
+        getResponseSortedPackage(response, result)
+      }
+      else{
+        getResponseSortedTitles(response, result)
+      }
+    }
+    else{
+      result.put("response_finished", "false")
+      result.put("progress", response.get("progress"))
+    }
+    return result
+  }
+
+
+  private List getResponseSortedPackage(Map response, Map result){
+    def jobResult = response.get("job_result")
+    String message = jobResult?.get("message")
+    if (message != null){
+      result.put("response_message", message)
+    }
+    int error = jobResult?.get("errors") != null ? jobResult?.get("errors")?.size() : 0
+    int ok = jobResult?.get("results") != null ? jobResult?.get("results")?.size() : 0
+    if (ok == 0){
+      // package update --> get "OK" information from message string
+      Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
+      if (matcher.find()){
+        ok = Integer.valueOf(matcher.group(1))
       }
     }
     result.put("response_ok", ok.toString())
     result.put("response_error", error.toString())
-    result.put("error_details", errorDetails)
-    return result
+  }
+
+
+  private List getResponseSortedTitles(Map response, Map result){
+    int ok, error
+    List errorDetails = []
+    String message = response.get("job_result")?.get("message")
+    for (Map resultItem in response.get("job_result")?.get("results")){
+      if (resultItem.get("result").equals("OK")){
+        ok++
+      }
+      else if (resultItem.get("result").equals("ERROR")){
+        error++
+        errorDetails.add(getRecordError(resultItem))
+      }
+    }
+    result.put("response_ok", ok.toString())
+    result.put("response_error", error.toString())
+    if (errorDetails.size() > 0){
+      result.put("error_details", errorDetails)
+    }
+    if (message != null){
+      result.put("response_message", message)
+    }
   }
 
 
@@ -435,54 +529,6 @@ class StatisticController{
       result.append(record.get("message"))
     }
     result.toString()
-  }
-
-
-  private Map<String, String> getPackageResponseMapped(List response){
-    Map<String, String> result = new HashMap<>()
-    List<String> errorDetails = []
-    result.put("response_exists", true)
-    int ok = 0, error = 0
-    for (Map outerMap in response){
-      for (Map innerMap in outerMap.values()){
-        if (!StringUtils.isEmpty(innerMap.get("message"))){
-          result.put("response_message", innerMap.get("message"))
-        }
-        if (innerMap.get("result").equals("OK") && innerMap.get("errors").isEmpty()){
-          ok = extractNumberFromResponse(innerMap.get("message"), "with", "TIPPs")
-        }
-        else {
-          for (def entry in innerMap){
-            if (entry.key.equals("errors")){
-              for (resultMap in entry.value){
-                error++
-                errorDetails.add(resultMap.'message')
-              }
-            }
-          }
-        }
-        if (ok > 0){
-          result.put("response_ok", ok.toString())
-        }
-        result.put("response_error", error.toString())
-        result.put("error_details", errorDetails)
-      }
-    }
-    return result
-  }
-
-
-  private Integer extractNumberFromResponse(String response, String prefix, String suffix){
-    final Pattern p = Pattern.compile(prefix.concat("[\\s]*([0-9]+)[\\s]*").concat(suffix))
-    Matcher m = p.matcher(response)
-    m.find()
-    try {
-      return Integer.valueOf(m.group(1))
-    }
-    catch (Exception e){
-      log.error("Could not extract number from GOKb response message. ".concat(e.getMessage()))
-      return null
-    }
   }
 
 

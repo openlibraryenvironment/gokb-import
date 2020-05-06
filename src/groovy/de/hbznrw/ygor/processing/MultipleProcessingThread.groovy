@@ -65,8 +65,9 @@ class MultipleProcessingThread extends Thread {
                        (eissnKeyMapping): OnlineIdentifier.class]
   }
 
+
   @Override
-  void run() {
+  void run(){
     isRunning = true
     progressCurrent = 0.0
     if (null == enrichment.originPathName)
@@ -100,13 +101,13 @@ class MultipleProcessingThread extends Thread {
       enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length() + 2))
       log.error(e.getMessage())
       log.error(e.printStackTrace())
-      log.info('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
+      log.error('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
       return
     }
     catch (Exception e) {
       enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
       log.error(e.getMessage())
-      log.info('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
+      log.error('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
       def stacktrace = Throwables.getStackTraceAsString(e).replaceAll("\\p{C}", " ")
       enrichment.setMessage(stacktrace + " ..")
       return

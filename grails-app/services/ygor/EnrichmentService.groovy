@@ -25,8 +25,7 @@ class EnrichmentService{
     def formats = getSessionFormats()
     formats << ["${en.originHash}": tmp]
 
-    def enrichments = getSessionEnrichments()
-    enrichments << ["${en.resultHash}": en]
+    getSessionEnrichments() << ["${en.resultHash.toString()}": en]
 
     file.transferTo(new File(en.originPathName))
     return en
@@ -135,6 +134,7 @@ class EnrichmentService{
             grailsApplication.config.gokbApi.xrTitleUri :
             null
         )
+    uri = uri.concat("?async=true")
     result << exportFileToGOKb(enrichment, json, uri, user, pwd)
     result
   }
@@ -189,7 +189,7 @@ class EnrichmentService{
     if (!session.enrichments){
       session.enrichments = [:]
     }
-    session.enrichments.put(enrichment.resultHash, enrichment)
+    session.enrichments.put(enrichment.resultHash.toString(), enrichment)
   }
 
 

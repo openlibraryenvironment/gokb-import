@@ -27,6 +27,8 @@ class EnrichmentController{
     def gokb_cgs = gokbService.getCuratoryGroupsList()
     namespace_doi_list.addAll(namespace_list)
     namespace_doi_list  << [id: 'doi', text: 'doi']
+    Enrichment en = getCurrentEnrichment()
+    setErrorStatus(en)
     render(
         view: 'process',
         params: [
@@ -34,7 +36,7 @@ class EnrichmentController{
             originHash: request.parameterMap.originHash
         ],
         model: [
-            enrichment        : getCurrentEnrichment(),
+            enrichment        : en,
             gokbService       : gokbService,
             pkg_namespaces    : namespace_list,
             record_namespaces : namespace_doi_list,
@@ -101,7 +103,9 @@ class EnrichmentController{
       flash.warning = null
       flash.error = message(code: 'error.kbart.noUtf8Encoding').toString().concat("<br>")
           .concat(message(code: 'error.kbart.messageFooter').toString())
-      redirect(action: 'process')
+      redirect(
+          action: 'process'
+      )
       return
     }
     def foDelimiter = request.parameterMap['formatDelimiter'][0]
@@ -117,9 +121,15 @@ class EnrichmentController{
       flash.warning = null
       flash.error = message(code: 'error.kbart.noValidFile').toString().concat("<br>")
           .concat(message(code: 'error.kbart.messageFooter').toString())
-      render(view: 'process',
+      Enrichment enrichment = getCurrentEnrichment()
+      render(
+          view: 'process',
+          params: [
+              resultHash: request.parameterMap.resultHash,
+              originHash: enrichment.originHash
+          ],
           model: [
-              enrichment : getCurrentEnrichment(),
+              enrichment : enrichment,
               currentView: 'process'
           ]
       )
@@ -133,9 +143,15 @@ class EnrichmentController{
       flash.info = null
       flash.warning = null
       flash.error = ype.getMessage()
-      render(view: 'process',
+      Enrichment enrichment = getCurrentEnrichment()
+      render(
+          view: 'process',
+          params: [
+              resultHash: request.parameterMap.resultHash,
+              originHash: enrichment.originHash
+          ],
           model: [
-              enrichment : getCurrentEnrichment(),
+              enrichment : enrichment,
               currentView: 'process'
           ]
       )
@@ -151,7 +167,7 @@ class EnrichmentController{
             originHash: enrichment.originHash
         ],
         model: [
-            enrichment : getCurrentEnrichment(),
+            enrichment : enrichment,
             currentView: 'process'
         ]
     )
@@ -217,6 +233,7 @@ class EnrichmentController{
     if (request.session.lastUpdate != null){
       request.session.lastUpdate.parameterMap = request.parameterMap
     }
+    setErrorStatus(enrichment)
     redirect(
         action: 'process',
         params: [
@@ -232,9 +249,9 @@ class EnrichmentController{
 
 
   def processFile = {
+    def en = getCurrentEnrichment()
     try{
       def pmOptions = request.parameterMap['processOption']
-      def en = getCurrentEnrichment()
       if (en.status != Enrichment.ProcessingState.WORKING){
         if (!pmOptions){
           flash.info = null
@@ -266,6 +283,7 @@ class EnrichmentController{
         }
       }
       if (en.status != Enrichment.ProcessingState.FINISHED){
+        setErrorStatus(en)
         redirect(
             action: 'process',
             params: [
@@ -293,9 +311,17 @@ class EnrichmentController{
         )
       }
     }
-    catch(YgorProcessingException ype){
-      flash.error = ype.getMessage()
+    catch(Exception e){
+      setErrorStatus(en)
       redirect(action: 'process')
+    }
+  }
+
+
+  private void setErrorStatus(Enrichment en){
+    if (en.apiMessage != null){
+      en.status == Enrichment.ProcessingState.ERROR
+      flash.error = en.apiMessage
     }
   }
 
@@ -337,9 +363,9 @@ class EnrichmentController{
     }
     def hash = (String) request.parameterMap['resultHash'][0]
     def enrichments = enrichmentService.getSessionEnrichments()
-    Enrichment result = enrichments[hash]
+    Enrichment result = enrichments[hash.toString()]
     if (null == result){
-      result = enrichments.get("${hash}")
+      result = enrichments.get("${hash.toString()}")
     }
     result
   }
