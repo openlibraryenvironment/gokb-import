@@ -4,11 +4,17 @@
 
 <p class="lead">${packageName}</p>
 
-    <div id="showUploadResults" hidden="hidden" >
+    <div id="showUploadResults">
         <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
             <g:message code="listDocuments.gokb.response"/>
         </button>
-        <div class="collapse in" id="btn-accord">
+        <g:set var="nrOfRecords" value="${greenRecords.size() + yellowRecords.size()}"/>
+        <div class="collapse in" id="progress-section">
+            <div id="progress-${resultHash}" class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
+                     aria-valuemin="0"aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
+            </div>
+        </div>
             <table class="table" id="feedbackTable">
                 <tbody>
                     <script>
@@ -35,17 +41,14 @@
                                                 rowTexts.set(count.toString(), errorDetail);
                                                 count++;
                                             }
-                                            if (data["response_exists"] == "true"){
-                                                document.getElementById('showUploadResults').removeAttribute("hidden");
-                                            }
-                                            return;
+                                            jQuery('#progress-${resultHash} > .progress-bar').attr('hidden', 'hidden');
+                                            jQuery('#progress-section').attr('hidden', 'hidden');
+                                            jQuery('.progress').attr('hidden', 'hidden');
                                         }
                                         else {
-                                            console.log("success RH: ${resultHash}");
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', progress);
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + progress + '%');
-                                            jQuery('#progress-${resultHash} > .progress-bar').text(progress + '%');
-                                            getJobInfo()
+                                            jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', data["progress"]);
+                                            jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + data["progress"] + '%');
+                                            jQuery('#progress-${resultHash} > .progress-bar').text(data["progress"] + '%');
                                         }
                                     }
                                 },

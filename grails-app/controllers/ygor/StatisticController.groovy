@@ -481,7 +481,7 @@ class StatisticController{
     }
     else{
       result.put("response_finished", "false")
-      response.get("result")
+      result.put("progress", response.get("progress"))
     }
     return result
   }
