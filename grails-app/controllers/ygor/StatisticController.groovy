@@ -18,6 +18,9 @@ import ygor.identifier.OnlineIdentifier
 import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 @Log4j
 class StatisticController{
 
@@ -28,9 +31,7 @@ class StatisticController{
       return file.isDirectory()
     }
   }
-  static final PROCESSED_KBART_ENTRIES = "processed kbart entries"
-  static final IGNORED_KBART_ENTRIES = "ignored kbart entries"
-  static final DUPLICATE_KEY_ENTRIES = "duplicate key entries"
+  final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
   def grailsApplication
   EnrichmentService enrichmentService
   Set<String> enrichmentsUploading = []
@@ -360,7 +361,7 @@ class StatisticController{
       List errorList = []
       def total = 0
       def errors = 0
-      log.debug("sendTitlesFile response: ${response}")
+      log.debug("sendFile response: ${response}")
       if (response.info){
         log.debug("json class: ${response.info.class}")
         def info_objects = response.info.results
@@ -399,9 +400,7 @@ class StatisticController{
   private String getJobId(ArrayList response){
     for (def responseItem in response){
       for (def value in responseItem.values()){
-        for (def v in value.values()){
-          return String.valueOf(v)
-        }
+        return String.valueOf(value.get("job_id"))
       }
     }
   }
@@ -461,29 +460,66 @@ class StatisticController{
 
   private Map getResponseSorted(Map response){
     Map result = [:]
-    List errorDetails = []
     result.put("response_exists", "true")
     if (response.get("finished") == true){
-      int ok = 0, error = 0
-      for (Map resultItem in response.get("job_result")?.get("results")){
-        if (resultItem.get("result").equals("OK")){
-          ok++
-        }
-        else if (resultItem.get("result").equals("ERROR")){
-          error++
-          errorDetails.add(getRecordError(resultItem))
-        }
-      }
-      result.put("response_ok", ok.toString())
-      result.put("response_error", error.toString())
-      result.put("error_details", errorDetails)
+      response.remove("progress")
       result.put("response_finished", "true")
+      if (response.get("job_result")?.get("pkgId") != null){
+        getResponseSortedPackage(response, result)
+      }
+      else{
+        getResponseSortedTitles(response, result)
+      }
     }
     else{
       result.put("response_finished", "false")
       result.put("progress", response.get("progress"))
     }
     return result
+  }
+
+
+  private List getResponseSortedPackage(Map response, Map result){
+    def jobResult = response.get("job_result")
+    String message = jobResult?.get("message")
+    if (message != null){
+      result.put("response_message", message)
+    }
+    int error = jobResult?.get("errors") != null ? jobResult?.get("errors")?.size() : 0
+    int ok = jobResult?.get("results") != null ? jobResult?.get("results")?.size() : 0
+    if (ok == 0){
+      // package update --> get "OK" information from message string
+      Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
+      if (matcher.find()){
+        ok = Integer.valueOf(matcher.group(1))
+      }
+    }
+    result.put("response_ok", ok.toString())
+    result.put("response_error", error.toString())
+  }
+
+
+  private List getResponseSortedTitles(Map response, Map result){
+    int ok, error
+    List errorDetails = []
+    String message = response.get("job_result")?.get("message")
+    for (Map resultItem in response.get("job_result")?.get("results")){
+      if (resultItem.get("result").equals("OK")){
+        ok++
+      }
+      else if (resultItem.get("result").equals("ERROR")){
+        error++
+        errorDetails.add(getRecordError(resultItem))
+      }
+    }
+    result.put("response_ok", ok.toString())
+    result.put("response_error", error.toString())
+    if (errorDetails.size() > 0){
+      result.put("error_details", errorDetails)
+    }
+    if (message != null){
+      result.put("response_message", message)
+    }
   }
 
 

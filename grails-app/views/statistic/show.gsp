@@ -4,7 +4,7 @@
 
 <p class="lead">${packageName}</p>
 
-    <div id="showUploadResults">
+    <div id="showUploadResults" hidden="hidden">
         <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
             <g:message code="listDocuments.gokb.response"/>
         </button>
@@ -31,15 +31,19 @@
                                 success: function (data) {
                                     if (data != null && !jQuery.isEmptyObject(data)) {
                                         if (data["error"] == "Request is missing an id."){
+                                            clearInterval(jobInfoHandle);
                                             return;
                                         }
+                                        document.getElementById("showUploadResults").removeAttribute("hidden")
                                         if (data["response_finished"] == "true") {
                                             rowTexts.set("${message(code: 'listDocuments.gokb.response.ok')}", data["response_ok"]);
                                             rowTexts.set("${message(code: 'listDocuments.gokb.response.error')}", data["response_error"]);
                                             let count=1;
-                                            for (let errorDetail of data["error_details"]){
-                                                rowTexts.set(count.toString(), errorDetail);
-                                                count++;
+                                            if (data["error_details"] != null){
+                                                for (let errorDetail of data["error_details"]){
+                                                    rowTexts.set(count.toString(), errorDetail);
+                                                    count++;
+                                                }
                                             }
                                             jQuery('#progress-${resultHash} > .progress-bar').attr('hidden', 'hidden');
                                             jQuery('#progress-section').attr('hidden', 'hidden');
@@ -67,7 +71,7 @@
                                 }
                                 clearInterval(jobInfoHandle);
                             }
-                        }, 2000);
+                        }, 1000);
                     </script>
                 </tbody>
             </table>
