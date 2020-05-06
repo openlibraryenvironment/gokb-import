@@ -408,6 +408,9 @@ class StatisticController{
 
 
   def getJobInfo = {
+    if (gokbUsername == null || gokbPassword == null){
+      return null
+    }
     def uri = grailsApplication.config.gokbApi.xrJobInfo.concat(params.jobId)
     def http = new HTTPBuilder(uri)
     Map<String, Object> result = new HashMap<>()
@@ -418,7 +421,12 @@ class StatisticController{
       response.success = { response, resultMap ->
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
           if (response.status < 400){
-            result.putAll(getResponseSorted(resultMap))
+            if (resultMap.result.equals("ERROR")){
+              result.put('error', resultMap.message)
+            }
+            else{
+              result.putAll(getResponseSorted(resultMap))
+            }
           }
           else{
             result.put('warning': resultMap)
@@ -470,6 +478,10 @@ class StatisticController{
       result.put("response_error", error.toString())
       result.put("error_details", errorDetails)
       result.put("response_finished", "true")
+    }
+    else{
+      result.put("response_finished", "false")
+      response.get("result")
     }
     return result
   }

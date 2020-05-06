@@ -24,6 +24,9 @@
                                 data: 'jobId=${jobId}',
                                 success: function (data) {
                                     if (data != null && !jQuery.isEmptyObject(data)) {
+                                        if (data["error"] == "Request is missing an id."){
+                                            return;
+                                        }
                                         if (data["response_finished"] == "true") {
                                             rowTexts.set("${message(code: 'listDocuments.gokb.response.ok')}", data["response_ok"]);
                                             rowTexts.set("${message(code: 'listDocuments.gokb.response.error')}", data["response_error"]);

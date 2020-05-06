@@ -248,16 +248,19 @@ class Enrichment{
     JsonSlurper slurpy = new JsonSlurper()
     ZipInputStream zis = new ZipInputStream(zipFile.getInputStream())
     ZipEntry zipEntry = zis.getNextEntry()
-    Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
-    def (File enrichmentFolder, File configFile) = getRecordFiles(configMap, zis)
-    zis.closeEntry()
-    zis.close()
-     List<File> recordFiles = enrichmentFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
-    Enrichment enrichment = fromJsonFile(configFile, true)
-    for (File recordFile in recordFiles){
-      enrichment.dataContainer.records.add(JsonToolkit.fromJson(JsonToolkit.jsonNodeFromFile(recordFile), "uid"))
+    if (zipEntry != null){
+      Map<?,?> configMap = getConfigMap(zipEntry, zis, slurpy, sessionFoldersRoot)
+      def (File enrichmentFolder, File configFile) = getRecordFiles(configMap, zis)
+      zis.closeEntry()
+      zis.close()
+      List<File> recordFiles = enrichmentFolder.listFiles(new RecordFileFilter(configMap.get("resultHash")))
+      Enrichment enrichment = fromJsonFile(configFile, true)
+      for (File recordFile in recordFiles){
+        enrichment.dataContainer.records.add(JsonToolkit.fromJson(JsonToolkit.jsonNodeFromFile(recordFile), "uid"))
+      }
+      return enrichment
     }
-    enrichment
+    return null
   }
 
   private static List getRecordFiles(Map configMap, ZipInputStream zis){
