@@ -83,6 +83,25 @@ class GokbExporter {
   }
 
 
+  static ObjectNode extractTitle(Enrichment enrichment, String recordId) {
+    Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recordId,
+        enrichment.dataContainer.mappingsContainer)
+    if (record != null && record.isValid()){
+      record.deriveHistoryEventObjects(enrichment)
+      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+      title = postProcessPublicationTitle(title, record)
+      title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
+      title = removeEmptyFields(title)
+      title = removeEmptyIdentifiers(title, FileType.JSON_TITLES_ONLY)
+      title = postProcessTitleIdentifiers(title, FileType.JSON_TITLES_ONLY,
+          enrichment.dataContainer.info.namespace_title_id)
+      return title
+    }
+    // else
+    return null
+  }
+
+
   static ArrayNode extractTipps(Enrichment enrichment) {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
@@ -92,48 +111,38 @@ class GokbExporter {
       if (record.isValid()){
         ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
         tipp = postProcessIssnIsbn(tipp, record, FileType.JSON_PACKAGE_ONLY)
+        tipp = removeEmptyFields(tipp)
+        tipp = removeEmptyIdentifiers(tipp, FileType.JSON_PACKAGE_ONLY)
+        tipp = postProcessTitleIdentifiers(tipp, FileType.JSON_PACKAGE_ONLY,
+            enrichment.dataContainer.info.namespace_title_id)
         tipps.add(tipp)
       }
     }
-    tipps = removeEmptyFields(tipps)
-    tipps = removeEmptyIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY)
-    tipps = postProcessTitleIdentifiers(tipps, FileType.JSON_PACKAGE_ONLY,
-        enrichment.dataContainer.info.namespace_title_id)
     enrichment.dataContainer.tipps = tipps
     log.debug("extracting tipps finished")
     tipps
   }
 
 
-  static ArrayNode postProcessTitleIdentifiers(ArrayNode arrayNode, FileType type, String namespace) {
-    log.debug("postprocessing title ids ...")
+  static ObjectNode postProcessTitleIdentifiers(ObjectNode item, FileType type, String namespace) {
     if (type.equals(FileType.JSON_TITLES_ONLY)) {
-      for (def title in arrayNode.elements()) {
-        postProcessTitleId(title.identifiers, namespace)
-      }
-    } else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
-      for (def tipp in arrayNode.elements()) {
-        postProcessTitleId(tipp.title.identifiers, namespace)
-      }
+      postProcessTitleId(item.identifiers, namespace)
     }
-    log.debug("postprocessing title ids finished")
-    arrayNode
+    else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
+      postProcessTitleId(item.title.identifiers, namespace)
+    }
+    item
   }
 
 
-  static ArrayNode removeEmptyIdentifiers(ArrayNode arrayNode, FileType type) {
-    log.debug("removing invalid fields ...")
+  static ObjectNode removeEmptyIdentifiers(ObjectNode item, FileType type) {
     if (type.equals(FileType.JSON_TITLES_ONLY)) {
-      for (def title in arrayNode.elements()) {
-        removeEmptyIds(title.identifiers)
-      }
-    } else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
-      for (def tipp in arrayNode.elements()) {
-        removeEmptyIds(tipp.title.identifiers)
-      }
+        removeEmptyIds(item.identifiers)
     }
-    log.debug("removing invalid fields finished")
-    arrayNode
+    else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
+      removeEmptyIds(item.title.identifiers)
+    }
+    item
   }
 
 
