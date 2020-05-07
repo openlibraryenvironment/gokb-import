@@ -58,6 +58,9 @@ class EnrichmentService{
     def ph = enrichment.dataContainer.pkg.packageHeader
     ph.name = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
+    if (pm['addOnly'] && pm['addOnly'][0] == "on"){
+      enrichment.addOnly = true
+    }
     if (pm['pkgIsil'] && pm['pkgIsil'][0]){
       enrichment.dataContainer.isil = pm['pkgIsil'][0]
     }
@@ -135,6 +138,9 @@ class EnrichmentService{
             null
         )
     uri = uri.concat("?async=true")
+    if (fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) && enrichment.addOnly == true){
+      uri = uri.concat("&addOnly=true")
+    }
     result << exportFileToGOKb(enrichment, json, uri, user, pwd)
     result
   }

@@ -113,8 +113,9 @@ class EnrichmentController{
     def foQuote = null                  // = request.parameterMap['formatQuote'][0]
     def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
     def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
+    def addOnly = false
 
-    setInputFieldDataToLastUpdate(file, foDelimiter, foQuote, foQuoteMode, recordSeparator)
+    setInputFieldDataToLastUpdate(file, foDelimiter, foQuote, foQuoteMode, recordSeparator, addOnly)
 
     if (file.empty){
       flash.info = null
@@ -174,7 +175,7 @@ class EnrichmentController{
   }
 
 
-  private void setInputFieldDataToLastUpdate(file, String foDelimiter, foQuote, foQuoteMode, String recordSeparator){
+  private void setInputFieldDataToLastUpdate(file, String foDelimiter, foQuote, foQuoteMode, String recordSeparator, boolean addOnly){
     if (!request.session.lastUpdate){
       request.session.lastUpdate = [:]
     }
@@ -183,6 +184,7 @@ class EnrichmentController{
     request.session.lastUpdate.foQuote = foQuote
     request.session.lastUpdate.foQuoteMode = foQuoteMode
     request.session.lastUpdate.recordSeparator = recordSeparator
+    request.session.lastUpdate.addOnly = addOnly
   }
 
 

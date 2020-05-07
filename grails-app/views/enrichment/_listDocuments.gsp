@@ -55,7 +55,18 @@
                                     <g:textField name="pkgTitle" size="48" placeholder="Munchhausen Verlag: Science Journals: hbz: 1999" class="form-control" required="true"/>
                                 </g:else>
                             </div>
-                            <br />
+                            <div class="checkbox">
+                                <label>
+                                    <g:if test="${session.lastUpdate != null && session.lastUpdate?.addOnly == true}">
+                                        <g:checkBox name="addOnly" checked="true" value="${addOnly}"/>
+                                    </g:if>
+                                    <g:else>
+                                        <g:checkBox name="addOnly" checked="false" value="${addOnly}"/>
+                                    </g:else>
+                                    <g:message code="uploadFile.addOnly" />
+                                </label>
+                            </div>
+                            <br/>
                             <div class="input-group">
                                 <span class="input-group-addon"><g:message code="listDocuments.key.isil" /></span>
                                 <g:if test="${session.lastUpdate?.parameterMap?.pkgIsil}">
