@@ -17,6 +17,11 @@ import ygor.Enrichment.FileType
 import ygor.Record
 import ygor.field.MappingsContainer
 
+import java.nio.ByteBuffer
+import java.nio.channels.FileLock
+import java.nio.channels.OverlappingFileLockException
+import java.nio.charset.Charset
+
 @Log4j
 class GokbExporter {
 
@@ -37,10 +42,7 @@ class GokbExporter {
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
       case FileType.JSON_TITLES_ONLY:
-        ArrayNode result = GokbExporter.extractTitles(enrichment)
-        def file = new File(enrichment.enrichmentFolder + ".titles.json")
-        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
-        return file
+        return extractTitles(enrichment)
       case FileType.JSON_OO_RAW:
         enrichment.save()
         return new File(enrichment.enrichmentFolder)
@@ -56,49 +58,6 @@ class GokbExporter {
     pkg.set("tipps", extractTipps(enrichment))
     log.debug("extracting package finished")
     pkg
-  }
-
-
-  static ArrayNode extractTitles(Enrichment enrichment) {
-    log.debug("extracting titles ...")
-    ArrayNode titles = new ArrayNode(NODE_FACTORY)
-    for (String recId in enrichment.dataContainer.records){
-      Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId,
-          enrichment.dataContainer.mappingsContainer)
-      if (record.isValid()){
-        record.deriveHistoryEventObjects(enrichment)
-        ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
-        title = postProcessPublicationTitle(title, record)
-        title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
-        titles.add(title)
-      }
-    }
-    titles = removeEmptyFields(titles)
-    titles = removeEmptyIdentifiers(titles, FileType.JSON_TITLES_ONLY)
-    titles = postProcessTitleIdentifiers(titles, FileType.JSON_TITLES_ONLY,
-        enrichment.dataContainer.info.namespace_title_id)
-    enrichment.dataContainer.titles = titles
-    log.debug("extracting titles finished")
-    titles
-  }
-
-
-  static ObjectNode extractTitle(Enrichment enrichment, String recordId) {
-    Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recordId,
-        enrichment.dataContainer.mappingsContainer)
-    if (record != null && record.isValid()){
-      record.deriveHistoryEventObjects(enrichment)
-      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
-      title = postProcessPublicationTitle(title, record)
-      title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
-      title = removeEmptyFields(title)
-      title = removeEmptyIdentifiers(title, FileType.JSON_TITLES_ONLY)
-      title = postProcessTitleIdentifiers(title, FileType.JSON_TITLES_ONLY,
-          enrichment.dataContainer.info.namespace_title_id)
-      return title
-    }
-    // else
-    return null
   }
 
 
@@ -121,6 +80,62 @@ class GokbExporter {
     enrichment.dataContainer.tipps = tipps
     log.debug("extracting tipps finished")
     tipps
+  }
+
+
+  static File extractTitles(Enrichment enrichment) {
+    String fileName = enrichment.enrichmentFolder + ".titles.json"
+    log.debug("extracting titles ... to ".concat(fileName))
+    RandomAccessFile titlesFile = new RandomAccessFile(fileName, "rw")
+    def fileChannel = titlesFile.getChannel()
+    try {
+      FileLock fileLock = fileChannel.tryLock()
+      if (null != fileLock){
+        for (int i=0; i<enrichment.dataContainer.records.size(); i++){
+          String recId = enrichment.dataContainer.records[i]
+          byte[] title
+          if (i == 0){
+            title = "[".concat(extractPrettyTitle(enrichment, recId)).getBytes(Charset.forName("UTF-8"))
+          }
+          else if (i < enrichment.dataContainer.records.size()-1){
+            title = ",".concat(extractPrettyTitle(enrichment, recId)).getBytes(Charset.forName("UTF-8"))
+          }
+          else{ // i == enrichment.dataContainer.records.size()
+            title = ",".concat(extractPrettyTitle(enrichment, recId)).concat("]").getBytes(Charset.forName("UTF-8"))
+          }
+          ByteBuffer buffer = ByteBuffer.wrap(title)
+          buffer.put(title)
+          buffer.flip()
+          while (buffer.hasRemaining()){
+            fileChannel.write(buffer)
+          }
+        }
+      }
+      fileLock.close()
+    }
+    catch (OverlappingFileLockException | IOException e) {
+      log.error("Exception occurred while trying lock titles file... " + e.getMessage())
+    }
+    return new File(fileName)
+  }
+
+
+  static String extractPrettyTitle(Enrichment enrichment, String recordId) {
+    Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recordId,
+        enrichment.dataContainer.mappingsContainer)
+    if (record != null && record.isValid()){
+      record.deriveHistoryEventObjects(enrichment)
+      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+      title = postProcessPublicationTitle(title, record)
+      title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
+      title = removeEmptyFields(title)
+      title = removeEmptyIdentifiers(title, FileType.JSON_TITLES_ONLY)
+      title = postProcessTitleIdentifiers(title, FileType.JSON_TITLES_ONLY,
+          enrichment.dataContainer.info.namespace_title_id)
+      return JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
+    }
+    // else
+    return null
   }
 
 

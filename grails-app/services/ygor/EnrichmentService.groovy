@@ -149,7 +149,7 @@ class EnrichmentService{
 
 
   def getTitleJson(){
-    // TODO call GOKbExporter.extractTitle()
+    // TODO call GOKbExporter.extractPrettyTitle()
   }
 
 
