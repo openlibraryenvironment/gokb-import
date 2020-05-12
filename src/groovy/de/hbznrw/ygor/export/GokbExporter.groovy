@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.format.GokbFormatter
 import de.hbznrw.ygor.normalizers.DoiNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.tools.MemoryToolkit
 import de.hbznrw.ygor.tools.StopwordToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
@@ -91,17 +92,18 @@ class GokbExporter {
     try {
       FileLock fileLock = fileChannel.tryLock()
       if (null != fileLock){
+        StringBuilder logBuilder = new StringBuilder("LOAD\tLOADED\tVALIDATED\tCALCULATED\tPPED\tPPISXN\tDELEMPT FIELDS\tDELEMPT IDS\tPPED TIT IDS\tPRETTIFIED\n")
         for (int i=0; i<enrichment.dataContainer.records.size(); i++){
           String recId = enrichment.dataContainer.records[i]
           byte[] title
           if (i == 0){
-            title = "[".concat(extractPrettyTitle(enrichment, recId)).getBytes(Charset.forName("UTF-8"))
+            title = "[".concat(extractPrettyTitle(enrichment, recId, logBuilder)).getBytes(Charset.forName("UTF-8"))
           }
           else if (i < enrichment.dataContainer.records.size()-1){
-            title = ",".concat(extractPrettyTitle(enrichment, recId)).getBytes(Charset.forName("UTF-8"))
+            title = ",".concat(extractPrettyTitle(enrichment, recId, logBuilder)).getBytes(Charset.forName("UTF-8"))
           }
           else{ // i == enrichment.dataContainer.records.size()
-            title = ",".concat(extractPrettyTitle(enrichment, recId)).concat("]").getBytes(Charset.forName("UTF-8"))
+            title = ",".concat(extractPrettyTitle(enrichment, recId, logBuilder)).concat("]").getBytes(Charset.forName("UTF-8"))
           }
           ByteBuffer buffer = ByteBuffer.wrap(title)
           buffer.put(title)
@@ -110,6 +112,7 @@ class GokbExporter {
             fileChannel.write(buffer)
           }
         }
+        log.debug(logBuilder.toString())
       }
       fileLock.close()
     }
@@ -120,19 +123,32 @@ class GokbExporter {
   }
 
 
-  static String extractPrettyTitle(Enrichment enrichment, String recordId) {
+  static String extractPrettyTitle(Enrichment enrichment, String recordId, StringBuilder logBuilder) {
+    long start = System.currentTimeMillis()
+    logBuilder.append(String.valueOf(start).concat("\t"))
     Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recordId,
         enrichment.dataContainer.mappingsContainer)
+    logBuilder.append(String.valueOf(MemoryToolkit.getObjectSize(record)).concat("\t"))
+    logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
     if (record != null && record.isValid()){
       record.deriveHistoryEventObjects(enrichment)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
       ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
       title = postProcessPublicationTitle(title, record)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
       title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
       title = removeEmptyFields(title)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
       title = removeEmptyIdentifiers(title, FileType.JSON_TITLES_ONLY)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
       title = postProcessTitleIdentifiers(title, FileType.JSON_TITLES_ONLY,
           enrichment.dataContainer.info.namespace_title_id)
-      return JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\t"))
+      String result = JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
+      logBuilder.append(String.valueOf(System.currentTimeMillis() - start).concat("\n"))
+      return result
     }
     // else
     return null

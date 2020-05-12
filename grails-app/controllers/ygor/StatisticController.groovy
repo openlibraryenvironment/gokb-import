@@ -18,6 +18,8 @@ import ygor.identifier.OnlineIdentifier
 import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -316,9 +318,16 @@ class StatisticController{
 
 
   def downloadTitlesFile = {
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
+    LocalDateTime now = LocalDateTime.now()
+    log.debug("PREPARING DOWNLOAD TITLES: ".concat(dtf.format(now)))
     def en = getCurrentEnrichment()
     if (en){
+      now = LocalDateTime.now()
+      log.debug("STARTING DOWNLOAD TITLES: ".concat(dtf.format(now)))
       def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
+      now = LocalDateTime.now()
+      log.debug("FINISHED DOWNLOAD TITLES: ".concat(dtf.format(now)))
       render(file: result, fileName: "${en.resultName}.titles.json")
     }
     else{
