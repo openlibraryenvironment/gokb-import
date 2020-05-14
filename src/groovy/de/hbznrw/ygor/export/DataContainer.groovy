@@ -11,11 +11,6 @@ import groovy.util.logging.Log4j
 import ygor.Record
 import ygor.field.MappingsContainer
 import ygor.identifier.AbstractIdentifier
-import ygor.identifier.DoiIdentifier
-import ygor.identifier.EzbIdentifier
-import ygor.identifier.OnlineIdentifier
-import ygor.identifier.PrintIdentifier
-import ygor.identifier.ZdbIdentifier
 
 @Log4j
 class DataContainer {
@@ -29,7 +24,7 @@ class DataContainer {
   String  isil
   ObjectNode packageHeader
   Set<String> records
-  Map<AbstractIdentifier, Set<Record>> recordsPerId
+  Map<AbstractIdentifier, Set<String>> recordsPerId
   ArrayNode titles
   ArrayNode tipps
   String curatoryGroup
@@ -67,16 +62,20 @@ class DataContainer {
   }
 
 
-  Record getRecord(def id) {
+  Set<Record> getRecords(def id){
     if (id instanceof AbstractIdentifier){
-      return getRecordFromIdentifier(id)
+      Set<Record> result  = new HashSet<>()
+      for (String uid in recordsPerId.get(id)){
+        result << Record.load(enrichmentFolder, resultHash, uid, mappingsContainer)
+      }
+      return result
     }
     try {
       if (id instanceof String && UUID.fromString(id)){
-        return Record.load(enrichmentFolder, resultHash, id, mappingsContainer)
+        return new HashSet() << Record.load(enrichmentFolder, resultHash, id, mappingsContainer)
       }
     }
-    catch(IllegalArgumentException iae) {
+    catch(IllegalArgumentException iae){
       return null
     }
     return null
@@ -105,61 +104,15 @@ class DataContainer {
   }
 
 
-  private Record getRecordFromIdentifier(AbstractIdentifier identifier){
-    /* TODO refactor this
-            general idea: replace by use of recordsPerId
-     */
-    if (identifier instanceof ZdbIdentifier){
-      for (String recId in records){
-        Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
-        if (identifier.identifier.equals(record.zdbId?.identifier)){
-          return record
-        }
-      }
-    }
-    if (identifier instanceof EzbIdentifier){
-      for (String recId in records){
-        Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
-        if (identifier.identifier.equals(record.ezbId?.identifier)){
-          return record
-        }
-      }
-    }
-    if (identifier instanceof DoiIdentifier){
-      for (String recId in records){
-        Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
-        if (identifier.identifier.equals(record.doiId?.identifier)){
-          return record
-        }
-      }
-    }
-    if (identifier instanceof OnlineIdentifier){
-      for (String recId in records){
-        Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
-        if (identifier.identifier.equals(record.onlineIdentifier?.identifier)){
-          return record
-        }
-      }
-    }
-    if (identifier instanceof PrintIdentifier){
-      for (String recId in records){
-        Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
-        if (identifier.identifier.equals(record.printIdentifier?.identifier)){
-          return record
-        }
-      }
-    }
-    return null
-  }
-
-
   void markDuplicateIds(){
     log.debug("marking duplicate IDs ...")
     this.sortAllRecordsPerId()
     for (def idRecs in recordsPerId){
       if (idRecs.value.size() > 1){
-        for (Record rec in idRecs.value){
-          rec.addDuplicates(idRecs.key, idRecs.value)
+        for (String recId in idRecs.value){
+          Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
+          record.addDuplicates(idRecs.key, idRecs.value, enrichmentFolder, resultHash, mappingsContainer)
+          record.save(enrichmentFolder, resultHash)
         }
       }
     }
@@ -196,12 +149,12 @@ class DataContainer {
 
 
   void addRecordToIdSortation(AbstractIdentifier id, Record record){
-    Set<Record> recordList = recordsPerId.get(id)
+    Set<String> recordList = recordsPerId.get(id)
     if (recordList == null){
       recordList = new HashSet<>()
       recordsPerId.put(id, recordList)
     }
-    recordList.add(record)
+    recordList.add(record.uid)
   }
 
 

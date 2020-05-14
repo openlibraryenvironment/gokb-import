@@ -37,7 +37,7 @@ class AbstractIdentifier {
   }
 
 
-  String toString() {
+  String toReducedString() {
     if (identifier == null){
       return ""
     }
@@ -45,7 +45,7 @@ class AbstractIdentifier {
   }
 
 
-  String toExtendedString() {
+  String toString() {
     if (identifier == null){
       return ""
     }
