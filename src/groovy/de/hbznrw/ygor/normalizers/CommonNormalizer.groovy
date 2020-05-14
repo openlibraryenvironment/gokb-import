@@ -28,8 +28,10 @@ class CommonNormalizer {
         return DateNormalizer.normalizeDate(value, DateNormalizer.START_DATE)
       case DateNormalizer.END_DATE:
         return DateNormalizer.normalizeDate(value, DateNormalizer.END_DATE)
+      case null:
+        return StringNormalizer.normalizeString(field.fields[0].value, false)
       case "ISBN":
-    // return validateISBN(value) // TODO
+        // return validateISBN(value) // TODO
       default:
         return StringNormalizer.normalizeString(value, false)
     }
