@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
+import ygor.identifier.AbstractIdentifier
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -405,6 +406,9 @@ class Enrichment{
   private String valOrEmpty(def val){
     if (val == null || val.equals("null")){
       return ""
+    }
+    if (val instanceof AbstractIdentifier){
+      return val.toReducedString()
     }
     return val.toString()
   }
