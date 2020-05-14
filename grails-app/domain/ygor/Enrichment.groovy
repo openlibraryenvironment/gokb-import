@@ -209,6 +209,7 @@ class Enrichment{
     en.dataContainer =
         DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer, loadRecordData)
     en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
+    en.dataContainer.markDuplicateIds()
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){

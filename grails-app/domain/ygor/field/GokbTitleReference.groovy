@@ -33,14 +33,16 @@ class GokbTitleReference{
 
 
   GokbTitleReference(String identifier, Enrichment enrichment, String publicationType){
-    Record referencedRecord = enrichment.dataContainer.getRecord(new ZdbIdentifier(identifier,
+    Set<Record> referencedRecords = enrichment.dataContainer.getRecords(new ZdbIdentifier(identifier,
         enrichment.mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)))
-    zdbId = referencedRecord.zdbId
-    ezbId = referencedRecord.ezbId
-    doiIdentifier = referencedRecord.doiId
-    onlineIdentifier = referencedRecord.onlineIdentifier
-    printIdentifier = referencedRecord.printIdentifier
-    publicationTitle = referencedRecord.multiFields.get("publicationTitle").getFirstPrioValue()
+    for (Record referencedRecord in referencedRecords){
+      zdbId = referencedRecord.zdbId
+      ezbId = referencedRecord.ezbId
+      doiIdentifier = referencedRecord.doiId
+      onlineIdentifier = referencedRecord.onlineIdentifier
+      printIdentifier = referencedRecord.printIdentifier
+      publicationTitle = referencedRecord.multiFields.get("publicationTitle").getFirstPrioValue()
+    }
     this.publicationType = publicationType
   }
 

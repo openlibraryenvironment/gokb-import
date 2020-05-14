@@ -84,20 +84,23 @@ class ZdbIntegrationService extends ExternalIntegrationService {
     List<Field> historyEventFields = record.multiFields.get("historyEventIdentifier").getFields(MappingsContainer.ZDB)
     for (Field historyEventField in historyEventFields){
       ZdbIdentifier zdbIdentifier = new ZdbIdentifier(historyEventField.value, zdbIdMapping)
-      Record existing = owner.enrichment.dataContainer.getRecord(zdbIdentifier)
-      if (existing == null){
+      Set<Record> existing = owner.enrichment.dataContainer.getRecords(zdbIdentifier)
+      if (existing == null || existing.isEmpty()){
         Record newLinkedRecord = new Record([] << zdbIdentifier, owner.enrichment.mappingsContainer)
         integrateRecord(owner, newLinkedRecord, [zdbIdMapping])
         if (newLinkedRecord.zdbIntegrationDate != null){
           // If there is no zdbIntegrationDate, the integration didn't happen, most probably because there was
           // no match. In this case, we would not add an empty record stub to the result list.
           newLinkedRecord.publicationType = record.publicationType
+          owner.enrichment.dataContainer.recordsPerId.put(zdbIdentifier, newLinkedRecord.uid)
           result.add(newLinkedRecord)
         }
       }
       else{
-        existing.publicationType = record.publicationType
-        result.add(existing)
+        for (Record existingRecord in existing){
+          existingRecord.publicationType = record.publicationType
+          result.add(existingRecord)
+        }
       }
     }
     result

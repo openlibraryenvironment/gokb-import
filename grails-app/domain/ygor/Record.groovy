@@ -220,10 +220,14 @@ class Record{
   }
 
 
-  void addDuplicates(AbstractIdentifier id, Set<Record> recordUids){
-    for (Record rec in recordUids){
-      if (rec.uid != this.uid && !haveDistinctiveId(this, rec)){
-        duplicates.put(id, rec.uid)
+  void addDuplicates(AbstractIdentifier id, Set<String> recordUids, String enrichmentFolder, String resultHash,
+                     MappingsContainer mappingsContainer){
+    for (String recordUid in recordUids){
+      if (recordUid != this.uid){
+        Record dup = load(enrichmentFolder, resultHash, recordUid, mappingsContainer)
+        if (!haveDistinctiveId(this, dup)){
+          duplicates.put(id, recordUid)
+        }
       }
     }
   }
@@ -318,7 +322,7 @@ class Record{
       jsonGenerator.writeFieldName("duplicates")
       jsonGenerator.writeStartArray()
       for (def dup in duplicates){
-        jsonGenerator.writeStringField(dup.key.toString(), dup.value)
+        jsonGenerator.writeStringField(dup.key.toReducedString(), dup.value)
       }
       jsonGenerator.writeEndArray()
     }
