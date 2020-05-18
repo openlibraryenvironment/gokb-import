@@ -95,13 +95,13 @@ class GokbExporter {
           String recId = enrichment.dataContainer.records[i]
           byte[] title
           if (i == 0){
-            title = "[".concat(extractPrettyTitle(enrichment, recId)).getBytes(Charset.forName("UTF-8"))
+            title = "[".concat(extractTitle(enrichment, recId, true)).getBytes(Charset.forName("UTF-8"))
           }
           else if (i < enrichment.dataContainer.records.size()-1){
-            title = ",".concat(extractPrettyTitle(enrichment, recId)).getBytes(Charset.forName("UTF-8"))
+            title = ",".concat(extractTitle(enrichment, recId, true)).getBytes(Charset.forName("UTF-8"))
           }
           else{ // i == enrichment.dataContainer.records.size()
-            title = ",".concat(extractPrettyTitle(enrichment, recId)).concat("]").getBytes(Charset.forName("UTF-8"))
+            title = ",".concat(extractTitle(enrichment, recId, true)).concat("]").getBytes(Charset.forName("UTF-8"))
           }
           ByteBuffer buffer = ByteBuffer.wrap(title)
           buffer.put(title)
@@ -120,7 +120,7 @@ class GokbExporter {
   }
 
 
-  static String extractPrettyTitle(Enrichment enrichment, String recordId) {
+  static String extractTitle(Enrichment enrichment, String recordId, boolean printPretty) {
     Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recordId,
         enrichment.dataContainer.mappingsContainer)
     if (record != null && record.isValid()){
@@ -132,7 +132,11 @@ class GokbExporter {
       title = removeEmptyIdentifiers(title, FileType.JSON_TITLES_ONLY)
       title = postProcessTitleIdentifiers(title, FileType.JSON_TITLES_ONLY,
           enrichment.dataContainer.info.namespace_title_id)
-      return JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
+      if (printPretty){
+        return JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
+      }
+      // else
+      return JSON_OBJECT_MAPPER.writeValueAsString(title)
     }
     // else
     return null

@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.Pod
 
 import javax.servlet.http.HttpSession
@@ -120,11 +121,6 @@ class EnrichmentService{
   }
 
 
-  void stopProcessing(Enrichment enrichment){
-    enrichment.thread.isRunning = false
-  }
-
-
   List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
     def result = []
     def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
@@ -136,33 +132,38 @@ class EnrichmentService{
     uri = uri.concat("?async=true")
     if (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY)){
       for (def recId in enrichment.dataContainer.records){
-        File recJson = getTitleJson()
-        result << exportFileToGOKb(enrichment, recJson, uri, user, pwd)
+        String titleText = GokbExporter.extractTitle(enrichment, recId, false)
+        result << exportRecordToGOKb(titleText, uri, user, pwd)
       }
     }
     else{
       def json = enrichment.getAsFile(fileType, true)
-      result << exportFileToGOKb(enrichment, json, uri, user, pwd)
+      result << exportEnrichmentToGOKb(enrichment, json, uri, user, pwd)
     }
     result
   }
 
 
-  def getTitleJson(){
-    // TODO call GOKbExporter.extractPrettyTitle()
+  private Map exportRecordToGOKb(String record, String url, def user, def pwd){
+    log.info("export Record: " + url)
+    sendText(url, record, user, pwd)
   }
 
 
-  private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
+  private Map exportEnrichmentToGOKb(Enrichment enrichment, File json, String url, def user, def pwd){
     log.info("exportFile: " + enrichment.resultHash + " -> " + url)
+    String body = json.getText()
+    sendText(url, body, user, pwd)
+  }
 
+
+  private void sendText(String url, String text, user, pwd){
     def http = new HTTPBuilder(url)
     http.auth.basic user, pwd
 
     http.request(Method.POST, ContentType.JSON){ req ->
       headers.'User-Agent' = 'ygor'
-
-      body = json.getText()
+      body = text
       response.success = { resp, html ->
         log.info("server response: ${resp.statusLine}")
         log.debug("server:          ${resp.headers.'Content-Type'}")
@@ -189,7 +190,7 @@ class EnrichmentService{
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
-      response.'401'= {resp ->
+      response.'401' = { resp ->
         log.error("server response: ${resp.statusLine}")
         return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
       }
