@@ -230,8 +230,17 @@ class Enrichment{
     en.dataContainer.pkg.packageHeader.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
     en.greenRecords = JsonToolkit.fromJsonNode(rootNode.get("greenRecords"))
+    if (en.greenRecords == null){
+      en.greenRecords = new HashMap<>()
+    }
     en.yellowRecords = JsonToolkit.fromJsonNode(rootNode.get("yellowRecords"))
+    if (en.yellowRecords == null){
+      en.yellowRecords = new HashMap<>()
+    }
     en.redRecords = JsonToolkit.fromJsonNode(rootNode.get("redRecords"))
+    if (en.redRecords == null){
+      en.redRecords = new HashMap<>()
+    }
     return en
   }
 
