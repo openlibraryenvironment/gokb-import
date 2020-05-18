@@ -8,7 +8,7 @@
         <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
             <g:message code="listDocuments.gokb.response"/>
         </button>
-        <g:set var="nrOfRecords" value="${greenRecords.size() + yellowRecords.size()}"/>
+        <g:set var="nrOfRecords" value="${greenRecords?.size() + yellowRecords?.size()}"/>
         <div class="collapse in" id="progress-section">
             <div id="progress-${resultHash}" class="progress">
                 <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
