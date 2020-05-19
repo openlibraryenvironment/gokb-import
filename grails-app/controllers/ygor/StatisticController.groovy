@@ -361,7 +361,8 @@ class StatisticController{
       String uri = getDestinationUri(fileType)
       if (fileType.equals(Enrichment.FileType.TITLES)){
         SendTitlesThread sendTitlesThread = new SendTitlesThread(enrichment, uri, gokbUsername, gokbPassword)
-        sendTitlesThread.start()
+        UploadJob uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
+        uploadJob.start()
       }
       else{
         def json = enrichment.getAsFile(fileType, true)
