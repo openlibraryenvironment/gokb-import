@@ -1,6 +1,7 @@
 package ygor
 
-import de.hbznrw.ygor.processing.SendTitlesThread
+
+import de.hbznrw.ygor.processing.UploadThread
 
 @SuppressWarnings("JpaObjectClassSignatureInspection")
 class UploadJob{
@@ -8,21 +9,21 @@ class UploadJob{
   Enrichment.FileType fileType
   String uuid
   Status status
-  SendTitlesThread sendTitlesThread
+  UploadThread uploadThread
   int total
 
-  UploadJob(Enrichment.FileType fileType, SendTitlesThread sendTitlesThread){
+  UploadJob(Enrichment.FileType fileType, UploadThread uploadThread){
     this.fileType = fileType
     uuid = UUID.randomUUID().toString()
     status = Status.PREPARATION
-    this.sendTitlesThread = sendTitlesThread
-    total = sendTitlesThread.total
+    this.uploadThread = uploadThread
+    total = uploadThread.total
   }
 
 
   void start(){
     if (fileType.equals(Enrichment.FileType.TITLES)){
-      sendTitlesThread.start()
+      uploadThread.start()
     }
     // else ... TODO: sendPackage
   }

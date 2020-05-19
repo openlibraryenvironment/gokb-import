@@ -7,15 +7,9 @@ import ygor.Enrichment
 import javax.annotation.Nonnull
 
 @Log4j
-class SendTitlesThread extends Thread{
+class SendTitlesThread extends UploadThread{
 
-  Enrichment enrichment
-  String uri
-  String user
-  String password
-  int total = 0
   int count = 0
-  List result
 
   SendTitlesThread(@Nonnull Enrichment enrichment, @Nonnull String uri,
                    @Nonnull String user, @Nonnull String password){

@@ -2,6 +2,7 @@ package ygor
 
 import com.google.gson.Gson
 import de.hbznrw.ygor.export.GokbExporter
+import de.hbznrw.ygor.processing.SendPackageThread
 import de.hbznrw.ygor.processing.SendTitlesThread
 import de.hbznrw.ygor.tools.FileToolkit
 import grails.converters.JSON
@@ -359,55 +360,56 @@ class StatisticController{
     if (enrichment){
       def response = []
       String uri = getDestinationUri(fileType)
+      UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
         SendTitlesThread sendTitlesThread = new SendTitlesThread(enrichment, uri, gokbUsername, gokbPassword)
-        UploadJob uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
+        uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
+      }
+      else if (fileType.equals(Enrichment.FileType.PACKAGE)){
+        SendPackageThread sendPackageThread = new SendPackageThread(enrichment, uri, gokbUsername, gokbPassword)
+        uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
+      }
+      if (uploadJob != null){
         uploadJob.start()
-      }
-      else{
-        def json = enrichment.getAsFile(fileType, true)
-        log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
-        String body = json.getText()
-        response << GokbExporter.sendText(uri, body, gokbUsername, gokbPassword)
-      }
-      flash.info = []
-      flash.warning = []
-      List errorList = []
-      def total = 0
-      def errors = 0
-      log.debug("sendFile response: ${response}")
-      if (response.info){
-        log.debug("json class: ${response.info.class}")
-        def info_objects = response.info.results
-        info_objects[0].each{ robj ->
-          log.debug("robj: ${robj}")
-          if (robj.result == 'ERROR'){
-            errorList.add(robj.message)
-            errors++
+        flash.info = []
+        flash.warning = []
+        List errorList = []
+        def total = 0
+        def errors = 0
+        log.debug("sendFile response: ${response}")
+        if (response.info){
+          log.debug("json class: ${response.info.class}")
+          def info_objects = response.info.results
+          info_objects[0].each{ robj ->
+            log.debug("robj: ${robj}")
+            if (robj.result == 'ERROR'){
+              errorList.add(robj.message)
+              errors++
+            }
+            total++
           }
-          total++
+          flash.info = "Total: ${total}, Errors: ${errors}"
+          flash.error = errorList
         }
-        flash.info = "Total: ${total}, Errors: ${errors}"
-        flash.error = errorList
+        render(
+            view         : 'show',
+            model: [
+                originHash   : enrichment.originHash,
+                resultHash   : enrichment.resultHash,
+                currentView  : 'statistic',
+                ygorVersion  : enrichment.ygorVersion,
+                date         : enrichment.date,
+                filename     : enrichment.originName,
+                greenRecords : enrichment.greenRecords,
+                yellowRecords: enrichment.yellowRecords,
+                redRecords   : enrichment.redRecords,
+                status       : enrichment.status.toString(),
+                packageName  : enrichment.packageName,
+                dataType     : fileType,
+                jobId        : getJobId(response)
+            ]
+        )
       }
-      render(
-          view         : 'show',
-          model: [
-              originHash   : enrichment.originHash,
-              resultHash   : enrichment.resultHash,
-              currentView  : 'statistic',
-              ygorVersion  : enrichment.ygorVersion,
-              date         : enrichment.date,
-              filename     : enrichment.originName,
-              greenRecords : enrichment.greenRecords,
-              yellowRecords: enrichment.yellowRecords,
-              redRecords   : enrichment.redRecords,
-              status       : enrichment.status.toString(),
-              packageName  : enrichment.packageName,
-              dataType     : fileType,
-              jobId        : getJobId(response)
-          ]
-      )
     }
   }
 

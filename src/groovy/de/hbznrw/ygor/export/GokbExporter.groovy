@@ -476,7 +476,7 @@ class GokbExporter {
   }
 
 
-  static def sendText(@Nonnull String url, @Nonnull String text,
+  static Map sendText(@Nonnull String url, @Nonnull String text,
                       @Nonnull String user, @Nonnull String password){
     def http = new HTTPBuilder(url)
     http.auth.basic user, password
