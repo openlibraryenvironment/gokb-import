@@ -28,7 +28,7 @@
                                 type: 'GET',
                                 url: '${grailsApplication.config.grails.app.context}/statistic/getJobInfo',
                                 id: '${jobId}',
-                                data: 'jobId=${jobId}',
+                                data: 'jobId=${jobId},type=${fileType}',
                                 success: function (data) {
                                     if (data != null && !jQuery.isEmptyObject(data)) {
                                         if (data["error"] == "Request is missing an id."){

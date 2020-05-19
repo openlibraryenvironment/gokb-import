@@ -11,12 +11,16 @@ import de.hbznrw.ygor.normalizers.DoiNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.StopwordToolkit
 import groovy.util.logging.Log4j
+import groovyx.net.http.ContentType
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.Method
 import org.apache.commons.lang.StringUtils
 import ygor.Enrichment
 import ygor.Enrichment.FileType
 import ygor.Record
 import ygor.field.MappingsContainer
 
+import javax.annotation.Nonnull
 import java.nio.ByteBuffer
 import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
@@ -36,14 +40,14 @@ class GokbExporter {
     switch (type) {
       case FileType.ORIGIN:
         return new File(enrichment.originPathName)
-      case FileType.JSON_PACKAGE_ONLY:
+      case FileType.PACKAGE:
         ObjectNode result = GokbExporter.extractPackage(enrichment)
         def file = new File(enrichment.enrichmentFolder + ".package.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
-      case FileType.JSON_TITLES_ONLY:
+      case FileType.TITLES:
         return extractTitles(enrichment)
-      case FileType.JSON_OO_RAW:
+      case FileType.RAW:
         enrichment.save()
         return new File(enrichment.enrichmentFolder)
     }
@@ -69,10 +73,10 @@ class GokbExporter {
           enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
         ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
-        tipp = postProcessIssnIsbn(tipp, record, FileType.JSON_PACKAGE_ONLY)
+        tipp = postProcessIssnIsbn(tipp, record, FileType.PACKAGE)
         tipp = removeEmptyFields(tipp)
-        tipp = removeEmptyIdentifiers(tipp, FileType.JSON_PACKAGE_ONLY)
-        tipp = postProcessTitleIdentifiers(tipp, FileType.JSON_PACKAGE_ONLY,
+        tipp = removeEmptyIdentifiers(tipp, FileType.PACKAGE)
+        tipp = postProcessTitleIdentifiers(tipp, FileType.PACKAGE,
             enrichment.dataContainer.info.namespace_title_id)
         tipps.add(tipp)
       }
@@ -127,10 +131,10 @@ class GokbExporter {
       record.deriveHistoryEventObjects(enrichment)
       ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
       title = postProcessPublicationTitle(title, record)
-      title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
+      title = postProcessIssnIsbn(title, record, FileType.TITLES)
       title = removeEmptyFields(title)
-      title = removeEmptyIdentifiers(title, FileType.JSON_TITLES_ONLY)
-      title = postProcessTitleIdentifiers(title, FileType.JSON_TITLES_ONLY,
+      title = removeEmptyIdentifiers(title, FileType.TITLES)
+      title = postProcessTitleIdentifiers(title, FileType.TITLES,
           enrichment.dataContainer.info.namespace_title_id)
       if (printPretty){
         return JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
@@ -144,10 +148,10 @@ class GokbExporter {
 
 
   static ObjectNode postProcessTitleIdentifiers(ObjectNode item, FileType type, String namespace) {
-    if (type.equals(FileType.JSON_TITLES_ONLY)) {
+    if (type.equals(FileType.TITLES)) {
       postProcessTitleId(item.identifiers, namespace)
     }
-    else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
+    else if (type.equals(FileType.PACKAGE)) {
       postProcessTitleId(item.title.identifiers, namespace)
     }
     item
@@ -155,10 +159,10 @@ class GokbExporter {
 
 
   static ObjectNode removeEmptyIdentifiers(ObjectNode item, FileType type) {
-    if (type.equals(FileType.JSON_TITLES_ONLY)) {
+    if (type.equals(FileType.TITLES)) {
         removeEmptyIds(item.identifiers)
     }
-    else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
+    else if (type.equals(FileType.PACKAGE)) {
       removeEmptyIds(item.title.identifiers)
     }
     item
@@ -248,11 +252,11 @@ class GokbExporter {
   private static ObjectNode postProcessIssnIsbn(ObjectNode node, Record record, FileType type){
     ObjectNode onlineIdentifier
     ObjectNode printIdentifier
-    if (type.equals(FileType.JSON_TITLES_ONLY)){
+    if (type.equals(FileType.TITLES)){
       onlineIdentifier = getIdentifierNodeByType(node.get("identifiers"), "onlineIdentifier")
       printIdentifier = getIdentifierNodeByType(node.get("identifiers"), "printIdentifier")
     }
-    else if (type.equals(FileType.JSON_PACKAGE_ONLY)){
+    else if (type.equals(FileType.PACKAGE)){
       onlineIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "onlineIdentifier")
       printIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "printIdentifier")
     }
@@ -469,6 +473,48 @@ class GokbExporter {
       }
     }
     return result
+  }
+
+
+  static def sendText(@Nonnull String url, @Nonnull String text,
+                      @Nonnull String user, @Nonnull String password){
+    def http = new HTTPBuilder(url)
+    http.auth.basic user, password
+
+    http.request(Method.POST, ContentType.JSON){ request ->
+      headers.'User-Agent' = 'ygor'
+      body = text
+      response.success = { response, html ->
+        log.debug("server response: ${response.statusLine}")
+        log.debug("server:          ${response.headers.'Content-Type'}")
+        log.debug("server:          ${response.headers.'Server'}")
+        log.debug("content length:  ${response.headers.'Content-Length'}")
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (response.status < 400){
+            return ['info': html]
+          }
+          else{
+            return ['warning': html]
+          }
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.failure = { response, html ->
+        log.error("server response: ${response.statusLine}")
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          return ['error': html]
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.'401' = { response ->
+        log.error("server response: ${response.statusLine}")
+        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+      }
+    }
   }
 
 }

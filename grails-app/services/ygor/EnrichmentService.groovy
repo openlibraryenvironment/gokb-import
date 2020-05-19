@@ -1,10 +1,8 @@
 package ygor
 
-import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.Pod
 
 import javax.servlet.http.HttpSession
-import groovyx.net.http.*
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
@@ -117,83 +115,6 @@ class EnrichmentService{
     }
     else{
       log.error("package platform not set!")
-    }
-  }
-
-
-  List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
-    def result = []
-    def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
-        grailsApplication.config.gokbApi.xrPackageUri :
-        (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?
-            grailsApplication.config.gokbApi.xrTitleUri :
-            null
-        )
-    uri = uri.concat("?async=true")
-    if (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY)){
-      for (def recId in enrichment.dataContainer.records){
-        String titleText = GokbExporter.extractTitle(enrichment, recId, false)
-        result << exportRecordToGOKb(titleText, uri, user, pwd)
-      }
-    }
-    else{
-      def json = enrichment.getAsFile(fileType, true)
-      result << exportEnrichmentToGOKb(enrichment, json, uri, user, pwd)
-    }
-    result
-  }
-
-
-  private Map exportRecordToGOKb(String record, String url, def user, def pwd){
-    log.info("export Record: " + url)
-    sendText(url, record, user, pwd)
-  }
-
-
-  private Map exportEnrichmentToGOKb(Enrichment enrichment, File json, String url, def user, def pwd){
-    log.info("exportFile: " + enrichment.resultHash + " -> " + url)
-    String body = json.getText()
-    sendText(url, body, user, pwd)
-  }
-
-
-  private void sendText(String url, String text, user, pwd){
-    def http = new HTTPBuilder(url)
-    http.auth.basic user, pwd
-
-    http.request(Method.POST, ContentType.JSON){ req ->
-      headers.'User-Agent' = 'ygor'
-      body = text
-      response.success = { resp, html ->
-        log.info("server response: ${resp.statusLine}")
-        log.debug("server:          ${resp.headers.'Content-Type'}")
-        log.debug("server:          ${resp.headers.'Server'}")
-        log.debug("content length:  ${resp.headers.'Content-Length'}")
-        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          if (resp.status < 400){
-            return ['info': html]
-          }
-          else{
-            return ['warning': html]
-          }
-        }
-        else{
-          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-        }
-      }
-      response.failure = { resp, html ->
-        log.error("server response: ${resp.statusLine}")
-        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          return ['error': html]
-        }
-        else{
-          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-        }
-      }
-      response.'401' = { resp ->
-        log.error("server response: ${resp.statusLine}")
-        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-      }
     }
   }
 

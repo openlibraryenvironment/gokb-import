@@ -34,9 +34,9 @@ class Enrichment{
     ORIGIN,
     RESULT,
     JSON,
-    JSON_PACKAGE_ONLY,
-    JSON_TITLES_ONLY,
-    JSON_OO_RAW
+    PACKAGE,
+    TITLES,
+    RAW
   }
 
   static enum ProcessingState {

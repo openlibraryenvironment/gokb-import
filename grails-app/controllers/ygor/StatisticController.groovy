@@ -1,6 +1,8 @@
 package ygor
 
 import com.google.gson.Gson
+import de.hbznrw.ygor.export.GokbExporter
+import de.hbznrw.ygor.processing.SendTitlesThread
 import de.hbznrw.ygor.tools.FileToolkit
 import grails.converters.JSON
 import groovy.util.logging.Log4j
@@ -306,7 +308,7 @@ class StatisticController{
   def downloadPackageFile = {
     def en = getCurrentEnrichment()
     if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
+      def result = enrichmentService.getFile(en, Enrichment.FileType.PACKAGE)
       render(file: result, fileName: "${en.resultName}.package.json")
     }
     else{
@@ -318,7 +320,7 @@ class StatisticController{
   def downloadTitlesFile = {
     def en = getCurrentEnrichment()
     if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
+      def result = enrichmentService.getFile(en, Enrichment.FileType.TITLES)
       render(file: result, fileName: "${en.resultName}.titles.json")
     }
     else{
@@ -340,22 +342,33 @@ class StatisticController{
 
 
   def sendPackageFile = {
-    sendFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
+    sendFile(Enrichment.FileType.PACKAGE)
   }
 
 
 
   def sendTitlesFile = {
-    sendFile(Enrichment.FileType.JSON_TITLES_ONLY)
+    sendFile(Enrichment.FileType.TITLES)
   }
 
 
   private void sendFile(Enrichment.FileType fileType){
     gokbUsername = params.gokbUsername
     gokbPassword = params.gokbPassword
-    def en = getCurrentEnrichment()
-    if (en){
-      def response = enrichmentService.sendFile(en, fileType, params.gokbUsername, params.gokbPassword)
+    def enrichment = getCurrentEnrichment()
+    if (enrichment){
+      def response = []
+      String uri = getDestinationUri(fileType)
+      if (fileType.equals(Enrichment.FileType.TITLES)){
+        SendTitlesThread sendTitlesThread = new SendTitlesThread(enrichment, uri, gokbUsername, gokbPassword)
+        sendTitlesThread.start()
+      }
+      else{
+        def json = enrichment.getAsFile(fileType, true)
+        log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
+        String body = json.getText()
+        response << GokbExporter.sendText(uri, body, gokbUsername, gokbPassword)
+      }
       flash.info = []
       flash.warning = []
       List errorList = []
@@ -379,21 +392,33 @@ class StatisticController{
       render(
           view         : 'show',
           model: [
-              originHash   : en.originHash,
-              resultHash   : en.resultHash,
+              originHash   : enrichment.originHash,
+              resultHash   : enrichment.resultHash,
               currentView  : 'statistic',
-              ygorVersion  : en.ygorVersion,
-              date         : en.date,
-              filename     : en.originName,
-              greenRecords : en.greenRecords,
-              yellowRecords: en.yellowRecords,
-              redRecords   : en.redRecords,
-              status       : en.status.toString(),
-              packageName  : en.packageName,
+              ygorVersion  : enrichment.ygorVersion,
+              date         : enrichment.date,
+              filename     : enrichment.originName,
+              greenRecords : enrichment.greenRecords,
+              yellowRecords: enrichment.yellowRecords,
+              redRecords   : enrichment.redRecords,
+              status       : enrichment.status.toString(),
+              packageName  : enrichment.packageName,
+              dataType     : fileType,
               jobId        : getJobId(response)
           ]
       )
     }
+  }
+
+
+  private String getDestinationUri(fileType){
+    def uri = fileType.equals(Enrichment.FileType.PACKAGE) ?
+        grailsApplication.config.gokbApi.xrPackageUri :
+        (fileType.equals(Enrichment.FileType.TITLES) ?
+            grailsApplication.config.gokbApi.xrTitleUri :
+            null
+        )
+    return uri.concat("?async=true")
   }
 
 
@@ -410,6 +435,20 @@ class StatisticController{
     if (gokbUsername == null || gokbPassword == null){
       return null
     }
+    if (params.type == Enrichment.FileType.PACKAGE.toString()){
+      getPackageJobInfo()
+    }
+    else{
+      getTitlesJobInfo()
+    }
+  }
+
+
+  private void getTitlesJobInfo(){
+
+  }
+
+  private void getPackageJobInfo(){
     def uri = grailsApplication.config.gokbApi.xrJobInfo.concat(params.jobId)
     def http = new HTTPBuilder(uri)
     Map<String, Object> result = new HashMap<>()
@@ -444,7 +483,7 @@ class StatisticController{
           result.putAll(handleAuthenticationError(response))
         }
       }
-      response.'401'= {resp ->
+      response.'401' = { resp ->
         result.putAll(handleAuthenticationError(resp))
       }
     }
