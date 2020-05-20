@@ -1,7 +1,7 @@
 package ygor
 
-
-import de.hbznrw.ygor.processing.UploadThread
+import de.hbznrw.ygor.processing.SendTitlesThreadGokb
+import de.hbznrw.ygor.processing.UploadThreadGokb
 
 @SuppressWarnings("JpaObjectClassSignatureInspection")
 class UploadJob{
@@ -9,10 +9,10 @@ class UploadJob{
   Enrichment.FileType fileType
   String uuid
   Status status
-  UploadThread uploadThread
+  def uploadThread
   int total
 
-  UploadJob(Enrichment.FileType fileType, UploadThread uploadThread){
+  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread){
     this.fileType = fileType
     uuid = UUID.randomUUID().toString()
     status = Status.PREPARATION
@@ -22,16 +22,42 @@ class UploadJob{
 
 
   void start(){
-    if (fileType.equals(Enrichment.FileType.TITLES)){
+    status = Status.STARTED
+    if (fileType in [Enrichment.FileType.TITLES, Enrichment.FileType.PACKAGE]){
       uploadThread.start()
     }
-    // else ... TODO: sendPackage
+    // else there is nothing to do
+  }
+
+
+  @SuppressWarnings("JpaAttributeMemberSignatureInspection")
+  int getCount(){
+    if (fileType.equals(Enrichment.FileType.TITLES)){
+      return ((SendTitlesThreadGokb) uploadThread).getCount();
+    }
+  }
+
+
+  @SuppressWarnings("JpaAttributeMemberSignatureInspection")
+  def getSortedJobInfo(){
+    Map<String, String> jobInfo = [:]
+    if (uploadThread.getCount() >= uploadThread.total){
+      status = Status.FINISHED_UNDEFINED
+    }
+    else{
+      // status is still the same
+    }
+    jobInfo.put("status", status)
+    jobInfo.put("jobId", uuid)
+    jobInfo = uploadThread.getJobInfo(jobInfo)
+    return uploadThread.getResponseSorted(jobInfo)
   }
 
 
   enum Status{
     PREPARATION,
     STARTED,
+    FINISHED_UNDEFINED,
     SUCCESS,
     ERROR
   }

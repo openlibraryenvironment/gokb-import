@@ -1,15 +1,10 @@
 package ygor
 
 import com.google.gson.Gson
-import de.hbznrw.ygor.export.GokbExporter
-import de.hbznrw.ygor.processing.SendPackageThread
-import de.hbznrw.ygor.processing.SendTitlesThread
+import de.hbznrw.ygor.processing.SendPackageThreadGokb
+import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.tools.FileToolkit
-import grails.converters.JSON
 import groovy.util.logging.Log4j
-import groovyx.net.http.ContentType
-import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.Method
 import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
@@ -21,12 +16,10 @@ import ygor.identifier.OnlineIdentifier
 import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
 @Log4j
 class StatisticController{
 
+  def grailsApplication
   static scope = "session"
   static FileFilter DIRECTORY_FILTER = new FileFilter(){
     @Override
@@ -34,12 +27,11 @@ class StatisticController{
       return file.isDirectory()
     }
   }
-  final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
-  def grailsApplication
   EnrichmentService enrichmentService
   Set<String> enrichmentsUploading = []
   String gokbUsername
   String gokbPassword
+  Map<String, UploadJob> uploadJobs = [:]
 
   def index(){
     render(
@@ -71,7 +63,8 @@ class StatisticController{
             yellowRecords : enrichment.yellowRecords,
             redRecords    : enrichment.redRecords,
             status        : enrichment.status,
-            packageName   : enrichment.packageName
+            packageName   : enrichment.packageName,
+            jobIds        : uploadJobs.keySet()
         ]
     )
   }
@@ -362,16 +355,18 @@ class StatisticController{
       String uri = getDestinationUri(fileType)
       UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
-        SendTitlesThread sendTitlesThread = new SendTitlesThread(enrichment, uri, gokbUsername, gokbPassword)
+        SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword)
         uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
-        SendPackageThread sendPackageThread = new SendPackageThread(enrichment, uri, gokbUsername, gokbPassword)
+        SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword)
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
+        sendPackageThread.getGokbJobId()
       }
       if (uploadJob != null){
+        uploadJobs.put(uploadJob.uuid, uploadJob)
         uploadJob.start()
-        flash.info = []
+        /*flash.info = []
         flash.warning = []
         List errorList = []
         def total = 0
@@ -390,7 +385,7 @@ class StatisticController{
           }
           flash.info = "Total: ${total}, Errors: ${errors}"
           flash.error = errorList
-        }
+        }*/
         render(
             view         : 'show',
             model: [
@@ -406,7 +401,7 @@ class StatisticController{
                 status       : enrichment.status.toString(),
                 packageName  : enrichment.packageName,
                 dataType     : fileType,
-                jobId        : getJobId(response)
+                jobIds       : uploadJobs.keySet()
             ]
         )
       }
@@ -425,152 +420,15 @@ class StatisticController{
   }
 
 
-  private String getJobId(ArrayList response){
-    for (def responseItem in response){
-      for (def value in responseItem.values()){
-        return String.valueOf(value.get("job_id"))
-      }
-    }
-  }
-
-
   def getJobInfo = {
     if (gokbUsername == null || gokbPassword == null){
       return null
     }
-    if (params.type == Enrichment.FileType.PACKAGE.toString()){
-      getPackageJobInfo()
+    UploadJob uploadJob = uploadJobs.get(params.jobId)
+    if (uploadJob != null){
+      return uploadJob.getSortedJobInfo()
     }
-    else{
-      getTitlesJobInfo()
-    }
-  }
-
-
-  private void getTitlesJobInfo(){
-
-  }
-
-  private void getPackageJobInfo(){
-    def uri = grailsApplication.config.gokbApi.xrJobInfo.concat(params.jobId)
-    def http = new HTTPBuilder(uri)
-    Map<String, Object> result = new HashMap<>()
-    result["jobId"] = params.jobId
-    http.auth.basic gokbUsername, gokbPassword
-
-    http.request(Method.GET, ContentType.JSON){ req ->
-      response.success = { response, resultMap ->
-        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          if (response.status < 400){
-            if (resultMap.result.equals("ERROR")){
-              result.put('error', resultMap.message)
-            }
-            else{
-              result.putAll(getResponseSorted(resultMap))
-            }
-          }
-          else{
-            result.put('warning': resultMap)
-          }
-        }
-        else{
-          result.putAll(handleAuthenticationError(response))
-        }
-      }
-      response.failure = { response, resultMap ->
-        log.error("GOKb server response: ${response.statusLine}")
-        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          result.put('error': resultMap)
-        }
-        else{
-          result.putAll(handleAuthenticationError(response))
-        }
-      }
-      response.'401' = { resp ->
-        result.putAll(handleAuthenticationError(resp))
-      }
-    }
-    render result as JSON
-  }
-
-
-  private Map handleAuthenticationError(response){
-    log.error("GOKb server response: ${response.statusLine}")
-    return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-  }
-
-
-  private Map getResponseSorted(Map response){
-    Map result = [:]
-    result.put("response_exists", "true")
-    if (response.get("finished") == true){
-      response.remove("progress")
-      result.put("response_finished", "true")
-      if (response.get("job_result")?.get("pkgId") != null){
-        getResponseSortedPackage(response, result)
-      }
-      else{
-        getResponseSortedTitles(response, result)
-      }
-    }
-    else{
-      result.put("response_finished", "false")
-      result.put("progress", response.get("progress"))
-    }
-    return result
-  }
-
-
-  private List getResponseSortedPackage(Map response, Map result){
-    def jobResult = response.get("job_result")
-    String message = jobResult?.get("message")
-    if (message != null){
-      result.put("response_message", message)
-    }
-    int error = jobResult?.get("errors") != null ? jobResult?.get("errors")?.size() : 0
-    int ok = jobResult?.get("results") != null ? jobResult?.get("results")?.size() : 0
-    if (ok == 0){
-      // package update --> get "OK" information from message string
-      Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
-      if (matcher.find()){
-        ok = Integer.valueOf(matcher.group(1))
-      }
-    }
-    result.put("response_ok", ok.toString())
-    result.put("response_error", error.toString())
-  }
-
-
-  private List getResponseSortedTitles(Map response, Map result){
-    int ok, error
-    List errorDetails = []
-    String message = response.get("job_result")?.get("message")
-    for (Map resultItem in response.get("job_result")?.get("results")){
-      if (resultItem.get("result").equals("OK")){
-        ok++
-      }
-      else if (resultItem.get("result").equals("ERROR")){
-        error++
-        errorDetails.add(getRecordError(resultItem))
-      }
-    }
-    result.put("response_ok", ok.toString())
-    result.put("response_error", error.toString())
-    if (errorDetails.size() > 0){
-      result.put("error_details", errorDetails)
-    }
-    if (message != null){
-      result.put("response_message", message)
-    }
-  }
-
-
-  private String getRecordError(Map record){
-    StringBuilder result = new StringBuilder()
-    if (record.get("message") != null){
-      result.append(record.get("message"))
-    }
-    result.toString()
+    return null
   }
 
 
