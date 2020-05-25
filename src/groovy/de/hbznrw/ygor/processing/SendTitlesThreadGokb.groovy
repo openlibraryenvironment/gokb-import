@@ -28,7 +28,7 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
   void run(){
     for (def recId in enrichment.dataContainer.records){
       String titleText = GokbExporter.extractTitle(enrichment, recId, false)
-      log.info("export Record: " + uri)
+      log.info("export Record " + recId + " to " + uri)
       result << GokbExporter.sendText(uri, titleText, user, password)
       count ++
     }

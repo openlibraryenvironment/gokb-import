@@ -4,82 +4,114 @@
 
 <p class="lead">${packageName}</p>
 
-    <div id="showUploadResults" hidden="hidden">
+<g:each in="${jobIds}" var="jobId">
+    <div id="uploadResult-${jobId}" class="showUploadResults">
+        <g:actionSubmit action="removeFeedback" value="${message(code: 'listDocuments.gokb.response.remove')}"
+                        class="btn btn-warning" id="remove-${jobId}" onclick="removeJobId('${jobId}')"/>
+
         <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
             <g:message code="listDocuments.gokb.response"/>
         </button>
         <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
-                                          greenRecords?.size() + yellowRecords?.size()}"/>
+                greenRecords?.size() + yellowRecords?.size()}"/>
         <div class="collapse in" id="progress-section">
             <div id="progress-${resultHash}" class="progress">
                 <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
                      aria-valuemin="0"aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
             </div>
         </div>
-            <table class="table" id="feedbackTable">
-                <tbody>
-                    <script>
-                        var data = {}
-                        var feedbackTable = document.getElementById("feedbackTable").getElementsByTagName('tbody')[0];
-                        var rowTexts = new Map();
-                        var jobInfoHandle = setInterval( function(){
-                            console.log("get jobInfo of resultHash: ${resultHash}");
-                            jQuery.ajax({
-                                type: 'GET',
-                                url: '${grailsApplication.config.grails.app.context}/statistic/getJobInfo',
-                                id: '${jobId}',
-                                data: 'jobId=${jobId},type=${fileType}',
-                                success: function (data) {
-                                    if (data != null && !jQuery.isEmptyObject(data)) {
-                                        if (data["error"] == "Request is missing an id."){
-                                            clearInterval(jobInfoHandle);
-                                            return;
-                                        }
-                                        document.getElementById("showUploadResults").removeAttribute("hidden")
-                                        if (data["response_finished"] == "true") {
-                                            rowTexts.set("${message(code: 'listDocuments.gokb.response.ok')}", data["response_ok"]);
-                                            rowTexts.set("${message(code: 'listDocuments.gokb.response.error')}", data["response_error"]);
-                                            let count=1;
-                                            if (data["error_details"] != null){
-                                                for (let errorDetail of data["error_details"]){
-                                                    rowTexts.set(count.toString(), errorDetail);
-                                                    count++;
-                                                }
-                                            }
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('hidden', 'hidden');
-                                            jQuery('#progress-section').attr('hidden', 'hidden');
-                                            jQuery('.progress').attr('hidden', 'hidden');
-                                        }
-                                        else {
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', data["progress"]);
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + data["progress"] + '%');
-                                            jQuery('#progress-${resultHash} > .progress-bar').text(data["progress"] + '%');
-                                        }
-                                    }
-                                },
-                                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                    console.error("ERROR - Could not get job info, failing Ajax request.");
-                                    console.error(textStatus + " : " + errorThrown);
-                                    console.error(data);
-                                    clearInterval(jobInfoHandle);
-                                }
-                            });
-                            if (rowTexts.size > 0){
-                                for (let text of rowTexts.entries()) {
-                                    let row = feedbackTable.insertRow()
-                                    row.insertCell(0).appendChild(document.createTextNode(text[0]));
-                                    row.insertCell(1).appendChild(document.createTextNode(text[1]));
-                                }
-                                clearInterval(jobInfoHandle);
-                            }
-                        }, 1000);
-                    </script>
-                </tbody>
-            </table>
-        </div>
-        <br/>
+        <table class="table" id="feedbackTable">
+            <tbody>
+            </tbody>
+        </table>
     </div>
+    <br/>
+</g:each>
+<script>
+    function removeJobId(uid) {
+        jQuery.ajax({
+            method: "POST",
+            url: '${grailsApplication.config.grails.app.context}/statistic/removeJobId',
+            dataType: "json",
+            timeout: 60000,
+            async: true,
+            data: {
+                uid: uid
+            },
+            success: function (data) {
+                jQuery('#uploadResult-'+uid).attr('hidden', 'hidden');
+            },
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                jQuery('#uploadResult-'+uid).attr('hidden', 'hidden');
+            }
+        });
+    }
 
+    var data = {}
+    var feedbackTable;
+    if (document.getElementById("feedbackTable") != null){
+        feedbackTable = document.getElementById("feedbackTable").getElementsByTagName('tbody')[0];
+    }
+    var rowTexts = new Map();
+    var statisticsRowFunction = function(){
+        console.log("get jobInfo of resultHash: ${resultHash}");
+        jQuery.ajax({
+            type: 'GET',
+            url: '${grailsApplication.config.grails.app.context}/statistic/getJobInfo',
+            id: data["jobId"],
+            data: 'jobId='.concat(data["jobId"]),
+            success: function (jobInfoHandle) {
+                if (data != null && !jQuery.isEmptyObject(data)) {
+                    if (data["error"] == "Request is missing an id."){
+                        clearInterval(jobInfoHandle);
+                        return;
+                    }
+                    document.getElementsById("uploadResult-${jobId}").removeAttribute("hidden");
+                    if (data["response_finished"] == "true") {
+                        rowTexts.set("${message(code: 'listDocuments.gokb.response.ok')}", data["response_ok"]);
+                        rowTexts.set("${message(code: 'listDocuments.gokb.response.error')}", data["response_error"]);
+                        let count=1;
+                        if (data["error_details"] != null){
+                            for (let errorDetail of data["error_details"]){
+                                rowTexts.set(count.toString(), errorDetail);
+                                count++;
+                            }
+                        }
+                        jQuery('#progress-${resultHash} > .progress-bar').attr('hidden', 'hidden');
+                        jQuery('#progress-section').attr('hidden', 'hidden');
+                        jQuery('.progress').attr('hidden', 'hidden');
+                    }
+                    else {
+                        jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', data["progress"]);
+                        jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + data["progress"] + '%');
+                        jQuery('#progress-${resultHash} > .progress-bar').text(data["progress"] + '%');
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.error("ERROR - Could not get job info, failing Ajax request.");
+                console.error(textStatus + " : " + errorThrown);
+                console.error(data);
+                clearInterval(jobInfoHandle);
+            }
+        });
+        if (rowTexts.size > 0){
+            for (let text of rowTexts.entries()) {
+                let row = feedbackTable.insertRow();
+                row.insertCell(0).appendChild(document.createTextNode(text[0]));
+                row.insertCell(1).appendChild(document.createTextNode(text[1]));
+            }
+            clearInterval(jobInfoHandle);
+        }
+    }
+    if ("${jobIds}" != "[]"){
+        var jobIdsAsList = "${jobIds}".replace("[", "").replace("]", "").split(", ");
+        $.each(jobIdsAsList, function(i, jobId){
+            data["jobId"] = jobId;
+            var jobInfoHandle = setInterval(statisticsRowFunction, 1000);
+        });
+    }
+</script>
 
 <div class="row">
     <g:set var="lineCounter" value="${0}"/>
@@ -193,9 +225,9 @@
                         <g:set var="lineCounter" value="${0}"/>
                         <g:each in="${greenRecords}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell">
+                            <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                        id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
+                                id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
                                         "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
                                 <g:if test="${displayZDB}">
                                     <td><g:if test="${record.value.getAt(1)}">
