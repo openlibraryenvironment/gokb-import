@@ -42,7 +42,7 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
 
 
   @Override
-  def getJobInfo(Map<String, Object> jobInfo){
+  def getThreadInfo(Map<String, Object> jobInfo){
     if (UploadJob.Status.STARTED.equals(jobInfo.get("status"))){
       jobInfo.put("progress", count)
     }

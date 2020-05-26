@@ -49,7 +49,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   @Override
-  def getJobInfo(Map<String, Object> infoMap){
+  def getThreadInfo(Map<String, Object> infoMap){
     def http = new HTTPBuilder(uri)
     http.auth.basic user, password
 

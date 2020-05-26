@@ -12,7 +12,7 @@ abstract class UploadThreadGokb extends Thread{
   int total = 0
   List result
 
-  abstract def getJobInfo(Map<String, Object> infoMap);
+  abstract def getThreadInfo(Map<String, Object> infoMap);
 
 
   Map getResponseSorted(Map response){

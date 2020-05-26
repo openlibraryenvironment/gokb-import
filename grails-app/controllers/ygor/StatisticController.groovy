@@ -409,6 +409,41 @@ class StatisticController{
   }
 
 
+  def removeJobId = {
+    uploadJobs.remove(params.uid)
+    render '{}'
+  }
+
+
+  def getJobStatus = {
+    UploadJob uploadJob = uploadJobs.get(params.uid)
+    if (uploadJob == null){
+      render '{}'
+    }
+    uploadJob.refreshStatus()
+    render '{"status":"' + uploadJob.status + '"}'
+  }
+
+
+  def getJobProgress = {
+    render '{"count":"' + uploadJobs.get(params.uid)?.getCount() + '"}'
+  }
+
+
+  def getResultsTable = {
+    def results = [:]
+    UploadJob uploadJob = uploadJobs.get(params.uid)
+    if (uploadJob != null){
+      results.putAll(uploadJob.getSortedJobInfo())
+    }
+    StringJoiner stringJoiner = new StringJoiner(",", "[", "]")
+    for (def entry in results){
+      stringJoiner.add('{"'.concat(entry.key).concat('":"').concat('"}'))
+    }
+    render stringJoiner.toString()
+  }
+
+
   private String getDestinationUri(fileType){
     def uri = fileType.equals(Enrichment.FileType.PACKAGE) ?
         grailsApplication.config.gokbApi.xrPackageUri :

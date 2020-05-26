@@ -41,16 +41,20 @@ class UploadJob{
   @SuppressWarnings("JpaAttributeMemberSignatureInspection")
   def getSortedJobInfo(){
     Map<String, String> jobInfo = [:]
-    if (uploadThread.getCount() >= uploadThread.total){
-      status = Status.FINISHED_UNDEFINED
-    }
-    else{
-      // status is still the same
-    }
+    refreshStatus()
     jobInfo.put("status", status)
     jobInfo.put("jobId", uuid)
-    jobInfo = uploadThread.getJobInfo(jobInfo)
+    jobInfo = uploadThread.getThreadInfo(jobInfo)
     return uploadThread.getResponseSorted(jobInfo)
+  }
+
+
+  void refreshStatus(){
+    if (status == Status.STARTED){
+      if (uploadThread.getCount() >= uploadThread.total){
+        status = Status.FINISHED_UNDEFINED
+      }
+    }
   }
 
 

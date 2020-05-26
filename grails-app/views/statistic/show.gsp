@@ -6,34 +6,53 @@
 
 <g:each in="${jobIds}" var="jobId">
     <div id="uploadResult-${jobId}" class="showUploadResults">
-        <g:actionSubmit action="removeFeedback" value="${message(code: 'listDocuments.gokb.response.remove')}"
-                        class="btn btn-warning" id="remove-${jobId}" onclick="removeJobId('${jobId}')"/>
-
-        <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
-            <g:message code="listDocuments.gokb.response"/>
+        <button type="button" class="btn btn-info response-button" data-toggle="collapse" data-target="#btn-accord">
+                <g:message code="listDocuments.gokb.response"/>
+        </button>
+        <button type="button" class="btn btn-success response-remove" onclick="removeJobId('${jobId}')">
+            <g:message code="listDocuments.gokb.response.remove"/>
         </button>
         <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
                 greenRecords?.size() + yellowRecords?.size()}"/>
-        <div class="collapse in" id="progress-section">
-            <div id="progress-${resultHash}" class="progress">
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
-                     aria-valuemin="0"aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
+        <div class="collapse in" id="progress-section-${jobId}">
+            <div id="progress-${jobId}" class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
             </div>
         </div>
-        <table class="table" id="feedbackTable">
+        <table class="table" id="feedbackTable-${jobId}">
             <tbody>
             </tbody>
         </table>
     </div>
     <br/>
 </g:each>
+
 <script>
+    // format buttons width
+    var responseButtons = $(".response-button");
+    console.log("responseButtons: "+responseButtons);
+    console.log("responseButtons[0]: "+responseButtons[0]);
+    console.log("responseButtons[0].parentNode: "+responseButtons[0].parentNode);
+    console.log("responseButtons[0].parentNode.parentElement: "+responseButtons[0].parentNode.parentElement);
+    var responseRemovers = $(".response-remove");
+    if (responseButtons.length > 0){
+        var divWidth = responseButtons[0].parentNode.parentElement.clientWidth;
+        console.log("width: "+divWidth);
+        var toggleWidth = (divWidth-5) * 5 / 6;
+        var removeWidth = (divWidth-5) / 6;
+        for (var i = 0, max = responseButtons.length; i < max; i++) {
+            responseButtons[i].style.width = toggleWidth+"px";
+            responseRemovers[i].style.width = removeWidth+"px";
+        }
+    }
+
+    var data = {}
     function removeJobId(uid) {
         jQuery.ajax({
             method: "POST",
             url: '${grailsApplication.config.grails.app.context}/statistic/removeJobId',
             dataType: "json",
-            timeout: 60000,
+            timeout: 500,
             async: true,
             data: {
                 uid: uid
@@ -47,69 +66,86 @@
         });
     }
 
-    var data = {}
-    var feedbackTable;
-    if (document.getElementById("feedbackTable") != null){
-        feedbackTable = document.getElementById("feedbackTable").getElementsByTagName('tbody')[0];
-    }
-    var rowTexts = new Map();
-    var statisticsRowFunction = function(){
-        console.log("get jobInfo of resultHash: ${resultHash}");
+
+    var jobIdsAsList = "${jobIds}".replace("[", "").replace("]", "").split(", ");
+    var intervals = new Map();
+    var jobStatus;
+
+    $.each(jobIdsAsList, function (i, uid) {
+        if (uid != null && uid != ""){
+            var interval = setInterval(function () {
+                processJobStatus(uid);
+            }, 1000);
+            intervals.set(uid, interval);
+        }
+    });
+
+
+    function processJobStatus(uid) {
         jQuery.ajax({
-            type: 'GET',
-            url: '${grailsApplication.config.grails.app.context}/statistic/getJobInfo',
-            id: data["jobId"],
-            data: 'jobId='.concat(data["jobId"]),
-            success: function (jobInfoHandle) {
-                if (data != null && !jQuery.isEmptyObject(data)) {
-                    if (data["error"] == "Request is missing an id."){
-                        clearInterval(jobInfoHandle);
-                        return;
-                    }
-                    document.getElementsById("uploadResult-${jobId}").removeAttribute("hidden");
-                    if (data["response_finished"] == "true") {
-                        rowTexts.set("${message(code: 'listDocuments.gokb.response.ok')}", data["response_ok"]);
-                        rowTexts.set("${message(code: 'listDocuments.gokb.response.error')}", data["response_error"]);
-                        let count=1;
-                        if (data["error_details"] != null){
-                            for (let errorDetail of data["error_details"]){
-                                rowTexts.set(count.toString(), errorDetail);
-                                count++;
-                            }
-                        }
-                        jQuery('#progress-${resultHash} > .progress-bar').attr('hidden', 'hidden');
-                        jQuery('#progress-section').attr('hidden', 'hidden');
-                        jQuery('.progress').attr('hidden', 'hidden');
-                    }
-                    else {
-                        jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', data["progress"]);
-                        jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + data["progress"] + '%');
-                        jQuery('#progress-${resultHash} > .progress-bar').text(data["progress"] + '%');
-                    }
-                }
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/getJobStatus?uid=' + uid,
+            timeout: 500,
+            success: function (data) {
+                var json = JSON.parse(data);
+                jobStatus = json["status"];
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.error("ERROR - Could not get job info, failing Ajax request.");
-                console.error(textStatus + " : " + errorThrown);
-                console.error(data);
-                clearInterval(jobInfoHandle);
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                jobStatus = null;
             }
         });
-        if (rowTexts.size > 0){
-            for (let text of rowTexts.entries()) {
-                let row = feedbackTable.insertRow();
-                row.insertCell(0).appendChild(document.createTextNode(text[0]));
-                row.insertCell(1).appendChild(document.createTextNode(text[1]));
-            }
-            clearInterval(jobInfoHandle);
+        if (jobStatus == 'STARTED') {
+            // show progress bar
+            jQuery('#progress-' + uid).removeAttr('hidden');
+            jQuery.ajax({
+                method: "GET",
+                url: '${grailsApplication.config.grails.app.context}/statistic/getJobProgress?uid=' + uid,
+                timeout: 500,
+                success: function (data) {
+                    var json = JSON.parse(data);
+                    var max = jQuery('#progress-'+ uid + ' > .progress-bar').attr('aria-valuemax');
+                    var percentNow = json["count"] / max * 100;
+                    jQuery('#progress-'+ uid + ' > .progress-bar').attr('aria-valuenow', percentNow);
+                    jQuery('#progress-'+ uid + ' > .progress-bar').attr('style', 'width:' + percentNow + '%');
+                    jQuery('#progress-'+ uid + ' > .progress-bar').text(percentNow + '%');
+                },
+                error: function (deXMLHttpRequest, textStatus, errorThrown) {}
+            });
+        }
+        else if (jobStatus == 'SUCCESS' || jobStatus == 'ERROR' || jobStatus == 'FINISHED_UNDEFINED') {
+            // remove progress bar
+            jQuery('#progress-' + uid).attr('hidden', 'hidden');
+            // fill result table
+            var table = null;
+            var data = null;
+            jQuery.ajax({
+                method: "GET",
+                url: '${grailsApplication.config.grails.app.context}/statistic/getResultsTable?uid=' + uid,
+                timeout: 500,
+                success: function (data) {
+                    table = document.getElementById("feedbackTable-" + uid).getElementsByTagName('tbody')[0];
+                    fillTable(table, data);
+                    clearInterval(intervals.get(uid));
+                },
+                error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                }
+            });
         }
     }
-    if ("${jobIds}" != "[]"){
-        var jobIdsAsList = "${jobIds}".replace("[", "").replace("]", "").split(", ");
-        $.each(jobIdsAsList, function(i, jobId){
-            data["jobId"] = jobId;
-            var jobInfoHandle = setInterval(statisticsRowFunction, 1000);
-        });
+
+
+    function fillTable(tableElement, data){
+        var json = JSON.parse(data);
+        if (json.length > 0){
+            json.forEach((entry) => {
+                Object.keys(entry).forEach(function(key) {
+                    var value = entry[key];
+                    let row = tableElement.insertRow();
+                    row.insertCell(0).appendChild(document.createTextNode(key));
+                    row.insertCell(1).appendChild(document.createTextNode(value));
+                });
+            });
+        }
     }
 </script>
 
@@ -306,7 +342,8 @@
                         } else if (uri.localeCompare('titles') == 0) {
                             $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
                         }
-                    })
+                    });
+
                 </script>
             </g:if>
             <g:else>
