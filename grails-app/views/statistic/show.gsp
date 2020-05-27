@@ -29,6 +29,7 @@
 
 <script>
     var rkm = getResponseKeyMap();
+    var rvm = getResponseValueMap();
 
     // format buttons width
     var responseButtons = $(".response-button");
@@ -82,7 +83,7 @@
         jQuery.ajax({
             method: "GET",
             url: '${grailsApplication.config.grails.app.context}/statistic/getJobStatus?uid=' + uid,
-            timeout: 500,
+            timeout: 60000,
             success: function (data) {
                 var json = JSON.parse(data);
                 jobStatus = json["status"];
@@ -97,7 +98,7 @@
             jQuery.ajax({
                 method: "GET",
                 url: '${grailsApplication.config.grails.app.context}/statistic/getJobProgress?uid=' + uid,
-                timeout: 500,
+                timeout: 60000,
                 success: function (data) {
                     var json = JSON.parse(data);
                     var max = jQuery('#progress-'+ uid + ' > .progress-bar').attr('aria-valuemax');
@@ -109,14 +110,14 @@
                 error: function (deXMLHttpRequest, textStatus, errorThrown) {}
             });
         }
-        else if (jobStatus == 'SUCCESS' || jobStatus == 'ERROR' || jobStatus == 'FINISHED_UNDEFINED') {
+        else if (jobStatus == 'FINISHED_UNDEFINED' || jobStatus == 'SUCCESS' || jobStatus == 'ERROR') {
             // remove progress bar
             jQuery('#progress-' + uid).attr('hidden', 'hidden');
             // fill result table
             jQuery.ajax({
                 method: "GET",
                 url: '${grailsApplication.config.grails.app.context}/statistic/getResultsTable?uid=' + uid,
-                timeout: 500,
+                timeout: 60000,
                 success: function (data) {
                     let table = document.getElementById("feedbackTable-" + uid).getElementsByTagName('tbody')[0];
                     fillTable(table, data);
@@ -145,17 +146,28 @@
         if (codedKey != undefined){
             key = codedKey
         }
+        let codedValue = rvm[value];
+        if (codedValue != undefined){
+            value = codedValue
+        }
         row.insertCell(0).appendChild(document.createTextNode(key));
         row.insertCell(1).appendChild(document.createTextNode(value));
     }
 
     function getResponseKeyMap() {
         const rkm = new Object();
+        rkm["listDocuments.gokb.response.type"] = "${g.message(code:"listDocuments.gokb.response.type")}";
         rkm["listDocuments.gokb.response.ok"] = "${g.message(code:"listDocuments.gokb.response.ok")}";
         rkm["listDocuments.gokb.response.error"] = "${g.message(code:"listDocuments.gokb.response.error")}";
         rkm["listDocuments.gokb.response.message"] = "${g.message(code:"listDocuments.gokb.response.message")}";
         rkm["listDocuments.gokb.response.status"] = "${g.message(code:"listDocuments.gokb.response.status")}";
         return rkm;
+    }
+    function getResponseValueMap() {
+        const rvm = new Object();
+        rvm["listDocuments.gokb.response.titles"] = "${g.message(code:"listDocuments.gokb.response.titles")}";
+        rvm["listDocuments.gokb.response.package"] = "${g.message(code:"listDocuments.gokb.response.package")}";
+        return rvm;
     }
 </script>
 
@@ -349,7 +361,8 @@
                         var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
                         if (uri.localeCompare('package') == 0) {
                             $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendPackageFile');
-                        } else if (uri.localeCompare('titles') == 0) {
+                        }
+                        else if (uri.localeCompare('titles') == 0) {
                             $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
                         }
                     });

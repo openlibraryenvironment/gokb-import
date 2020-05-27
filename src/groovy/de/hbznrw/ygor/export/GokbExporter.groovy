@@ -485,10 +485,6 @@ class GokbExporter {
       headers.'User-Agent' = 'ygor'
       body = text
       response.success = { response, html ->
-        log.debug("server response: ${response.statusLine}")
-        log.debug("server:          ${response.headers.'Content-Type'}")
-        log.debug("server:          ${response.headers.'Server'}")
-        log.debug("content length:  ${response.headers.'Content-Length'}")
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
           if (response.status < 400){
             return ['info': html]
@@ -502,7 +498,6 @@ class GokbExporter {
         }
       }
       response.failure = { response, html ->
-        log.error("server response: ${response.statusLine}")
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
           return ['error': html]
         }
@@ -511,7 +506,6 @@ class GokbExporter {
         }
       }
       response.'401' = { response ->
-        log.error("server response: ${response.statusLine}")
         return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
       }
     }

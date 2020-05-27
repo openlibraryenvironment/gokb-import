@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
 
@@ -30,28 +31,32 @@ class UploadJob{
   }
 
 
-  @SuppressWarnings("JpaAttributeMemberSignatureInspection")
-  int getCount(){
-    if (fileType.equals(Enrichment.FileType.TITLES)){
-      return ((SendTitlesThreadGokb) uploadThread).getCount();
+  void updateCount(){
+    if (uploadThread instanceof SendPackageThreadGokb){
+      ((SendPackageThreadGokb) uploadThread).updateCount()
     }
+    // else if (uploadThread instanceof SendTitlesThreadGokb)
+    //   --> there is no need for explicit updating as it happens automatically
   }
 
 
   @SuppressWarnings("JpaAttributeMemberSignatureInspection")
-  def getSortedJobInfo(){
-    Map<String, String> jobInfo = [:]
-    refreshStatus()
-    jobInfo.put("status", status)
-    jobInfo.put("jobId", uuid)
-    jobInfo = uploadThread.getThreadInfo(jobInfo)
-    return uploadThread.getResponseSorted(jobInfo)
+  int getCount(){
+    return uploadThread.count
+  }
+
+
+  @SuppressWarnings(["JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"])
+  Map getResultsTable(){
+    Map results = [:]
+    results.putAll(uploadThread.getResultsTable())
+    return results
   }
 
 
   void refreshStatus(){
     if (status == Status.STARTED){
-      if (uploadThread.getCount() >= uploadThread.total){
+      if (uploadThread.count >= uploadThread.total){
         status = Status.FINISHED_UNDEFINED
       }
     }

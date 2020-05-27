@@ -359,9 +359,9 @@ class StatisticController{
         uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
-        SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword)
+        SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(grailsApplication, enrichment, uri, gokbUsername, gokbPassword)
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
-        sendPackageThread.getGokbJobId()
+        // sendPackageThread.getGokbJobId()
       }
       if (uploadJob != null){
         uploadJobs.put(uploadJob.uuid, uploadJob)
@@ -420,13 +420,22 @@ class StatisticController{
     if (uploadJob == null){
       render '{}'
     }
-    uploadJob.refreshStatus()
-    render '{"status":"' + uploadJob.status + '"}'
+    else{
+      uploadJob.refreshStatus()
+      render '{"status":"' + uploadJob.status + '"}'
+    }
   }
 
 
   def getJobProgress = {
-    render '{"count":"' + uploadJobs.get(params.uid)?.getCount() + '"}'
+    UploadJob uploadJob = uploadJobs.get(params.uid)
+    if (uploadJob == null){
+      render '{}'
+    }
+    else{
+      uploadJob.updateCount()
+      render '{"count":"' + uploadJob.getCount() + '"}'
+    }
   }
 
 
@@ -434,7 +443,7 @@ class StatisticController{
     def results = [:]
     UploadJob uploadJob = uploadJobs.get(params.uid)
     if (uploadJob != null){
-      results.putAll(uploadJob.getSortedJobInfo())
+      results.putAll(uploadJob.getResultsTable())
     }
     StringJoiner stringJoiner = new StringJoiner(",", "[", "]")
     for (def entry in results){
@@ -452,18 +461,6 @@ class StatisticController{
             null
         )
     return uri.concat("?async=true")
-  }
-
-
-  def getJobInfo = {
-    if (gokbUsername == null || gokbPassword == null){
-      return null
-    }
-    UploadJob uploadJob = uploadJobs.get(params.jobId)
-    if (uploadJob != null){
-      return uploadJob.getSortedJobInfo()
-    }
-    return null
   }
 
 
