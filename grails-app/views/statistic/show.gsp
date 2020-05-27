@@ -28,16 +28,13 @@
 </g:each>
 
 <script>
+    var rkm = getResponseKeyMap();
+
     // format buttons width
     var responseButtons = $(".response-button");
-    console.log("responseButtons: "+responseButtons);
-    console.log("responseButtons[0]: "+responseButtons[0]);
-    console.log("responseButtons[0].parentNode: "+responseButtons[0].parentNode);
-    console.log("responseButtons[0].parentNode.parentElement: "+responseButtons[0].parentNode.parentElement);
     var responseRemovers = $(".response-remove");
     if (responseButtons.length > 0){
         var divWidth = responseButtons[0].parentNode.parentElement.clientWidth;
-        console.log("width: "+divWidth);
         var toggleWidth = (divWidth-5) * 5 / 6;
         var removeWidth = (divWidth-5) / 6;
         for (var i = 0, max = responseButtons.length; i < max; i++) {
@@ -116,14 +113,12 @@
             // remove progress bar
             jQuery('#progress-' + uid).attr('hidden', 'hidden');
             // fill result table
-            var table = null;
-            var data = null;
             jQuery.ajax({
                 method: "GET",
                 url: '${grailsApplication.config.grails.app.context}/statistic/getResultsTable?uid=' + uid,
                 timeout: 500,
                 success: function (data) {
-                    table = document.getElementById("feedbackTable-" + uid).getElementsByTagName('tbody')[0];
+                    let table = document.getElementById("feedbackTable-" + uid).getElementsByTagName('tbody')[0];
                     fillTable(table, data);
                     clearInterval(intervals.get(uid));
                 },
@@ -133,19 +128,34 @@
         }
     }
 
-
     function fillTable(tableElement, data){
-        var json = JSON.parse(data);
+        let json = JSON.parse(data);
         if (json.length > 0){
             json.forEach((entry) => {
-                Object.keys(entry).forEach(function(key) {
-                    var value = entry[key];
-                    let row = tableElement.insertRow();
-                    row.insertCell(0).appendChild(document.createTextNode(key));
-                    row.insertCell(1).appendChild(document.createTextNode(value));
-                });
+                for (let key in entry){
+                    appendRow(tableElement, key, entry[key]);
+                }
             });
         }
+    }
+
+    function appendRow(tableElement, key, value) {
+        let row = tableElement.insertRow();
+        let codedKey = rkm[key];
+        if (codedKey != undefined){
+            key = codedKey
+        }
+        row.insertCell(0).appendChild(document.createTextNode(key));
+        row.insertCell(1).appendChild(document.createTextNode(value));
+    }
+
+    function getResponseKeyMap() {
+        const rkm = new Object();
+        rkm["listDocuments.gokb.response.ok"] = "${g.message(code:"listDocuments.gokb.response.ok")}";
+        rkm["listDocuments.gokb.response.error"] = "${g.message(code:"listDocuments.gokb.response.error")}";
+        rkm["listDocuments.gokb.response.message"] = "${g.message(code:"listDocuments.gokb.response.message")}";
+        rkm["listDocuments.gokb.response.status"] = "${g.message(code:"listDocuments.gokb.response.status")}";
+        return rkm;
     }
 </script>
 

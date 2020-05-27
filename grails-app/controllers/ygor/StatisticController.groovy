@@ -438,7 +438,7 @@ class StatisticController{
     }
     StringJoiner stringJoiner = new StringJoiner(",", "[", "]")
     for (def entry in results){
-      stringJoiner.add('{"'.concat(entry.key).concat('":"').concat('"}'))
+      stringJoiner.add('{"'.concat(entry.key).concat('":"').concat(entry.value.toString()).concat('"}'))
     }
     render stringJoiner.toString()
   }

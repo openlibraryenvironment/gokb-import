@@ -94,7 +94,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     def jobResult = result.get("job_result")
     String message = jobResult?.get("message")
     if (message != null){
-      sortedDetails.put("response_message", message)
+      sortedDetails.put("listDocuments.gokb.response.message", message)
     }
     int error = jobResult?.get("errors") != null ? jobResult?.get("errors")?.size() : 0
     int ok = jobResult?.get("results") != null ? jobResult?.get("results")?.size() : 0
@@ -105,8 +105,8 @@ class SendPackageThreadGokb extends UploadThreadGokb{
         ok = Integer.valueOf(matcher.group(1))
       }
     }
-    sortedDetails.put("response_ok", ok.toString())
-    sortedDetails.put("response_error", error.toString())
+    sortedDetails.put("listDocuments.gokb.response.ok", ok.toString())
+    sortedDetails.put("listDocuments.gokb.response.error", error.toString())
     sortedDetails
   }
 

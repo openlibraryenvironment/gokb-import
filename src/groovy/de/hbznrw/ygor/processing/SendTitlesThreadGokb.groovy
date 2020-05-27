@@ -65,14 +65,14 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
         errorDetails.add(getRecordError(innerResults))
       }
     }
-    sortedDetails.put("response_ok", ok.toString())
-    sortedDetails.put("response_error", error.toString())
+    sortedDetails.put("listDocuments.gokb.response.ok", ok.toString())
+    sortedDetails.put("listDocuments.gokb.response.error", error.toString())
     if (errorDetails.size() > 0){
       sortedDetails.put("error_details", errorDetails)
-      sortedDetails.put("status", UploadJob.Status.ERROR)
+      sortedDetails.put("listDocuments.gokb.response.status", UploadJob.Status.ERROR)
     }
     else{
-      sortedDetails.put("status", UploadJob.Status.SUCCESS)
+      sortedDetails.put("listDocuments.gokb.response.status", UploadJob.Status.SUCCESS)
     }
     sortedDetails
   }

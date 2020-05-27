@@ -1,6 +1,5 @@
 package ygor
 
-import de.hbznrw.ygor.export.Statistics
 import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON

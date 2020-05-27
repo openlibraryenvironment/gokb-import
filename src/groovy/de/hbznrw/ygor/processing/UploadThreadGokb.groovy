@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.processing
 
 import ygor.Enrichment
+import ygor.UploadJob
 
 
 abstract class UploadThreadGokb extends Thread{
@@ -14,16 +15,13 @@ abstract class UploadThreadGokb extends Thread{
 
   abstract def getThreadInfo(Map<String, Object> infoMap);
 
-
   Map getResponseSorted(Map response){
     Map result = [:]
-    if (response.get("finished") == true){
+    if (response.get("listDocuments.gokb.response.status") == UploadJob.Status.SUCCESS){
       response.remove("progress")
-      result.put("response_finished", "true")
-      result.putAll(getResponseSortedDetails(response))
+      result.putAll(getResponseSortedDetails())
     }
     else{
-      result.put("response_finished", "false")
       result.put("progress", response.get("progress"))
     }
     return result
