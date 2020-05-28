@@ -314,9 +314,13 @@
         <div class="col-xs-12" style="margin-bottom: 20px">
             <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
                 <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
-                        data-target="#credentialsModal"><g:message code="listDocuments.button.sendTitlesFile"/></button>
+                        data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                    <g:message code="listDocuments.button.sendTitlesFile"/>
+                </button>
                 <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
-                        data-target="#credentialsModal"><g:message code="listDocuments.button.sendPackageFile"/></button>
+                        data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                    <g:message code="listDocuments.button.sendPackageFile"/>
+                </button>
 
                 <div class="modal fade" id="credentialsModal" role="dialog">
                     <div class="modal-dialog">
@@ -333,7 +337,6 @@
                                                 code="listDocuments.gokb.username"/></span>
                                         <g:textField name="gokbUsername" size="24" class="form-control"/>
                                     </div>
-
                                     <div class="input-group">
                                         <span class="input-group-addon"><g:message
                                                 code="listDocuments.gokb.password"/></span>
@@ -345,7 +348,7 @@
                                                 code="listDocuments.button.cancel"/></button>
                                         <g:actionSubmit action="" value="${message(code: 'listDocuments.button.send')}"
                                                         class="btn btn-success btn-same-width"
-                                                        name="cred-modal-btn-send" data-toggle="tooltip"
+                                                        id="cred-modal-btn-send" data-toggle="tooltip"
                                                         data-placement="top"
                                                         title="JavaScript ${message(code: 'technical.required')}."/>
                                     </div>
@@ -357,16 +360,17 @@
                 <br/>
                 <br/>
                 <script>
-                    $('#credentialsModal').on('show.bs.modal', function (event) {
-                        var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
-                        if (uri.localeCompare('package') == 0) {
-                            $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendPackageFile');
-                        }
-                        else if (uri.localeCompare('titles') == 0) {
-                            $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
-                        }
-                    });
-
+                    function assignSendTargetToModal(){
+                        $('#credentialsModal').on('show.bs.modal', function (event) {
+                            var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
+                            if (uri.localeCompare('package') == 0) {
+                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendPackageFile');
+                            }
+                            else if (uri.localeCompare('titles') == 0) {
+                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendTitlesFile');
+                            }
+                        });
+                    }
                 </script>
             </g:if>
             <g:else>

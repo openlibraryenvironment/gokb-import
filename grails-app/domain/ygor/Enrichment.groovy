@@ -70,6 +70,8 @@ class Enrichment{
   Map<String, List<String>> yellowRecords = new HashMap<>()
   Map<String, List<String>> redRecords = new HashMap<>()
 
+  Map<FileType, Boolean> hasBeenUploaded = new HashMap<>()
+
   static constraints = {
   }
 
@@ -241,6 +243,8 @@ class Enrichment{
     if (en.redRecords == null){
       en.redRecords = new HashMap<>()
     }
+    en.hasBeenUploaded.put(FileType.TITLES, false)
+    en.hasBeenUploaded.put(FileType.PACKAGE, false)
     return en
   }
 

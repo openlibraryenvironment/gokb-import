@@ -146,6 +146,8 @@ class StatisticController{
     // write record into dataContainer
     String resultHash = request.parameterMap['resultHash'][0]
     Enrichment enrichment = getEnrichment(resultHash)
+    enrichment.hasBeenUploaded.put(FileType.TITLES, false)
+    enrichment.hasBeenUploaded.put(FileType.PACKAGE, false)
     String enrichmentFolder = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash).concat(File.separator)
     Record record = Record.load(enrichmentFolder, resultHash, params['record.uid'], enrichment.mappingsContainer)
     for (def field in params['fieldschanged']){
@@ -350,7 +352,7 @@ class StatisticController{
     gokbUsername = params.gokbUsername
     gokbPassword = params.gokbPassword
     def enrichment = getCurrentEnrichment()
-    if (enrichment){
+    if (enrichment && !enrichment.hasBeenUploaded.get(fileType)){
       def response = []
       String uri = getDestinationUri(fileType)
       UploadJob uploadJob
@@ -366,46 +368,27 @@ class StatisticController{
       if (uploadJob != null){
         uploadJobs.put(uploadJob.uuid, uploadJob)
         uploadJob.start()
-        /*flash.info = []
-        flash.warning = []
-        List errorList = []
-        def total = 0
-        def errors = 0
-        log.debug("sendFile response: ${response}")
-        if (response.info){
-          log.debug("json class: ${response.info.class}")
-          def info_objects = response.info.results
-          info_objects[0].each{ robj ->
-            log.debug("robj: ${robj}")
-            if (robj.result == 'ERROR'){
-              errorList.add(robj.message)
-              errors++
-            }
-            total++
-          }
-          flash.info = "Total: ${total}, Errors: ${errors}"
-          flash.error = errorList
-        }*/
-        render(
-            view         : 'show',
-            model: [
-                originHash   : enrichment.originHash,
-                resultHash   : enrichment.resultHash,
-                currentView  : 'statistic',
-                ygorVersion  : enrichment.ygorVersion,
-                date         : enrichment.date,
-                filename     : enrichment.originName,
-                greenRecords : enrichment.greenRecords,
-                yellowRecords: enrichment.yellowRecords,
-                redRecords   : enrichment.redRecords,
-                status       : enrichment.status.toString(),
-                packageName  : enrichment.packageName,
-                dataType     : fileType,
-                jobIds       : uploadJobs.keySet()
-            ]
-        )
+        enrichment.hasBeenUploaded.put(fileType, true)
       }
     }
+    render(
+        view         : 'show',
+        model: [
+            originHash   : enrichment.originHash,
+            resultHash   : enrichment.resultHash,
+            currentView  : 'statistic',
+            ygorVersion  : enrichment.ygorVersion,
+            date         : enrichment.date,
+            filename     : enrichment.originName,
+            greenRecords : enrichment.greenRecords,
+            yellowRecords: enrichment.yellowRecords,
+            redRecords   : enrichment.redRecords,
+            status       : enrichment.status.toString(),
+            packageName  : enrichment.packageName,
+            dataType     : fileType,
+            jobIds       : uploadJobs.keySet()
+        ]
+    )
   }
 
 
