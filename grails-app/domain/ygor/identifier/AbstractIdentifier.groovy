@@ -1,6 +1,7 @@
 package ygor.identifier
 
 import ygor.field.FieldKeyMapping
+import ygor.field.MappingsContainer
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
@@ -32,11 +33,6 @@ class AbstractIdentifier {
   }
 
 
-  private AbstractIdentifier(String identifier){
-    this.identifier = identifier
-  }
-
-
   String toReducedString() {
     if (identifier == null){
       return ""
@@ -53,11 +49,37 @@ class AbstractIdentifier {
   }
 
 
-  static AbstractIdentifier fromString(string) throws InstantiationException{
+  static AbstractIdentifier fromString(string, MappingsContainer mappings) throws InstantiationException{
     try{
       String[] split = string.split(" : ")
-      Constructor boa = Class.forName(split[0]).getConstructor(String.class)
-      return boa.newInstance(split[1])
+      Class clazz = Class.forName("ygor.identifier.".concat(split[0]))
+      String mappingName
+      switch (clazz.getSimpleName()){
+        case "ZdbIdentifier":
+          mappingName = "zdbId"
+          break
+        case "EzbIdentifier":
+          mappingName = "ezbId"
+          break
+        case "DoiIdentifier":
+          mappingName = "doi"
+          break
+        case "OnlineIdentifier":
+          mappingName = "onlineIdentifier"
+          break
+        case "PrintIdentifier":
+          mappingName = "printIdentifier"
+          break
+        default:
+          mappingName = null
+      }
+      if (mappingName != null){
+        FieldKeyMapping fieldKeyMapping = mappings.getMapping(mappingName, MappingsContainer.YGOR)
+        Constructor boa = clazz.getConstructor(String.class, FieldKeyMapping.class)
+        return boa.newInstance(split[1], fieldKeyMapping)
+      }
+      // else
+      return null
     }
     catch (Exception e){
       throw new InstantiationException("Could not create AbstractIdentifier for : ".concat(string))
