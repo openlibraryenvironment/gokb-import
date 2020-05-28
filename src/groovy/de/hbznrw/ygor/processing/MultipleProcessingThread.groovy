@@ -37,6 +37,7 @@ class MultipleProcessingThread extends Thread {
   private quote
   private quoteMode
   private recordSeparator
+  private addOnly
   private platform
   private kbartFile
 
@@ -54,6 +55,7 @@ class MultipleProcessingThread extends Thread {
     quote = options.get('quote')
     quoteMode = options.get('quoteMode')
     recordSeparator = options.get('recordSeparator')
+    addOnly = options.get('addOnly')
     platform = options.get('platform')
     kbartFile = en.originPathName
     this.kbartReader = kbartReader

@@ -1,6 +1,7 @@
 package ygor
 
 import de.hbznrw.ygor.export.structure.Pod
+import groovyx.net.http.HTTPBuilder
 
 import javax.servlet.http.HttpSession
 import org.springframework.web.multipart.commons.CommonsMultipartFile
@@ -57,6 +58,9 @@ class EnrichmentService{
     def ph = enrichment.dataContainer.pkg.packageHeader
     ph.name = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
+    if (pm['addOnly'] && pm['addOnly'][0] == "on"){
+      enrichment.addOnly = true
+    }
     if (pm['pkgIsil'] && pm['pkgIsil'][0]){
       enrichment.dataContainer.isil = pm['pkgIsil'][0]
     }
@@ -115,6 +119,73 @@ class EnrichmentService{
     }
     else{
       log.error("package platform not set!")
+    }
+  }
+
+
+  void stopProcessing(Enrichment enrichment){
+    enrichment.thread.isRunning = false
+  }
+
+
+  List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
+    def result = []
+    def json = enrichment.getAsFile(fileType, true)
+    def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
+        grailsApplication.config.gokbApi.xrPackageUri :
+        (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?
+            grailsApplication.config.gokbApi.xrTitleUri :
+            null
+        )
+    uri = uri.concat("?async=true")
+    if (fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) && enrichment.addOnly == true){
+      uri = uri.concat("&addOnly=true")
+    }
+    result << exportFileToGOKb(enrichment, json, uri, user, pwd)
+    result
+  }
+
+
+  private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
+    log.info("exportFile: " + enrichment.resultHash + " -> " + url)
+
+    def http = new HTTPBuilder(url)
+    http.auth.basic user, pwd
+
+    http.request(Method.POST, ContentType.JSON){ req ->
+      headers.'User-Agent' = 'ygor'
+
+      body = json.getText()
+      response.success = { resp, html ->
+        log.info("server response: ${resp.statusLine}")
+        log.debug("server:          ${resp.headers.'Content-Type'}")
+        log.debug("server:          ${resp.headers.'Server'}")
+        log.debug("content length:  ${resp.headers.'Content-Length'}")
+        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (resp.status < 400){
+            return ['info': html]
+          }
+          else{
+            return ['warning': html]
+          }
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.failure = { resp, html ->
+        log.error("server response: ${resp.statusLine}")
+        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          return ['error': html]
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.'401'= {resp ->
+        log.error("server response: ${resp.statusLine}")
+        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+      }
     }
   }
 

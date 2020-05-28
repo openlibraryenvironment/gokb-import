@@ -61,6 +61,7 @@ class Enrichment{
   File sessionFolder
   String ygorVersion
   String date
+  boolean addOnly
 
   def thread
   MappingsContainer mappingsContainer
@@ -166,6 +167,7 @@ class Enrichment{
     result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
     result.append("\"configuration\":{")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
+    result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
     if (dataContainer.curatoryGroup != null){
       result.append("\"curatoryGroup\":\"").append(dataContainer.curatoryGroup).append("\",")
     }
@@ -214,6 +216,7 @@ class Enrichment{
     en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.markDuplicateIds()
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
+    en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
       en.dataContainer.curatoryGroup = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")
