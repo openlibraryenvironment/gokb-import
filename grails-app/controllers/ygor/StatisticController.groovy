@@ -146,8 +146,8 @@ class StatisticController{
     // write record into dataContainer
     String resultHash = request.parameterMap['resultHash'][0]
     Enrichment enrichment = getEnrichment(resultHash)
-    enrichment.hasBeenUploaded.put(FileType.TITLES, false)
-    enrichment.hasBeenUploaded.put(FileType.PACKAGE, false)
+    enrichment.hasBeenUploaded.put(Enrichment.FileType.TITLES, false)
+    enrichment.hasBeenUploaded.put(Enrichment.FileType.PACKAGE, false)
     String enrichmentFolder = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash).concat(File.separator)
     Record record = Record.load(enrichmentFolder, resultHash, params['record.uid'], enrichment.mappingsContainer)
     for (def field in params['fieldschanged']){

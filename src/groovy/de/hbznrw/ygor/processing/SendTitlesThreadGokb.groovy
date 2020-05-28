@@ -33,56 +33,6 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
   }
 
 
-  /*@Override
-  Map getResponseSorted(Map response){
-    Map result = [:]
-    if (response.get("listDocuments.gokb.response.status") == UploadJob.Status.SUCCESS){
-      response.remove("progress")
-      result.putAll(getResponseSortedDetails(response))
-    }
-    else{
-      result.put("progress", response.get("progress"))
-    }
-    return result
-  }*/
-
-
-  /*protected Map getResponseSortedDetails(Map response){
-    Map<String, Object> sortedDetails = [:]
-    int ok, error
-    List errorDetails = []
-    for (def resultItem in response){
-      def innerResults = resultItem.get("info")
-      if (innerResults.get("result").equals("OK")){
-        ok++
-      }
-      else if (innerResults.get("result").equals("ERROR")){
-        error++
-        errorDetails.add(getRecordError(innerResults))
-      }
-    }
-    sortedDetails.put("listDocuments.gokb.response.ok", ok.toString())
-    sortedDetails.put("listDocuments.gokb.response.error", error.toString())
-    if (errorDetails.size() > 0){
-      sortedDetails.put("error_details", errorDetails)
-      sortedDetails.put("listDocuments.gokb.response.status", UploadJob.Status.ERROR)
-    }
-    else{
-      sortedDetails.put("listDocuments.gokb.response.status", UploadJob.Status.SUCCESS)
-    }
-    sortedDetails
-  }*/
-
-
-  /*private String getRecordError(Map record){
-    StringBuilder result = new StringBuilder()
-    if (record.get("message") != null){
-      result.append(record.get("message"))
-    }
-    result.toString()
-  }*/
-
-
   @Override
   Map getResultsTable(){
     Map results = [:]
@@ -118,4 +68,10 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
     errorMap
   }
 
+
+  @Override
+  String getGokbResponseValue(String jobId, String responseKey){
+    // TODO
+    return "TODO!"
+  }
 }

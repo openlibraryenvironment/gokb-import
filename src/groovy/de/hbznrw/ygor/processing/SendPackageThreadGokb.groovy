@@ -44,7 +44,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
   void updateCount(){
     String jobId = getJobId()
-    String message = getGokbResultMessage(jobId)
+    String message = getGokbResponseValue(jobId, "job_result.message")
     Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
     if (matcher.find()){
       Integer foundInt = Integer.valueOf(matcher.group(1))
@@ -63,9 +63,18 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   }
 
 
-  String getGokbResultMessage(String jobId){
+  @Override
+  String getGokbResponseValue(String jobId, String responseKey){
     gokbStatusResponse = getGokbStatusResponse(jobId)
-    return gokbStatusResponse.get("job_result")?.get("message")
+    String[] path = responseKey.split("\\.")
+    def response = gokbStatusResponse
+    for (String subField in path){
+      response = response.get(subField)
+      if (response == null){
+        break
+      }
+    }
+    return response
   }
 
 

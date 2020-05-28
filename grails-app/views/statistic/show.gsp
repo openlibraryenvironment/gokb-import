@@ -15,7 +15,7 @@
         <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
                 greenRecords?.size() + yellowRecords?.size()}"/>
         <div class="collapse in" id="progress-section-${jobId}">
-            <div id="progress-${jobId}" class="progress">
+            <div id="progress-${jobId}" class="progress" hidden="hidden">
                 <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
             </div>
         </div>

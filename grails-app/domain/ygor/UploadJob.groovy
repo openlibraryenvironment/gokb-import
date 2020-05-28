@@ -1,7 +1,6 @@
 package ygor
 
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
-import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
 
 @SuppressWarnings("JpaObjectClassSignatureInspection")
@@ -58,6 +57,10 @@ class UploadJob{
     if (status == Status.STARTED){
       if (uploadThread.count >= uploadThread.total){
         status = Status.FINISHED_UNDEFINED
+      }
+      String responseStatus = uploadThread.getGokbResponseValue(uuid, "responseStatus")
+      if ("error" == responseStatus){
+        status = Status.ERROR
       }
     }
   }
