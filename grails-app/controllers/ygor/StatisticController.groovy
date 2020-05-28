@@ -354,7 +354,7 @@ class StatisticController{
     def enrichment = getCurrentEnrichment()
     if (enrichment && !enrichment.hasBeenUploaded.get(fileType)){
       def response = []
-      String uri = getDestinationUri(fileType)
+      String uri = getDestinationUri(fileType, enrichment.addOnly)
       UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
         SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword)
@@ -363,7 +363,6 @@ class StatisticController{
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(grailsApplication, enrichment, uri, gokbUsername, gokbPassword)
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
-        // sendPackageThread.getGokbJobId()
       }
       if (uploadJob != null){
         uploadJobs.put(uploadJob.uuid, uploadJob)
@@ -436,14 +435,18 @@ class StatisticController{
   }
 
 
-  private String getDestinationUri(fileType){
+  private String getDestinationUri(fileType, boolean addOnly){
     def uri = fileType.equals(Enrichment.FileType.PACKAGE) ?
         grailsApplication.config.gokbApi.xrPackageUri :
         (fileType.equals(Enrichment.FileType.TITLES) ?
             grailsApplication.config.gokbApi.xrTitleUri :
             null
         )
-    return uri.concat("?async=true")
+    uri = uri.concat("?async=true")
+    if (addOnly){
+      uri = uri.concat("&addOnly=true")
+    }
+    return uri
   }
 
 

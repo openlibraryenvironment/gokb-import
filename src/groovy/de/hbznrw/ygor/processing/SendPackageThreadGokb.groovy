@@ -6,7 +6,6 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import ygor.Enrichment
-import ygor.UploadJob
 
 import javax.annotation.Nonnull
 import java.util.regex.Matcher
@@ -41,20 +40,6 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     String body = json.getText()
     result << GokbExporter.sendText(uri, body, user, password)
   }
-
-
-  /*@Override
-  Map getResponseSorted(Map response){
-    Map result = [:]
-    if (response.get("listDocuments.gokb.response.status") == UploadJob.Status.SUCCESS){
-      response.remove("progress")
-      result.putAll(getResponseSortedDetails(response))
-    }
-    else{
-      result.put("progress", response.get("progress"))
-    }
-    return result
-  }*/
 
 
   void updateCount(){
@@ -129,28 +114,6 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     }
     result
   }
-
-
-  /*protected Map getResponseSortedDetails(Map response){
-    Map sortedDetails = [:]
-    def jobResult = response.get("job_result")
-    String message = jobResult?.get("message")
-    if (message != null){
-      sortedDetails.put("listDocuments.gokb.response.message", message)
-    }
-    int error = jobResult?.get("errors") != null ? jobResult?.get("errors")?.size() : 0
-    int ok = jobResult?.get("results") != null ? jobResult?.get("results")?.size() : 0
-    if (ok == 0){
-      // package update --> get "OK" information from message string
-      Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
-      if (matcher.find()){
-        ok = Integer.valueOf(matcher.group(1))
-      }
-    }
-    sortedDetails.put("listDocuments.gokb.response.ok", ok.toString())
-    sortedDetails.put("listDocuments.gokb.response.error", error.toString())
-    sortedDetails
-  }*/
 
 
   @Override
