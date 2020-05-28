@@ -107,7 +107,9 @@
                     jQuery('#progress-'+ uid + ' > .progress-bar').attr('style', 'width:' + percentNow + '%');
                     jQuery('#progress-'+ uid + ' > .progress-bar').text(percentNow + '%');
                 },
-                error: function (deXMLHttpRequest, textStatus, errorThrown) {}
+                error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                    console.error("Could not get job info for job "+uid);
+                }
             });
         }
         else if (jobStatus == 'FINISHED_UNDEFINED' || jobStatus == 'SUCCESS' || jobStatus == 'ERROR') {
@@ -124,6 +126,7 @@
                     clearInterval(intervals.get(uid));
                 },
                 error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                    console.error("Could not get results for job "+uid);
                 }
             });
         }

@@ -32,7 +32,11 @@ class UploadJob{
 
   void updateCount(){
     if (uploadThread instanceof SendPackageThreadGokb){
-      ((SendPackageThreadGokb) uploadThread).updateCount()
+      SendPackageThreadGokb sendPackageThreadGokb = (SendPackageThreadGokb) uploadThread
+      sendPackageThreadGokb.updateCount()
+      if (sendPackageThreadGokb.isInterrupted()){
+        status = Status.ERROR
+      }
     }
     // else if (uploadThread instanceof SendTitlesThreadGokb)
     //   --> there is no need for explicit updating as it happens automatically
@@ -58,7 +62,7 @@ class UploadJob{
       if (uploadThread.count >= uploadThread.total){
         status = Status.FINISHED_UNDEFINED
       }
-      String responseStatus = uploadThread.getGokbResponseValue(uuid, "responseStatus")
+      String responseStatus = uploadThread.getGokbResponseValue("responseStatus")
       if ("error" == responseStatus){
         status = Status.ERROR
       }

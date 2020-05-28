@@ -43,15 +43,26 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   void updateCount(){
-    String jobId = getJobId()
-    String message = getGokbResponseValue(jobId, "job_result.message")
-    Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
-    if (matcher.find()){
-      Integer foundInt = Integer.valueOf(matcher.group(1))
-      if (foundInt != null){
-        count = foundInt
+    String message = getGokbResponseValue("job_result.message")
+    if (message != null){
+      Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
+      if (matcher.find()){
+        Integer foundInt = Integer.valueOf(matcher.group(1))
+        if (foundInt != null){
+          count = foundInt
+        }
       }
     }
+  }
+
+
+  boolean isInterrupted(){
+    String message = getGokbResponseValue("job_result.message")
+    if (message.contains("tipps have not been loaded because of validation errors")){
+      return true
+    }
+    // else
+    return false
   }
 
 
@@ -64,8 +75,8 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   @Override
-  String getGokbResponseValue(String jobId, String responseKey){
-    gokbStatusResponse = getGokbStatusResponse(jobId)
+  String getGokbResponseValue(String responseKey){
+    gokbStatusResponse = getGokbStatusResponse(getJobId())
     String[] path = responseKey.split("\\.")
     def response = gokbStatusResponse
     for (String subField in path){
@@ -137,8 +148,15 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       results.put("listDocuments.gokb.response.error", jobResult.get("errors")?.size())
       int i=1
       for (def error in jobResult.get("errors")){
-        results.put(String.valueOf(i), error.toString())
+        results.put(String.valueOf(i++), error.toString())
       }
+    }
+    if ("ERROR" == gokbStatusResponse.get("result")){
+      results.put("listDocuments.gokb.response.message", gokbStatusResponse.get("message"))
+    }
+    if ("ERROR" == gokbStatusResponse.get("job_result")?.get("result")){
+      results.put("listDocuments.gokb.response.message", gokbStatusResponse.get("job_result").get("message"))
+      results.put("listDocuments.gokb.response.status", "ERROR")
     }
     return results
   }
