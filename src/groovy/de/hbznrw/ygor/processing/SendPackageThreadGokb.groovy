@@ -45,6 +45,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   void updateCount(){
     String message = getGokbResponseValue("job_result.message")
     if (message != null){
+      // get count from finished process
       Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
       if (matcher.find()){
         Integer foundInt = Integer.valueOf(matcher.group(1))
@@ -53,12 +54,19 @@ class SendPackageThreadGokb extends UploadThreadGokb{
         }
       }
     }
+    else{
+      // get count from ongoing process
+      String countString = getGokbResponseValue("progress")
+      if (countString != null){
+        count = Integer.valueOf(countString)
+      }
+    }
   }
 
 
   boolean isInterrupted(){
     String message = getGokbResponseValue("job_result.message")
-    if (message.contains("tipps have not been loaded because of validation errors")){
+    if (message != null && message.contains("tipps have not been loaded because of validation errors")){
       return true
     }
     // else
