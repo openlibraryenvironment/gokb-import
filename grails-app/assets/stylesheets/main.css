@@ -746,6 +746,36 @@ table.dataTable thead .sorting_desc {
 	outline: 0;
 }
 
+
 #gokbResponseText {
 	white-space: pre-line
+}
+
+
+.info-icon{
+	height:16px;
+	float:initial;
+	margin-left: 2px;
+	visibility: visible;
+}
+
+.info-icon-text{
+	float:initial;
+	visibility: hidden;
+	margin-left: 25px;
+	height: 0px;
+}
+
+.info-icon:before{
+	content: '';
+	background:url('https://cdn3.iconfinder.com/data/icons/business-reports/512/question-512.png');
+	background-size:cover;
+	position:absolute;
+	width:16px;
+	height:16px;
+}
+
+.info-icon:hover .info-icon-text{
+	visibility: visible;
+	height: 50px;
 }

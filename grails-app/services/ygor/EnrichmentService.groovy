@@ -1,10 +1,9 @@
 package ygor
 
-import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.Pod
+import groovyx.net.http.HTTPBuilder
 
 import javax.servlet.http.HttpSession
-import groovyx.net.http.*
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
@@ -59,6 +58,9 @@ class EnrichmentService{
     def ph = enrichment.dataContainer.pkg.packageHeader
     ph.name = new Pod(pm['pkgTitle'][0])
     enrichment.packageName = pm['pkgTitle'][0]
+    if (pm['addOnly'] && pm['addOnly'][0] == "on"){
+      enrichment.addOnly = true
+    }
     if (pm['pkgIsil'] && pm['pkgIsil'][0]){
       enrichment.dataContainer.isil = pm['pkgIsil'][0]
     }
@@ -132,8 +134,14 @@ class EnrichmentService{
   }
 
 
+  void stopProcessing(Enrichment enrichment){
+    enrichment.thread.isRunning = false
+  }
+
+
   List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
     def result = []
+    def json = enrichment.getAsFile(fileType, true)
     def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
         grailsApplication.config.gokbApi.xrPackageUri :
         (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?
@@ -141,40 +149,24 @@ class EnrichmentService{
             null
         )
     uri = uri.concat("?async=true")
-    if (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY)){
-      for (def recId in enrichment.dataContainer.records){
-        String titleText = GokbExporter.extractTitle(enrichment, recId, false)
-        result << exportRecordToGOKb(titleText, uri, user, pwd)
-      }
+    if (fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) && enrichment.addOnly == true){
+      uri = uri.concat("&addOnly=true")
     }
-    else{
-      def json = enrichment.getAsFile(fileType, true)
-      result << exportEnrichmentToGOKb(enrichment, json, uri, user, pwd)
-    }
+    result << exportFileToGOKb(enrichment, json, uri, user, pwd)
     result
   }
 
 
-  private Map exportRecordToGOKb(String record, String url, def user, def pwd){
-    log.info("export Record: " + url)
-    sendText(url, record, user, pwd)
-  }
-
-
-  private Map exportEnrichmentToGOKb(Enrichment enrichment, File json, String url, def user, def pwd){
+  private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
     log.info("exportFile: " + enrichment.resultHash + " -> " + url)
-    String body = json.getText()
-    sendText(url, body, user, pwd)
-  }
 
-
-  private void sendText(String url, String text, user, pwd){
     def http = new HTTPBuilder(url)
     http.auth.basic user, pwd
 
     http.request(Method.POST, ContentType.JSON){ req ->
       headers.'User-Agent' = 'ygor'
-      body = text
+
+      body = json.getText()
       response.success = { resp, html ->
         log.info("server response: ${resp.statusLine}")
         log.debug("server:          ${resp.headers.'Content-Type'}")
@@ -201,7 +193,7 @@ class EnrichmentService{
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
-      response.'401' = { resp ->
+      response.'401'= {resp ->
         log.error("server response: ${resp.statusLine}")
         return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
       }

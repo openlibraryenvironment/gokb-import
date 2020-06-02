@@ -21,13 +21,13 @@ class EzbIntegrationService extends ExternalIntegrationService {
 
 
   def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
-    if (status != IntegrationStatus.INTERRUPTING){
+    if (status != ExternalIntegrationService.IntegrationStatus.INTERRUPTING){
       super.integrate()
       String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
       for (String recId in dataContainer.records){
         Record record = Record.load(dataContainer.enrichmentFolder, dataContainer.resultHash, recId, mappingsContainer)
-        if (status == IntegrationStatus.INTERRUPTING){
-          status = IntegrationStatus.STOPPED
+        if (status == ExternalIntegrationService.IntegrationStatus.INTERRUPTING){
+          status = ExternalIntegrationService.IntegrationStatus.STOPPED
           return
         }
         if (isApiCallMedium(record)){
@@ -41,7 +41,7 @@ class EzbIntegrationService extends ExternalIntegrationService {
         owner.increaseProgress()
       }
     }
-    status = IntegrationStatus.IDLE
+    status = ExternalIntegrationService.IntegrationStatus.IDLE
   }
 
 
