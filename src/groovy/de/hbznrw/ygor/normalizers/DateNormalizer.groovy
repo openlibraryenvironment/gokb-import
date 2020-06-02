@@ -79,30 +79,30 @@ class DateNormalizer {
     if (StringUtils.isEmpty(date)){
       return null
     }
-    SimpleDateFormat format
-    if (date.matches(YEAR)){
-      format = YYYY
-    }
-    else if (date.matches(YEAR_MM)){
-      format = YYYY_MM
-    }
-    else if (date.matches(YEAR_MM_DD)){
-      format = YYYY_MM_DD
-    }
-    else if (date.matches(MM_YEAR)){
-      format = MM_YYYY
-    }
-    else if (date.matches(DD_MM_YEAR)){
-      format = DD_MM_YYYY
-    }
-    else if (date.matches(YEAR_MM_DD_HH_mm_SS)){
-      format = YYYY_MM_DD_HH_mm_SS
-    }
     try {
+      SimpleDateFormat format
+      if (date.matches(YEAR)){
+        format = YYYY
+      }
+      else if (date.matches(YEAR_MM)){
+        format = YYYY_MM
+      }
+      else if (date.matches(YEAR_MM_DD)){
+        format = YYYY_MM_DD
+      }
+      else if (date.matches(MM_YEAR)){
+        format = MM_YYYY
+      }
+      else if (date.matches(DD_MM_YEAR)){
+        format = DD_MM_YYYY
+      }
+      else if (date.matches(YEAR_MM_DD_HH_mm_SS)){
+        format = YYYY_MM_DD_HH_mm_SS
+      }
       return new Date(format.parse(date).getTime())
     }
     catch (Exception exception) {
-      log.error("Could not parse ".concat(date).concat(" as Date."))
+      log.error("Could not parse ".concat(date).concat(" as Date. Exception: ").concat(exception.getMessage()))
     }
     return null
   }
