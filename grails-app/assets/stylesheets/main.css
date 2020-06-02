@@ -11,11 +11,6 @@ h1, h2, h3, h4, h5, h6 {
 /* BASE LAYOUT */
 
 html {
-	background-color: #ddd;
-	background-image: -moz-linear-gradient(center top, #aaa, #ddd);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #aaa), color-stop(1, #ddd));
-	background-image: linear-gradient(top, #aaa, #ddd);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr = '#aaaaaa', EndColorStr = '#dddddd');
 	background-repeat: no-repeat;
 	height: 100%;
 	/* change the box model to exclude the padding from the calculation of 100% height (IE8+) */
@@ -40,11 +35,6 @@ body {
 	background: #ffffff;
 	color: #333333;
 	margin: 0 auto;
-	max-width: 960px;
-	overflow-x: hidden; /* prevents box-shadow causing a horizontal scrollbar in firefox when viewport < 960px wide */
-	   -moz-box-shadow: 0 0 0.3em #255b17;
-	-webkit-box-shadow: 0 0 0.3em #255b17;
-	        box-shadow: 0 0 0.3em #255b17;
 }
 
 #grailsLogo {
@@ -64,8 +54,69 @@ body {
 	height: 100%;
 }
 
-a:link, a:visited, a:hover {
-	color: #48802c;
+a:link, a:hover {
+	color: #000;
+}
+
+a.link-icon{
+	height:14px;
+	padding-left:14px;
+	padding-right:14px;
+	margin-right:21px;
+}
+
+a.link-icon:before{
+	content: '';
+	background:url('https://image.flaticon.com/icons/svg/25/25284.svg');
+	background-size:cover;
+	position:absolute;
+	width:14px;
+	height:14px;
+	margin-left:-14px;
+	margin-top:3px;
+}
+
+a.link-icon-header{
+	height:14px;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+a.link-icon-header:before{
+	content: '';
+	background:url('https://image.flaticon.com/icons/svg/25/25284.svg');
+	background-size:cover;
+	position:absolute;
+	width:18px;
+	height:18px;
+	margin-top:-2px;
+}
+
+#approve-flag, #warn-flag, #reject-flag{
+	height:32px;
+	padding-left:3px;
+	padding-right:3px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-top: -13px;
+	margin-bottom: -11px;
+	border: 0px;
+}
+
+a:visited {
+	color: #609;
+}
+
+td.statistics-cell{
+	white-space: nowrap;
+}
+
+td.statistics-cell a:link {
+	color: #000;
+}
+
+tr.even:hover a, tr.odd:hover a{
+	color: #fff;
 }
 
 a:hover, a:active {
@@ -135,11 +186,6 @@ img {
 /* NAVIGATION MENU */
 
 .nav {
-	background-color: #efefef;
-	padding: 0.5em 0.75em;
-	   -moz-box-shadow: 0 0 3px 1px #aaaaaa;
-	-webkit-box-shadow: 0 0 3px 1px #aaaaaa;
-	        box-shadow: 0 0 3px 1px #aaaaaa;
 	zoom: 1;
 }
 
@@ -246,7 +292,6 @@ label {
 }
 
 input, select, textarea {
-	background-color: #fcfcfc;
 	border: 1px solid #cccccc;
 	font-size: 1em;
 	padding: 0.2em 0.4em;
@@ -399,7 +444,6 @@ input:invalid:focus, select:invalid:focus, textarea:invalid:focus {
 /* TABLES */
 
 table {
-	border-top: 1px solid #DFDFDF;
 	border-collapse: collapse;
 	width: 100%;
 	margin-bottom: 1em;
@@ -409,31 +453,16 @@ tr {
 	border: 0;
 }
 
-tr>td:first-child, tr>th:first-child {
-	padding-left: 1.25em;
-}
-
-tr>td:last-child, tr>th:last-child {
-	padding-right: 1.25em;
-}
-
 td, th {
 	line-height: 1.5em;
-	padding: 0.5em 0.6em;
 	text-align: left;
 	vertical-align: top;
 }
 
 th {
-	background-color: #efefef;
-	background-image: -moz-linear-gradient(top, #ffffff, #eaeaea);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(1, #eaeaea));
-	    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr = '#ffffff', EndColorStr = '#eaeaea');
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#eaeaea')";
-	color: #666666;
+	color: #004678;
 	font-weight: bold;
 	line-height: 1.7em;
-	padding: 0.2em 0.6em;
 }
 
 thead th {
@@ -473,10 +502,6 @@ th.desc a {
 
 .even {
 	background: #ffffff;
-}
-
-th:hover, tr:hover {
-	background: #E1F2B6;
 }
 
 /* PAGINATION */
@@ -598,4 +623,129 @@ a.skip {
 a.skip:focus, a.skip:active {
 	position: relative;
 	left: 0px;
+}
+
+
+table.statistics-details {
+	border-collapse: collapse;
+}
+
+td.statistics-cell-key, td.statistics-cell-display, td.statistics-cell-value, td.statistics-cell-source, td.statistics-cell-status {
+	padding: 0px 5px 0px 0px;
+	line-height: 1.8em;
+}
+
+tr.even:hover, tr.odd:hover {
+	background: #004678;
+	color: #fff;
+}
+
+tr.error-even-hover {
+	background: #bd4b4b;
+	color: #fff;
+}
+
+tr.error-odd-hover {
+	background: #bd4b4b;
+	color: #fff;
+}
+
+tr.warning-even-hover {
+	background: #f9ff99;
+	color: #000;
+}
+
+tr.warning-odd-hover {
+	background: #f9ff99;
+	color: #000;
+}
+
+tr.ok-even-hover {
+	background: #ffffff;
+	color: #000;
+}
+
+tr.ok-odd-hover {
+	background: #f7f7f7;
+	color: #000;
+}
+
+td a {
+	display: block;
+}
+
+.statistics-data {
+	padding: 15px 15px 0px 15px;
+}
+
+
+.panel-heading-red {
+	color: #ffffff;
+	background-color: #c04c49;
+	border-color: #d43f3a;
+	padding: 10px 15px;
+	border-bottom: 1px solid transparent;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.panel-heading-yellow {
+	color: #ffffff;
+	background-color: #f0ad4e;
+	border-color: #eea236;
+	padding: 10px 15px;
+	border-bottom: 1px solid transparent;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.panel-heading-green {
+	color: #ffffff;
+	background-color: #5aa95a;
+	border-color: #4cae4c;
+	padding: 10px 15px;
+	border-bottom: 1px solid transparent;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+
+table.dataTable thead .sorting_asc {
+	background-image: url(../images/sort_asc.png);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+table.dataTable thead .sorting {
+	background-image: url(../images/sort_both.png);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+table.dataTable thead .sorting_desc {
+	background-image: url(../images/sort_desc.png);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+#edit-table td:first-child, #edit-table th:first-child {
+	display: none;
+}
+
+
+.modal-info {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1050;
+	display: grid;
+	overflow: hidden;
+	-webkit-overflow-scrolling: touch;
+	outline: 0;
+}
+
+#gokbResponseText {
+	white-space: pre-line
 }

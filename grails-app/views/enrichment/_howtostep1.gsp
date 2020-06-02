@@ -9,10 +9,6 @@
 	</li>
 	<li class="list-group-item">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-		&nbsp; <g:message code="howtostep1.mediatype" />
-	</li>
-	<li class="list-group-item">
-		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
 		&nbsp; <g:message code="howtostep1.upload" />
 	</li>
 </ul>

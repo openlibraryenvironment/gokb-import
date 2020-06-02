@@ -7,6 +7,7 @@
 //
 //= require jquery
 //= require bootstrap
+//= require jquery.dataTables
 //;;= require_tree .
 //;;= require_self
 

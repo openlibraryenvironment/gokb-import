@@ -1,254 +1,252 @@
 package ygor
 
-import de.hbznrw.ygor.export.Validator
+import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.Pod
-import groovyx.net.http.HTTPBuilder
+
 import javax.servlet.http.HttpSession
 import groovyx.net.http.*
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
 
-class EnrichmentService {
-    
-    def grailsApplication
-    GokbService gokbService
-    
-    void addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode, String dataTyp) {
-        
-        def en = new Enrichment(getSessionFolder(), file.originalFilename)
-        en.setStatus(Enrichment.ProcessingState.PREPARE)
-        
-        def tmp = [:]
-        tmp << ['delimiter': delimiter]
-        tmp << ['quote':     quote]
-        tmp << ['quoteMode': quoteMode]
-        tmp << ['dataTyp': dataTyp]
-        
-        def formats = getSessionFormats()
-        formats << ["${en.originHash}":tmp]
-        
-        def enrichments = getSessionEnrichments()
-        enrichments << ["${en.originHash}": en]
-        
-        file.transferTo(new File(en.originPathName))
+class EnrichmentService{
+
+  def grailsApplication
+  GokbService gokbService
+
+  Enrichment addFileAndFormat(CommonsMultipartFile file, String delimiter, String quote, String quoteMode){
+    def en = new Enrichment(getSessionFolder(), file.originalFilename)
+    en.setStatus(Enrichment.ProcessingState.PREPARE_1)
+
+    def tmp = [:]
+    tmp << ['delimiter': delimiter]
+    tmp << ['quote': quote]
+    tmp << ['quoteMode': quoteMode]
+
+    def formats = getSessionFormats()
+    formats << ["${en.originHash}": tmp]
+
+    getSessionEnrichments() << ["${en.resultHash.toString()}": en]
+
+    file.transferTo(new File(en.originPathName))
+    return en
+  }
+
+
+  File getFile(Enrichment enrichment, Enrichment.FileType type){
+    enrichment.getAsFile(type, true)
+  }
+
+
+  void deleteFileAndFormat(Enrichment enrichment){
+    if (enrichment){
+      def origin = enrichment.getAsFile(Enrichment.FileType.ORIGIN, false)
+      if (origin){
+        origin.delete()
+      }
+      getSessionEnrichments()?.remove("${enrichment.resultHash}")
+      getSessionEnrichments()?.remove(enrichment.resultHash)
+      getSessionFormats()?.remove("${enrichment.originHash}")
+      getSessionFormats()?.remove(enrichment.originHash)
     }
-    
-    File getFile(Enrichment enrichment, Enrichment.FileType type) {
-        
-        enrichment.getFile(type)
+  }
+
+
+  void prepareFile(Enrichment enrichment, Map pm){
+    if (enrichment == null || pm == null){
+      return
     }
-    
-    void deleteFileAndFormat(Enrichment enrichment) {
-        
-        if(enrichment) {
-            def origin = enrichment.getFile(Enrichment.FileType.ORIGIN)
-            if(origin)
-                origin.delete()
-            getSessionEnrichments()?.remove("${enrichment.originHash}")
-            getSessionFormats()?.remove("${enrichment.originHash}")
-        }
+    def ph = enrichment.dataContainer.pkg.packageHeader
+    ph.name = new Pod(pm['pkgTitle'][0])
+    enrichment.packageName = pm['pkgTitle'][0]
+    if (pm['pkgIsil'] && pm['pkgIsil'][0]){
+      enrichment.dataContainer.isil = pm['pkgIsil'][0]
     }
-    
-    void prepareFile(Enrichment enrichment, Map pm){
-        
-        def ph = enrichment.dataContainer.pkg.packageHeader
-        
-        ph.v.name.v          = new Pod(pm['pkgTitle'][0])
-        if ("" != pm['pkgVariantName'][0].trim()) {
-            ph.v.identifiers << ['type':'isil', 'value': pm['pkgVariantName'][0] ]
-        }
-        if("" != pm['pkgCuratoryGroup1'][0].trim()){
-            ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup1'][0])
-        }
-        if("" != pm['pkgCuratoryGroup2'][0].trim()){
-            ph.v.curatoryGroups << new Pod(pm['pkgCuratoryGroup2'][0])
-        }
-
-        setPlatformMap(pm, ph)
-
-        def pkgNomProvider = pm['pkgNominalProvider'][0]
-        if(pkgNomProvider){
-            ph.v.nominalProvider.v = pkgNomProvider
-            ph.v.nominalProvider.m = Validator.isValidString(ph.v.nominalProvider.v)
-        }
-
-        if(pm['namespace_title_id']) {
-            enrichment.dataContainer.info.namespace_title_id = pm['namespace_title_id'][0]
-        }
-
-        enrichment.setStatus(Enrichment.ProcessingState.UNTOUCHED)
+    if (pm['pkgCuratoryGroup']){
+      enrichment.dataContainer.curatoryGroup = (pm['pkgCuratoryGroup'][0])
     }
+    if ("" != pm['pkgId'][0].trim()){
+      enrichment.dataContainer.pkgId = (pm['pkgId'][0])
+    }
+    if ("" != pm['pkgIdNamespace'][0].trim()){
+      enrichment.dataContainer.pkgIdNamespace = (pm['pkgIdNamespace'][0])
+    }
+    setPlatformMap(pm, ph)
+    if (pm['pkgNominalProvider']){
+      ph.nominalProvider = pm['pkgNominalProvider'][0]
+    }
+    if (pm['pkgTitleId']){
+      enrichment.dataContainer.info.namespace_title_id = pm['pkgTitleId'][0]
+    }
+    enrichment.setStatus(Enrichment.ProcessingState.PREPARE_2)
+  }
 
-    private void setPlatformMap(Map pm, ph) {
 
-      log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
+  private void setPlatformMap(Map pm, ph){
+    log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
+    def tmp = pm['pkgNominalPlatform'][0].split(';')
+    def platformID = tmp[0]
+    def qterm = tmp[1]
 
-      def tmp = pm['pkgNominalPlatform'][0].split(';')
-      def platformID = tmp[0]
-      def qterm =  tmp[1]
+    def platforms = gokbService.getPlatformMap(qterm, false).records
+    def pkgNomPlatform = null
 
+    log.debug("Got platforms: ${platforms}")
 
-      def platforms = gokbService.getPlatformMap(qterm, false).records
-      def pkgNomPlatform = null
-
-      log.debug("Got platforms: ${platforms}")
-
-      platforms.each {
-        log.debug("Handling platform ${it}..")
-
-        if (it.name == qterm && it.status == "Current" && it.oid == platformID) {
-          if(pkgNomPlatform) {
-            log.warn("Mehrere Plattformen mit dem gleichen Namen gefunden ...")
-          }else{
-            log.debug("Setze ${it.name} als nominalPlatform.")
-            pkgNomPlatform = it
-          }
+    platforms.each{
+      if (it.name == qterm && it.status == "Current" && it.oid == platformID){
+        if (pkgNomPlatform){
+          log.warn("Multiple platforms found named: ".concat(it.name))
         }
-        else {
-          if (it.name != qterm) {
-            log.debug("No name match: ${it.name} - ${qterm}")
-          }
-          if(it.status != "Current") {
-            log.debug("Wrong status: ${it.status}")
-          }
-          if (it.oid != platformID) {
-            log.debug("No OID match: ${it.oid} - ${platformID}")
-          }
+        else{
+          log.debug("Setze ${it.name} als nominalPlatform.")
+          pkgNomPlatform = it
         }
       }
-
-      if (pkgNomPlatform) {
-        setUrlIfValid(pkgNomPlatform.url, ph)
-        ph.v.nominalPlatform.name = pkgNomPlatform.name
-        ph.v.nominalPlatform.m = Validator.isValidURL(ph.v.nominalPlatform.url)
-      }else{
-        log.error("package platform not set!")
+      else {
+        if (it.name != qterm) {
+          log.debug("No name match: ${it.name} - ${qterm}")
+        }
+        if(it.status != "Current") {
+          log.debug("Wrong status: ${it.status}")
+        }
+        if (it.oid != platformID) {
+          log.debug("No OID match: ${it.oid} - ${platformID}")
+        }
       }
     }
 
-    private void setUrlIfValid(value, ph) {
-
-        try {
-            URL url = new URL(value)
-            ph.v.nominalPlatform.url = value
-        }
-        catch (MalformedURLException e) {
-            ph.v.nominalPlatform.url = ""
-        }
+    if (pkgNomPlatform){
+      try{
+        URL url = new URL(pkgNomPlatform.url)
+        ph.nominalPlatform.url = pkgNomPlatform.url
+      }
+      catch (MalformedURLException e){
+        ph.nominalPlatform.url = ""
+      }
+      ph.nominalPlatform.name = pkgNomPlatform.name
     }
-
-    void stopProcessing(Enrichment enrichment) {
-
-        enrichment.thread.isRunning = false
+    else{
+      log.error("package platform not set!")
     }
-    
-    List sendFile(Enrichment enrichment, Object fileType, def user, def pwd) {
-        
-        def result = []
-        def json
-        
-        if(fileType == Enrichment.FileType.JSON_PACKAGE_ONLY){
-            json = enrichment?.getFile(Enrichment.FileType.JSON_PACKAGE_ONLY) ?: null
+  }
 
-            if (json) {
-              result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrPackageUri, user, pwd)
-            }
-        }
-        else if(fileType == Enrichment.FileType.JSON_TITLES_ONLY){
-            json = enrichment?.getFile(Enrichment.FileType.JSON_TITLES_ONLY) ?: null
 
-            if (json) {
-              result << exportFileToGOKb(enrichment, json, grailsApplication.config.gokbApi.xrTitleUri, user, pwd)
-            }
-        }
-
-        result
+  List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
+    def result = []
+    def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
+        grailsApplication.config.gokbApi.xrPackageUri :
+        (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?
+            grailsApplication.config.gokbApi.xrTitleUri :
+            null
+        )
+    uri = uri.concat("?async=true")
+    if (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY)){
+      for (def recId in enrichment.dataContainer.records){
+        String titleText = GokbExporter.extractTitle(enrichment, recId, false)
+        result << exportRecordToGOKb(titleText, uri, user, pwd)
+      }
     }
-
-
-    private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
-        
-        log.info("exportFile: " + enrichment.resultHash + " -> " + url)
-
-        try {
-
-            def http = new HTTPBuilder(url)
-            http.auth.basic user, pwd
-
-            http.request(Method.POST, ContentType.JSON) { req ->
-                headers.'User-Agent' = 'ygor'
-
-                body = json.getText()
-                response.success = { resp, html ->
-                    log.info("server response:  ${resp.statusLine}")
-                    log.debug("content-type:    ${resp.headers.'Content-Type'}")
-                    log.debug("server:          ${resp.headers.'Server'}")
-                    log.debug("content length:  ${resp.headers.'Content-Length'}")
-                    log.debug("status: ${resp.status} (${resp.status.class.name})" )
-                    if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
-                        if(resp.status < 400){
-                            return ['info':html]
-                        }
-                        else {
-                            return ['warning':html]
-                        }
-                    }
-                    else {
-                        return ['failure': ['message':"Authentication error!", 'result':"ERROR"]]
-                    }
-                }
-                response.failure = { resp, html ->
-                    log.error("server response: ${resp.status} - ${resp.statusLine}")
-                    if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8') {
-                        return ['error': html]
-                    }
-                    else {
-                        return ['failure': ['message':"Authentication error!", 'result':"ERROR"]]
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
-            log.debug("exportFileToGOKb exception: ${e}")
-            if (e.statusCode == 401 ) {
-              return ['failure': ['message': "Upload permission denied!", 'result':"ERROR"]]
-            }
-            else {
-              return ['failure': ['message': "There was an error sending data to GOKb!", 'result':"ERROR"]]
-            }
-        }
+    else{
+      def json = enrichment.getAsFile(fileType, true)
+      result << exportEnrichmentToGOKb(enrichment, json, uri, user, pwd)
     }
-    
-    def getSessionEnrichments(){
-        HttpSession session = SessionToolkit.getSession()
-        if(!session.enrichments){
-            session.enrichments = [:]
-        }
-        session.enrichments
-    }
-    
-    def getSessionFormats(){
-        HttpSession session = SessionToolkit.getSession()
-        if(!session.formats){
-            session.formats = [:]
-        }
-        session.formats
-    }
-    
-    /**
-     * Return session depending directory for file upload.
-     * Creates if not existing.
-     */
+    result
+  }
 
-    File getSessionFolder() {
-        
-        def session = WebUtils.retrieveGrailsWebRequest().session
-        def path = grailsApplication.config.ygor.uploadLocation + File.separator + session.id
-        def sessionFolder = new File(path)
-        if(!sessionFolder.exists()) {
-            sessionFolder.mkdirs()
+
+  private Map exportRecordToGOKb(String record, String url, def user, def pwd){
+    log.info("export Record: " + url)
+    sendText(url, record, user, pwd)
+  }
+
+
+  private Map exportEnrichmentToGOKb(Enrichment enrichment, File json, String url, def user, def pwd){
+    log.info("exportFile: " + enrichment.resultHash + " -> " + url)
+    String body = json.getText()
+    sendText(url, body, user, pwd)
+  }
+
+
+  private void sendText(String url, String text, user, pwd){
+    def http = new HTTPBuilder(url)
+    http.auth.basic user, pwd
+
+    http.request(Method.POST, ContentType.JSON){ req ->
+      headers.'User-Agent' = 'ygor'
+      body = text
+      response.success = { resp, html ->
+        log.info("server response: ${resp.statusLine}")
+        log.debug("server:          ${resp.headers.'Content-Type'}")
+        log.debug("server:          ${resp.headers.'Server'}")
+        log.debug("content length:  ${resp.headers.'Content-Length'}")
+        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (resp.status < 400){
+            return ['info': html]
+          }
+          else{
+            return ['warning': html]
+          }
         }
-        sessionFolder
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.failure = { resp, html ->
+        log.error("server response: ${resp.statusLine}")
+        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          return ['error': html]
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.'401' = { resp ->
+        log.error("server response: ${resp.statusLine}")
+        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+      }
     }
+  }
+
+
+  def addSessionEnrichment(Enrichment enrichment){
+    HttpSession session = SessionToolkit.getSession()
+    if (!session.enrichments){
+      session.enrichments = [:]
+    }
+    session.enrichments.put(enrichment.resultHash.toString(), enrichment)
+  }
+
+
+  def getSessionEnrichments(){
+    HttpSession session = SessionToolkit.getSession()
+    if (!session.enrichments){
+      session.enrichments = [:]
+    }
+    session.enrichments
+  }
+
+
+  def getSessionFormats(){
+    HttpSession session = SessionToolkit.getSession()
+    if (!session.formats){
+      session.formats = [:]
+    }
+    session.formats
+  }
+
+
+  /**
+   * Return session depending directory for file upload.
+   * Creates if not existing.
+   */
+  File getSessionFolder(){
+    def session = WebUtils.retrieveGrailsWebRequest().session
+    def path = grailsApplication.config.ygor.uploadLocation + File.separator + session.id
+    def sessionFolder = new File(path)
+    if (!sessionFolder.exists()){
+      sessionFolder.mkdirs()
+    }
+    sessionFolder
+  }
 }

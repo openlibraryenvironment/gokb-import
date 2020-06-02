@@ -6,9 +6,9 @@ import javax.servlet.http.HttpSession
 
 class SessionToolkit {
 
-    static HttpSession getSession() {
-        HttpServletRequest request = WebUtils.retrieveGrailsWebRequest().currentRequest
-        HttpSession session = request.session
-        session
-    }
+  static HttpSession getSession() {
+    HttpServletRequest request = WebUtils.retrieveGrailsWebRequest().currentRequest
+    HttpSession session = request.session
+    session
+  }
 }

@@ -3,9 +3,9 @@ import grails.util.Environment
 
 class BootStrap {
 
-    def init = { servletContext ->
-		
-			log.info('''
+  def init = { servletContext ->
+
+    log.info('''
 
   ▓██   ██▓  ▄████  ▒█████   ██▀███  
    ▒██  ██▒ ██▒ ▀█▒▒██▒  ██▒▓██ ▒ ██▒
@@ -17,10 +17,10 @@ class BootStrap {
    ░░                     
                        Yes, Master?
 			''')
-            log.info('Environment: ' + Environment.current)
-    }
-	
-    def destroy = {
-		log.info('I\'ll leave')
-    }
+    log.info('Environment: ' + Environment.current)
+  }
+
+  def destroy = {
+    log.info('I\'ll leave')
+  }
 }

@@ -2,13 +2,13 @@
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
 
-grails.config.locations = [ "classpath:${appName}-config.properties",
-                            "classpath:${appName}-config.groovy",
-                            "file:${userHome}/.grails/${appName}-config.properties",
-                            "file:${userHome}/.grails/${appName}-config.groovy"]
+grails.config.locations = ["classpath:${appName}-config.properties",
+                           "classpath:${appName}-config.groovy",
+                           "file:${userHome}/.grails/${appName}-config.properties",
+                           "file:${userHome}/.grails/${appName}-config.groovy"]
 
 if (System.properties["${appName}.config.location"]) {
-   grails.config.locations << "file:" + System.properties["${appName}.config.location"]
+  grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 }
 
 // http://localhost:8080/
@@ -19,19 +19,19 @@ grails.project.groupId = appName // change this to alter the default package nam
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']
 grails.mime.types = [ // the first one is the default format
-    all:           '*/*', // 'all' maps to '*' or the first available format in withFormat
-    atom:          'application/atom+xml',
-    css:           'text/css',
-    csv:           'text/csv',
-    form:          'application/x-www-form-urlencoded',
-    html:          ['text/html','application/xhtml+xml'],
-    js:            'text/javascript',
-    json:          ['application/json', 'text/json'],
-    multipartForm: 'multipart/form-data',
-    rss:           'application/rss+xml',
-    text:          'text/plain',
-    hal:           ['application/hal+json','application/hal+xml'],
-    xml:           ['text/xml', 'application/xml']
+                      all          : '*/*', // 'all' maps to '*' or the first available format in withFormat
+                      atom         : 'application/atom+xml',
+                      css          : 'text/css',
+                      csv          : 'text/csv',
+                      form         : 'application/x-www-form-urlencoded',
+                      html         : ['text/html', 'application/xhtml+xml'],
+                      js           : 'text/javascript',
+                      json         : ['application/json', 'text/json'],
+                      multipartForm: 'multipart/form-data',
+                      rss          : 'application/rss+xml',
+                      text         : 'text/plain',
+                      hal          : ['application/hal+json', 'application/hal+xml'],
+                      xml          : ['text/xml', 'application/xml']
 ]
 
 // URL Mapping Cache Max Size, defaults to 5000
@@ -46,20 +46,20 @@ grails.controllers.defaultScope = 'singleton'
 
 // GSP settings
 grails {
-    views {
-        gsp {
-            encoding = 'UTF-8'
-            htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
-            codecs {
-                expression = 'html' // escapes values inside ${}
-                scriptlet = 'html' // escapes output from scriptlets in GSPs
-                taglib = 'none' // escapes output from taglibs
-                staticparts = 'none' // escapes output from static template parts
-            }
-        }
-        // escapes all not-encoded output at final stage of outputting
-        // filteringCodecForContentType.'text/html' = 'html'
+  views {
+    gsp {
+      encoding = 'UTF-8'
+      htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
+      codecs {
+        expression = 'html' // escapes values inside ${}
+        scriptlet = 'html' // escapes output from scriptlets in GSPs
+        taglib = 'none' // escapes output from taglibs
+        staticparts = 'none' // escapes output from static template parts
+      }
     }
+    // escapes all not-encoded output at final stage of outputting
+    // filteringCodecForContentType.'text/html' = 'html'
+  }
 }
 
 
@@ -74,7 +74,7 @@ grails.enable.native2ascii = true
 // packages to include in Spring bean scanning
 grails.spring.bean.packages = []
 // whether to disable processing of multi part requests
-grails.web.disable.multipart=false
+grails.web.disable.multipart = false
 
 // request parameters to mask when logging exceptions
 grails.exceptionresolver.params.exclude = ['password']
@@ -89,95 +89,95 @@ grails.hibernate.pass.readonly = false
 grails.hibernate.osiv.readonly = false
 
 environments {
-    development {
-        grails.logging.jul.usebridge = true
-        ygor {
-            version             = grails.util.Metadata.current.'app.version'
-            type                = 'development'
-            uploadLocation      = '/tmp/ygor/dev'
-            enableGokbUpload    = true
-            enableDebugDownload = true
-        }
-        gokbApi {
-            baseUri          = 'http://localhost:8080/gokb/'
-            xrTitleUri       = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
-            xrPackageUri     = 'http://localhost:8080/gokb/integration/crossReferencePackage'
-            xrSuggestUriStub = 'http://localhost:8080/gokb/api/suggest'
-            xrFindUriStub    = 'http://localhost:8080/gokb/api/find'
-            namespaceCategory= 'ttl_prv'
-            user             = ''
-            pwd              = ''
-        }
-        gokbDB {
-            dbUri = 'jdbc:postgresql://localhost:5432/gokb'
-            user  = ''
-            pwd   = ''
-        }
+  development {
+    grails.logging.jul.usebridge = true
+    ygor {
+      version = grails.util.Metadata.current.'app.version'
+      type = 'development'
+      uploadLocation = '/tmp/ygor/dev'
+      enableGokbUpload = true
+      enableDebugDownload = true
     }
-    production {
-        grails.logging.jul.usebridge = false
-        ygor {
-            version             = grails.util.Metadata.current.'app.version'
-            type                = 'production'
-            uploadLocation      = '/tmp/ygor/prod'
-            enableGokbUpload    = false
-            enableDebugDownload = false
-        }
-        gokbApi {
-            baseUri          = 'http://phaeton.hbz-nrw.de/gokb/'
-            xrTitleUri       = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
-            xrPackageUri     = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
-            xrSuggestUriStub = 'http://phaeton.hbz-nrw.de/gokb/api/suggest'
-            xrFindUriStub    = 'http://phaeton.hbz-nrw.de/gokb/api/find'
-            namespaceCategory= 'ttl_prv'
-            user             = ''
-            pwd              = ''
-        }
-        gokbDB {
-            dbUri = 'jdbc:postgresql://phaeton.hbz-nrw.de:5432/gokb'
-            user  = ''
-            pwd   = ''
-        }
+    gokbApi {
+      baseUri           = 'http://localhost:8080/gokb/'
+      xrTitleUri        = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
+      xrPackageUri      = 'http://localhost:8080/gokb/integration/crossReferencePackage'
+      xrSuggestUriStub  = 'http://localhost:8080/gokb/api/suggest'
+      xrFindUriStub     = 'http://localhost:8080/gokb/api/find'
+      namespaceCategory = 'ttl_prv'
+      user              = ''
+      pwd               = ''
     }
+    gokbDB {
+      dbUri = 'jdbc:postgresql://localhost:5432/gokb'
+      user  = ''
+      pwd   = ''
+    }
+  }
+  production {
+    grails.logging.jul.usebridge = false
+    ygor {
+      version = grails.util.Metadata.current.'app.version'
+      type = 'production'
+      uploadLocation = '/tmp/ygor/prod'
+      enableGokbUpload = false
+      enableDebugDownload = false
+    }
+    gokbApi {
+      baseUri           = 'http://phaeton.hbz-nrw.de/gokb/'
+      xrTitleUri        = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
+      xrPackageUri      = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
+      xrSuggestUriStub  = 'http://phaeton.hbz-nrw.de/gokb/api/suggest'
+      xrFindUriStub     = 'http://phaeton.hbz-nrw.de/gokb/api/find'
+      namespaceCategory = 'ttl_prv'
+      user              = ''
+      pwd               = ''
+    }
+    gokbDB {
+      dbUri = 'jdbc:postgresql://phaeton.hbz-nrw.de:5432/gokb'
+      user  = ''
+      pwd   = ''
+    }
+  }
 }
 
 // log4j configuration
 log4j.main = {
-    // Example of changing the log pattern for the default console appender:
-    //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+  // Example of changing the log pattern for the default console appender:
+  //
+  //appenders {
+  //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+  //}
 
-    debug  'ygor',
-           'de.hbznrw.ygor'
+  debug 'ygor',
+      'de.hbznrw.ygor'
 
-    error  'org.codehaus.groovy.grails.web.servlet',        // controllers
-           'org.codehaus.groovy.grails.web.pages',          // GSP
-           'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-           'org.codehaus.groovy.grails.web.mapping',        // URL mapping
-           'org.codehaus.groovy.grails.commons',            // core / classloading
-           'org.codehaus.groovy.grails.plugins',            // plugins
-           'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
-           'org.springframework',
-           'org.hibernate',
-           'net.sf.ehcache.hibernate'
+  error 'org.codehaus.groovy.grails.web.servlet',        // controllers
+      'org.codehaus.groovy.grails.web.pages',          // GSP
+      'org.codehaus.groovy.grails.web.sitemesh',       // layouts
+      'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+      'org.codehaus.groovy.grails.web.mapping',        // URL mapping
+      'org.codehaus.groovy.grails.commons',            // core / classloading
+      'org.codehaus.groovy.grails.plugins',            // plugins
+      'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
+      'org.springframework',
+      'org.hibernate',
+      'net.sf.ehcache.hibernate'
 
-    environments {
-      development {
-        debug 'ygor.GokbService',
-              'ygor.EnrichmentService',
-              'grails.app.controllers',
-              'grails.app.service',
-              'grails.app.services',
-              'grails.app.domain',
-              'grails.app.domains',
-              'ygor.export.DataMapper',
-              'ygor.export.JsonTransformer',
-              'ygor.connectors.ZdbdbSruPicaConnector'
-      }
+  environments {
+    development {
+      debug 'ygor.GokbService',
+          'ygor.EnrichmentService',
+          'grails.app.controllers',
+          'grails.app.service',
+          'grails.app.services',
+          'grails.app.domain',
+          'grails.app.domains',
+          'ygor.export.DataMapper',
+          'ygor.export.JsonTransformer',
+          'ygor.connectors.ZdbdbSruPicaConnector'
     }
+  }
 }
 
 
@@ -185,6 +185,6 @@ log4j.main = {
 //       according to https://stackoverflow.com/a/18494029/4420271 Timeout is set to 16 hours.
 //       This workaround solution is preferred to others for being versionable most easily.
 grails.war.resources = { stagingDir, args ->
-    def webXML = new java.io.File("${stagingDir}/WEB-INF/web.xml")
-    webXML.text = webXML.text.replaceFirst("<session-timeout>30</session-timeout>", "<session-timeout>960</session-timeout>")
+  def webXML = new java.io.File("${stagingDir}/WEB-INF/web.xml")
+  webXML.text = webXML.text.replaceFirst("<session-timeout>30</session-timeout>", "<session-timeout>960</session-timeout>")
 }

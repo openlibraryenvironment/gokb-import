@@ -26,9 +26,8 @@
 				<p><g:message code="about.content.1" /></p>
 				<p><g:message code="about.content.2" /></p>
 				<p><g:message code="about.content.3" /></p>
-
-				<p class="lead"></p>
-				<br />
+				<dl>
+				<br/>
 				<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4 class="panel-title">
@@ -38,6 +37,69 @@
 						<div id="versions" class="panel-collapse collapse">
 							<div class="panel-body">
 								<dl>
+									<br /><dt>0.90</dt><br />
+
+									<dd>- <g:message code="version.090.0" /></dd>
+									<br /><dt>0.89</dt><br />
+
+									<dd>- <g:message code="version.089.0" /></dd>
+									<br /><dt>0.88</dt><br />
+
+									<dd>- <g:message code="version.088.0" /></dd>
+									<br /><dt>0.87</dt><br />
+
+									<dd>- <g:message code="version.087.0" /></dd>
+									<br /><dt>0.86</dt><br />
+
+									<dd>- <g:message code="version.086.0" /></dd>
+									<br /><dt>0.85</dt><br />
+
+									<dd>- <g:message code="version.085.0" /></dd>
+									<br /><dt>0.84</dt><br />
+
+									<dd>- <g:message code="version.084.0" /></dd>
+									<br /><dt>0.83</dt><br />
+
+									<dd>- <g:message code="version.083.0" /></dd>
+									<br /><dt>0.82</dt><br />
+
+									<dd>- <g:message code="version.082.0" /></dd>
+									<br /><dt>0.81 </dt><br />
+
+									<dd>- <g:message code="version.081.0" /></dd>
+									<br /><dt>0.80 </dt><br />
+
+									<dd>- <g:message code="version.080.0" /></dd>
+									<br /><dt>0.79 </dt><br />
+
+									<dd>- <g:message code="version.079.0" /></dd>
+									<br /><dt>0.78 </dt><br />
+
+									<dd>- <g:message code="version.078.1" /></dd>
+									<br /><dt>0.77 </dt><br />
+
+									<dd>- <g:message code="version.077.1" /></dd>
+									<br /><dt>0.76 </dt><br />
+
+									<dd>- <g:message code="version.076.1" /></dd>
+									<br /><dt>0.75 </dt><br />
+
+									<dd>- <g:message code="version.075.1" /></dd>
+									<br /><dt>0.74 </dt><br />
+
+									<dd>- <g:message code="version.074.1" /></dd>
+									<br /><dt>0.73 </dt><br />
+
+									<dd>- <g:message code="version.073.1" /></dd>
+									<br /><dt>0.72 </dt><br />
+
+									<dd>- <g:message code="version.072.1" /></dd>
+									<br /><dt>0.71 </dt><br />
+
+									<dd>- <g:message code="version.071.1" /></dd>
+									<br /><dt>0.70 </dt><br />
+
+									<dd>- <g:message code="version.070.1" /></dd>
 									<br /><dt>0.60 </dt><br />
 
 									<dd>- <g:message code="version.060.1" /></dd>

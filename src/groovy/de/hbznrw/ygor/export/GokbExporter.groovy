@@ -1,0 +1,474 @@
+package de.hbznrw.ygor.export
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
+import de.hbznrw.ygor.format.GokbFormatter
+import de.hbznrw.ygor.normalizers.DoiNormalizer
+import de.hbznrw.ygor.tools.JsonToolkit
+import de.hbznrw.ygor.tools.StopwordToolkit
+import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
+import ygor.Enrichment
+import ygor.Enrichment.FileType
+import ygor.Record
+import ygor.field.MappingsContainer
+
+import java.nio.ByteBuffer
+import java.nio.channels.FileLock
+import java.nio.channels.OverlappingFileLockException
+import java.nio.charset.Charset
+
+@Log4j
+class GokbExporter {
+
+  static ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper()
+  static GokbFormatter FORMATTER = new GokbFormatter()
+  static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
+
+  static File getFile(Enrichment enrichment, FileType type, boolean validate) {
+    if (validate){
+      enrichment.validateContainer()
+    }
+    switch (type) {
+      case FileType.ORIGIN:
+        return new File(enrichment.originPathName)
+      case FileType.JSON_PACKAGE_ONLY:
+        ObjectNode result = GokbExporter.extractPackage(enrichment)
+        def file = new File(enrichment.enrichmentFolder + ".package.json")
+        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        return file
+      case FileType.JSON_TITLES_ONLY:
+        return extractTitles(enrichment)
+      case FileType.JSON_OO_RAW:
+        enrichment.save()
+        return new File(enrichment.enrichmentFolder)
+    }
+    return null
+  }
+
+
+  static ObjectNode extractPackage(Enrichment enrichment) {
+    ObjectNode pkg = new ObjectNode(NODE_FACTORY)
+    log.debug("extracting package ...")
+    pkg.set("packageHeader", extractPackageHeader(enrichment))
+    pkg.set("tipps", extractTipps(enrichment))
+    log.debug("extracting package finished")
+    pkg
+  }
+
+
+  static ArrayNode extractTipps(Enrichment enrichment) {
+    log.debug("extracting tipps ...")
+    ArrayNode tipps = new ArrayNode(NODE_FACTORY)
+    for (String recId in enrichment.dataContainer.records) {
+      Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId,
+          enrichment.dataContainer.mappingsContainer)
+      if (record.isValid()){
+        ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        tipp = postProcessIssnIsbn(tipp, record, FileType.JSON_PACKAGE_ONLY)
+        tipp = removeEmptyFields(tipp)
+        tipp = removeEmptyIdentifiers(tipp, FileType.JSON_PACKAGE_ONLY)
+        tipp = postProcessTitleIdentifiers(tipp, FileType.JSON_PACKAGE_ONLY,
+            enrichment.dataContainer.info.namespace_title_id)
+        tipps.add(tipp)
+      }
+    }
+    enrichment.dataContainer.tipps = tipps
+    log.debug("extracting tipps finished")
+    tipps
+  }
+
+
+  static File extractTitles(Enrichment enrichment) {
+    String fileName = enrichment.enrichmentFolder + ".titles.json"
+    log.debug("extracting titles ... to ".concat(fileName))
+    RandomAccessFile titlesFile = new RandomAccessFile(fileName, "rw")
+    def fileChannel = titlesFile.getChannel()
+    try {
+      FileLock fileLock = fileChannel.tryLock()
+      if (null != fileLock){
+        for (int i=0; i<enrichment.dataContainer.records.size(); i++){
+          String recId = enrichment.dataContainer.records[i]
+          byte[] title
+          if (i == 0){
+            title = "[".concat(extractTitle(enrichment, recId, true)).getBytes(Charset.forName("UTF-8"))
+          }
+          else if (i < enrichment.dataContainer.records.size()-1){
+            title = ",".concat(extractTitle(enrichment, recId, true)).getBytes(Charset.forName("UTF-8"))
+          }
+          else{ // i == enrichment.dataContainer.records.size()
+            title = ",".concat(extractTitle(enrichment, recId, true)).concat("]").getBytes(Charset.forName("UTF-8"))
+          }
+          ByteBuffer buffer = ByteBuffer.wrap(title)
+          buffer.put(title)
+          buffer.flip()
+          while (buffer.hasRemaining()){
+            fileChannel.write(buffer)
+          }
+        }
+      }
+      fileLock.close()
+    }
+    catch (OverlappingFileLockException | IOException e) {
+      log.error("Exception occurred while trying lock titles file... " + e.getMessage())
+    }
+    return new File(fileName)
+  }
+
+
+  static String extractTitle(Enrichment enrichment, String recordId, boolean printPretty) {
+    Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recordId,
+        enrichment.dataContainer.mappingsContainer)
+    if (record != null && record.isValid()){
+      record.deriveHistoryEventObjects(enrichment)
+      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+      title = postProcessPublicationTitle(title, record)
+      title = postProcessIssnIsbn(title, record, FileType.JSON_TITLES_ONLY)
+      title = removeEmptyFields(title)
+      title = removeEmptyIdentifiers(title, FileType.JSON_TITLES_ONLY)
+      title = postProcessTitleIdentifiers(title, FileType.JSON_TITLES_ONLY,
+          enrichment.dataContainer.info.namespace_title_id)
+      if (printPretty){
+        return JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
+      }
+      // else
+      return JSON_OBJECT_MAPPER.writeValueAsString(title)
+    }
+    // else
+    return null
+  }
+
+
+  static ObjectNode postProcessTitleIdentifiers(ObjectNode item, FileType type, String namespace) {
+    if (type.equals(FileType.JSON_TITLES_ONLY)) {
+      postProcessTitleId(item.identifiers, namespace)
+    }
+    else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
+      postProcessTitleId(item.title.identifiers, namespace)
+    }
+    item
+  }
+
+
+  static ObjectNode removeEmptyIdentifiers(ObjectNode item, FileType type) {
+    if (type.equals(FileType.JSON_TITLES_ONLY)) {
+        removeEmptyIds(item.identifiers)
+    }
+    else if (type.equals(FileType.JSON_PACKAGE_ONLY)) {
+      removeEmptyIds(item.title.identifiers)
+    }
+    item
+  }
+
+
+  static ObjectNode extractPackageHeader(Enrichment enrichment) {
+    // this currently parses the old package header
+    // TODO: refactor
+    log.debug("parsing package header ...")
+    def packageHeader = enrichment.dataContainer.pkg.packageHeader
+    def result = new ObjectNode(NODE_FACTORY)
+    def identifiers = new ArrayNode(NODE_FACTORY)
+
+    for (String field in ["breakable", "consistent", "fixed", "global",
+                          "listStatus", "nominalProvider", "paymentType", "scope", "userListVerifier"]) {
+      result.put("${field}", (String) packageHeader."${field}")
+    }
+    setIsil(enrichment.dataContainer, identifiers)
+    if (enrichment.packageName){
+      result.put("name", enrichment.packageName)
+    }
+    else {
+      result.put("name", packageHeader.name)
+    }
+
+    def nominalPlatform = new ObjectNode(NODE_FACTORY)
+    nominalPlatform.put("name", (String) packageHeader.nominalPlatform.name)
+    nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
+    result.set("nominalPlatform", nominalPlatform)
+
+    if (null != enrichment.dataContainer.curatoryGroup){
+      ArrayNode curatoryGroups = NODE_FACTORY.arrayNode()
+      curatoryGroups.add(enrichment.dataContainer.curatoryGroup)
+      result.set("curatoryGroups", (curatoryGroups))
+    }
+    setPkgId(enrichment.dataContainer, identifiers)
+    result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
+
+    def source = new ObjectNode(NODE_FACTORY)
+    if (packageHeader.source?.name != null && !StringUtils.isEmpty(packageHeader.source.name))
+      source.put("name", packageHeader.source.name)
+    if (packageHeader.source?.normname != null && !StringUtils.isEmpty(packageHeader.source.normname))
+      source.put("normname", packageHeader.source.normname)
+    if (packageHeader.source?.url != null && !StringUtils.isEmpty(packageHeader.source.url))
+      source.put("url", packageHeader.source.url)
+    result.set("source", source)
+
+    result.set("identifiers", identifiers)
+
+    enrichment.dataContainer.packageHeader = result
+    log.debug("parsing package header finished")
+    result
+  }
+
+
+  private static ObjectNode postProcessPublicationTitle(ObjectNode titleNode, Record record){
+    String title = titleNode.get("name").asText()
+    List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
+    if (ramifications != null && !ramifications.isEmpty()){
+      String extendedTitle = title
+      for (String ramification in ramifications){
+        if (!StringUtils.isEmpty(ramification)){
+          extendedTitle = extendedTitle.concat(" / ").concat(ramification)
+        }
+      }
+      titleNode.set("name", new TextNode(extendedTitle))
+    }
+    else{
+      for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
+        String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
+        if (!StringUtils.isEmpty(extendedTitle)){
+          if (isRoughlySubString(title, extendedTitle)){
+            titleNode.set("name", new TextNode(extendedTitle))
+          }
+          else{
+            titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
+          }
+          return titleNode
+        }
+      }
+    }
+    titleNode.set("name", new TextNode(title))    // Disabled ramification and subtitle enrichment temporarily, delete line to roll back
+    return titleNode
+  }
+
+  private static ObjectNode postProcessIssnIsbn(ObjectNode node, Record record, FileType type){
+    ObjectNode onlineIdentifier
+    ObjectNode printIdentifier
+    if (type.equals(FileType.JSON_TITLES_ONLY)){
+      onlineIdentifier = getIdentifierNodeByType(node.get("identifiers"), "onlineIdentifier")
+      printIdentifier = getIdentifierNodeByType(node.get("identifiers"), "printIdentifier")
+    }
+    else if (type.equals(FileType.JSON_PACKAGE_ONLY)){
+      onlineIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "onlineIdentifier")
+      printIdentifier = getIdentifierNodeByType(node.get("title").get("identifiers"), "printIdentifier")
+    }
+    else{
+      return node
+    }
+    if (record.publicationType.equals("serial")){
+      if (onlineIdentifier != null){
+        onlineIdentifier.remove("type")
+        onlineIdentifier.set("type", new TextNode("eissn"))
+      }
+      if (printIdentifier != null){
+        printIdentifier.remove("type")
+        printIdentifier.set("type", new TextNode("issn"))
+      }
+    }
+    else if (record.publicationType.equals("monograph")){
+      if (onlineIdentifier != null){
+        onlineIdentifier.remove("type")
+        onlineIdentifier.set("type", new TextNode("isbn"))
+      }
+      if (printIdentifier != null){
+        printIdentifier.remove("type")
+        printIdentifier.set("type", new TextNode("pisbn"))
+      }
+    }
+    return node
+  }
+
+
+  private static ObjectNode getIdentifierNodeByType(ArrayNode identifiers, String type){
+    for (ObjectNode identifier in identifiers){
+      if (identifier.get("type").asText().equals(type)){
+        return identifier
+      }
+    }
+    return null
+  }
+
+
+  private static boolean isRoughlySubString(String subStringCandidate, String longerString){
+    List<String> subStringStems = getStems(subStringCandidate)
+    List<String> longerStringStems = getStems(longerString)
+    if (subStringStems.size() >= longerStringStems.size()){
+      return false
+    }
+    for (String subStem in subStringStems){
+      if (!(subStem in longerStringStems)){
+        return false
+      }
+    }
+    return true
+  }
+
+
+  /**
+   * This helper method is called get"Stems" as syntactical stemming intended (but not implemented for now).
+   */
+  static private List<String> getStems(String title){
+    List<String> result = []
+    String[] splitTitle = title.split(" ")
+    for (String split in splitTitle){
+      split = split.toLowerCase()
+      if (!StopwordToolkit.isStopword(split) && isWord(split)){
+        result.add(split.replaceAll("[^a-zà]", ""))
+      }
+    }
+    return result
+  }
+
+
+  private static boolean isWord(String string){
+    return string.matches(".*[a-zà].*")
+  }
+
+
+  private static void setPkgId(DataContainer dataContainer, ArrayNode identifiers){
+    if (!StringUtils.isEmpty(dataContainer.pkgId) && !StringUtils.isEmpty(dataContainer.pkgIdNamespace)){
+      ObjectNode identifier = NODE_FACTORY.objectNode()
+      identifier.put("type", dataContainer.pkgIdNamespace)
+      identifier.put("value", dataContainer.pkgId)
+      identifiers.add(identifier)
+    }
+  }
+
+
+  private static void setIsil(DataContainer dc, ArrayNode identifiers) {
+    if (!StringUtils.isEmpty(dc.isil)) {
+      def isilNode = new ObjectNode(NODE_FACTORY)
+      isilNode.put("type", "isil")
+      isilNode.put("value", dc.isil)
+      identifiers.add(isilNode)
+    }
+  }
+
+
+  static private ArrayNode getArrayNode(def source, def sourceField) {
+    ArrayNode result = new ArrayNode(NODE_FACTORY)
+    for (def item in source."${sourceField}") {
+      result.add(item.v)
+    }
+    result
+  }
+
+
+  static private void removeEmptyIds(ArrayNode identifiers) {
+    def count = 0
+    def idsToBeRemoved = []
+    for (ObjectNode idNode in identifiers.elements()) {
+      if (idNode.elements().size() == 1 && idNode.get("type") != null) {
+        // identifier has "type" only ==> remove
+        idsToBeRemoved << count
+      } else if (idNode.elements().size() > 1 && idNode.get("value").asText().trim() == "\"\"") {
+        idsToBeRemoved << count
+      }
+      count++
+    }
+    for (int i = idsToBeRemoved.size() - 1; i > -1; i--) {
+      identifiers.remove(idsToBeRemoved[i])
+    }
+  }
+
+
+  // adapted from: https://technicaldifficulties.io/2018/04/26/using-jackson-to-remove-empty-json-fields/ -thx Stacie!
+  static ObjectNode removeEmptyFields(final ObjectNode jsonNode) {
+    ObjectNode result = new ObjectMapper().createObjectNode()
+    for (def entry in jsonNode.fields()) {
+      String key = entry.getKey()
+      JsonNode value = entry.getValue()
+      if (value instanceof ObjectNode) {
+        JsonNode subNode = removeEmptyFields((ObjectNode) value)
+        if (subNode.size() > 0) {
+          Map<String, ObjectNode> map = new HashMap<String, ObjectNode>()
+          map.put(key, subNode)
+          result.setAll(map)
+        }
+      } else if (value instanceof ArrayNode) {
+        JsonNode subNode = removeEmptyFields((ArrayNode) value)
+        if (subNode.size() > 0) {
+          result.set(key, subNode)
+        }
+      } else if (value.asText() != null) {
+        if (value.asText().equals(" ")) {
+          result.put(key, "")
+        } else if (!value.asText().isEmpty()) {
+          result.set(key, value)
+        }
+      }
+    }
+    return result
+  }
+
+
+  static private void postProcessTitleId(ArrayNode identifiers, String namespace) {
+    int count = 0
+    ObjectNode titleIdNode = null
+    for (ObjectNode idNode in identifiers) {
+      if (idNode.get("type").asText().equals("titleId")) {
+        titleIdNode = idNode
+        break
+      }
+      else {
+        count++
+      }
+    }
+    if (titleIdNode == null) {
+      // There is no titleId node --> nothing to do
+      return
+    }
+    // remove title id node if value is a copy another identifier node value
+    for (int i = 0; i < identifiers.size(); i++) {
+      if (i != count &&
+          identifiers.get(i).get("value").asText().equals(titleIdNode.get("value").asText())) {
+        identifiers.remove(count)
+        return
+      }
+    }
+    if (StringUtils.isEmpty(namespace)) {
+      // namespace has not been selected -->
+      // just remove titleId node from identifiers
+      identifiers.remove(count)
+      return
+    }
+    // set identifier type
+    titleIdNode.remove("type")
+    titleIdNode.set("type", new TextNode(namespace))
+    // normalize value
+    if (titleIdNode.get("type").asText().equals("doi")){
+      TextNode oldValue = titleIdNode.remove("value")
+      titleIdNode.set("value", new TextNode(DoiNormalizer.normalizeDoi(oldValue.asText())))
+    }
+  }
+
+
+  static ArrayNode removeEmptyFields(ArrayNode array) {
+    ArrayNode result = new ObjectMapper().createArrayNode()
+    for (JsonNode value in array.elements()) {
+      if (value instanceof ArrayNode) {
+        JsonNode subNode = removeEmptyFields((ArrayNode) (value))
+        if (subNode.size() > 0) {
+          result.add(subNode)
+        }
+      } else if (value instanceof ObjectNode) {
+        JsonNode subNode = removeEmptyFields((ObjectNode) (value))
+        if (subNode.size() > 0) {
+          result.add(removeEmptyFields((ObjectNode) (value)))
+        }
+      } else if (value.asText() != null) {
+        if (value.asText().equals(" ")) {
+          result.add("")
+        } else if (!value.asText().isEmpty()) {
+          result.add(value)
+        }
+      }
+    }
+    return result
+  }
+
+}

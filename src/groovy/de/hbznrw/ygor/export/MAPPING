@@ -21,7 +21,7 @@ first 025@a or first 021Aa		- 	Title.name / Package.tipps.title.name
 first 006Z0						-	Title.identifiers.value (type: zdb) / Package.tipps.title.identifier.value (type: zdb)
 first 003@0						-	Title.identifiers.value (type: gvk_ppn) / Package.tipps.title.identifier.value (type: gvk_ppn)
 first 005A0						-	Title.identifiers.value (type: eissn) / Package.tipps.title.identifier.value (type: eissn)
-first 005P0						-	Title.identifiers.value (type: pissn) / Package.tipps.title.identifier.value (type: pissn)
+first 005P0						-	Title.identifiers.value (type: issn) / Package.tipps.title.identifier.value (type: issn)
 first 011@a						-	Title.publishedFrom
 first 011@b						-	Title.publishedTo
 
