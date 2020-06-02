@@ -74,23 +74,26 @@ class DateNormalizer {
 
 
   static Date formatDateTime(String date){
-    SimpleDateFormat format
-    if (date.matches(YEAR)){
-      format = YYYY
-    }
-    else if (date.matches(YEAR_MM)){
-      format = YYYY_MM
-    }
-    else if (date.matches(YEAR_MM_DD)){
-      format = YYYY_MM_DD
-    }
-    else if (date.matches(MM_YEAR)){
-      format = MM_YYYY
-    }
-    else if (date.matches(DD_MM_YEAR)){
-      format = DD_MM_YYYY
+    if (StringUtils.isEmpty(date)){
+      return null
     }
     try {
+      SimpleDateFormat format
+      if (date.matches(YEAR)){
+        format = YYYY
+      }
+      else if (date.matches(YEAR_MM)){
+        format = YYYY_MM
+      }
+      else if (date.matches(YEAR_MM_DD)){
+        format = YYYY_MM_DD
+      }
+      else if (date.matches(MM_YEAR)){
+        format = MM_YYYY
+      }
+      else if (date.matches(DD_MM_YEAR)){
+        format = DD_MM_YYYY
+      }
       return new Date(format.parse(date).getTime())
     }
     catch (Exception exception) {
