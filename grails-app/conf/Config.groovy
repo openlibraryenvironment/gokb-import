@@ -77,7 +77,7 @@ grails.spring.bean.packages = []
 grails.web.disable.multipart = false
 
 // request parameters to mask when logging exceptions
-grails.exceptionresolver.params.exclude = ['password']
+grails.exceptionresolver.params.exclude = ['password','gokbPassword']
 
 // configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
 grails.hibernate.cache.queries = false
@@ -104,6 +104,7 @@ environments {
       xrPackageUri      = 'http://localhost:8080/gokb/integration/crossReferencePackage'
       xrSuggestUriStub  = 'http://localhost:8080/gokb/api/suggest'
       xrFindUriStub     = 'http://localhost:8080/gokb/api/find'
+      xrJobInfo         = 'http://localhost:8080/gokb/integration/getJobInfo'
       namespaceCategory = 'ttl_prv'
       user              = ''
       pwd               = ''
@@ -129,6 +130,7 @@ environments {
       xrPackageUri      = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
       xrSuggestUriStub  = 'http://phaeton.hbz-nrw.de/gokb/api/suggest'
       xrFindUriStub     = 'http://phaeton.hbz-nrw.de/gokb/api/find'
+      xrJobInfo         = 'http://phaeton.hbz-nrw.de/gokb/integration/getJobInfo'
       namespaceCategory = 'ttl_prv'
       user              = ''
       pwd               = ''

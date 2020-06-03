@@ -105,6 +105,17 @@ class EnrichmentService{
           pkgNomPlatform = it
         }
       }
+      else {
+        if (it.name != qterm) {
+          log.debug("No name match: ${it.name} - ${qterm}")
+        }
+        if(it.status != "Current") {
+          log.debug("Wrong status: ${it.status}")
+        }
+        if (it.oid != platformID) {
+          log.debug("No OID match: ${it.oid} - ${platformID}")
+        }
+      }
     }
 
     if (pkgNomPlatform){
