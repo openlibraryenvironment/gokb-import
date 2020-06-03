@@ -113,8 +113,8 @@ class StatisticController{
             }
           }
           resultData.add(value)
-          i++
         }
+        i++
       }
     }
     render "{\"recordsTotal\":${records.size()},\"recordsFiltered\":${records.size()},\"draw\":${pageIndex},\"data\":".concat(new Gson().toJson(resultData)).concat("}")
