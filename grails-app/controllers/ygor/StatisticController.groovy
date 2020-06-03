@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.tools.FileToolkit
+import grails.converters.JSON
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
@@ -71,11 +72,12 @@ class StatisticController{
 
 
   def records(){
-    String resultHash = request.parameterMap.resultHash[0]
-    String colour = request.parameterMap.colour[0]
-    int pageIndex = Integer.valueOf(request.parameterMap.start[0])
-    int size = Integer.valueOf(request.parameterMap.length[0])
-    int draw = Integer.valueOf(request.parameterMap.draw[0])
+    log.debug("${params}")
+    String resultHash = params.resultHash
+    String colour = params.colour
+    int start = params.int('start')
+    int size = params.int('length')
+    int draw = params.int('draw')
     Map records
     Enrichment enrichment = getCurrentEnrichment()
     switch (colour){
@@ -91,33 +93,53 @@ class StatisticController{
       default:
         records = null
     }
-    List resultData = []
+    def result = [recordsTotal: records.size(), recordsFiltered: records.size(), draw: draw, displayStart: start, data: []]
+
     if (records != null){
-      int from = pageIndex
-      int to = pageIndex + size
+      int from = start
+      int to = from + size
       int i = 0
-      records.forEach(){key, value ->
+      records.each { key, value ->
+        // log.debug("Processing value ${value}")
         if (i >= from && i < to){
+          def cols = value
           if (value.size() > 4){
-            String title = value.getAt(0)
-            String uid = value.getAt(4)
-            if (!(StringUtils.isEmpty(title)) && !(StringUtils.isEmpty(uid))){
-              value[0] = "<a href=\"/ygor/statistic/edit/".concat(uid).concat("?resultHash=").concat(resultHash)
-                  .concat("\">").concat(title).concat("</a>")
+            String title = value.get(0)
+            String uid = value.get(4)
+            if (!(StringUtils.isEmpty(title)) && !(StringUtils.isEmpty(uid)) && !value[0].contains('<')){
+              StringWriter sw = new StringWriter()
+
+              sw.write('<a href="/ygor/statistic/edit/')
+              sw.write(uid)
+              sw.write('?resultHash=')
+              sw.write(resultHash)
+              sw.write('">')
+              sw.write(title)
+              sw.write('</a>')
+
+              cols[0] = sw.toString()
             }
           }
-          if (value.size() > 1){
-            String linkValue = value.getAt(1)
+          if (value.size() > 1 && !value[1].contains('<')){
+            String linkValue = value.get(1)
             if (!(StringUtils.isEmpty(linkValue))){
-              value[1] = "<a class=\"link-icon\" href=\"".concat(linkValue).concat("\"/>")
+              StringWriter sw = new StringWriter()
+
+              sw.write('<a class="link-icon" href="')
+              sw.write(linkValue)
+              sw.write('"></a>')
+
+              cols[1] = sw.toString()
             }
           }
-          resultData.add(value)
-          i++
+          result.data.add(cols)
         }
+        i++
       }
     }
-    render "{\"recordsTotal\":${records.size()},\"recordsFiltered\":${records.size()},\"draw\":${pageIndex},\"data\":".concat(new Gson().toJson(resultData)).concat("}")
+    log.debug("New data: ${result}")
+
+    render result as JSON
   }
 
 
