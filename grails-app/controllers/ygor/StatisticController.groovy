@@ -130,15 +130,17 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            packageName   : enrichment.packageName
+            resultHash     : resultHash,
+            currentView    : 'statistic',
+            greenRecords   : enrichment.greenRecords,
+            yellowRecords  : enrichment.yellowRecords,
+            redRecords     : enrichment.redRecords,
+            ygorVersion    : enrichment.ygorVersion,
+            date           : enrichment.date,
+            filename       : enrichment.originName,
+            packageName    : enrichment.packageName,
+            runningJobIds  : runningUploadJobs.keySet(),
+            finishedJobIds : finishedUploadJobs.keySet()
         ]
     )
   }
@@ -181,15 +183,17 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            packageName   : enrichment.packageName
+            resultHash     : resultHash,
+            currentView    : 'statistic',
+            greenRecords   : enrichment.greenRecords,
+            yellowRecords  : enrichment.yellowRecords,
+            redRecords     : enrichment.redRecords,
+            ygorVersion    : enrichment.ygorVersion,
+            date           : enrichment.date,
+            filename       : enrichment.originName,
+            packageName    : enrichment.packageName,
+            runningJobIds  : runningUploadJobs.keySet(),
+            finishedJobIds : finishedUploadJobs.keySet()
         ]
     )
   }

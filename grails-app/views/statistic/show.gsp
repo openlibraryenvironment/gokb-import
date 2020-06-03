@@ -24,8 +24,8 @@
                 <tbody>
                 </tbody>
             </table>
+            <br/>
         </div>
-        <br/>
     </g:each>
 </g:if>
 
