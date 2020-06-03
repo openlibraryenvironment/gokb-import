@@ -360,15 +360,32 @@
         <g:hiddenField name="resultHash" value="${resultHash}"/>
         <div class="col-xs-12" style="margin-bottom: 20px">
             <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-                <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
-                        data-target="#credentialsModal" onclick="assignSendTargetToModal()">
-                    <g:message code="listDocuments.button.sendTitlesFile"/>
-                </button>
-                <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
-                        data-target="#credentialsModal" onclick="assignSendTargetToModal()">
-                    <g:message code="listDocuments.button.sendPackageFile"/>
-                </button>
-
+                <g:if test="${titlesUploaded == true}">
+                    <!-- Titles have already been uploaded -> disable upload button -->
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                        <g:message code="listDocuments.button.sendTitlesFile"/>
+                    </button>
+                </g:if>
+                <g:else>
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                        <g:message code="listDocuments.button.sendTitlesFile"/>
+                    </button>
+                </g:else>
+                <g:if test="${packageUploaded == true}">
+                    <!-- Package has already been uploaded -> disable upload button -->
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                        <g:message code="listDocuments.button.sendPackageFile"/>
+                    </button>
+                </g:if>
+                <g:else>
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                        <g:message code="listDocuments.button.sendPackageFile"/>
+                    </button>
+                </g:else>
                 <div class="modal fade" id="credentialsModal" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">

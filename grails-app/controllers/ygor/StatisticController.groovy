@@ -46,27 +46,29 @@ class StatisticController{
     if (enrichmentsUploading.contains(resultHash)){
       return null
     }
-    enrichmentsUploading.add(resultHash.toString())
+    enrichmentsUploading.add(resultHash)
     String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
-    enrichmentsUploading.remove(resultHash.toString())
+    enrichmentsUploading.remove(resultHash)
     render(
         view: 'show',
         model: [
-            originHash     : originHash,
-            resultHash     : resultHash,
-            currentView    : 'statistic',
-            ygorVersion    : enrichment.ygorVersion,
-            date           : enrichment.date,
-            filename       : enrichment.originName,
-            greenRecords   : enrichment.greenRecords,
-            yellowRecords  : enrichment.yellowRecords,
-            redRecords     : enrichment.redRecords,
-            status         : enrichment.status,
-            packageName    : enrichment.packageName,
-            runningJobIds  : runningUploadJobs.keySet(),
-            finishedJobIds : finishedUploadJobs.keySet()
+            originHash      : originHash,
+            resultHash      : resultHash,
+            currentView     : 'statistic',
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            greenRecords    : enrichment.greenRecords,
+            yellowRecords   : enrichment.yellowRecords,
+            redRecords      : enrichment.redRecords,
+            status          : enrichment.status,
+            packageName     : enrichment.packageName,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
         ]
     )
   }
@@ -146,17 +148,19 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash     : resultHash,
-            currentView    : 'statistic',
-            greenRecords   : enrichment.greenRecords,
-            yellowRecords  : enrichment.yellowRecords,
-            redRecords     : enrichment.redRecords,
-            ygorVersion    : enrichment.ygorVersion,
-            date           : enrichment.date,
-            filename       : enrichment.originName,
-            packageName    : enrichment.packageName,
-            runningJobIds  : runningUploadJobs.keySet(),
-            finishedJobIds : finishedUploadJobs.keySet()
+            resultHash      : resultHash,
+            currentView     : 'statistic',
+            greenRecords    : enrichment.greenRecords,
+            yellowRecords   : enrichment.yellowRecords,
+            redRecords      : enrichment.redRecords,
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            packageName     : enrichment.packageName,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
         ]
     )
   }
@@ -199,17 +203,19 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash     : resultHash,
-            currentView    : 'statistic',
-            greenRecords   : enrichment.greenRecords,
-            yellowRecords  : enrichment.yellowRecords,
-            redRecords     : enrichment.redRecords,
-            ygorVersion    : enrichment.ygorVersion,
-            date           : enrichment.date,
-            filename       : enrichment.originName,
-            packageName    : enrichment.packageName,
-            runningJobIds  : runningUploadJobs.keySet(),
-            finishedJobIds : finishedUploadJobs.keySet()
+            resultHash      : resultHash,
+            currentView     : 'statistic',
+            greenRecords    : enrichment.greenRecords,
+            yellowRecords   : enrichment.yellowRecords,
+            redRecords      : enrichment.redRecords,
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            packageName     : enrichment.packageName,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
         ]
     )
   }
@@ -395,20 +401,22 @@ class StatisticController{
     render(
         view         : 'show',
         model: [
-            originHash     : enrichment.originHash,
-            resultHash     : enrichment.resultHash,
-            currentView    : 'statistic',
-            ygorVersion    : enrichment.ygorVersion,
-            date           : enrichment.date,
-            filename       : enrichment.originName,
-            greenRecords   : enrichment.greenRecords,
-            yellowRecords  : enrichment.yellowRecords,
-            redRecords     : enrichment.redRecords,
-            status         : enrichment.status.toString(),
-            packageName    : enrichment.packageName,
-            dataType       : fileType,
-            runningJobIds  : runningUploadJobs.keySet(),
-            finishedJobIds : finishedUploadJobs.keySet()
+            originHash      : enrichment.originHash,
+            resultHash      : enrichment.resultHash,
+            currentView     : 'statistic',
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            greenRecords    : enrichment.greenRecords,
+            yellowRecords   : enrichment.yellowRecords,
+            redRecords      : enrichment.redRecords,
+            status          : enrichment.status.toString(),
+            packageName     : enrichment.packageName,
+            dataType        : fileType,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
         ]
     )
   }
