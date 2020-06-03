@@ -4,28 +4,30 @@
 
 <p class="lead">${packageName}</p>
 
-<g:each in="${jobIds}" var="jobId">
-    <div id="uploadResult-${jobId}" class="showUploadResults">
-        <button type="button" class="btn btn-info response-button" data-toggle="collapse" data-target="#btn-accord">
+<g:if test="${runningJobIds != null || finishedJobIds != null}">
+    <g:each in="${runningJobIds + finishedJobIds}" var="jobId">
+        <div id="uploadResult-${jobId}" class="showUploadResults">
+            <button type="button" class="btn btn-info response-button" data-toggle="collapse" data-target="#btn-accord">
                 <g:message code="listDocuments.gokb.response"/>
-        </button>
-        <button type="button" class="btn btn-success response-remove" onclick="removeJobId('${jobId}')">
-            <g:message code="listDocuments.gokb.response.remove"/>
-        </button>
-        <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
-                greenRecords?.size() + yellowRecords?.size()}"/>
-        <div class="collapse in" id="progress-section-${jobId}">
-            <div id="progress-${jobId}" class="progress" hidden="hidden">
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
+            </button>
+            <button type="button" class="btn btn-success response-remove" onclick="removeJobId('${jobId}')">
+                <g:message code="listDocuments.gokb.response.remove"/>
+            </button>
+            <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
+                    greenRecords?.size() + yellowRecords?.size()}"/>
+            <div class="collapse in" id="progress-section-${jobId}">
+                <div id="progress-${jobId}" class="progress" hidden="hidden">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
+                </div>
             </div>
+            <table class="table" id="feedbackTable-${jobId}">
+                <tbody>
+                </tbody>
+            </table>
+            <br/>
         </div>
-        <table class="table" id="feedbackTable-${jobId}">
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <br/>
-</g:each>
+    </g:each>
+</g:if>
 
 <script>
     var rkm = getResponseKeyMap();
@@ -65,14 +67,14 @@
     }
 
 
-    var jobIdsAsList = "${jobIds}".replace("[", "").replace("]", "").split(", ");
+    var runningJobIdsAsList = "${runningJobIds}".replace("[", "").replace("]", "").split(", ");
     var intervals = new Map();
-    var jobStatus;
 
-    $.each(jobIdsAsList, function (i, uid) {
+    $.each(runningJobIdsAsList, function (i, uid) {
         if (uid != null && uid != ""){
             var interval = setInterval(function () {
                 processJobStatus(uid);
+                updateJobStatus(uid);
             }, 1000);
             intervals.set(uid, interval);
         }
@@ -85,51 +87,92 @@
             url: '${grailsApplication.config.grails.app.context}/statistic/getJobStatus?uid=' + uid,
             timeout: 60000,
             success: function (data) {
+                if (JSON.parse(data)["status"] == 'STARTED') {
+                    showProgressBar(uid);
+                }
+                else {
+                    let interval = intervals.get(uid);
+                    if (interval != null) {
+                        clearInterval(interval);
+                        intervals.delete(uid);
+                    }
+                    showFinishedJobResult(uid);
+                }
+            },
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {}
+        });
+    }
+
+
+    function updateJobStatus(uid) {
+        jQuery.ajax({
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/refreshJobStatus?uid=' + uid,
+            timeout: 60000,
+            success: function (data) {},
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {}
+        });
+    }
+
+
+    function showProgressBar(uid){
+        jQuery('#progress-' + uid).removeAttr('hidden');
+        jQuery.ajax({
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/getJobProgress?uid=' + uid,
+            timeout: 60000,
+            success: function (data) {
                 var json = JSON.parse(data);
-                jobStatus = json["status"];
+                var max = jQuery('#progress-' + uid + ' > .progress-bar').attr('aria-valuemax');
+                var percentNow = json["count"] / max * 100;
+                jQuery('#progress-' + uid + ' > .progress-bar').attr('aria-valuenow', percentNow);
+                jQuery('#progress-' + uid + ' > .progress-bar').attr('style', 'width:' + percentNow + '%');
+                jQuery('#progress-' + uid + ' > .progress-bar').text(percentNow + '%');
+            },
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                console.error("Could not get job info for job " + uid);
+            }
+        });
+    }
+
+    // show former upload results
+    var finishedJobIdsAsList = "${finishedJobIds}".replace("[", "").replace("]", "").split(", ");
+    $.each(finishedJobIdsAsList, function (i, uid) {
+        if (uid != null && uid != ""){
+            showFinishedJobResult(uid);
+        }
+    });
+
+    function showFinishedJobResult(uid) {
+        let jobStatus;
+        jQuery.ajax({
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/getJobStatus?uid=' + uid,
+            timeout: 60000,
+            success: function (data) {
+                jobStatus = JSON.parse(data)["status"];
+                if (jobStatus == 'FINISHED_UNDEFINED' || jobStatus == 'SUCCESS' || jobStatus == 'ERROR') {
+                    // remove progress bar
+                    jQuery('#progress-' + uid).attr('hidden', 'hidden');
+                    // fill result table
+                    jQuery.ajax({
+                        method: "GET",
+                        url: '${grailsApplication.config.grails.app.context}/statistic/getResultsTable?uid=' + uid,
+                        timeout: 60000,
+                        success: function (data) {
+                            let table = document.getElementById("feedbackTable-" + uid).getElementsByTagName('tbody')[0];
+                            fillTable(table, data);
+                        },
+                        error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                            console.error("Could not get results for job "+uid);
+                        }
+                    });
+                }
             },
             error: function (deXMLHttpRequest, textStatus, errorThrown) {
                 jobStatus = null;
             }
         });
-        if (jobStatus == 'STARTED') {
-            // show progress bar
-            jQuery('#progress-' + uid).removeAttr('hidden');
-            jQuery.ajax({
-                method: "GET",
-                url: '${grailsApplication.config.grails.app.context}/statistic/getJobProgress?uid=' + uid,
-                timeout: 60000,
-                success: function (data) {
-                    var json = JSON.parse(data);
-                    var max = jQuery('#progress-'+ uid + ' > .progress-bar').attr('aria-valuemax');
-                    var percentNow = json["count"] / max * 100;
-                    jQuery('#progress-'+ uid + ' > .progress-bar').attr('aria-valuenow', percentNow);
-                    jQuery('#progress-'+ uid + ' > .progress-bar').attr('style', 'width:' + percentNow + '%');
-                    jQuery('#progress-'+ uid + ' > .progress-bar').text(percentNow + '%');
-                },
-                error: function (deXMLHttpRequest, textStatus, errorThrown) {
-                    console.error("Could not get job info for job "+uid);
-                }
-            });
-        }
-        else if (jobStatus == 'FINISHED_UNDEFINED' || jobStatus == 'SUCCESS' || jobStatus == 'ERROR') {
-            // remove progress bar
-            jQuery('#progress-' + uid).attr('hidden', 'hidden');
-            // fill result table
-            jQuery.ajax({
-                method: "GET",
-                url: '${grailsApplication.config.grails.app.context}/statistic/getResultsTable?uid=' + uid,
-                timeout: 60000,
-                success: function (data) {
-                    let table = document.getElementById("feedbackTable-" + uid).getElementsByTagName('tbody')[0];
-                    fillTable(table, data);
-                    clearInterval(intervals.get(uid));
-                },
-                error: function (deXMLHttpRequest, textStatus, errorThrown) {
-                    console.error("Could not get results for job "+uid);
-                }
-            });
-        }
     }
 
     function fillTable(tableElement, data){
@@ -166,6 +209,7 @@
         rkm["listDocuments.gokb.response.status"] = "${g.message(code:"listDocuments.gokb.response.status")}";
         return rkm;
     }
+
     function getResponseValueMap() {
         const rvm = new Object();
         rvm["listDocuments.gokb.response.titles"] = "${g.message(code:"listDocuments.gokb.response.titles")}";

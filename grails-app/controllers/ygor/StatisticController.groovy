@@ -32,7 +32,8 @@ class StatisticController{
   Set<String> enrichmentsUploading = []
   String gokbUsername
   String gokbPassword
-  Map<String, UploadJob> uploadJobs = [:]
+  Map<String, UploadJob> runningUploadJobs = [:]
+  Map<String, UploadJob> finishedUploadJobs = [:]
 
   def index(){
     render(
@@ -54,18 +55,19 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            originHash    : originHash,
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            status        : enrichment.status,
-            packageName   : enrichment.packageName,
-            jobIds        : uploadJobs.keySet()
+            originHash     : originHash,
+            resultHash     : resultHash,
+            currentView    : 'statistic',
+            ygorVersion    : enrichment.ygorVersion,
+            date           : enrichment.date,
+            filename       : enrichment.originName,
+            greenRecords   : enrichment.greenRecords,
+            yellowRecords  : enrichment.yellowRecords,
+            redRecords     : enrichment.redRecords,
+            status         : enrichment.status,
+            packageName    : enrichment.packageName,
+            runningJobIds  : runningUploadJobs.keySet(),
+            finishedJobIds : finishedUploadJobs.keySet()
         ]
     )
   }
@@ -150,15 +152,17 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            packageName   : enrichment.packageName
+            resultHash     : resultHash,
+            currentView    : 'statistic',
+            greenRecords   : enrichment.greenRecords,
+            yellowRecords  : enrichment.yellowRecords,
+            redRecords     : enrichment.redRecords,
+            ygorVersion    : enrichment.ygorVersion,
+            date           : enrichment.date,
+            filename       : enrichment.originName,
+            packageName    : enrichment.packageName,
+            runningJobIds  : runningUploadJobs.keySet(),
+            finishedJobIds : finishedUploadJobs.keySet()
         ]
     )
   }
@@ -201,15 +205,17 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            packageName   : enrichment.packageName
+            resultHash     : resultHash,
+            currentView    : 'statistic',
+            greenRecords   : enrichment.greenRecords,
+            yellowRecords  : enrichment.yellowRecords,
+            redRecords     : enrichment.redRecords,
+            ygorVersion    : enrichment.ygorVersion,
+            date           : enrichment.date,
+            filename       : enrichment.originName,
+            packageName    : enrichment.packageName,
+            runningJobIds  : runningUploadJobs.keySet(),
+            finishedJobIds : finishedUploadJobs.keySet()
         ]
     )
   }
@@ -387,7 +393,7 @@ class StatisticController{
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
       }
       if (uploadJob != null){
-        uploadJobs.put(uploadJob.uuid, uploadJob)
+        runningUploadJobs.put(uploadJob.uuid, uploadJob)
         uploadJob.start()
         enrichment.hasBeenUploaded.put(fileType, true)
       }
@@ -395,44 +401,59 @@ class StatisticController{
     render(
         view         : 'show',
         model: [
-            originHash   : enrichment.originHash,
-            resultHash   : enrichment.resultHash,
-            currentView  : 'statistic',
-            ygorVersion  : enrichment.ygorVersion,
-            date         : enrichment.date,
-            filename     : enrichment.originName,
-            greenRecords : enrichment.greenRecords,
-            yellowRecords: enrichment.yellowRecords,
-            redRecords   : enrichment.redRecords,
-            status       : enrichment.status.toString(),
-            packageName  : enrichment.packageName,
-            dataType     : fileType,
-            jobIds       : uploadJobs.keySet()
+            originHash     : enrichment.originHash,
+            resultHash     : enrichment.resultHash,
+            currentView    : 'statistic',
+            ygorVersion    : enrichment.ygorVersion,
+            date           : enrichment.date,
+            filename       : enrichment.originName,
+            greenRecords   : enrichment.greenRecords,
+            yellowRecords  : enrichment.yellowRecords,
+            redRecords     : enrichment.redRecords,
+            status         : enrichment.status.toString(),
+            packageName    : enrichment.packageName,
+            dataType       : fileType,
+            runningJobIds  : runningUploadJobs.keySet(),
+            finishedJobIds : finishedUploadJobs.keySet()
         ]
     )
   }
 
 
   def removeJobId = {
-    uploadJobs.remove(params.uid)
+    runningUploadJobs.remove(params.uid)
+    finishedUploadJobs.remove(params.uid)
     render '{}'
   }
 
 
   def getJobStatus = {
-    UploadJob uploadJob = uploadJobs.get(params.uid)
+    UploadJob uploadJob = runningUploadJobs.get(params.uid)
+    if (uploadJob == null){
+      uploadJob = finishedUploadJobs.get(params.uid)
+    }
     if (uploadJob == null){
       render '{}'
     }
     else{
-      uploadJob.refreshStatus()
       render '{"status":"' + uploadJob.status + '"}'
     }
   }
 
 
+  def refreshJobStatus = {
+    UploadJob uploadJob = runningUploadJobs.get(params.uid)
+    uploadJob.refreshStatus()
+    if (uploadJob.status.toString() in ['FINISHED_UNDEFINED', 'SUCCESS', 'ERROR']){
+      runningUploadJobs.remove(params.uid)
+      finishedUploadJobs.put(params.uid, uploadJob)
+    }
+    render '{}'
+  }
+
+
   def getJobProgress = {
-    UploadJob uploadJob = uploadJobs.get(params.uid)
+    UploadJob uploadJob = runningUploadJobs.get(params.uid)
     if (uploadJob == null){
       render '{}'
     }
@@ -445,7 +466,7 @@ class StatisticController{
 
   def getResultsTable = {
     def results = [:]
-    UploadJob uploadJob = uploadJobs.get(params.uid)
+    UploadJob uploadJob = finishedUploadJobs.get(params.uid)
     if (uploadJob != null){
       results.putAll(uploadJob.getResultsTable())
     }

@@ -97,16 +97,28 @@ class GokbExporter {
       if (null != fileLock){
         for (int i=0; i<enrichment.dataContainer.records.size(); i++){
           String recId = enrichment.dataContainer.records[i]
+          def titleRecord = extractTitle(enrichment, recId, true)
           byte[] title
-          if (i == 0){
-            title = "[".concat(extractTitle(enrichment, recId, true)).getBytes(Charset.forName("UTF-8"))
+
+          StringWriter strw = new StringWriter()
+
+          if (i == 0) {
+            strw.write("[")
           }
-          else if (i < enrichment.dataContainer.records.size()-1){
-            title = ",".concat(extractTitle(enrichment, recId, true)).getBytes(Charset.forName("UTF-8"))
+
+          if (titleRecord) {
+            if (i != 0){
+              strw.write(",")
+            }
+            strw.write(titleRecord)
           }
-          else{ // i == enrichment.dataContainer.records.size()
-            title = ",".concat(extractTitle(enrichment, recId, true)).concat("]").getBytes(Charset.forName("UTF-8"))
+
+          if (i == enrichment.dataContainer.records.size()-1) {
+            strw.write("]")
           }
+
+          title = strw.toString().getBytes(Charset.forName("UTF-8"))
+
           ByteBuffer buffer = ByteBuffer.wrap(title)
           buffer.put(title)
           buffer.flip()
