@@ -381,7 +381,6 @@ class StatisticController{
     gokbPassword = params.gokbPassword
     def enrichment = getCurrentEnrichment()
     if (enrichment && !enrichment.hasBeenUploaded.get(fileType)){
-      def response = []
       String uri = getDestinationUri(fileType, enrichment.addOnly)
       UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
