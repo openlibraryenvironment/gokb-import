@@ -7,7 +7,8 @@
 <g:if test="${runningJobIds != null || finishedJobIds != null}">
     <g:each in="${runningJobIds + finishedJobIds}" var="jobId">
         <div id="uploadResult-${jobId}" class="showUploadResults">
-            <button type="button" class="btn btn-info response-button" data-toggle="collapse" data-target="#btn-accord">
+            <button type="button" class="btn btn-info response-button" data-toggle="collapse"
+                    data-target="#progress-section-${jobId}">
                 <g:message code="listDocuments.gokb.response"/>
             </button>
             <button type="button" class="btn btn-success response-remove" onclick="removeJobId('${jobId}')">
@@ -19,12 +20,12 @@
                 <div id="progress-${jobId}" class="progress" hidden="hidden">
                     <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
                 </div>
+                <table class="table" id="feedbackTable-${jobId}">
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
-            <table class="table" id="feedbackTable-${jobId}">
-                <tbody>
-                </tbody>
-            </table>
-            <br/>
+            <br/><br/>
         </div>
     </g:each>
 </g:if>
@@ -216,6 +217,7 @@
         rvm["listDocuments.gokb.response.package"] = "${g.message(code:"listDocuments.gokb.response.package")}";
         return rvm;
     }
+
 </script>
 
 <div class="row">
