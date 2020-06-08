@@ -37,8 +37,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   void run(){
     def json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
-    String body = json.getText()
-    result << GokbExporter.sendText(uri, body, user, password)
+    result << GokbExporter.sendText(uri, json.getText(), user, password)
   }
 
 

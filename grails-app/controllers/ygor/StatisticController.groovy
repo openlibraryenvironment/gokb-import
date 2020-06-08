@@ -396,6 +396,7 @@ class StatisticController{
         uploadJob.start()
         enrichment.hasBeenUploaded.put(fileType, true)
       }
+      Thread.sleep(750)
     }
     render(
         view         : 'show',
