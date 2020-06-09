@@ -444,10 +444,12 @@ class StatisticController{
 
   def refreshJobStatus = {
     UploadJob uploadJob = runningUploadJobs.get(params.uid)
-    uploadJob.refreshStatus()
-    if (uploadJob.status.toString() in ['FINISHED_UNDEFINED', 'SUCCESS', 'ERROR']){
-      runningUploadJobs.remove(params.uid)
-      finishedUploadJobs.put(params.uid, uploadJob)
+    if (uploadJob != null){
+      uploadJob.refreshStatus()
+      if (uploadJob.status.toString() in ['FINISHED_UNDEFINED', 'SUCCESS', 'ERROR']){
+        runningUploadJobs.remove(params.uid)
+        finishedUploadJobs.put(params.uid, uploadJob)
+      }
     }
     render '{}'
   }
