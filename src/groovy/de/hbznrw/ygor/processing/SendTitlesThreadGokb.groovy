@@ -16,8 +16,8 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
     this.uri = uri
     this.user = user
     this.password = password
-    total += enrichment.yellowRecords?.size()
-    total += enrichment.greenRecords?.size()
+    this.total += enrichment.yellowRecords?.size()
+    this.total += enrichment.greenRecords?.size()
     result = []
   }
 

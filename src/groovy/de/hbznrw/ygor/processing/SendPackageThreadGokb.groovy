@@ -58,7 +58,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       // get count from ongoing process
       String countString = getGokbResponseValue("progress")
       if (countString != null){
-        count = Integer.valueOf(countString)
+        count = Double.valueOf(countString) / 100.0 * total
       }
     }
   }
