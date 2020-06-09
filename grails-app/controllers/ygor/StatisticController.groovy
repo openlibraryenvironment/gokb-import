@@ -60,9 +60,9 @@ class StatisticController{
             ygorVersion     : enrichment.ygorVersion,
             date            : enrichment.date,
             filename        : enrichment.originName,
-            greenRecords    : enrichment.greenRecords,
-            yellowRecords   : enrichment.yellowRecords,
-            redRecords      : enrichment.redRecords,
+            greenRecords    : recordsPrivate(resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
             status          : enrichment.status,
             packageName     : enrichment.packageName,
             runningJobIds   : runningUploadJobs.keySet(),
@@ -73,14 +73,12 @@ class StatisticController{
     )
   }
 
-
   def records(){
-    log.debug("${params}")
-    String resultHash = params.resultHash
-    String colour = params.colour
-    int start = params.int('start')
-    int size = params.int('length')
-    int draw = params.int('draw')
+    render recordsPrivate(params.resultHash, params.colour, params.int('start'), params.int('length'), params.int('draw')) as JSON
+  }
+
+
+  private def recordsPrivate(String resultHash, String colour, int start, int size, int draw){
     Map records
     Enrichment enrichment = getCurrentEnrichment()
     switch (colour){
@@ -137,7 +135,7 @@ class StatisticController{
       }
     }
     log.debug("New data: ${result}")
-    render result as JSON
+    result
   }
 
 
@@ -150,9 +148,9 @@ class StatisticController{
         model: [
             resultHash      : resultHash,
             currentView     : 'statistic',
-            greenRecords    : enrichment.greenRecords,
-            yellowRecords   : enrichment.yellowRecords,
-            redRecords      : enrichment.redRecords,
+            greenRecords    : recordsPrivate(resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
             ygorVersion     : enrichment.ygorVersion,
             date            : enrichment.date,
             filename        : enrichment.originName,
@@ -205,9 +203,9 @@ class StatisticController{
         model: [
             resultHash      : resultHash,
             currentView     : 'statistic',
-            greenRecords    : enrichment.greenRecords,
-            yellowRecords   : enrichment.yellowRecords,
-            redRecords      : enrichment.redRecords,
+            greenRecords    : recordsPrivate(resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
             ygorVersion     : enrichment.ygorVersion,
             date            : enrichment.date,
             filename        : enrichment.originName,
@@ -407,9 +405,9 @@ class StatisticController{
             ygorVersion     : enrichment.ygorVersion,
             date            : enrichment.date,
             filename        : enrichment.originName,
-            greenRecords    : enrichment.greenRecords,
-            yellowRecords   : enrichment.yellowRecords,
-            redRecords      : enrichment.redRecords,
+            greenRecords    : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
             status          : enrichment.status.toString(),
             packageName     : enrichment.packageName,
             dataType        : fileType,

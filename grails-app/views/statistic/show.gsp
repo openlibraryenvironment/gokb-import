@@ -15,7 +15,7 @@
                 <g:message code="listDocuments.gokb.response.remove"/>
             </button>
             <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
-                    greenRecords?.size() + yellowRecords?.size()}"/>
+                    Integer.valueOf(greenRecords?.getAt("size")) + Integer.valueOf(yellowRecords?.getAt("size"))}"/>
             <div class="collapse in" id="progress-section-${jobId}">
                 <div id="progress-${jobId}" class="progress" hidden="hidden">
                     <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
@@ -224,11 +224,11 @@
     <g:set var="lineCounter" value="${0}"/>
     <g:set var="displayZDB" value="true"/>
 
-    <g:if test="${redRecords != null && !(redRecords.isEmpty())}">
+    <g:if test="${redRecords != null && !(redRecords.getAt("data")?.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-red">
-                    <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.red"/></h3>
+                    <h3 class="panel-title">${redRecords.getAt("size")} <g:message code="statistic.show.records.red"/></h3>
                 </div>
 
                 <div class="statistics-data">
@@ -243,23 +243,23 @@
                         </tr></thead>
                         <tbody>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${redRecords}" var="record">
+                        <g:each in="${redRecords?.getAt("data")}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
-                                            "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                            id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                            "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
                                 </td>
                                 <g:if test="${displayZDB}">
-                                    <td><g:if test="${record.value.getAt(1)}">
-                                        <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                    <td><g:if test="${record.getAt(1)}">
+                                        <a href="${record.getAt(1)}" class="link-icon"></a>
                                     </g:if></td>
-                                    <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
-                                        ${record.value.getAt(2)}<br/>
+                                    <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                        ${record.getAt(2)}<br/>
                                     </g:if></td>
                                 </g:if>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
-                                    ${record.value.getAt(3)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                    ${record.getAt(3)}<br/>
                                 </g:if></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -271,11 +271,11 @@
         </div>
     </g:if>
 
-    <g:if test="${displayZDB && yellowRecords != null && !(yellowRecords.isEmpty())}">
+    <g:if test="${displayZDB && yellowRecords != null && !(yellowRecords.getAt("data")?.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-yellow">
-                    <h3 class="panel-title">${yellowRecords.size} <g:message code="statistic.show.records.yellow"/></h3>
+                    <h3 class="panel-title">${yellowRecords.getAt("size")} <g:message code="statistic.show.records.yellow"/></h3>
                 </div>
                 <div class="statistics-data">
                     <table id="yellow-records"class="statistics-details">
@@ -287,21 +287,21 @@
                         </tr></thead>
                         <tbody>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${yellowRecords}" var="record">
+                        <g:each in="${yellowRecords?.getAt("data")}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
-                                            "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                            id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                            "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
                                 </td>
-                                <td><g:if test="${record.value.getAt(1)}">
-                                    <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                <td><g:if test="${record.getAt(1)}">
+                                    <a href="${record.getAt(1)}" class="link-icon"></a>
                                 </g:if></td>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
-                                    ${record.value.getAt(2)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                    ${record.getAt(2)}<br/>
                                 </g:if></td>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
-                                    ${record.value.getAt(3)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                    ${record.getAt(3)}<br/>
                                 </g:if></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -313,11 +313,11 @@
         </div>
     </g:if>
 
-    <g:if test="${greenRecords != null && !(greenRecords.isEmpty())}">
+    <g:if test="${greenRecords != null && !(greenRecords.getAt("data")?.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-green">
-                    <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.green"/></h3>
+                    <h3 class="panel-title">${greenRecords.getAt("size")} <g:message code="statistic.show.records.green"/></h3>
                 </div>
 
                 <div class="statistics-data">
@@ -330,22 +330,22 @@
                         </tr></thead>
                         <tbody>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${greenRecords}" var="record">
+                        <g:each in="${greenRecords?.getAt("data")}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
-                                        "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                        "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
                                 <g:if test="${displayZDB}">
-                                    <td><g:if test="${record.value.getAt(1)}">
-                                        <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                    <td><g:if test="${record.getAt(1)}">
+                                        <a href="${record.getAt(1)}" class="link-icon"></a>
                                     </g:if></td>
-                                    <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
-                                        ${record.value.getAt(2)}<br/>
+                                    <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                        ${record.getAt(2)}<br/>
                                     </g:if></td>
                                 </g:if>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
-                                    ${record.value.getAt(3)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                    ${record.getAt(3)}<br/>
                                 </g:if></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
