@@ -1,12 +1,10 @@
 package ygor
 
-import com.google.gson.Gson
+import de.hbznrw.ygor.processing.SendPackageThreadGokb
+import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.tools.FileToolkit
 import grails.converters.JSON
 import groovy.util.logging.Log4j
-import groovyx.net.http.ContentType
-import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.Method
 import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
@@ -18,12 +16,10 @@ import ygor.identifier.OnlineIdentifier
 import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
 @Log4j
 class StatisticController{
 
+  def grailsApplication
   static scope = "session"
   static FileFilter DIRECTORY_FILTER = new FileFilter(){
     @Override
@@ -31,12 +27,12 @@ class StatisticController{
       return file.isDirectory()
     }
   }
-  final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
-  def grailsApplication
   EnrichmentService enrichmentService
   Set<String> enrichmentsUploading = []
   String gokbUsername
   String gokbPassword
+  Map<String, UploadJob> runningUploadJobs = [:]
+  Map<String, UploadJob> finishedUploadJobs = [:]
 
   def index(){
     render(
@@ -50,36 +46,39 @@ class StatisticController{
     if (enrichmentsUploading.contains(resultHash)){
       return null
     }
-    enrichmentsUploading.add(resultHash.toString())
+    enrichmentsUploading.add(resultHash)
     String originHash = request.parameterMap.originHash[0]
     log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
-    enrichmentsUploading.remove(resultHash.toString())
+    enrichmentsUploading.remove(resultHash)
     render(
         view: 'show',
         model: [
-            originHash    : originHash,
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            status        : enrichment.status,
-            packageName   : enrichment.packageName
+            originHash      : originHash,
+            resultHash      : resultHash,
+            currentView     : 'statistic',
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            greenRecords    : recordsPrivate(resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
+            status          : enrichment.status,
+            packageName     : enrichment.packageName,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
         ]
     )
   }
 
-
   def records(){
-    String resultHash = request.parameterMap.resultHash[0]
-    String colour = request.parameterMap.colour[0]
-    int pageIndex = Integer.valueOf(request.parameterMap.start[0])
-    int size = Integer.valueOf(request.parameterMap.length[0])
-    int draw = Integer.valueOf(request.parameterMap.draw[0])
+    render recordsPrivate(params.resultHash, params.colour, params.int('start'), params.int('length'), params.int('draw')) as JSON
+  }
+
+
+  private def recordsPrivate(String resultHash, String colour, int start, int size, int draw){
     Map records
     Enrichment enrichment = getCurrentEnrichment()
     switch (colour){
@@ -95,33 +94,48 @@ class StatisticController{
       default:
         records = null
     }
-    List resultData = []
+    def result = [recordsTotal: records.size(), recordsFiltered: records.size(), draw: draw, displayStart: start, data: []]
+
     if (records != null){
-      int from = pageIndex
-      int to = pageIndex + size
+      int from = start
+      int to = from + size
       int i = 0
-      records.forEach(){key, value ->
+      records.each { key, value ->
+        // log.debug("Processing value ${value}")
         if (i >= from && i < to){
+          def cols = value
           if (value.size() > 4){
-            String title = value.getAt(0)
-            String uid = value.getAt(4)
-            if (!(StringUtils.isEmpty(title)) && !(StringUtils.isEmpty(uid))){
-              value[0] = "<a href=\"/ygor/statistic/edit/".concat(uid).concat("?resultHash=").concat(resultHash)
-                  .concat("\">").concat(title).concat("</a>")
+            String title = value.get(0)
+            String uid = value.get(4)
+            if (!(StringUtils.isEmpty(title)) && !(StringUtils.isEmpty(uid)) && !value[0].contains('<')){
+              StringWriter sw = new StringWriter()
+              sw.write('<a href="/ygor/statistic/edit/')
+              sw.write(uid)
+              sw.write('?resultHash=')
+              sw.write(resultHash)
+              sw.write('">')
+              sw.write(title)
+              sw.write('</a>')
+              cols[0] = sw.toString()
             }
           }
-          if (value.size() > 1){
-            String linkValue = value.getAt(1)
+          if (value.size() > 1 && !value[1].contains('<')){
+            String linkValue = value.get(1)
             if (!(StringUtils.isEmpty(linkValue))){
-              value[1] = "<a class=\"link-icon\" href=\"".concat(linkValue).concat("\"/>")
+              StringWriter sw = new StringWriter()
+              sw.write('<a class="link-icon" href="')
+              sw.write(linkValue)
+              sw.write('"></a>')
+              cols[1] = sw.toString()
             }
           }
-          resultData.add(value)
-          i++
+          result.data.add(cols)
         }
+        i++
       }
     }
-    render "{\"recordsTotal\":${records.size()},\"recordsFiltered\":${records.size()},\"draw\":${pageIndex},\"data\":".concat(new Gson().toJson(resultData)).concat("}")
+    log.debug("New data: ${result}")
+    result
   }
 
 
@@ -132,15 +146,19 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            packageName   : enrichment.packageName
+            resultHash      : resultHash,
+            currentView     : 'statistic',
+            greenRecords    : recordsPrivate(resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            packageName     : enrichment.packageName,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
         ]
     )
   }
@@ -150,6 +168,8 @@ class StatisticController{
     // write record into dataContainer
     String resultHash = request.parameterMap['resultHash'][0]
     Enrichment enrichment = getEnrichment(resultHash)
+    enrichment.hasBeenUploaded.put(Enrichment.FileType.TITLES, false)
+    enrichment.hasBeenUploaded.put(Enrichment.FileType.PACKAGE, false)
     String enrichmentFolder = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash).concat(File.separator)
     Record record = Record.load(enrichmentFolder, resultHash, params['record.uid'], enrichment.mappingsContainer)
     for (def field in params['fieldschanged']){
@@ -181,15 +201,19 @@ class StatisticController{
     render(
         view: 'show',
         model: [
-            resultHash    : resultHash,
-            currentView   : 'statistic',
-            greenRecords  : enrichment.greenRecords,
-            yellowRecords : enrichment.yellowRecords,
-            redRecords    : enrichment.redRecords,
-            ygorVersion   : enrichment.ygorVersion,
-            date          : enrichment.date,
-            filename      : enrichment.originName,
-            packageName   : enrichment.packageName
+            resultHash      : resultHash,
+            currentView     : 'statistic',
+            greenRecords    : recordsPrivate(resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            packageName     : enrichment.packageName,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
         ]
     )
   }
@@ -306,7 +330,7 @@ class StatisticController{
   def downloadPackageFile = {
     def en = getCurrentEnrichment()
     if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_PACKAGE_ONLY)
+      def result = enrichmentService.getFile(en, Enrichment.FileType.PACKAGE)
       render(file: result, fileName: "${en.resultName}.package.json")
     }
     else{
@@ -318,7 +342,7 @@ class StatisticController{
   def downloadTitlesFile = {
     def en = getCurrentEnrichment()
     if (en){
-      def result = enrichmentService.getFile(en, Enrichment.FileType.JSON_TITLES_ONLY)
+      def result = enrichmentService.getFile(en, Enrichment.FileType.TITLES)
       render(file: result, fileName: "${en.resultName}.titles.json")
     }
     else{
@@ -340,195 +364,134 @@ class StatisticController{
 
 
   def sendPackageFile = {
-    sendFile(Enrichment.FileType.JSON_PACKAGE_ONLY)
+    sendFile(Enrichment.FileType.PACKAGE)
   }
 
 
 
   def sendTitlesFile = {
-    sendFile(Enrichment.FileType.JSON_TITLES_ONLY)
+    sendFile(Enrichment.FileType.TITLES)
   }
 
 
   private void sendFile(Enrichment.FileType fileType){
     gokbUsername = params.gokbUsername
     gokbPassword = params.gokbPassword
-    def en = getCurrentEnrichment()
-    if (en){
-      def response = enrichmentService.sendFile(en, fileType, params.gokbUsername, params.gokbPassword)
-      flash.info = []
-      flash.warning = []
-      List errorList = []
-      def total = 0
-      def errors = 0
-      log.debug("sendFile response: ${response}")
-      if (response.info){
-        log.debug("json class: ${response.info.class}")
-        def info_objects = response.info.results
-        info_objects[0].each{ robj ->
-          log.debug("robj: ${robj}")
-          if (robj.result == 'ERROR'){
-            errorList.add(robj.message)
-            errors++
-          }
-          total++
-        }
-        flash.info = "Total: ${total}, Errors: ${errors}"
-        flash.error = errorList
+    def enrichment = getCurrentEnrichment()
+    if (enrichment && !enrichment.hasBeenUploaded.get(fileType)){
+      String uri = getDestinationUri(fileType, enrichment.addOnly)
+      UploadJob uploadJob
+      if (fileType.equals(Enrichment.FileType.TITLES)){
+        SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword)
+        uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
       }
-      render(
-          view         : 'show',
-          model: [
-              originHash   : en.originHash,
-              resultHash   : en.resultHash,
-              currentView  : 'statistic',
-              ygorVersion  : en.ygorVersion,
-              date         : en.date,
-              filename     : en.originName,
-              greenRecords : en.greenRecords,
-              yellowRecords: en.yellowRecords,
-              redRecords   : en.redRecords,
-              status       : en.status.toString(),
-              packageName  : en.packageName,
-              jobId        : getJobId(response)
-          ]
-      )
+      else if (fileType.equals(Enrichment.FileType.PACKAGE)){
+        SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(grailsApplication, enrichment, uri, gokbUsername, gokbPassword)
+        uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
+      }
+      if (uploadJob != null){
+        runningUploadJobs.put(uploadJob.uuid, uploadJob)
+        uploadJob.start()
+        enrichment.hasBeenUploaded.put(fileType, true)
+      }
+      Thread.sleep(750)
     }
+    render(
+        view         : 'show',
+        model: [
+            originHash      : enrichment.originHash,
+            resultHash      : enrichment.resultHash,
+            currentView     : 'statistic',
+            ygorVersion     : enrichment.ygorVersion,
+            date            : enrichment.date,
+            filename        : enrichment.originName,
+            greenRecords    : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
+            yellowRecords   : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
+            redRecords      : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
+            status          : enrichment.status.toString(),
+            packageName     : enrichment.packageName,
+            dataType        : fileType,
+            runningJobIds   : runningUploadJobs.keySet(),
+            finishedJobIds  : finishedUploadJobs.keySet(),
+            titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
+        ]
+    )
   }
 
 
-  private String getJobId(ArrayList response){
-    for (def responseItem in response){
-      for (def value in responseItem.values()){
-        return String.valueOf(value.get("job_id"))
-      }
-    }
+  def removeJobId = {
+    runningUploadJobs.remove(params.uid)
+    finishedUploadJobs.remove(params.uid)
+    render '{}'
   }
 
 
-  def getJobInfo = {
-    if (gokbUsername == null || gokbPassword == null){
-      return null
+  def getJobStatus = {
+    UploadJob uploadJob = runningUploadJobs.get(params.uid)
+    if (uploadJob == null){
+      uploadJob = finishedUploadJobs.get(params.uid)
     }
-    def uri = grailsApplication.config.gokbApi.xrJobInfo.concat(params.jobId)
-    def http = new HTTPBuilder(uri)
-    Map<String, Object> result = new HashMap<>()
-    result["jobId"] = params.jobId
-    http.auth.basic gokbUsername, gokbPassword
-
-    http.request(Method.GET, ContentType.JSON){ req ->
-      response.success = { response, resultMap ->
-        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          if (response.status < 400){
-            if (resultMap.result.equals("ERROR")){
-              result.put('error', resultMap.message)
-            }
-            else{
-              result.putAll(getResponseSorted(resultMap))
-            }
-          }
-          else{
-            result.put('warning': resultMap)
-          }
-        }
-        else{
-          result.putAll(handleAuthenticationError(response))
-        }
-      }
-      response.failure = { response, resultMap ->
-        log.error("GOKb server response: ${response.statusLine}")
-        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          result.put('error': resultMap)
-        }
-        else{
-          result.putAll(handleAuthenticationError(response))
-        }
-      }
-      response.'401'= {resp ->
-        result.putAll(handleAuthenticationError(resp))
-      }
-    }
-    render result as JSON
-  }
-
-
-  private Map handleAuthenticationError(response){
-    log.error("GOKb server response: ${response.statusLine}")
-    return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-  }
-
-
-  private Map getResponseSorted(Map response){
-    Map result = [:]
-    result.put("response_exists", "true")
-    if (response.get("finished") == true){
-      response.remove("progress")
-      result.put("response_finished", "true")
-      if (response.get("job_result")?.get("pkgId") != null){
-        getResponseSortedPackage(response, result)
-      }
-      else{
-        getResponseSortedTitles(response, result)
-      }
+    if (uploadJob == null){
+      render '{}'
     }
     else{
-      result.put("response_finished", "false")
-      result.put("progress", response.get("progress"))
-    }
-    return result
-  }
-
-
-  private List getResponseSortedPackage(Map response, Map result){
-    def jobResult = response.get("job_result")
-    String message = jobResult?.get("message")
-    if (message != null){
-      result.put("response_message", message)
-    }
-    int error = jobResult?.get("errors") != null ? jobResult?.get("errors")?.size() : 0
-    int ok = jobResult?.get("results") != null ? jobResult?.get("results")?.size() : 0
-    if (ok == 0){
-      // package update --> get "OK" information from message string
-      Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
-      if (matcher.find()){
-        ok = Integer.valueOf(matcher.group(1))
-      }
-    }
-    result.put("response_ok", ok.toString())
-    result.put("response_error", error.toString())
-  }
-
-
-  private List getResponseSortedTitles(Map response, Map result){
-    int ok, error
-    List errorDetails = []
-    String message = response.get("job_result")?.get("message")
-    for (Map resultItem in response.get("job_result")?.get("results")){
-      if (resultItem.get("result").equals("OK")){
-        ok++
-      }
-      else if (resultItem.get("result").equals("ERROR")){
-        error++
-        errorDetails.add(getRecordError(resultItem))
-      }
-    }
-    result.put("response_ok", ok.toString())
-    result.put("response_error", error.toString())
-    if (errorDetails.size() > 0){
-      result.put("error_details", errorDetails)
-    }
-    if (message != null){
-      result.put("response_message", message)
+      render '{"status":"' + uploadJob.status + '"}'
     }
   }
 
 
-  private String getRecordError(Map record){
-    StringBuilder result = new StringBuilder()
-    if (record.get("message") != null){
-      result.append(record.get("message"))
+  def refreshJobStatus = {
+    UploadJob uploadJob = runningUploadJobs.get(params.uid)
+    if (uploadJob != null){
+      uploadJob.refreshStatus()
+      if (uploadJob.status.toString() in ['FINISHED_UNDEFINED', 'SUCCESS', 'ERROR']){
+        runningUploadJobs.remove(params.uid)
+        finishedUploadJobs.put(params.uid, uploadJob)
+      }
     }
-    result.toString()
+    render '{}'
+  }
+
+
+  def getJobProgress = {
+    UploadJob uploadJob = runningUploadJobs.get(params.uid)
+    if (uploadJob == null){
+      render '{}'
+    }
+    else{
+      uploadJob.updateCount()
+      render '{"count":"' + uploadJob.getCount() + '"}'
+    }
+  }
+
+
+  def getResultsTable = {
+    def results = [:]
+    UploadJob uploadJob = finishedUploadJobs.get(params.uid)
+    if (uploadJob != null){
+      results.putAll(uploadJob.getResultsTable())
+    }
+    StringJoiner stringJoiner = new StringJoiner(",", "[", "]")
+    for (def entry in results){
+      stringJoiner.add('{"'.concat(entry.key).concat('":"').concat(entry.value.toString()).concat('"}'))
+    }
+    render stringJoiner.toString()
+  }
+
+
+  private String getDestinationUri(fileType, boolean addOnly){
+    def uri = fileType.equals(Enrichment.FileType.PACKAGE) ?
+        grailsApplication.config.gokbApi.xrPackageUri :
+        (fileType.equals(Enrichment.FileType.TITLES) ?
+            grailsApplication.config.gokbApi.xrTitleUri :
+            null
+        )
+    uri = uri.concat("?async=true")
+    if (addOnly){
+      uri = uri.concat("&addOnly=true")
+    }
+    return uri
   }
 
 

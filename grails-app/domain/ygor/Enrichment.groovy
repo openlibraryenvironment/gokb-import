@@ -34,9 +34,9 @@ class Enrichment{
     ORIGIN,
     RESULT,
     JSON,
-    JSON_PACKAGE_ONLY,
-    JSON_TITLES_ONLY,
-    JSON_OO_RAW
+    PACKAGE,
+    TITLES,
+    RAW
   }
 
   static enum ProcessingState {
@@ -61,6 +61,7 @@ class Enrichment{
   File sessionFolder
   String ygorVersion
   String date
+  boolean addOnly
 
   def thread
   MappingsContainer mappingsContainer
@@ -69,6 +70,8 @@ class Enrichment{
   Map<String, List<String>> greenRecords = new HashMap<>()
   Map<String, List<String>> yellowRecords = new HashMap<>()
   Map<String, List<String>> redRecords = new HashMap<>()
+
+  Map<FileType, Boolean> hasBeenUploaded = new HashMap<>()
 
   static constraints = {
   }
@@ -164,6 +167,7 @@ class Enrichment{
     result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
     result.append("\"configuration\":{")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
+    result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
     if (dataContainer.curatoryGroup != null){
       result.append("\"curatoryGroup\":\"").append(dataContainer.curatoryGroup).append("\",")
     }
@@ -212,6 +216,7 @@ class Enrichment{
     en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.markDuplicateIds()
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
+    en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
       en.dataContainer.curatoryGroup = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")
@@ -241,6 +246,8 @@ class Enrichment{
     if (en.redRecords == null){
       en.redRecords = new HashMap<>()
     }
+    en.hasBeenUploaded.put(FileType.TITLES, false)
+    en.hasBeenUploaded.put(FileType.PACKAGE, false)
     return en
   }
 

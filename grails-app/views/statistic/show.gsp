@@ -4,92 +4,231 @@
 
 <p class="lead">${packageName}</p>
 
-    <div id="showUploadResults" hidden="hidden">
-        <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#btn-accord">
-            <g:message code="listDocuments.gokb.response"/>
-        </button>
-        <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
-                                          greenRecords?.size() + yellowRecords?.size()}"/>
-        <div class="collapse in" id="progress-section">
-            <div id="progress-${resultHash}" class="progress">
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
-                     aria-valuemin="0"aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
+<g:if test="${runningJobIds != null || finishedJobIds != null}">
+    <g:each in="${runningJobIds + finishedJobIds}" var="jobId">
+        <div id="uploadResult-${jobId}" class="showUploadResults">
+            <button type="button" class="btn btn-info response-button" data-toggle="collapse"
+                    data-target="#progress-section-${jobId}">
+                <g:message code="listDocuments.gokb.response"/>
+            </button>
+            <button type="button" class="btn btn-success response-remove" onclick="removeJobId('${jobId}')">
+                <g:message code="listDocuments.gokb.response.remove"/>
+            </button>
+            <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
+                    Integer.valueOf(greenRecords?.getAt("size")) + Integer.valueOf(yellowRecords?.getAt("size"))}"/>
+            <div class="collapse in" id="progress-section-${jobId}">
+                <div id="progress-${jobId}" class="progress" hidden="hidden">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
+                </div>
+                <table class="table" id="feedbackTable-${jobId}">
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
+            <br/><br/>
         </div>
-            <table class="table" id="feedbackTable">
-                <tbody>
-                    <script>
-                        var data = {}
-                        var feedbackTable = document.getElementById("feedbackTable").getElementsByTagName('tbody')[0];
-                        var rowTexts = new Map();
-                        var jobInfoHandle = setInterval( function(){
-                            console.log("get jobInfo of resultHash: ${resultHash}");
-                            jQuery.ajax({
-                                type: 'GET',
-                                url: '${grailsApplication.config.grails.app.context}/statistic/getJobInfo',
-                                id: '${jobId}',
-                                data: 'jobId=${jobId}',
-                                success: function (data) {
-                                    if (data != null && !jQuery.isEmptyObject(data)) {
-                                        if (data["error"] == "Request is missing an id."){
-                                            clearInterval(jobInfoHandle);
-                                            return;
-                                        }
-                                        document.getElementById("showUploadResults").removeAttribute("hidden")
-                                        if (data["response_finished"] == "true") {
-                                            rowTexts.set("${message(code: 'listDocuments.gokb.response.ok')}", data["response_ok"]);
-                                            rowTexts.set("${message(code: 'listDocuments.gokb.response.error')}", data["response_error"]);
-                                            let count=1;
-                                            if (data["error_details"] != null){
-                                                for (let errorDetail of data["error_details"]){
-                                                    rowTexts.set(count.toString(), errorDetail);
-                                                    count++;
-                                                }
-                                            }
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('hidden', 'hidden');
-                                            jQuery('#progress-section').attr('hidden', 'hidden');
-                                            jQuery('.progress').attr('hidden', 'hidden');
-                                        }
-                                        else {
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('aria-valuenow', data["progress"]);
-                                            jQuery('#progress-${resultHash} > .progress-bar').attr('style', 'width:' + data["progress"] + '%');
-                                            jQuery('#progress-${resultHash} > .progress-bar').text(data["progress"] + '%');
-                                        }
-                                    }
-                                },
-                                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                    console.error("ERROR - Could not get job info, failing Ajax request.");
-                                    console.error(textStatus + " : " + errorThrown);
-                                    console.error(data);
-                                    clearInterval(jobInfoHandle);
-                                }
-                            });
-                            if (rowTexts.size > 0){
-                                for (let text of rowTexts.entries()) {
-                                    let row = feedbackTable.insertRow()
-                                    row.insertCell(0).appendChild(document.createTextNode(text[0]));
-                                    row.insertCell(1).appendChild(document.createTextNode(text[1]));
-                                }
-                                clearInterval(jobInfoHandle);
-                            }
-                        }, 1000);
-                    </script>
-                </tbody>
-            </table>
-        </div>
-        <br/>
-    </div>
+    </g:each>
+</g:if>
 
+<script>
+    var rkm = getResponseKeyMap();
+    var rvm = getResponseValueMap();
+
+    // format buttons width
+    var responseButtons = $(".response-button");
+    var responseRemovers = $(".response-remove");
+    if (responseButtons.length > 0){
+        var divWidth = responseButtons[0].parentNode.parentElement.clientWidth;
+        var toggleWidth = (divWidth-5) * 5 / 6;
+        var removeWidth = (divWidth-5) / 6;
+        for (var i = 0, max = responseButtons.length; i < max; i++) {
+            responseButtons[i].style.width = toggleWidth+"px";
+            responseRemovers[i].style.width = removeWidth+"px";
+        }
+    }
+
+    var data = {}
+    function removeJobId(uid) {
+        jQuery.ajax({
+            method: "POST",
+            url: '${grailsApplication.config.grails.app.context}/statistic/removeJobId',
+            dataType: "json",
+            timeout: 500,
+            async: true,
+            data: {
+                uid: uid
+            },
+            success: function (data) {
+                jQuery('#uploadResult-'+uid).attr('hidden', 'hidden');
+            },
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                jQuery('#uploadResult-'+uid).attr('hidden', 'hidden');
+            }
+        });
+    }
+
+
+    var runningJobIdsAsList = "${runningJobIds}".replace("[", "").replace("]", "").split(", ");
+    var intervals = new Map();
+
+    $.each(runningJobIdsAsList, function (i, uid) {
+        if (uid != null && uid != ""){
+            var interval = setInterval(function () {
+                processJobStatus(uid);
+                updateJobStatus(uid);
+            }, 1000);
+            intervals.set(uid, interval);
+        }
+    });
+
+
+    function processJobStatus(uid) {
+        jQuery.ajax({
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/getJobStatus?uid=' + uid,
+            timeout: 60000,
+            success: function (data) {
+                if (JSON.parse(data)["status"] == 'STARTED') {
+                    showProgressBar(uid);
+                }
+                else {
+                    let interval = intervals.get(uid);
+                    if (interval != null) {
+                        clearInterval(interval);
+                        intervals.delete(uid);
+                    }
+                    showFinishedJobResult(uid);
+                }
+            },
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {}
+        });
+    }
+
+
+    function updateJobStatus(uid) {
+        jQuery.ajax({
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/refreshJobStatus?uid=' + uid,
+            timeout: 60000,
+            success: function (data) {},
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {}
+        });
+    }
+
+
+    function showProgressBar(uid){
+        jQuery('#progress-' + uid).removeAttr('hidden');
+        jQuery.ajax({
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/getJobProgress?uid=' + uid,
+            timeout: 60000,
+            success: function (data) {
+                var json = JSON.parse(data);
+                var max = jQuery('#progress-' + uid + ' > .progress-bar').attr('aria-valuemax');
+                var percentNow = json["count"] / max * 100;
+                jQuery('#progress-' + uid + ' > .progress-bar').attr('aria-valuenow', percentNow);
+                jQuery('#progress-' + uid + ' > .progress-bar').attr('style', 'width:' + percentNow + '%');
+                jQuery('#progress-' + uid + ' > .progress-bar').text(percentNow + '%');
+            },
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                console.error("Could not get job info for job " + uid);
+            }
+        });
+    }
+
+    // show former upload results
+    var finishedJobIdsAsList = "${finishedJobIds}".replace("[", "").replace("]", "").split(", ");
+    $.each(finishedJobIdsAsList, function (i, uid) {
+        if (uid != null && uid != ""){
+            showFinishedJobResult(uid);
+        }
+    });
+
+    function showFinishedJobResult(uid) {
+        let jobStatus;
+        jQuery.ajax({
+            method: "GET",
+            url: '${grailsApplication.config.grails.app.context}/statistic/getJobStatus?uid=' + uid,
+            timeout: 60000,
+            success: function (data) {
+                jobStatus = JSON.parse(data)["status"];
+                if (jobStatus == 'FINISHED_UNDEFINED' || jobStatus == 'SUCCESS' || jobStatus == 'ERROR') {
+                    // remove progress bar
+                    jQuery('#progress-' + uid).attr('hidden', 'hidden');
+                    // fill result table
+                    jQuery.ajax({
+                        method: "GET",
+                        url: '${grailsApplication.config.grails.app.context}/statistic/getResultsTable?uid=' + uid,
+                        timeout: 60000,
+                        success: function (data) {
+                            let table = document.getElementById("feedbackTable-" + uid).getElementsByTagName('tbody')[0];
+                            fillTable(table, data);
+                        },
+                        error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                            console.error("Could not get results for job "+uid);
+                        }
+                    });
+                }
+            },
+            error: function (deXMLHttpRequest, textStatus, errorThrown) {
+                jobStatus = null;
+            }
+        });
+    }
+
+    function fillTable(tableElement, data){
+        let json = JSON.parse(data);
+        if (json.length > 0){
+            json.forEach((entry) => {
+                for (let key in entry){
+                    appendRow(tableElement, key, entry[key]);
+                }
+            });
+        }
+    }
+
+    function appendRow(tableElement, key, value) {
+        let row = tableElement.insertRow();
+        let codedKey = rkm[key];
+        if (codedKey != undefined){
+            key = codedKey
+        }
+        let codedValue = rvm[value];
+        if (codedValue != undefined){
+            value = codedValue
+        }
+        row.insertCell(0).appendChild(document.createTextNode(key));
+        row.insertCell(1).appendChild(document.createTextNode(value));
+    }
+
+    function getResponseKeyMap() {
+        const rkm = new Object();
+        rkm["listDocuments.gokb.response.type"] = "${g.message(code:"listDocuments.gokb.response.type")}";
+        rkm["listDocuments.gokb.response.ok"] = "${g.message(code:"listDocuments.gokb.response.ok")}";
+        rkm["listDocuments.gokb.response.error"] = "${g.message(code:"listDocuments.gokb.response.error")}";
+        rkm["listDocuments.gokb.response.message"] = "${g.message(code:"listDocuments.gokb.response.message")}";
+        rkm["listDocuments.gokb.response.status"] = "${g.message(code:"listDocuments.gokb.response.status")}";
+        return rkm;
+    }
+
+    function getResponseValueMap() {
+        const rvm = new Object();
+        rvm["listDocuments.gokb.response.titles"] = "${g.message(code:"listDocuments.gokb.response.titles")}";
+        rvm["listDocuments.gokb.response.package"] = "${g.message(code:"listDocuments.gokb.response.package")}";
+        return rvm;
+    }
+
+</script>
 
 <div class="row">
     <g:set var="lineCounter" value="${0}"/>
     <g:set var="displayZDB" value="true"/>
 
-    <g:if test="${redRecords != null && !(redRecords.isEmpty())}">
+    <g:if test="${redRecords != null && !(redRecords.getAt("data")?.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-red">
-                    <h3 class="panel-title">${redRecords.size} <g:message code="statistic.show.records.red"/></h3>
+                    <h3 class="panel-title">${redRecords.getAt("size")} <g:message code="statistic.show.records.red"/></h3>
                 </div>
 
                 <div class="statistics-data">
@@ -104,23 +243,23 @@
                         </tr></thead>
                         <tbody>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${redRecords}" var="record">
+                        <g:each in="${redRecords?.getAt("data")}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
-                                            "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                            id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                            "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
                                 </td>
                                 <g:if test="${displayZDB}">
-                                    <td><g:if test="${record.value.getAt(1)}">
-                                        <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                    <td><g:if test="${record.getAt(1)}">
+                                        <a href="${record.getAt(1)}" class="link-icon"></a>
                                     </g:if></td>
-                                    <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
-                                        ${record.value.getAt(2)}<br/>
+                                    <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                        ${record.getAt(2)}<br/>
                                     </g:if></td>
                                 </g:if>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
-                                    ${record.value.getAt(3)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                    ${record.getAt(3)}<br/>
                                 </g:if></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -132,11 +271,11 @@
         </div>
     </g:if>
 
-    <g:if test="${displayZDB && yellowRecords != null && !(yellowRecords.isEmpty())}">
+    <g:if test="${displayZDB && yellowRecords != null && !(yellowRecords.getAt("data")?.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-yellow">
-                    <h3 class="panel-title">${yellowRecords.size} <g:message code="statistic.show.records.yellow"/></h3>
+                    <h3 class="panel-title">${yellowRecords.getAt("size")} <g:message code="statistic.show.records.yellow"/></h3>
                 </div>
                 <div class="statistics-data">
                     <table id="yellow-records"class="statistics-details">
@@ -148,21 +287,21 @@
                         </tr></thead>
                         <tbody>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${yellowRecords}" var="record">
+                        <g:each in="${yellowRecords?.getAt("data")}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
-                                            "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                            id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                            "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
                                 </td>
-                                <td><g:if test="${record.value.getAt(1)}">
-                                    <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                <td><g:if test="${record.getAt(1)}">
+                                    <a href="${record.getAt(1)}" class="link-icon"></a>
                                 </g:if></td>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
-                                    ${record.value.getAt(2)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                    ${record.getAt(2)}<br/>
                                 </g:if></td>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
-                                    ${record.value.getAt(3)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                    ${record.getAt(3)}<br/>
                                 </g:if></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -174,11 +313,11 @@
         </div>
     </g:if>
 
-    <g:if test="${greenRecords != null && !(greenRecords.isEmpty())}">
+    <g:if test="${greenRecords != null && !(greenRecords.getAt("data")?.isEmpty())}">
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading-green">
-                    <h3 class="panel-title">${greenRecords.size} <g:message code="statistic.show.records.green"/></h3>
+                    <h3 class="panel-title">${greenRecords.getAt("size")} <g:message code="statistic.show.records.green"/></h3>
                 </div>
 
                 <div class="statistics-data">
@@ -191,22 +330,22 @@
                         </tr></thead>
                         <tbody>
                         <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${greenRecords}" var="record">
+                        <g:each in="${greenRecords?.getAt("data")}" var="record">
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell">
+                            <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                        id="${record.value.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.value.getAt(0)) ?
-                                        "<"+message(code: 'missing')+">" : record.value.getAt(0)}</g:link>
+                                id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                        "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
                                 <g:if test="${displayZDB}">
-                                    <td><g:if test="${record.value.getAt(1)}">
-                                        <a href="${record.value.getAt(1)}" class="link-icon"></a>
+                                    <td><g:if test="${record.getAt(1)}">
+                                        <a href="${record.getAt(1)}" class="link-icon"></a>
                                     </g:if></td>
-                                    <td class="statistics-cell"><g:if test="${record.value.getAt(2) != null}">
-                                        ${record.value.getAt(2)}<br/>
+                                    <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                        ${record.getAt(2)}<br/>
                                     </g:if></td>
                                 </g:if>
-                                <td class="statistics-cell"><g:if test="${record.value.getAt(3) != null}">
-                                    ${record.value.getAt(3)}<br/>
+                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                    ${record.getAt(3)}<br/>
                                 </g:if></td>
                             </tr>
                             <g:set var="lineCounter" value="${lineCounter + 1}"/>
@@ -223,11 +362,32 @@
         <g:hiddenField name="resultHash" value="${resultHash}"/>
         <div class="col-xs-12" style="margin-bottom: 20px">
             <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-                <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
-                        data-target="#credentialsModal"><g:message code="listDocuments.button.sendTitlesFile"/></button>
-                <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
-                        data-target="#credentialsModal"><g:message code="listDocuments.button.sendPackageFile"/></button>
-
+                <g:if test="${titlesUploaded == true}">
+                    <!-- Titles have already been uploaded -> disable upload button -->
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                        <g:message code="listDocuments.button.sendTitlesFile"/>
+                    </button>
+                </g:if>
+                <g:else>
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                        <g:message code="listDocuments.button.sendTitlesFile"/>
+                    </button>
+                </g:else>
+                <g:if test="${packageUploaded == true}">
+                    <!-- Package has already been uploaded -> disable upload button -->
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                        <g:message code="listDocuments.button.sendPackageFile"/>
+                    </button>
+                </g:if>
+                <g:else>
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                        <g:message code="listDocuments.button.sendPackageFile"/>
+                    </button>
+                </g:else>
                 <div class="modal fade" id="credentialsModal" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -243,7 +403,6 @@
                                                 code="listDocuments.gokb.username"/></span>
                                         <g:textField name="gokbUsername" size="24" class="form-control"/>
                                     </div>
-
                                     <div class="input-group">
                                         <span class="input-group-addon"><g:message
                                                 code="listDocuments.gokb.password"/></span>
@@ -255,7 +414,7 @@
                                                 code="listDocuments.button.cancel"/></button>
                                         <g:actionSubmit action="" value="${message(code: 'listDocuments.button.send')}"
                                                         class="btn btn-success btn-same-width"
-                                                        name="cred-modal-btn-send" data-toggle="tooltip"
+                                                        id="cred-modal-btn-send" data-toggle="tooltip"
                                                         data-placement="top"
                                                         title="JavaScript ${message(code: 'technical.required')}."/>
                                     </div>
@@ -267,14 +426,17 @@
                 <br/>
                 <br/>
                 <script>
-                    $('#credentialsModal').on('show.bs.modal', function (event) {
-                        var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
-                        if (uri.localeCompare('package') == 0) {
-                            $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendPackageFile');
-                        } else if (uri.localeCompare('titles') == 0) {
-                            $(this).find('.modal-body .btn.btn-success').attr('name', '_action_sendTitlesFile');
-                        }
-                    })
+                    function assignSendTargetToModal(){
+                        $('#credentialsModal').on('show.bs.modal', function (event) {
+                            var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
+                            if (uri.localeCompare('package') == 0) {
+                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendPackageFile');
+                            }
+                            else if (uri.localeCompare('titles') == 0) {
+                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendTitlesFile');
+                            }
+                        });
+                    }
                 </script>
             </g:if>
             <g:else>

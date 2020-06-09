@@ -26,7 +26,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
 
 
   def integrate(MultipleProcessingThread owner, DataContainer dataContainer) {
-    if (status != IntegrationStatus.INTERRUPTING){
+    if (status != ExternalIntegrationService.IntegrationStatus.INTERRUPTING){
       super.integrate()
       zdbIdMapping = mappingsContainer.getMapping("zdbId", MappingsContainer.YGOR)
       processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
@@ -34,8 +34,8 @@ class ZdbIntegrationService extends ExternalIntegrationService {
       Map<String, Record> linkedRecords = new HashMap<>()
       for (String recId in dataContainer.records){
         Record record = Record.load(dataContainer.enrichmentFolder, dataContainer.resultHash, recId, dataContainer.mappingsContainer)
-        if (status == IntegrationStatus.INTERRUPTING){
-          status = IntegrationStatus.STOPPED
+        if (status == ExternalIntegrationService.IntegrationStatus.INTERRUPTING){
+          status = ExternalIntegrationService.IntegrationStatus.STOPPED
           return
         }
         if (isApiCallMedium(record)){
@@ -51,7 +51,7 @@ class ZdbIntegrationService extends ExternalIntegrationService {
         linkedRecord.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
       }
     }
-    status = IntegrationStatus.IDLE
+    status = ExternalIntegrationService.IntegrationStatus.IDLE
   }
 
 

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.normalizers.EditionNormalizer
@@ -320,11 +321,13 @@ class Record{
     jsonGenerator.writeEndArray()
     if (!duplicates.isEmpty()){
       jsonGenerator.writeFieldName("duplicates")
-      jsonGenerator.writeStartArray()
+      jsonGenerator.writeStartObject()
       for (def dup in duplicates){
-        jsonGenerator.writeStringField(dup.key.toReducedString(), dup.value)
+        if (dup.key != null && dup.value != null){
+          jsonGenerator.writeStringField(dup.key.toString(), dup.value.toString())
+        }
       }
-      jsonGenerator.writeEndArray()
+      jsonGenerator.writeEndObject()
     }
     if (!flags.isEmpty()){
       jsonGenerator.writeFieldName("flags")
@@ -414,10 +417,17 @@ class Record{
       result.publicationType = publicationType
     }
     result.duplicates = [:]
-    Collection duplicates = JsonToolkit.fromJson(json, "duplicates")
-    if (duplicates != null){
-      for (def dup in duplicates){
-        result.duplicates.put(AbstractIdentifier.fromString(dup.key), dup.value)
+    JsonNode duplicates = json.path("duplicates")
+    if (duplicates instanceof ObjectNode){
+      Iterator<String> fieldNames = duplicates.fieldNames()
+      if (fieldNames != null){
+        while (fieldNames.hasNext()){
+          String fieldName = fieldNames.next()
+          String value = ((TextNode) duplicates.path(fieldName))?.asText()
+          if (fieldName != null && value != null){
+            result.duplicates.put(AbstractIdentifier.fromString(fieldName, mappings), value)
+          }
+        }
       }
     }
     result.flags = [:]

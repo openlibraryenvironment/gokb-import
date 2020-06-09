@@ -82,7 +82,10 @@ class JsonToolkit {
       if (multiField.keyMapping == null) {
         def value = multiField.getFirstPrioValue()
         ArrayList concatKey = Arrays.asList(typeFilter)
-        concatKey.addAll(multiField.fields.iterator().next().key)
+        Iterator it = multiField.fields.iterator()
+        if (it.hasNext()){
+          concatKey.addAll(it.next().key)
+        }
         upsertIntoJsonNode(result, concatKey, value, multiField.type, formatter, false)
       }
       else {
@@ -114,7 +117,9 @@ class JsonToolkit {
 
   private static void upsertIntoJsonNode(JsonNode root, ArrayList<String> keyPath, String value, String type,
                                          YgorFormatter formatter, boolean keepIfEmpty) {
-    assert keyPath.size() > 1
+    if (keyPath.size() <= 1){
+      return
+    }
     if (keyPath.size() == 2 && keyPath[1].startsWith("(")) {
       ObjectNode multiLeaf = buildMultiLeaf(keyPath, value)
       putAddNode(keyPath, root, multiLeaf)

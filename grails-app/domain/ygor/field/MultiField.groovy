@@ -241,6 +241,9 @@ class MultiField {
 
 
   static String extractFixedValue(String value) {
+    if (StringUtils.isEmpty(value)){
+      return value
+    }
     Matcher fixedMatcher = FIXED_PATTERN.matcher(value)
     if (fixedMatcher.matches()) {
       value = fixedMatcher.group(1)
