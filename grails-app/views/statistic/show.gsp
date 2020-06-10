@@ -14,8 +14,13 @@
             <button type="button" class="btn btn-success response-remove" onclick="removeJobId('${jobId}')">
                 <g:message code="listDocuments.gokb.response.remove"/>
             </button>
-            <g:set var="nrOfRecords" value="${greenRecords == null && yellowRecords == null ? 0 :
-                    Integer.valueOf(greenRecords?.getAt("size")) + Integer.valueOf(yellowRecords?.getAt("size"))}"/>
+            <g:set var="nrOfGreenRecords" value='${greenRecords == null || greenRecords.getAt("size") == null ||
+                    StringUtils.isEmpty(greenRecords.getAt("size")) || greenRecords?.getAt("size").matches("[a-zA-Z]+")
+                    ? 0 : Integer.valueOf(greenRecords?.getAt("size"))}'/>
+            <g:set var="nrOfYellowRecords" value='${yellowRecords == null || yellowRecords.getAt("size") == null ||
+                    StringUtils.isEmpty(yellowRecords.getAt("size")) || yellowRecords?.getAt("size").matches("[a-zA-Z]+")
+                    ? 0 : Integer.valueOf(yellowRecords?.getAt("size"))}'/>
+            <g:set var="nrOfRecords" value="${nrOfGreenRecords + nrOfYellowRecords}"/>
             <div class="collapse in" id="progress-section-${jobId}">
                 <div id="progress-${jobId}" class="progress" hidden="hidden">
                     <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
