@@ -14,12 +14,14 @@
             <button type="button" class="btn btn-success response-remove" onclick="removeJobId('${jobId}')">
                 <g:message code="listDocuments.gokb.response.remove"/>
             </button>
-            <g:set var="nrOfGreenRecords" value='${greenRecords == null || greenRecords.getAt("size") == null ||
-                    StringUtils.isEmpty(greenRecords.getAt("size")) || greenRecords?.getAt("size").matches("[a-zA-Z]+")
-                    ? 0 : Integer.valueOf(greenRecords?.getAt("size"))}'/>
-            <g:set var="nrOfYellowRecords" value='${yellowRecords == null || yellowRecords.getAt("size") == null ||
-                    StringUtils.isEmpty(yellowRecords.getAt("size")) || yellowRecords?.getAt("size").matches("[a-zA-Z]+")
-                    ? 0 : Integer.valueOf(yellowRecords?.getAt("size"))}'/>
+            <g:set var="nrOfGreenRecords" value='${greenRecords == null || greenRecords.getAt("recordsTotal") == null ||
+                    greenRecords.getAt("recordsTotal") == "" ||
+                    greenRecords.getAt("recordsTotal") instanceof String && greenRecords.getAt("recordsTotal").matches("[a-zA-Z]+")
+                    ? 0 : greenRecords.getAt("recordsTotal")}'/>
+            <g:set var="nrOfYellowRecords" value='${yellowRecords == null || yellowRecords.getAt("recordsTotal") == null ||
+                    yellowRecords.getAt("recordsTotal") == "" ||
+                    yellowRecords.getAt("recordsTotal") instanceof String && yellowRecords.getAt("recordsTotal").matches("[a-zA-Z]+")
+                    ? 0 : yellowRecords.getAt("recordsTotal")}'/>
             <g:set var="nrOfRecords" value="${nrOfGreenRecords + nrOfYellowRecords}"/>
             <div class="collapse in" id="progress-section-${jobId}">
                 <div id="progress-${jobId}" class="progress" hidden="hidden">
