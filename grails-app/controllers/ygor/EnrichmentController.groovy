@@ -92,7 +92,7 @@ class EnrichmentController{
   def uploadFile = {
     def file = request.getFile('uploadFile')
     if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
-        request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate.file?.originalFilename){
+        request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate?.file?.originalFilename){
       // the file form is unpopulated but the previously selected file is unchanged
       file = request.session.lastUpdate.file
     }

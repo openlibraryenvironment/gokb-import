@@ -48,7 +48,6 @@ class StatisticController{
     }
     enrichmentsUploading.add(resultHash)
     String originHash = request.parameterMap.originHash[0]
-    log.info('show enrichment ' + resultHash)
     Enrichment enrichment = getEnrichment(resultHash)
     enrichmentsUploading.remove(resultHash)
     render(
