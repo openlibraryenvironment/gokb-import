@@ -486,9 +486,13 @@ class StatisticController{
             grailsApplication.config.gokbApi.xrTitleUri :
             null
         )
-    uri = uri.concat("?async=true")
-    if (addOnly){
-      uri = uri.concat("&addOnly=true")
+    if (fileType.equals(Enrichment.FileType.PACKAGE)){
+      uri = uri.concat("?async=true")
+      // Titles are being sent 1 per request, there's no need for asynchronicity
+      if (addOnly){
+        uri = uri.concat("&addOnly=true")
+      }
+      // (addOnly has no effect for titles, it only needs to be set for packages)
     }
     return uri
   }
