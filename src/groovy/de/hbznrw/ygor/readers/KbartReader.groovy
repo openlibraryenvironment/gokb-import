@@ -109,8 +109,15 @@ class KbartReader {
       return null
     }
     Map<String, String> resultMap = new HashMap<>()
+    boolean hasContentYet = false
     for (int i = 0; i < csvHeader.size(); i++) {
       resultMap.put(csvHeader.get(i), splitItem[i])
+      if (!hasContentYet && StringUtils.isNotBlank(splitItem[i])){
+        hasContentYet = true
+      }
+    }
+    if (!hasContentYet){
+      return null
     }
     lastItemReturned = item
     // Fix coverage_depth = Volltext
