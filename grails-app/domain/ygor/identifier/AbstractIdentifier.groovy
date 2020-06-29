@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class AbstractIdentifier {
 
   static mapWith = "none" // disable persisting into database

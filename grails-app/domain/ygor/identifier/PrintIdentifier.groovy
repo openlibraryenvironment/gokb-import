@@ -2,6 +2,7 @@ package ygor.identifier
 
 import ygor.field.FieldKeyMapping
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class PrintIdentifier extends AbstractIdentifier {
 
   static mapWith = "none" // disable persisting into database

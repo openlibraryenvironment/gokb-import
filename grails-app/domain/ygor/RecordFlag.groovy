@@ -6,6 +6,7 @@ import de.hbznrw.ygor.enums.Status
 import de.hbznrw.ygor.tools.JsonToolkit
 import ygor.field.FieldKeyMapping
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class RecordFlag{
 
   static mapWith = "none" // disable persisting into database

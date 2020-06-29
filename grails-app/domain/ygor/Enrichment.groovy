@@ -26,6 +26,7 @@ import java.time.LocalDateTime
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class Enrichment{
 
   static mapWith = "none" // disable persisting into database
@@ -111,6 +112,7 @@ class Enrichment{
     this.apiProgress = progress
   }
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   double getProgress(){
     apiProgress
   }
@@ -119,6 +121,7 @@ class Enrichment{
     apiMessage = message
   }
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   String getMessage(){
     apiMessage
   }
@@ -131,6 +134,7 @@ class Enrichment{
     this.status = status
   }
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   ProcessingState getStatus(){
     status
   }

@@ -22,6 +22,7 @@ import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.*
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class Record{
 
   static mapWith = "none" // disable persisting into database
@@ -165,6 +166,7 @@ class Record{
   }
 
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   boolean isValid() {
     // validate tipp.titleUrl
     MultiField urlMultiField = multiFields.get("titleUrl")
@@ -360,6 +362,7 @@ class Record{
   }
 
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   String getDisplayTitle(){
     List<String> titleFieldNames = ["publicationTitle", "publicationTitleVariation", "publicationSubTitle"]
     for (String displayTitleCandidateFieldNames in titleFieldNames){

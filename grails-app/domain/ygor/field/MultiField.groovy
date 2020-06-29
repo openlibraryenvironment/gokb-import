@@ -12,6 +12,7 @@ import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class MultiField {
 
   static mapWith = "none" // disable persisting into database
@@ -64,6 +65,7 @@ class MultiField {
   }
 
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   String getFirstPrioValue() {
     return getPrioValues()[0]
   }
@@ -125,6 +127,7 @@ class MultiField {
   }
 
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   String getPrioSource() {
     if (revised != null){
       return g.message(code: 'record.source.revised')

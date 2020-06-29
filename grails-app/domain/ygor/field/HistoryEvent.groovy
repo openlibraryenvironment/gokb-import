@@ -8,6 +8,7 @@ import ygor.Enrichment
 import ygor.Record
 
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class HistoryEvent {
 
   static mapWith = "none" // disable persisting into database
@@ -76,6 +77,7 @@ class HistoryEvent {
   }
 
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   boolean isValid(){
     if (StringUtils.isEmpty(date)){
       return false

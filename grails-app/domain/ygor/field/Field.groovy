@@ -3,6 +3,7 @@ package ygor.field
 import com.fasterxml.jackson.core.JsonGenerator
 
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class Field {
 
   static mapWith = "none" // disable persisting into database

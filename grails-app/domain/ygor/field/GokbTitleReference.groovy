@@ -15,6 +15,7 @@ import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
 
+@SuppressWarnings('JpaObjectClassSignatureInspection')
 class GokbTitleReference{
 
   static mapWith = "none" // disable persisting into database
@@ -47,6 +48,7 @@ class GokbTitleReference{
   }
 
 
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   boolean isValid(){
     // publicationTitle must be set
     if (StringUtils.isEmpty(publicationTitle)){
