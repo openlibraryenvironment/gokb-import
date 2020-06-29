@@ -26,16 +26,7 @@ class KbartReader {
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
   static MANDATORY_KBART_KEYS = [
-      'date_first_issue_online',
-      'date_last_issue_online',
-      'num_first_vol_online',
-      'num_last_vol_online',
-      'num_first_issue_online',
-      'num_last_issue_online',
       'title_url',
-      'embargo_info',
-      'coverage_depth',
-      'notes',
       'publication_type'
   ]
 
