@@ -237,8 +237,9 @@ class StatisticController{
     String enrichmentFolder = enrichment.sessionFolder.absolutePath.concat(File.separator).concat(resultHash).concat(File.separator)
     Record record = Record.load(enrichmentFolder, resultHash, params.id, enrichment.mappingsContainer)
     [
-        resultHash: resultHash,
-        record    : record
+        resultHash          : resultHash,
+        record              : record,
+        zdbEnrichmentActive : enrichment.isZdbIntegrated
     ]
   }
 

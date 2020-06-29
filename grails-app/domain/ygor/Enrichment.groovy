@@ -63,6 +63,8 @@ class Enrichment{
   String ygorVersion
   String date
   boolean addOnly
+  boolean isZdbIntegrated
+  boolean isEzbIntegrated
 
   def thread
   MappingsContainer mappingsContainer
@@ -88,6 +90,8 @@ class Enrichment{
     new File(enrichmentFolder).mkdirs()
     mappingsContainer = new MappingsContainer()
     dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
+    isZdbIntegrated = false
+    isEzbIntegrated = false
   }
 
 
@@ -172,6 +176,8 @@ class Enrichment{
     result.append("\"configuration\":{")
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
+    result.append("\"isZdbIntegrated\":\"").append(String.valueOf(isZdbIntegrated)).append("\",")
+    result.append("\"isEzbIntegrated\":\"").append(String.valueOf(isEzbIntegrated)).append("\",")
     if (dataContainer.curatoryGroup != null){
       result.append("\"curatoryGroup\":\"").append(dataContainer.curatoryGroup).append("\",")
     }
@@ -221,6 +227,8 @@ class Enrichment{
     en.dataContainer.markDuplicateIds()
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
+    en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
+    en.isEzbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isEzbIntegrated"))
 
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
       en.dataContainer.curatoryGroup = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")

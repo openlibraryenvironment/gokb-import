@@ -31,7 +31,8 @@ class Record{
   static List<String> GOKB_FIELD_ORDER = []
   static {
     MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-    GOKB_FIELD_ORDER.addAll(new JsonSlurper().parseText(new ClassPathResource("/resources/GokbOutputFieldOrder.json").file.text))
+    GOKB_FIELD_ORDER.addAll(new JsonSlurper().parseText(
+        new ClassPathResource("/resources/GokbOutputFieldOrder.json").file.text))
   }
   static JsonFactory JSON_FACTORY = new JsonFactory()
   static{
@@ -47,8 +48,8 @@ class Record{
   String publicationType
   Map multiFields
   Map validation
-  String zdbIntegrationDate
-  String ezbIntegrationDate
+  String zdbIntegrationDate // TODO : performance check : this information can be replaced by a boolean "isZdbIntegrated"
+  String ezbIntegrationDate // TODO : performance check : this information can be replaced by a boolean "isEzbIntegrated"
   String zdbIntegrationUrl
   String ezbIntegrationUrl
   List historyEvents

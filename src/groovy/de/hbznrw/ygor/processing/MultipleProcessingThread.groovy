@@ -2,7 +2,6 @@ package de.hbznrw.ygor.processing
 
 import com.google.common.base.Throwables
 import de.hbznrw.ygor.export.GokbExporter
-import de.hbznrw.ygor.export.Statistics
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
@@ -89,9 +88,11 @@ class MultipleProcessingThread extends Thread {
             kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)
             break
           case EzbReader.IDENTIFIER:
+            enrichment.isEzbIntegrated = true
             ezbIntegrationService.integrate(this, enrichment.dataContainer)
             break
           case ZdbReader.IDENTIFIER:
+            enrichment.isZdbIntegrated = true
             zdbIntegrationService.integrate(this, enrichment.dataContainer)
             break
         }
