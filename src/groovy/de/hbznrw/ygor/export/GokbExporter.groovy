@@ -189,8 +189,7 @@ class GokbExporter {
     def result = new ObjectNode(NODE_FACTORY)
     def identifiers = new ArrayNode(NODE_FACTORY)
 
-    for (String field in ["breakable", "consistent", "fixed", "global",
-                          "listStatus", "nominalProvider", "paymentType", "scope", "userListVerifier"]) {
+    for (String field in ["nominalProvider"]) {
       result.put("${field}", (String) packageHeader."${field}")
     }
     setIsil(enrichment.dataContainer, identifiers)
@@ -212,16 +211,6 @@ class GokbExporter {
       result.set("curatoryGroups", (curatoryGroups))
     }
     setPkgId(enrichment.dataContainer, identifiers)
-    result.set("additionalProperties", getArrayNode(packageHeader, "additionalProperties"))
-
-    def source = new ObjectNode(NODE_FACTORY)
-    if (packageHeader.source?.name != null && !StringUtils.isEmpty(packageHeader.source.name))
-      source.put("name", packageHeader.source.name)
-    if (packageHeader.source?.normname != null && !StringUtils.isEmpty(packageHeader.source.normname))
-      source.put("normname", packageHeader.source.normname)
-    if (packageHeader.source?.url != null && !StringUtils.isEmpty(packageHeader.source.url))
-      source.put("url", packageHeader.source.url)
-    result.set("source", source)
 
     result.set("identifiers", identifiers)
 
@@ -362,15 +351,6 @@ class GokbExporter {
       isilNode.put("value", dc.isil)
       identifiers.add(isilNode)
     }
-  }
-
-
-  static private ArrayNode getArrayNode(def source, def sourceField) {
-    ArrayNode result = new ArrayNode(NODE_FACTORY)
-    for (def item in source."${sourceField}") {
-      result.add(item.v)
-    }
-    result
   }
 
 
