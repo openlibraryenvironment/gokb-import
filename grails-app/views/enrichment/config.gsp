@@ -324,64 +324,8 @@
 				<tr>
 					<td><em>fixed</em></td>
 					<td></td>
-					<td>packageHeader.breakable</td>
-					<td>${FixedValues.packageHeader_breakable}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
-					<td>packageHeader.consistent</td>
-					<td>${FixedValues.packageHeader_consistent}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
-					<td>packageHeader.fixed</td>
-					<td>${FixedValues.packageHeader_fixed}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
-					<td>packageHeader.global</td>
-					<td>${FixedValues.packageHeader_global}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
-					<td>packageHeader.listStatus</td>
-					<td>${FixedValues.packageHeader_listStatus}</td>
-				</tr>
-
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
-					<td>tipps.medium</td>
-					<td>${FixedValues.tipp_medium}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
-					<td>tipps.status</td>
-					<td>${FixedValues.tipp_status}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
-					<td>tipps.coverage.coverageDepth</td>
-					<td>${FixedValues.tipp_coverage_coverageDepth}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
-					<td></td>
 					<td>tipps.title.type</td>
 					<td>Serial / Database / Ebook</td>
-				</tr>
-
-				<tr>
-					<td><em>fixed</em></td>
-					<td>title.editStatus</td>
-					<td></td>
-					<td>${FixedValues.title_editStatus}</td>
 				</tr>
 				<tr>
 					<td><em>fixed</em></td>
@@ -391,24 +335,10 @@
 				</tr>
 				<tr>
 					<td><em>fixed</em></td>
-					<td>title.status</td>
-					<td></td>
-					<td>${FixedValues.title_status}</td>
-				</tr>
-				<tr>
-					<td><em>fixed</em></td>
 					<td>title.type</td>
 					<td></td>
 					<td>Serial / Database / Ebook</td>
 				</tr>
-				
-				<tr>
-					<td><em>fixed</em></td>
-					<td>title.publisher_history.status</td>
-					<td></td>
-					<td>${FixedValues.title_publisher_history_status}</td>
-				</tr>
-								
 			</tbody>
 		</table>
 		

@@ -1,7 +1,6 @@
 package de.hbznrw.ygor.export.structure
 
 class Meta {
-
   String type
   String ygor
   String date
