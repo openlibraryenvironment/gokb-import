@@ -74,8 +74,8 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   private String getJobId(){
-    if (gokbJobId == null && result != null){
-      gokbJobId = result[0]?.get("info")?.get("job_id")
+    if (gokbJobId == null && result != null && result.size() > 0 && result[0].get("info") != null){
+      gokbJobId = result[0].get("info")?.get("job_id")
     }
     return gokbJobId
   }

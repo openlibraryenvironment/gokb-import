@@ -65,6 +65,12 @@ class UploadJob{
       String responseStatus = uploadThread.getGokbResponseValue("responseStatus")
       if ("error" == responseStatus){
         status = Status.ERROR
+        return
+      }
+      String innerResponseStatus = uploadThread.getGokbResponseValue("job_result.result")
+      if ("error" == innerResponseStatus){
+        status = Status.ERROR
+        return
       }
     }
   }
