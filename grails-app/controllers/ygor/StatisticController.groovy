@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.tools.FileToolkit
@@ -104,9 +105,9 @@ class StatisticController{
         if (i >= from && i < to){
           def cols = value
           if (value.size() > 4){
-            String title = value.get(0)
+            String title = StringUtils.isEmpty(value.get(0)) ? message(code: 'missing') : value.get(0)
             String uid = value.get(4)
-            if (!(StringUtils.isEmpty(title)) && !(StringUtils.isEmpty(uid)) && !value[0].contains('<')){
+            if (!(StringUtils.isEmpty(uid)) && !value[0].contains('<')){
               StringWriter sw = new StringWriter()
               sw.write('<a href="/ygor/statistic/edit/')
               sw.write(uid)

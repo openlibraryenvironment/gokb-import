@@ -46,6 +46,7 @@ class Record{
   OnlineIdentifier onlineIdentifier
   PrintIdentifier printIdentifier
   String publicationType
+  String displayTitle
   Map multiFields
   Map validation
   String zdbIntegrationDate // TODO : performance check : this information can be replaced by a boolean "isZdbIntegrated"
@@ -84,6 +85,7 @@ class Record{
     for (def ygorMapping in container.ygorMappings) {
       multiFields.put(ygorMapping.key, new MultiField(ygorMapping.value))
     }
+    displayTitle = ""
     zdbIntegrationDate = null
     ezbIntegrationDate = null
     zdbIntegrationUrl = null
@@ -364,12 +366,12 @@ class Record{
 
 
   @SuppressWarnings('JpaAttributeMemberSignatureInspection')
-  String getDisplayTitle(){
+  void setDisplayTitle(){
     List<String> titleFieldNames = ["publicationTitle", "publicationTitleVariation", "publicationSubTitle"]
     for (String displayTitleCandidateFieldNames in titleFieldNames){
       String value = multiFields.get(displayTitleCandidateFieldNames).getFirstPrioValue()
       if (!StringUtils.isEmpty(value)){
-        return value
+        displayTitle = value
       }
     }
   }

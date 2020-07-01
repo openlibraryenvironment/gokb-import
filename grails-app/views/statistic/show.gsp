@@ -254,8 +254,8 @@
                             <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                                 <td class="statistics-cell">
                                     <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
-                                            "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
+                                            id="${record.getAt(4)}">${record.getAt(0) == null || record.getAt(0) == "" ?
+                                            "<" + message(code: 'missing') + ">" : record.getAt(0)}</g:link>
                                 </td>
                                 <g:if test="${displayZDB}">
                                     <td><g:if test="${record.getAt(1)}">

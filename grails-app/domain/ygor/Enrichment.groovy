@@ -400,9 +400,11 @@ class Enrichment{
 
 
   synchronized void classifyRecord(Record record){
+    record.setDisplayTitle()
     String key = record.displayTitle.concat(record.uid)
     List<String> values = [
-        valOrEmpty(record.displayTitle.size() > 100 ? record.displayTitle.substring(0,100).concat("...") : record.displayTitle),
+        StringUtils.isEmpty(record.displayTitle) ? "" : (
+            record.displayTitle.size() > 100 ? record.displayTitle.substring(0,100).concat("...") : record.displayTitle),
         valOrEmpty(record.zdbIntegrationUrl),
         valOrEmpty(record.zdbId),
         valOrEmpty(record.onlineIdentifier),
