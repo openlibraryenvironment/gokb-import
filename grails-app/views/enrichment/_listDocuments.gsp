@@ -49,10 +49,10 @@
                             <div class="input-group">
                                 <span class="input-group-addon"><g:message code="listDocuments.key.title" /></span>
                                 <g:if test="${session.lastUpdate?.parameterMap?.pkgTitle}">
-                                    <g:textField name="pkgTitle" size="48" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" required="true"/>
+                                    <g:textField name="pkgTitle" size="60" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" required="true"/>
                                 </g:if>
                                 <g:else>
-                                    <g:textField name="pkgTitle" size="48" placeholder="Munchhausen Verlag: Science Journals: hbz: 1999" class="form-control" required="true"/>
+                                    <g:textField name="pkgTitle" size="60" class="form-control" required="true"/>
                                 </g:else>
                             </div>
                             <span class="checkbox">
