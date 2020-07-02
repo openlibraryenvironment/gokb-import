@@ -189,6 +189,10 @@ class MultipleProcessingThread extends Thread {
 
   void increaseProgress() {
     progressCurrent += progressIncrement
+    if (progressCurrent > 99){
+      // Don't increase to 100 as this can irritate the user in case of waiting
+      progressCurrent = 99
+    }
     enrichment.setProgress(progressCurrent)
   }
 
