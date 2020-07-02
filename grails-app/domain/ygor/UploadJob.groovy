@@ -68,7 +68,7 @@ class UploadJob{
         return
       }
       String innerResponseStatus = uploadThread.getGokbResponseValue("job_result.result")
-      if ("error" == innerResponseStatus){
+      if ("error" == innerResponseStatus.toLowerCase()){
         status = Status.ERROR
         return
       }
