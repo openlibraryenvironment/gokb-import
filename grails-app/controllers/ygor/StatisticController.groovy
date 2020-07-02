@@ -259,6 +259,9 @@ class StatisticController{
         record = Record.load(enrichmentFolder, resultHash, params['uid'], enrichment.mappingsContainer)
         MultiField multiField = record.multiFields.get(key)
         multiField.revised = value.trim()
+        if (key.equals("publicationType")){
+          record.publicationType = multiField.revised.toLowerCase()
+        }
         record.validate(namespace)
         record.save(enrichmentFolder, resultHash)
       }
