@@ -22,10 +22,10 @@
                     yellowRecords.getAt("recordsTotal") == "" ||
                     yellowRecords.getAt("recordsTotal") instanceof String && yellowRecords.getAt("recordsTotal").matches("[a-zA-Z]+")
                     ? 0 : yellowRecords.getAt("recordsTotal")}'/>
-            <g:set var="nrOfRecords" value="${nrOfGreenRecords + nrOfYellowRecords}"/>
+            <g:set var="nrOfRecords" value="${(nrOfGreenRecords + nrOfYellowRecords) * 1.02}"/>
             <div class="collapse in" id="progress-section-${jobId}">
                 <div id="progress-${jobId}" class="progress" hidden="hidden">
-                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="${nrOfRecords}" style="width:0%;">0%</div>
                 </div>
                 <table class="table" id="feedbackTable-${jobId}">
                     <tbody>
@@ -132,7 +132,7 @@
             success: function (data) {
                 var json = JSON.parse(data);
                 var max = jQuery('#progress-' + uid + ' > .progress-bar').attr('aria-valuemax');
-                var percentNow = json["count"] / max * 100;
+                var percentNow = (json["count"] / max * 100).toFixed(1);
                 jQuery('#progress-' + uid + ' > .progress-bar').attr('aria-valuenow', percentNow);
                 jQuery('#progress-' + uid + ' > .progress-bar').attr('style', 'width:' + percentNow + '%');
                 jQuery('#progress-' + uid + ' > .progress-bar').text(percentNow + '%');
