@@ -12,6 +12,7 @@ abstract class UploadThreadGokb extends Thread{
   int total = 0
   List result
   int count = 0
+  String locale
 
   abstract Map getResultsTable();
 

@@ -1,12 +1,12 @@
 package ygor
 
-import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.tools.FileToolkit
 import grails.converters.JSON
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
+import org.springframework.web.servlet.support.RequestContextUtils
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -383,11 +383,13 @@ class StatisticController{
       String uri = getDestinationUri(fileType, enrichment.addOnly)
       UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
-        SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword)
+        SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
+            RequestContextUtils.getLocale(request).toString())
         uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
-        SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(grailsApplication, enrichment, uri, gokbUsername, gokbPassword)
+        SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(grailsApplication, enrichment, uri,
+            gokbUsername, gokbPassword, RequestContextUtils.getLocale(request).toString())
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
       }
       if (uploadJob != null){

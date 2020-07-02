@@ -11,7 +11,7 @@ import javax.annotation.Nonnull
 class SendTitlesThreadGokb extends UploadThreadGokb{
 
   SendTitlesThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri,
-                       @Nonnull String user, @Nonnull String password){
+                       @Nonnull String user, @Nonnull String password, @Nonnull locale){
     this.enrichment = enrichment
     this.uri = uri
     this.user = user
@@ -19,6 +19,7 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
     this.total += enrichment.yellowRecords?.size()
     this.total += enrichment.greenRecords?.size()
     result = []
+    this.locale = locale
   }
 
 
@@ -27,7 +28,7 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
     for (def recId in enrichment.dataContainer.records){
       String titleText = GokbExporter.extractTitle(enrichment, recId, false)
       log.info("export Record " + recId + " to " + uri)
-      result << GokbExporter.sendText(uri, titleText, user, password)
+      result << GokbExporter.sendText(uri, titleText, user, password, locale)
       count ++
     }
   }

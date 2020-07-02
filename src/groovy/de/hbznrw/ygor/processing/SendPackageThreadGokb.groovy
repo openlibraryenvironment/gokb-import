@@ -20,7 +20,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   Map gokbStatusResponse
 
   SendPackageThreadGokb(def grailsApplication, @Nonnull Enrichment enrichment, @Nonnull String uri,
-                        @Nonnull String user, @Nonnull String password){
+                        @Nonnull String user, @Nonnull String password, @Nonnull locale){
     this.grailsApplication = grailsApplication
     this.enrichment = enrichment
     this.uri = uri
@@ -30,6 +30,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     total += enrichment.greenRecords?.size()
     result = []
     gokbStatusResponse = [:]
+    this.locale = locale
   }
 
 
@@ -37,7 +38,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   void run(){
     def json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
-    result << GokbExporter.sendText(uri, json.getText(), user, password)
+    result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
   }
 
 
