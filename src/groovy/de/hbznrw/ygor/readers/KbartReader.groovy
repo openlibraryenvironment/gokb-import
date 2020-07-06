@@ -35,16 +35,24 @@ class KbartReader {
       'zdb_id': ['zdb-id', 'ZDB_ID', 'ZDB-ID']
   ]
 
+  KbartReader(){
+    // not in use
+  }
+
   KbartReader(Reader kbartFile, String delimiter) throws YgorProcessingException{
+    init(kbartFile, delimiter)
+  }
+
+  protected void init(Reader kbartFile, String delimiter){
     String fileData = kbartFile.getText()
     // remove the BOM from the Data
     fileData = fileData.replace('\uFEFF', '')
     // automatic delimiter adaptation
     int maxCount = 0
     String favourite = delimiter;
-    for (String prop : ['comma', 'semicolon', 'tab']) {
+    for (String prop : ['comma', 'semicolon', 'tab']){
       int num = StringUtils.countMatches(fileData, resolver.get(prop).toString())
-      if (maxCount < num) {
+      if (maxCount < num){
         maxCount = num
         favourite = prop
       }
@@ -57,7 +65,7 @@ class KbartReader {
     try{
       csv = CSVParser.parse(fileData, csvFormat)
     }
-    catch(IllegalArgumentException iae){
+    catch (IllegalArgumentException iae){
       String duplicateName = iae.getMessage().minus("The header contains a duplicate name: \"")
       duplicateName = duplicateName.substring(0, duplicateName.indexOf("\""))
       throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.multipleColumn').toString()
