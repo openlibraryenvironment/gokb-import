@@ -15,5 +15,4 @@ class KbartFromUrlReader extends KbartReader{
   KbartFromUrlReader(URL url , String delimiter) throws YgorProcessingException{
     this(url, delimiter, Charset.forName("UTF-8"))
   }
-
 }

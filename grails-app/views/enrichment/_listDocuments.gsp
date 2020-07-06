@@ -239,7 +239,7 @@
                                     <div class="checkbox">
                                         <label>
                                             <g:checkBox name="processOption" required="true" checked="true" value="${KbartReader.IDENTIFIER}"/>
-                                            KBART <code><g:message code="listDocuments.enrichment.file" /></code>
+                                            KBart <code><g:message code="listDocuments.enrichment.file" /></code>
                                         </label>
                                     &nbsp;
                                         <label>
