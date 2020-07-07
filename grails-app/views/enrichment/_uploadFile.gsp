@@ -3,29 +3,22 @@
 
 <g:if test="${enrichment == null || enrichment.status == null}">
 
+    <!-- KBART FILE UPLOAD -->
     <div class="row">
         <div class="col-xs-12">
-
-            <br/><br/>
-
             <g:set var="filename" value="${message(code: 'uploadFile.file.nofile')}" scope="page"/>
             <g:if test="${session.lastUpdate?.file?.originalFilename != null}">
                 <g:set var="filename" value="${session.lastUpdate?.file?.originalFilename}" scope="page"/>
             </g:if>
-
             <g:uploadForm name="uploadFile" action="uploadFile">
-
                 <ul class="list-group content-list">
                     <li class="list-group-item">
-
                         <div class="input-group">
                             <span class="input-group-addon"><g:message code="uploadFile.file.label"/></span>
                             <input class="form-control" type="text" id="uploadFileLabel" name="uploadFileLabel" readonly
                                    value="${filename}" size="46"/>
                         </div>
-
-                        <br/>
-
+                        <br>
                         <div class="input-group">
                             <span class="input-group-addon"><g:message code="uploadFile.separator.label"/></span>
                             <span class="form-control">
@@ -62,34 +55,8 @@
                                 </div>
                             </span>
                         </div>
-
-                        <br/>
-
-                        <!-- <br />
-					<div class="input-group">
-						<span class="input-group-addon">Zeichenbegrenzer:</span>
-						<span class="form-control">
-							<div class="radio">
-								<label>
-									<g:radio name="formatQuoteMode" checked="true" value="none"/>
-									Ohne
-								</label>
-								&nbsp;
-								<label>
-									<g:radio name="formatQuoteMode" value="nonnumeric"/>
-									Nur alphanumerische Felder begrenzen
-								</label>
-								&nbsp;
-								<label>
-									<g:radio name="formatQuoteMode" value="all"/>
-									Alle Felder begrenzen
-								</label>
-							</div>
-						</span>
-					</div> -->
                     </li>
                 </ul>
-
                 <ul class="list-group content-list">
                     <li class="list-group-item">
                         <label class="btn btn-link btn-file">
@@ -107,29 +74,107 @@
                                         filename = file0.name,
                                         replaced = filename.replace(/\\/g, '/'),
                                         label = replaced.replace(/.*\//, '');
-                                    jQuery('#uploadFileLabel')[0].setAttribute("value", label)
+                                    jQuery('#uploadFileLabel')[0].setAttribute("value", label);
                                 }
                             });
                         </script>
                     </li>
                 </ul>
-
             </g:uploadForm>
         </div>
     </div><!-- .row -->
+    <!-- KBART FILE UPLOAD END -->
 
+    <!-- KBART URL-DRIVEN PROCESSING -->
+    <br><br>
     <div class="row">
         <div class="col-xs-12">
+            <ul class="list-group how-to-list">
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+                    &nbsp; <g:message code="howtostep1.uploadUrl"/>
+                </li>
+            </ul>
+            <g:set var="url" value="${message(code: 'uploadUrl.url.noUrl')}" scope="page"/>
+            <g:if test="${session.lastUpdate?.url != null}">
+                <g:set var="url" value="${session.lastUpdate?.url}" scope="page"/>
+            </g:if>
+            <g:uploadForm name="uploadUrl" action="uploadUrl">
+                <ul class="list-group content-list">
+                    <li class="list-group-item">
+                        <div class="input-group">
+                            <span class="input-group-addon"><g:message code="uploadUrl.url.label"/></span>
+                            <input class="form-control" type="text" id="uploadUrlText" name="uploadUrlText"
+                                   type="url" value="${url}" size="46"/>
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon"><g:message code="uploadFile.separator.label"/></span>
+                            <span class="form-control">
+                                <div class="radio">
+                                    <label>
+                                        <g:if test="${session.lastUpdate?.foDelimiterUrl == null || session.lastUpdate?.foDelimiterUrl == "tab"}">
+                                            <g:radio name="formatDelimiterUrl" checked="true" value="tab"/>
+                                        </g:if>
+                                        <g:else>
+                                            <g:radio name="formatDelimiterUrl" value="tab"/>
+                                        </g:else>
+                                        <g:message code="uploadFile.separator.tabulator"/>  <code>(\t)</code>
+                                    </label>
+                                    &nbsp;
+                                    <label>
+                                        <g:if test="${session.lastUpdate?.foDelimiterUrl == "comma"}">
+                                            <g:radio name="formatDelimiterUrl" checked="true" value="comma"/>
+                                        </g:if>
+                                        <g:else>
+                                            <g:radio name="formatDelimiterUrl" value="comma"/>
+                                        </g:else>
+                                        <g:message code="uploadFile.separator.comma"/> <code>(,)</code>
+                                    </label>
+                                    &nbsp;
+                                    <label>
+                                        <g:if test="${session.lastUpdate?.foDelimiterUrl == "semicolon"}">
+                                            <g:radio name="formatDelimiterUrl" checked="true" value="semicolon"/>
+                                        </g:if>
+                                        <g:else>
+                                            <g:radio name="formatDelimiterUrl" value="semicolon"/>
+                                        </g:else>
+                                        <g:message code="uploadFile.separator.semicolon"/>  <code>(;)</code>
+                                    </label>
+                                </div>
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="list-group content-list">
+                    <li class="list-group-item">
+                        <input type="submit" value="${message(code: 'uploadFile.button.upload')}"
+                               class="btn btn-success"/>
+                        <script>
+                            $("#uploadUrlText").on("focus", function() {
+                                $("#uploadUrlText").val("");
+                            });
+                            jQuery(document).on('change', "[name='uploadUrl']", function () {
+                                jQuery('#uploadUrlLabel')[0].setAttribute("value", label);
+                            });
+                        </script>
+                    </li>
+                </ul>
+            </g:uploadForm>
+        </div>
+    </div><!-- .row -->
+    <!-- KBART URL-DRIVEN PROCESSING END -->
 
-            <br/><br/>
+    <!-- RAW DATA UPLOAD -->
+    <div class="row">
+        <div class="col-xs-12">
+            <br><br>
             <ul class="list-group how-to-list">
                 <li class="list-group-item">
                     <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
                     &nbsp; <g:message code="howtostep1.uploadRaw"/>
                 </li>
             </ul>
-            <br/>
-
             <g:set var="filenameRaw" value="${message(code: 'uploadFile.raw.file.nofile')}" scope="page"/>
             <g:uploadForm id="uploadRawFile" action="uploadRawFile">
 
@@ -169,4 +214,5 @@
             </g:uploadForm>
         </div>
     </div><!-- .row -->
+    <!-- RAW DATA UPLOAD END -->
 </g:if>

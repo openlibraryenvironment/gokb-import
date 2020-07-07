@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.readers
 
-import de.hbznrw.ygor.processing.YgorProcessingException
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -39,12 +38,12 @@ class KbartReader {
     // not in use
   }
 
-  KbartReader(Reader kbartFile, String delimiter) throws YgorProcessingException{
-    init(kbartFile, delimiter)
+  KbartReader(Reader kbartFile, String delimiter) throws Exception{
+    String fileData = kbartFile.getText()
+    init(fileData, delimiter)
   }
 
-  protected void init(Reader kbartFile, String delimiter){
-    String fileData = kbartFile.getText()
+  protected void init(String fileData, String delimiter){
     // remove the BOM from the Data
     fileData = fileData.replace('\uFEFF', '')
     // automatic delimiter adaptation
@@ -68,7 +67,7 @@ class KbartReader {
     catch (IllegalArgumentException iae){
       String duplicateName = iae.getMessage().minus("The header contains a duplicate name: \"")
       duplicateName = duplicateName.substring(0, duplicateName.indexOf("\""))
-      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.multipleColumn').toString()
+      throw new Exception(VALIDATION_TAG_LIB.message(code: 'error.kbart.multipleColumn').toString()
           .replace("{}", duplicateName)
           .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }
@@ -135,18 +134,20 @@ class KbartReader {
   }
 
 
-  void checkHeader() throws YgorProcessingException {
+  void checkHeader() throws Exception {
     def missingKeys = []
     if (!csvHeader) {
-      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader').toString()
+      throw new Exception(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader').toString()
           .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }
     // check mandatory fields
+    List<String> headerFields = new ArrayList<>()
+    headerFields.addAll(csvHeader)
     MANDATORY_KBART_KEYS.each { kbk ->
-      if (!csvHeader.contains(kbk)) {
+      if (!headerFields.contains(kbk)) {
         boolean isMissing = true
         for (def alias : ALIASES[kbk]) {
-          if (csvHeader.contains(alias)) {
+          if (headerFields.contains(alias)) {
             isMissing = false
           }
         }
@@ -156,7 +157,7 @@ class KbartReader {
       }
     }
     if (missingKeys.size() > 0) {
-      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingColumns').toString()
+      throw new Exception(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingColumns').toString()
           .replace("{}", missingKeys.toString())
           .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }

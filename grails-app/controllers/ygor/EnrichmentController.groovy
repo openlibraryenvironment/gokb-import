@@ -1,6 +1,7 @@
 package ygor
 
-import de.hbznrw.ygor.processing.YgorProcessingException
+import de.hbznrw.ygor.processing.Exception
+import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import org.apache.commons.io.IOUtils
@@ -96,7 +97,7 @@ class EnrichmentController{
       // the file form is unpopulated but the previously selected file is unchanged
       file = request.session.lastUpdate.file
     }
-    String encoding = getEncoding(file)
+    String encoding = getEncoding(file.getInputStream())
     if (encoding && encoding != "UTF-8"){
       flash.info = null
       flash.warning = null
@@ -139,7 +140,7 @@ class EnrichmentController{
       kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()), foDelimiter)
       kbartReader.checkHeader()
     }
-    catch (YgorProcessingException ype) {
+    catch (Exception ype) {
       flash.info = null
       flash.warning = null
       flash.error = ype.getMessage()
@@ -158,7 +159,69 @@ class EnrichmentController{
       return
     }
 
-    Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
+
+    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
+    enrichmentService.addFileAndFormat(enrichment, foDelimiter, foQuote, foQuoteMode)
+    enrichment.status = Enrichment.ProcessingState.PREPARE_1
+    redirect(
+        action: 'process',
+        params: [
+            resultHash: enrichment.resultHash,
+            originHash: enrichment.originHash
+        ],
+        model: [
+            enrichment : enrichment,
+            currentView: 'process'
+        ]
+    )
+  }
+
+
+  def uploadUrl = {
+    def urlString = request.parameterMap["uploadUrlText"][0]
+    // validate
+    if (!(new org.apache.commons.validator.routines.UrlValidator()).isValid(urlString)){
+      flash.error = message(code: 'error.kbart.noValidUrl').toString()
+      redirect(
+          action: 'process'
+      )
+    }
+    // set last update settings
+    if (!request.session.lastUpdate){
+      request.session.lastUpdate = [:]
+    }
+    request.session.lastUpdate.url = urlString
+    request.session.lastUpdate.foDelimiterUrl = request.parameterMap['formatDelimiterUrl'][0]
+    request.session.lastUpdate.foQuoteUrl = null
+    request.session.lastUpdate.foQuoteModeUrl = null
+    request.session.lastUpdate.recordSeparatorUrl = "none"
+    request.session.lastUpdate.addOnlyUrl = false
+    // load file from URL
+    try {
+      kbartReader = new KbartFromUrlReader(new URL(urlString) , request.parameterMap['formatDelimiterUrl'][0])
+      kbartReader.checkHeader()
+    }
+    catch (Exception e) {
+      flash.info = null
+      flash.warning = null
+      flash.error = e.getMessage()
+      Enrichment enrichment = getCurrentEnrichment()
+      render(
+          view: 'process',
+          params: [
+              resultHash: request.parameterMap.resultHash,
+              originHash: enrichment.originHash
+          ],
+          model: [
+              enrichment : enrichment,
+              currentView: 'process'
+          ]
+      )
+      return
+    }
+    Enrichment enrichment = enrichmentService.fromFilename(KbartFromUrlReader.urlStringToFileString(urlString))
+    enrichment.originPathName
+    enrichmentService.addFileAndFormat(enrichment, request.parameterMap['formatDelimiterUrl'][0], null, null)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
     redirect(
         action: 'process',
@@ -187,16 +250,16 @@ class EnrichmentController{
   }
 
 
-  private String getEncoding(file){
+  private String getEncoding(def inputStream){
     String encoding
     try{
-      encoding = UniversalDetector.detectCharset(file.getInputStream())
+      encoding = UniversalDetector.detectCharset(inputStream)
     }
     catch (IllegalStateException ise){
       ByteArrayOutputStream baos = new ByteArrayOutputStream()
-      IOUtils.copy(file.getInputStream(), baos)
+      IOUtils.copy(inputStream, baos)
       ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
-      encoding = UniversalDetector.detectCharset(file.getInputStream())
+      encoding = UniversalDetector.detectCharset(inputStream)
     }
     log.debug("Detected encoding ${encoding}")
     encoding
