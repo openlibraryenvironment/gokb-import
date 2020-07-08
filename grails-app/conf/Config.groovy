@@ -96,6 +96,7 @@ environments {
       type = 'development'
       uploadLocation = '/tmp/ygor/dev'
       enableGokbUpload = true
+      autoUpdateJobsLocation = '/var/lib/ygor/automaticUpdates/'
     }
     gokbApi {
       baseUri           = 'http://localhost:8080/gokb/'
@@ -121,6 +122,7 @@ environments {
       type = 'production'
       uploadLocation = '/tmp/ygor/prod'
       enableGokbUpload = false
+      autoUpdateJobsLocation = '/var/lib/ygor/automaticUpdates/'
     }
     gokbApi {
       baseUri           = 'http://phaeton.hbz-nrw.de/gokb/'
