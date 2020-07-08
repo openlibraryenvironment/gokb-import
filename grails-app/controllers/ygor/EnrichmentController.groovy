@@ -180,6 +180,7 @@ class EnrichmentController{
 
   def uploadUrl = {
     def urlString = request.parameterMap["uploadUrlText"][0]
+    def update = request.parameterMap['urlAutoUpdate'][0]
     // validate
     if (!(new org.apache.commons.validator.routines.UrlValidator()).isValid(urlString)){
       flash.error = message(code: 'error.kbart.noValidUrl').toString()

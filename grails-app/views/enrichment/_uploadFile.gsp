@@ -144,6 +144,11 @@
                                 </div>
                             </span>
                         </div>
+                        <br>
+                        <div>
+                            <g:message code="uploadUrl.autoUpdate" />
+                            <g:checkBox name="urlAutoUpdate" checked="false" value="${urlAutoUpdate}"/>
+                        </div>
                     </li>
                 </ul>
                 <ul class="list-group content-list">
