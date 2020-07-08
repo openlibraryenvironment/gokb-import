@@ -96,7 +96,6 @@ environments {
       type = 'development'
       uploadLocation = '/tmp/ygor/dev'
       enableGokbUpload = true
-      enableDebugDownload = true
     }
     gokbApi {
       baseUri           = 'http://localhost:8080/gokb/'
@@ -122,7 +121,6 @@ environments {
       type = 'production'
       uploadLocation = '/tmp/ygor/prod'
       enableGokbUpload = false
-      enableDebugDownload = false
     }
     gokbApi {
       baseUri           = 'http://phaeton.hbz-nrw.de/gokb/'
