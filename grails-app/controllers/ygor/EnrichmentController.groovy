@@ -1,11 +1,12 @@
 package ygor
 
-import de.hbznrw.ygor.processing.Exception
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.mozilla.universalchardet.UniversalDetector
+
+import java.nio.charset.Charset
 
 
 class EnrichmentController{
@@ -198,7 +199,8 @@ class EnrichmentController{
     request.session.lastUpdate.addOnlyUrl = false
     // load file from URL
     try {
-      kbartReader = new KbartFromUrlReader(new URL(urlString) , request.parameterMap['formatDelimiterUrl'][0])
+      kbartReader = new KbartFromUrlReader(new URL(urlString) , request.parameterMap['formatDelimiterUrl'][0],
+                                           Charset.forName("UTF-8"), enrichmentService.getSessionFolder())
       kbartReader.checkHeader()
     }
     catch (Exception e) {
@@ -219,8 +221,9 @@ class EnrichmentController{
       )
       return
     }
-    Enrichment enrichment = enrichmentService.fromFilename(KbartFromUrlReader.urlStringToFileString(urlString))
-    enrichment.originPathName
+    String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
+    Enrichment enrichment = enrichmentService.fromFilename(kbartFileName)
+    enrichment.originPathName = kbartFileName
     enrichmentService.addFileAndFormat(enrichment, request.parameterMap['formatDelimiterUrl'][0], null, null)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
     redirect(
