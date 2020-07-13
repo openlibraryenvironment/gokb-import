@@ -440,7 +440,7 @@ class Record{
     Collection flags = JsonToolkit.fromJson(json, "flags")
     if (flags != null){
       for (def flag in flags){
-        RecordFlag rf = RecordFlag.fromJson(flag)
+        RecordFlag rf = RecordFlag.fromJson(MAPPER.readTree(flag))
         result.flags.put(rf.errorCode, rf)
       }
     }
