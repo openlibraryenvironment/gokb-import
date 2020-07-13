@@ -84,7 +84,7 @@ class MultipleProcessingThread extends Thread {
             KbartReaderConfiguration conf =
                 new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
             KbartIntegrationService kbartIntegrationService = new KbartIntegrationService(enrichment.mappingsContainer)
-            calculateProgressIncrement()
+            calculateProgressIncrement(enrichment.enrichmentFolder)
             kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)
             break
           case EzbReader.IDENTIFIER:
@@ -148,8 +148,9 @@ class MultipleProcessingThread extends Thread {
   }
 
 
-  private void calculateProgressIncrement() {
-    double lines = (double) (countLines(kbartFile) - 1)
+  private void calculateProgressIncrement(String enrichmentFolder) {
+    String file = new File(kbartFile).absolutePath.equals(kbartFile) ? kbartFile : enrichmentFolder.concat(kbartFile)
+    double lines = (double) (countLines(file) - 1)
     if (lines > 0) {
       progressIncrement = 100.0 / lines / (double) apiCalls.size()
       // division by 3 for number of tasks (Kbart, ZDB, EZB)

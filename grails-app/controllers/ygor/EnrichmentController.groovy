@@ -180,7 +180,6 @@ class EnrichmentController{
 
   def uploadUrl = {
     def urlString = request.parameterMap["uploadUrlText"][0]
-    def update = request.parameterMap['urlAutoUpdate'][0]
     // validate
     if (!(new org.apache.commons.validator.routines.UrlValidator()).isValid(urlString)){
       flash.error = message(code: 'error.kbart.noValidUrl').toString()
@@ -199,16 +198,18 @@ class EnrichmentController{
     request.session.lastUpdate.recordSeparatorUrl = "none"
     request.session.lastUpdate.addOnlyUrl = false
     // load file from URL
+    String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
+    Enrichment enrichment = enrichmentService.fromFilename(kbartFileName)
     try {
       kbartReader = new KbartFromUrlReader(new URL(urlString) , request.parameterMap['formatDelimiterUrl'][0],
-                                           Charset.forName("UTF-8"), enrichmentService.getSessionFolder())
+                                           Charset.forName("UTF-8"), new File (enrichment.enrichmentFolder))
       kbartReader.checkHeader()
     }
     catch (Exception e) {
       flash.info = null
       flash.warning = null
       flash.error = e.getMessage()
-      Enrichment enrichment = getCurrentEnrichment()
+
       render(
           view: 'process',
           params: [
@@ -222,11 +223,14 @@ class EnrichmentController{
       )
       return
     }
-    String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
-    Enrichment enrichment = enrichmentService.fromFilename(kbartFileName)
     enrichment.originPathName = kbartFileName
+    enrichment.originUrl = urlString
+    if (request.parameterMap['urlAutoUpdate'] != null){
+      enrichment.autoUpdate = request.parameterMap['urlAutoUpdate'][0].equals("on")
+    }
     enrichmentService.addFileAndFormat(enrichment, request.parameterMap['formatDelimiterUrl'][0], null, null)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
+
     redirect(
         action: 'process',
         params: [
@@ -365,6 +369,9 @@ class EnrichmentController{
         )
       }
       else{
+        if (en.autoUpdate){
+          AutoUpdateService.addEnrichmentJob(en)
+        }
         redirect(
             controller: 'Statistic',
             action: 'show',

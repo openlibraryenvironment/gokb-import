@@ -50,6 +50,7 @@ class Enrichment{
   String apiMessage
   double apiProgress = 0.0
 
+  String originUrl
   String originName
   String originHash
   String originPathName
@@ -65,6 +66,7 @@ class Enrichment{
   boolean addOnly
   boolean isZdbIntegrated
   boolean isEzbIntegrated
+  boolean autoUpdate
 
   def thread
   MappingsContainer mappingsContainer
@@ -92,6 +94,7 @@ class Enrichment{
     dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
     isZdbIntegrated = false
     isEzbIntegrated = false
+    autoUpdate = false
   }
 
 
@@ -173,7 +176,23 @@ class Enrichment{
     result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
     result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
     result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
-    result.append("\"configuration\":{")
+    result.append("\"configuration\":")
+    result.append(this.getConfiguration())
+    result.append("}")
+    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
+    file.getParentFile().mkdirs()
+    file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
+    log.info("Saving enrichment finished.")
+  }
+
+
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
+  String getConfiguration(){
+    StringWriter result = new StringWriter()
+    result.append("{")
+    if (originUrl != null){
+      result.append("\"originUrl\":\"").append(originUrl).append("\",")
+    }
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
     result.append("\"isZdbIntegrated\":\"").append(String.valueOf(isZdbIntegrated)).append("\",")
@@ -201,11 +220,8 @@ class Enrichment{
     }
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
-    result.append("}}")
-    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
-    file.getParentFile().mkdirs()
-    file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
-    log.info("Saving enrichment finished.")
+    result.append("}")
+    return result.toString()
   }
 
 
@@ -225,6 +241,7 @@ class Enrichment{
         DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer, loadRecordData)
     en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.markDuplicateIds()
+    en.originUrl = JsonToolkit.fromJson(rootNode, "configuration.originUrl")
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))

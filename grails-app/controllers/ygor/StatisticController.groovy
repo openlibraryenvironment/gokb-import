@@ -524,12 +524,6 @@ class StatisticController{
   }
 
 
-  HashMap getCurrentFormat(){
-    def hash = (String) request.parameterMap['originHash'][0]
-    enrichmentService.getSessionFormats().get("${hash}")
-  }
-
-
   void noValidEnrichment(){
     flash.info = null
     flash.warning = message(code: 'warning.fileNotFound')

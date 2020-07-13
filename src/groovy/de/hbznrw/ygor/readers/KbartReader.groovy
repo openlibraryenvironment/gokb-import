@@ -21,6 +21,7 @@ class KbartReader {
   private List<String> csvHeader
   private Iterator<CSVRecord> iterator
   private CSVRecord lastItemReturned
+  String file
 
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
@@ -38,8 +39,8 @@ class KbartReader {
     // not in use
   }
 
-  KbartReader(Reader kbartFile, String delimiter) throws Exception{
-    String fileData = kbartFile.getText()
+  KbartReader(Reader kbartFileReader, String delimiter) throws Exception{
+    String fileData = kbartFileReader.getText()
     init(fileData, delimiter)
   }
 

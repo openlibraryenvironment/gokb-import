@@ -11,8 +11,8 @@ class KbartFromUrlReader extends KbartReader{
     String fileData = urlReader.getText()
     init(fileData, delimiter)
     // copy content to local file
-    FileWriter fileWriter = new FileWriter(
-        sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm())))
+    file = sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
+    FileWriter fileWriter = new FileWriter(file)
     fileWriter.write(fileData)
     fileWriter.close()
   }
