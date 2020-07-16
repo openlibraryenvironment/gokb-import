@@ -382,7 +382,10 @@ class StatisticController{
     gokbUsername = params.gokbUsername
     gokbPassword = params.gokbPassword
     def enrichment = getCurrentEnrichment()
-    if (enrichment && !enrichment.hasBeenUploaded.get(fileType)){
+    if (enrichment == null){
+      flash.error = message(code: 'error.enrichment.missing').toString().concat("<br>")
+    }
+    if (!enrichment.hasBeenUploaded.get(fileType)){
       String uri = getDestinationUri(fileType, enrichment.addOnly)
       UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
