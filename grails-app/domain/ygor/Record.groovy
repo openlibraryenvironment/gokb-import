@@ -191,7 +191,7 @@ class Record{
 
 
   boolean hasValidPublicationType(){
-    if (publicationType == null || !(publicationType in ["serial", "monograph"])){
+    if (publicationType == null || !(publicationType in ["serial", "monograph", "other"])){
       return false
     }
     return true
@@ -297,14 +297,8 @@ class Record{
     jsonGenerator.writeStringField("zdbId", zdbId?.identifier)
     jsonGenerator.writeStringField("ezbId", ezbId?.identifier)
     jsonGenerator.writeStringField("doiId", doiId?.identifier)
-    if (publicationType.equals("serial")){
-      jsonGenerator.writeStringField("printIdentifier", printIdentifier?.identifier)
-      jsonGenerator.writeStringField("onlineIdentifier", onlineIdentifier?.identifier)
-    }
-    else if (publicationType.equals("monograph")){
-      jsonGenerator.writeStringField("printIdentifier", printIdentifier?.identifier)
-      jsonGenerator.writeStringField("onlineIdentifier", onlineIdentifier?.identifier)
-    }
+    jsonGenerator.writeStringField("printIdentifier", printIdentifier?.identifier)
+    jsonGenerator.writeStringField("onlineIdentifier", onlineIdentifier?.identifier)
     jsonGenerator.writeStringField("publicationType", publicationType)
     if (ezbIntegrationDate) {
       jsonGenerator.writeStringField("ezbIntegrationDate", ezbIntegrationDate)
