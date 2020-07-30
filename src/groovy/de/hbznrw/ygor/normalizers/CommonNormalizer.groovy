@@ -19,6 +19,8 @@ class CommonNormalizer {
         return StringNormalizer.normalizeString(value, false)
       case "Number":
         return NumberNormalizer.normalizeInteger(value)
+      case "Amount":
+        return AmountNormalizer.normalizeAmount(value)
       case "ID":
         // String subType = field. TODO
         return IdentifierNormalizer.normIdentifier(value, field.keyMapping.ygorKey, namespace)
