@@ -952,6 +952,26 @@
     }
   },
   {
+    "ygor" : "subjectArea",
+    "display" : "Subject Area",
+    "in" : {
+      "kbart" : ["primary_subject", "subject_area", "subject"],
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.subjectArea"]
+    },
+    "order" : ["kbart"],
+    "type" : "String",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning", "other" : "ok"}]
+    }
+  },
+  {
     "ygor" : "titleId",
     "display" : "title_id",
     "in" : {
