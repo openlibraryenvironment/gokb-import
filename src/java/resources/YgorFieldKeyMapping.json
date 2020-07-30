@@ -424,6 +424,63 @@
     }
   },
   {
+    "ygor" : "listpriceEur",
+    "in" : {
+      "kbart" : "listprice_eur",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.prices.$ARRAY.(currency:EUR,type:list,amount)"]
+    },
+    "order" : ["kbart"],
+    "type" : "Amount",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}]
+    }
+  },
+  {
+    "ygor" : "listpriceGbp",
+    "in" : {
+      "kbart" : "listprice_gbp",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.prices.$ARRAY.(currency:GBP,type:list,amount)"]
+    },
+    "order" : ["kbart"],
+    "type" : "Amount",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}]
+    }
+  },
+  {
+    "ygor" : "listpriceUsd",
+    "in" : {
+      "kbart" : "listprice_usd",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.prices.$ARRAY.(currency:USD,type:list,amount)"]
+    },
+    "order" : ["kbart"],
+    "type" : "Amount",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}]
+    }
+  },
+  {
     "ygor" : "medium",
     "out" : {
       "gokb" : ["$TITLE.medium"]
@@ -661,7 +718,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"],
+      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
     },
     "order" : ["zdb"],
     "type" : "Title",
