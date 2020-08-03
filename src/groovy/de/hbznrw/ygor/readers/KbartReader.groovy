@@ -112,7 +112,7 @@ class KbartReader {
     }
     lastItemReturned = item
     // Fix coverage_depth = Volltext
-    if (resultMap.get("coverage_depth").equalsIgnoreCase("volltext")) {
+    if (resultMap.get("coverage_depth")?.equalsIgnoreCase("volltext")) {
       resultMap.put("coverage_depth", "fulltext")
     }
     resultMap
