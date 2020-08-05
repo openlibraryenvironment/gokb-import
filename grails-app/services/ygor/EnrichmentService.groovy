@@ -56,9 +56,11 @@ class EnrichmentService{
       return
     }
     def ph = enrichment.dataContainer.pkg.packageHeader
-    ph.name = new Pod(pm['pkgTitle'][0])
-    enrichment.packageName = pm['pkgTitle'][0]
-    if (pm['addOnly'] && pm['addOnly'][0] == "on"){
+    if (pm['pkgTitle']){
+      ph.name = new Pod(pm['pkgTitle'][0])
+      enrichment.packageName = pm['pkgTitle'][0]
+    }
+    if (pm['addOnly'] && pm['addOnly'][0] in ["on", "true"]){
       enrichment.addOnly = true
     }
     if (pm['pkgIsil'] && pm['pkgIsil'][0]){
@@ -67,10 +69,10 @@ class EnrichmentService{
     if (pm['pkgCuratoryGroup']){
       enrichment.dataContainer.curatoryGroup = (pm['pkgCuratoryGroup'][0])
     }
-    if ("" != pm['pkgId'][0].trim()){
+    if (pm['pkgId'] && "" != pm['pkgId'][0].trim()){
       enrichment.dataContainer.pkgId = (pm['pkgId'][0])
     }
-    if ("" != pm['pkgIdNamespace'][0].trim()){
+    if (pm['pkgIdNamespace'] && "" != pm['pkgIdNamespace'][0].trim()){
       enrichment.dataContainer.pkgIdNamespace = (pm['pkgIdNamespace'][0])
     }
     setPlatformMap(pm, ph)
@@ -117,10 +119,9 @@ class EnrichmentService{
         }
       }
     }
-
     if (pkgNomPlatform){
       try{
-        URL url = new URL(pkgNomPlatform.url)
+        new URL(pkgNomPlatform.url)
         ph.nominalPlatform.url = pkgNomPlatform.url
       }
       catch (MalformedURLException e){
