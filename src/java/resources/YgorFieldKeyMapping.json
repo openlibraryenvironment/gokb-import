@@ -932,6 +932,26 @@
     }
   },
   {
+    "ygor" : "series",
+    "display" : "Series",
+    "in" : {
+      "kbart" : ["series"],
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.series"]
+    },
+    "order" : ["kbart"],
+    "type" : "String",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning", "other" : "ok"}]
+    }
+  },
+  {
     "ygor" : "shortcode",
     "display" : "Veröffentlichung Shortcode (033A:p)",
     "in" : {
