@@ -75,7 +75,8 @@ class EnrichmentService{
     if (pm['pkgIdNamespace'] && "" != pm['pkgIdNamespace'][0].trim()){
       enrichment.dataContainer.pkgIdNamespace = (pm['pkgIdNamespace'][0])
     }
-    setPlatformMap(pm, ph)
+    def platform = getPlatform(pm)
+    applyPlatformToPackageHeader(platform, ph)
     if (pm['pkgNominalProvider']){
       ph.nominalProvider = pm['pkgNominalProvider'][0]
     }
@@ -86,119 +87,72 @@ class EnrichmentService{
   }
 
 
-  private void setPlatformMap(Map pm, ph){
+  private def getPlatform(Map pm){
     log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
-    def tmp = pm['pkgNominalPlatform'][0].split(';')
-    def platformID = tmp[0]
-    def qterm = tmp[1]
+    def platformSplit = splitPlatformString(pm['pkgNominalPlatform'][0])
+    if (platformSplit == null){
+      log.error("Could not split platform string.")
+      return
+    }
+    def platform = pickPlatform(platformSplit[0], platformSplit[1])
+    if (platform == null){
+      log.error("No platform found.")
+    }
+    return platform
+  }
 
-    def platforms = gokbService.getPlatformMap(qterm, false).records
+
+  private def pickPlatform(String platFormId, String queryTerm){
+    def platforms = gokbService.getPlatformMap(queryTerm, false).records
     def pkgNomPlatform = null
-
     log.debug("Got platforms: ${platforms}")
-
     platforms.each{
-      if (it.name == qterm && it.status == "Current" && it.oid == platformID){
+      if (it.name == queryTerm && it.status == "Current" && it.oid == platFormId){
         if (pkgNomPlatform){
           log.warn("Multiple platforms found named: ".concat(it.name))
         }
         else{
-          log.debug("Setze ${it.name} als nominalPlatform.")
+          log.debug("Set ${it.name} as nominalPlatform.")
           pkgNomPlatform = it
         }
       }
-      else {
-        if (it.name != qterm) {
-          log.debug("No name match: ${it.name} - ${qterm}")
+      else{
+        if (it.name != queryTerm){
+          log.debug("No name match: ${it.name} - ${queryTerm}")
         }
-        if(it.status != "Current") {
+        if (it.status != "Current"){
           log.debug("Wrong status: ${it.status}")
         }
-        if (it.oid != platformID) {
-          log.debug("No OID match: ${it.oid} - ${platformID}")
+        if (it.oid != platFormId){
+          log.debug("No OID match: ${it.oid} - ${platFormId}")
         }
       }
     }
-    if (pkgNomPlatform){
-      try{
-        new URL(pkgNomPlatform.url)
-        ph.nominalPlatform.url = pkgNomPlatform.url
-      }
-      catch (MalformedURLException e){
-        ph.nominalPlatform.url = ""
-      }
-      ph.nominalPlatform.name = pkgNomPlatform.name
-    }
-    else{
-      log.error("package platform not set!")
-    }
+    return pkgNomPlatform
   }
 
 
-  void stopProcessing(Enrichment enrichment){
-    enrichment.thread.isRunning = false
+  private void applyPlatformToPackageHeader(def platform, def packageHeader){
+    try{
+      new URL(platform.url)
+      packageHeader.nominalPlatform.url = platform.url
+    }
+    catch (MalformedURLException e){
+      packageHeader.nominalPlatform.url = ""
+    }
+    packageHeader.nominalPlatform.name = platform.name
   }
 
 
-  List sendFile(Enrichment enrichment, Object fileType, def user, def pwd){
-    def result = []
-    def json = enrichment.getAsFile(fileType, true)
-    def uri = fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) ?
-        grailsApplication.config.gokbApi.xrPackageUri :
-        (fileType.equals(Enrichment.FileType.JSON_TITLES_ONLY) ?
-            grailsApplication.config.gokbApi.xrTitleUri :
-            null
-        )
-    uri = uri.concat("?async=true")
-    if (fileType.equals(Enrichment.FileType.JSON_PACKAGE_ONLY) && enrichment.addOnly == true){
-      uri = uri.concat("&addOnly=true")
+  /**
+   * Splits into an array of platformId and platformName (query term)
+   */
+  private def splitPlatformString(String platformString){
+    def tmp = platformString.split(';')
+    if (tmp.size() != 2){
+      return null
     }
-    result << exportFileToGOKb(enrichment, json, uri, user, pwd)
-    result
-  }
-
-
-  private Map exportFileToGOKb(Enrichment enrichment, Object json, String url, def user, def pwd){
-    log.info("exportFile: " + enrichment.resultHash + " -> " + url)
-
-    def http = new HTTPBuilder(url)
-    http.auth.basic user, pwd
-
-    http.request(Method.POST, ContentType.JSON){ req ->
-      headers.'User-Agent' = 'ygor'
-
-      body = json.getText()
-      response.success = { resp, html ->
-        log.info("server response: ${resp.statusLine}")
-        log.debug("server:          ${resp.headers.'Content-Type'}")
-        log.debug("server:          ${resp.headers.'Server'}")
-        log.debug("content length:  ${resp.headers.'Content-Length'}")
-        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          if (resp.status < 400){
-            return ['info': html]
-          }
-          else{
-            return ['warning': html]
-          }
-        }
-        else{
-          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-        }
-      }
-      response.failure = { resp, html ->
-        log.error("server response: ${resp.statusLine}")
-        if (resp.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          return ['error': html]
-        }
-        else{
-          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-        }
-      }
-      response.'401'= {resp ->
-        log.error("server response: ${resp.statusLine}")
-        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
-      }
-    }
+    return [tmp[0], tmp[1]]
   }
 
 
