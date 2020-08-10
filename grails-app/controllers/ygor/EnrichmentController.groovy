@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils
 import org.mozilla.universalchardet.UniversalDetector
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.springframework.web.servlet.support.RequestContextUtils
+import ygor.field.FieldKeyMapping
 
 class EnrichmentController implements ControllersHelper{
 
@@ -283,6 +284,12 @@ class EnrichmentController implements ControllersHelper{
     }
     Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
     enrichmentService.prepareFile(enrichment, request.parameterMap)
+    FieldKeyMapping tippNameMapping =
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
+    enrichment.enrollMappingToRecords(tippNameMapping)
+    FieldKeyMapping tippUrlMapping =
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
+    enrichment.enrollMappingToRecords(tippUrlMapping)
     def options = [
         'options'         : pmOptions,
         'delimiter'       : foDelimiter,
@@ -321,6 +328,8 @@ class EnrichmentController implements ControllersHelper{
 
   private void watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
     while (true){
+      uploadJob.updateCount()
+      uploadJob.refreshStatus()
       if (uploadJob.status == UploadJob.Status.STARTED){
         // still running
         Thread.sleep(1000)
