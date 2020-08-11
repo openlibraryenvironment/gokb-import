@@ -76,7 +76,9 @@ class EnrichmentService{
       enrichment.dataContainer.pkgIdNamespace = (pm['pkgIdNamespace'][0])
     }
     def platform = getPlatform(pm)
-    applyPlatformToPackageHeader(platform, ph)
+    if (platform != null){
+      applyPlatformToPackageHeader(platform, ph)
+    }
     if (pm['pkgNominalProvider']){
       ph.nominalProvider = pm['pkgNominalProvider'][0]
     }
@@ -90,7 +92,7 @@ class EnrichmentService{
   private def getPlatform(Map pm){
     log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
     def platformSplit = splitPlatformString(pm['pkgNominalPlatform'][0])
-    if (platformSplit == null){
+    if (platformSplit == null || platformSplit.size() != 2){
       log.error("Could not split platform string.")
       return
     }

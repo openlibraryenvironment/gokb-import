@@ -252,6 +252,33 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
+  /**
+   * Current Test configuration via Postman:
+   *
+   * POST /ygor/enrichment/processCompleteNoInteraction?
+   * formatDelimiter=null&
+   * formatQuote=null&
+   * formatQuoteMode=null&
+   * recordSeparator=null&
+   * addOnly=false&
+   * processOption=kbart,zdb,ezb&
+   * gokbUsername=<aValidGokbUser>&
+   * gokbPassword=<theUser'sPassword>&
+   * pkgTitle=<yourPackageTitle>&
+   * pkgIsil&
+   * pkgCuratoryGroup=<yourCuratoryGroupName>&
+   * pkgNominalProvider=Organisation for Economic Co-operation and Development&
+   * pkgNominalPlatform=org.gokb.cred.Platform:408671;OECD UN iLibrary
+   *
+   * (examples given for pkgNominalProvider and pkgNominalPlatform)
+   *
+   * HTTP/1.1
+   * Host: localhost:8092
+   * cache-control: no-cache
+   * Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+   *
+   * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
+   */
   def processCompleteNoInteraction = {
     CommonsMultipartFile file = request.getFile('uploadFile')
     if (file == null){
