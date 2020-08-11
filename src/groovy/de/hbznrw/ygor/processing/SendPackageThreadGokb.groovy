@@ -84,7 +84,11 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
   @Override
   String getGokbResponseValue(String responseKey){
-    gokbStatusResponse = getGokbStatusResponse(getJobId())
+    def jobId = getJobId()
+    if (jobId == null){
+      return null
+    }
+    gokbStatusResponse = getGokbStatusResponse(jobId)
     String[] path = responseKey.split("\\.")
     def response = gokbStatusResponse
     for (String subField in path){
@@ -98,7 +102,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   protected Map getGokbStatusResponse(String jobId){
-    if (user == null || password == null){
+    if (user == null || password == null || jobId == null){
       return null
     }
     def uri = grailsApplication.config.gokbApi.xrJobInfo.toString().concat("/").concat(jobId)
