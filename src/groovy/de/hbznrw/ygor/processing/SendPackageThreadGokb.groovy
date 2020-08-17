@@ -18,9 +18,11 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
   String gokbJobId
   Map gokbStatusResponse
+  boolean integrateWithTitleData
 
   SendPackageThreadGokb(def grailsApplication, @Nonnull Enrichment enrichment, @Nonnull String uri,
-                        @Nonnull String user, @Nonnull String password, @Nonnull locale){
+                        @Nonnull String user, @Nonnull String password, @Nonnull locale,
+                        boolean integrateWithTitleData){
     this.grailsApplication = grailsApplication
     this.enrichment = enrichment
     this.uri = uri
@@ -31,12 +33,19 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     result = []
     gokbStatusResponse = [:]
     this.locale = locale
+    this.integrateWithTitleData = integrateWithTitleData
   }
 
 
   @Override
   void run(){
-    def json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
+    def json
+    if (integrateWithTitleData){
+      json = enrichment.getAsFile(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, true)
+    }
+    else{
+      json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
+    }
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
     result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
   }

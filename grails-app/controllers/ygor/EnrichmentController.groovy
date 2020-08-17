@@ -335,19 +335,12 @@ class EnrichmentController implements ControllersHelper{
     // Upload following.
     def gokbUsername = params.gokbUsername
     def gokbPassword = params.gokbPassword
-    // send titles
-    String uri = getDestinationUri(grailsApplication, Enrichment.FileType.TITLES, enrichment.addOnly)
+    // send package with integrated title data
+    String uri = getDestinationUri(grailsApplication, Enrichment.FileType.PACKAGE, enrichment.addOnly)
     def locale = RequestContextUtils.getLocale(request).toString()
-    SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
-        locale)
-    UploadJob uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
-    uploadJob.start()
-    watchUpload(uploadJob, Enrichment.FileType.TITLES, fileName)
-    // send package
-    uri = getDestinationUri(grailsApplication, Enrichment.FileType.PACKAGE, enrichment.addOnly)
     SendPackageThreadGokb sendPackageThreadGokb = new SendPackageThreadGokb(grailsApplication, enrichment, uri,
-        gokbUsername, gokbPassword, locale)
-    uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
+        gokbUsername, gokbPassword, locale, true)
+    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
     uploadJob.start()
     watchUpload(uploadJob, Enrichment.FileType.PACKAGE, fileName)
   }

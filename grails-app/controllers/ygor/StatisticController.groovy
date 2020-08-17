@@ -395,7 +395,7 @@ class StatisticController implements ControllersHelper{
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(grailsApplication, enrichment, uri,
-            gokbUsername, gokbPassword, RequestContextUtils.getLocale(request).toString())
+            gokbUsername, gokbPassword, RequestContextUtils.getLocale(request).toString(), false)
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
       }
       if (uploadJob != null){

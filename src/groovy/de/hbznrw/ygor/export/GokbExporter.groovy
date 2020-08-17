@@ -41,8 +41,13 @@ class GokbExporter {
       case FileType.ORIGIN:
         return new File(enrichment.originPathName)
       case FileType.PACKAGE:
-        ObjectNode result = GokbExporter.extractPackage(enrichment)
+        ObjectNode result = GokbExporter.extractPackage(enrichment, false)
         def file = new File(enrichment.enrichmentFolder + ".package.json")
+        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        return file
+      case FileType.PACKAGE_WITH_TITLEDATA:
+        ObjectNode result = GokbExporter.extractPackage(enrichment, true)
+        def file = new File(enrichment.enrichmentFolder + ".packageWithTitleData.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
       case FileType.TITLES:
@@ -55,24 +60,30 @@ class GokbExporter {
   }
 
 
-  static ObjectNode extractPackage(Enrichment enrichment) {
+  static ObjectNode extractPackage(Enrichment enrichment, boolean integrateWithTitleData) {
     ObjectNode pkg = new ObjectNode(NODE_FACTORY)
     log.debug("extracting package ...")
     pkg.set("packageHeader", extractPackageHeader(enrichment))
-    pkg.set("tipps", extractTipps(enrichment))
+    pkg.set("tipps", extractTipps(enrichment, integrateWithTitleData))
     log.debug("extracting package finished")
     pkg
   }
 
 
-  static ArrayNode extractTipps(Enrichment enrichment) {
+  static ArrayNode extractTipps(Enrichment enrichment, boolean integrateWithTitleData) {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (String recId in enrichment.dataContainer.records) {
       Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId,
           enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
-        ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        ObjectNode tipp
+        if (integrateWithTitleData){
+          tipp = JsonToolkit.getCombinedTitleTippJsonFromRecord("gokb", record, FORMATTER)
+        }
+        else{
+          tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        }
         tipp = postProcessIssnIsbn(tipp, record, FileType.PACKAGE)
         tipp = removeEmptyFields(tipp)
         tipp = removeEmptyIdentifiers(tipp, FileType.PACKAGE)

@@ -37,6 +37,7 @@ class Enrichment{
     JSON,
     PACKAGE,
     TITLES,
+    PACKAGE_WITH_TITLEDATA,
     RAW
   }
 
