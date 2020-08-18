@@ -64,10 +64,16 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       }
     }
     else{
-      // get count from ongoing process
-      String countString = getGokbResponseValue("progress")
-      if (countString != null){
-        count = Double.valueOf(countString) / 100.0 * total
+      String error = getGokbResponseValue("error")
+      if (error != null){
+        count = total
+      }
+      else{
+        // get count from ongoing process
+        String countString = getGokbResponseValue("progress")
+        if (countString != null){
+          count = Double.valueOf(countString) / 100.0 * total
+        }
       }
     }
   }
@@ -76,6 +82,10 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   boolean isInterrupted(){
     String message = getGokbResponseValue("job_result.message")
     if (message != null && message.contains("tipps have not been loaded because of validation errors")){
+      return true
+    }
+    message = getGokbResponseValue("result")
+    if (message != null && message.contains("error")){
       return true
     }
     // else

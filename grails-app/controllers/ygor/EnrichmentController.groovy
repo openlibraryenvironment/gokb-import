@@ -342,11 +342,15 @@ class EnrichmentController implements ControllersHelper{
         gokbUsername, gokbPassword, locale, true)
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
     uploadJob.start()
-    watchUpload(uploadJob, Enrichment.FileType.PACKAGE, fileName)
+    render(
+        model: [
+            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, fileName)
+        ]
+    )
   }
 
 
-  private void watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
+  private String watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
     while (true){
       uploadJob.updateCount()
       uploadJob.refreshStatus()
@@ -355,11 +359,14 @@ class EnrichmentController implements ControllersHelper{
         Thread.sleep(1000)
       }
       if (uploadJob.status == UploadJob.Status.ERROR){
-        log.error("Aborting. Couldn't upload " + fileType.toString() + " for file " + fileName)
-        return
+        String message = "Aborting. Couldn't upload " + fileType.toString() + " for file " + fileName
+        log.error(message)
+        return message
       }
       if (uploadJob.status == UploadJob.Status.SUCCESS || uploadJob.status == UploadJob.Status.FINISHED_UNDEFINED){
-        return
+        String message = "Success. Finished upload for file " + fileName
+        log.info(message)
+        return message
       }
     }
   }

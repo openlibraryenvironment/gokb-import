@@ -63,6 +63,12 @@ class UploadJob{
         status = Status.FINISHED_UNDEFINED
       }
       String responseStatus = uploadThread.getGokbResponseValue("responseStatus")
+      if (responseStatus == null && status == Status.STARTED){
+        if (uploadThread.result.size() > 0 && uploadThread.result[0].get("error") != null){
+          status = Status.ERROR
+          return
+        }
+      }
       if ("error" == responseStatus){
         status = Status.ERROR
         return
