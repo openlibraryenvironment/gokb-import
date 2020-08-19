@@ -1,7 +1,6 @@
 package ygor
 
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
-import de.hbznrw.ygor.processing.SendTitlesThreadGokb
 import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
@@ -337,7 +336,7 @@ class EnrichmentController implements ControllersHelper{
     def gokbPassword = params.gokbPassword
     // send package with integrated title data
     String uri = getDestinationUri(grailsApplication, Enrichment.FileType.PACKAGE, enrichment.addOnly)
-    def locale = RequestContextUtils.getLocale(request).toString()
+    def locale = RequestContextUtils.getLocale(request).getLanguage()
     SendPackageThreadGokb sendPackageThreadGokb = new SendPackageThreadGokb(grailsApplication, enrichment, uri,
         gokbUsername, gokbPassword, locale, true)
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
