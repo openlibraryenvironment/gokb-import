@@ -46,14 +46,14 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
 
 
   private int getCountForStatus(String status){
-    int count = 0
+    int statusCount = 0
     for (def resultItem in result){
       def innerResults = resultItem.get("info")
       if (innerResults.get("result").equals(status)){
-        count++
+        statusCount++
       }
     }
-    return count
+    return statusCount
   }
 
 

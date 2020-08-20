@@ -1,15 +1,20 @@
 package ygor
 
 import de.hbznrw.ygor.readers.KbartFromUrlReader
+import de.hbznrw.ygor.processing.SendPackageThreadGokb
+import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.mozilla.universalchardet.UniversalDetector
+import org.springframework.web.multipart.commons.CommonsMultipartFile
+import org.springframework.web.servlet.support.RequestContextUtils
+import ygor.field.FieldKeyMapping
 
 import java.nio.charset.Charset
 
 
-class EnrichmentController{
+class EnrichmentController implements ControllersHelper{
 
   static scope = "session"
 
@@ -98,6 +103,7 @@ class EnrichmentController{
       // the file form is unpopulated but the previously selected file is unchanged
       file = request.session.lastUpdate.file
     }
+
     String encoding = getEncoding(file.getInputStream())
     if (encoding && encoding != "UTF-8"){
       flash.info = null
@@ -317,6 +323,126 @@ class EnrichmentController{
             currentView: 'process'
         ]
     )
+  }
+
+
+  /**
+   * Current Test configuration via Postman:
+   *
+   * POST /ygor/enrichment/processCompleteNoInteraction?
+   * formatDelimiter=null&
+   * formatQuote=null&
+   * formatQuoteMode=null&
+   * recordSeparator=null&
+   * addOnly=false&
+   * processOption=kbart,zdb,ezb&
+   * gokbUsername=<aValidGokbUser>&
+   * gokbPassword=<theUser'sPassword>&
+   * pkgTitle=<yourPackageTitle>&
+   * pkgIsil&
+   * pkgCuratoryGroup=<yourCuratoryGroupName>&
+   * pkgNominalProvider=Organisation for Economic Co-operation and Development&
+   * pkgNominalPlatform=org.gokb.cred.Platform:408671;OECD UN iLibrary
+   *
+   * (examples given for pkgNominalProvider and pkgNominalPlatform)
+   *
+   * HTTP/1.1
+   * Host: localhost:8092
+   * cache-control: no-cache
+   * Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+   *
+   * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
+   */
+  def processCompleteNoInteraction = {
+    CommonsMultipartFile file = request.getFile('uploadFile')
+    if (file == null){
+      log.error("Received request missing a file. Aborting.")
+      return
+    }
+    if (file.empty){
+      log.error("Received request with empty file. Aborting.")
+      return
+    }
+    String fileName = file.originalFilename
+    String encoding = getEncoding(file)
+    if (encoding != "UTF-8"){
+      log.error(String.format("Transferred file has encoding %s. Aborting.", encoding))
+      return
+    }
+    def foDelimiter = params.get('formatDelimiter')      // inactive, set null
+    def foQuote = params.get('formatQuote')              // inactive, set null
+    def foQuoteMode = params.get('formatQuoteMode')      // inactive, set null
+    def recordSeparator = params.get('recordSeparator')  //
+    def addOnly = params.get('addOnly')                  // "on" or "off"
+    def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
+    try{
+      kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()), foDelimiter)
+      kbartReader.checkHeader()
+    }
+    catch (YgorProcessingException ype){
+      log.error("Aborting on KBart header check for file " + fileName)
+      return
+    }
+    Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
+    enrichmentService.prepareFile(enrichment, request.parameterMap)
+    FieldKeyMapping tippNameMapping =
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
+    enrichment.enrollMappingToRecords(tippNameMapping)
+    FieldKeyMapping tippUrlMapping =
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
+    enrichment.enrollMappingToRecords(tippUrlMapping)
+    def options = [
+        'options'         : pmOptions,
+        'delimiter'       : foDelimiter,
+        'quote'           : foQuote,
+        'quoteMode'       : foQuoteMode,
+        'recordSeparator' : recordSeparator,
+        'addOnly'         : addOnly,
+        'ygorVersion'     : grailsApplication.config.ygor.version,
+        'ygorType'        : grailsApplication.config.ygor.type
+    ]
+    enrichment.process(options, kbartReader)
+    while (enrichment.status != Enrichment.ProcessingState.FINISHED){
+      Thread.sleep(1000)
+    }
+    // Main processing finished here.
+    // Upload following.
+    def gokbUsername = params.gokbUsername
+    def gokbPassword = params.gokbPassword
+    // send package with integrated title data
+    String uri = getDestinationUri(grailsApplication, Enrichment.FileType.PACKAGE, enrichment.addOnly)
+    def locale = RequestContextUtils.getLocale(request).getLanguage()
+    SendPackageThreadGokb sendPackageThreadGokb = new SendPackageThreadGokb(grailsApplication, enrichment, uri,
+        gokbUsername, gokbPassword, locale, true)
+    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
+    uploadJob.start()
+    render(
+        model: [
+            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, fileName)
+        ]
+    )
+  }
+
+
+  private String watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
+    while (true){
+      uploadJob.updateCount()
+      uploadJob.refreshStatus()
+      if (uploadJob.status == UploadJob.Status.STARTED){
+        // still running
+        Thread.sleep(1000)
+      }
+      if (uploadJob.status == UploadJob.Status.ERROR){
+        String message = "Aborting. Couldn't upload " + fileType.toString() + " for file " + fileName
+        log.error(message)
+        return message
+      }
+      if (uploadJob.status == UploadJob.Status.SUCCESS || uploadJob.status == UploadJob.Status.FINISHED_UNDEFINED){
+        String message = "Success. Finished upload for file " + fileName
+        log.info(message)
+        return message
+      }
+    }
   }
 
 

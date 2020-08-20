@@ -2,6 +2,7 @@ package de.hbznrw.ygor.export
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -41,8 +42,13 @@ class GokbExporter {
       case FileType.ORIGIN:
         return new File(enrichment.originPathName)
       case FileType.PACKAGE:
-        ObjectNode result = GokbExporter.extractPackage(enrichment)
+        ObjectNode result = GokbExporter.extractPackage(enrichment, type)
         def file = new File(enrichment.enrichmentFolder + ".package.json")
+        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        return file
+      case FileType.PACKAGE_WITH_TITLEDATA:
+        ObjectNode result = GokbExporter.extractPackage(enrichment, type)
+        def file = new File(enrichment.enrichmentFolder + ".packageWithTitleData.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
       case FileType.TITLES:
@@ -55,28 +61,38 @@ class GokbExporter {
   }
 
 
-  static ObjectNode extractPackage(Enrichment enrichment) {
+  static ObjectNode extractPackage(Enrichment enrichment, FileType type) {
     ObjectNode pkg = new ObjectNode(NODE_FACTORY)
     log.debug("extracting package ...")
     pkg.set("packageHeader", extractPackageHeader(enrichment))
-    pkg.set("tipps", extractTipps(enrichment))
+    pkg.set("tipps", extractTipps(enrichment, type))
     log.debug("extracting package finished")
     pkg
   }
 
 
-  static ArrayNode extractTipps(Enrichment enrichment) {
+  static ArrayNode extractTipps(Enrichment enrichment, FileType type) {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (String recId in enrichment.dataContainer.records) {
       Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId,
           enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
-        ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        ObjectNode tipp
+        if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
+          tipp = JsonToolkit.getCombinedTitleTippJsonFromRecord("gokb", record, FORMATTER)
+        }
+        else{
+          tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        }
         tipp = postProcessIssnIsbn(tipp, record, FileType.PACKAGE)
+        if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
+          // additionally rename title identifiers
+          postProcessIssnIsbn(tipp, record, FileType.TITLES)
+        }
         tipp = removeEmptyFields(tipp)
-        tipp = removeEmptyIdentifiers(tipp, FileType.PACKAGE)
-        tipp = postProcessTitleIdentifiers(tipp, FileType.PACKAGE,
+        tipp = removeEmptyIdentifiers(tipp, type)
+        tipp = postProcessTitleIdentifiers(tipp, type,
             enrichment.dataContainer.info.namespace_title_id)
         tipps.add(tipp)
       }
@@ -166,6 +182,10 @@ class GokbExporter {
     else if (type.equals(FileType.PACKAGE)) {
       postProcessTitleId(item.title.identifiers, namespace)
     }
+    else if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)) {
+      postProcessTitleId(item.identifiers, namespace)
+      postProcessTitleId(item.title.identifiers, namespace)
+    }
     item
   }
 
@@ -175,6 +195,10 @@ class GokbExporter {
         removeEmptyIds(item.identifiers)
     }
     else if (type.equals(FileType.PACKAGE)) {
+      removeEmptyIds(item.title.identifiers)
+    }
+    else if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)) {
+      removeEmptyIds(item.identifiers)
       removeEmptyIds(item.title.identifiers)
     }
     item

@@ -18,9 +18,11 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
   String gokbJobId
   Map gokbStatusResponse
+  boolean integrateWithTitleData
 
   SendPackageThreadGokb(def grailsApplication, @Nonnull Enrichment enrichment, @Nonnull String uri,
-                        @Nonnull String user, @Nonnull String password, @Nonnull locale){
+                        @Nonnull String user, @Nonnull String password, @Nonnull locale,
+                        boolean integrateWithTitleData){
     this.grailsApplication = grailsApplication
     this.enrichment = enrichment
     this.uri = uri
@@ -31,12 +33,19 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     result = []
     gokbStatusResponse = [:]
     this.locale = locale
+    this.integrateWithTitleData = integrateWithTitleData
   }
 
 
   @Override
   void run(){
-    def json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
+    def json
+    if (integrateWithTitleData){
+      json = enrichment.getAsFile(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, true)
+    }
+    else{
+      json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
+    }
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
     result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
   }
@@ -55,10 +64,16 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       }
     }
     else{
-      // get count from ongoing process
-      String countString = getGokbResponseValue("progress")
-      if (countString != null){
-        count = Double.valueOf(countString) / 100.0 * total
+      String error = getGokbResponseValue("error")
+      if (error != null){
+        count = total
+      }
+      else{
+        // get count from ongoing process
+        String countString = getGokbResponseValue("progress")
+        if (countString != null){
+          count = Double.valueOf(countString) / 100.0 * total
+        }
       }
     }
   }
@@ -67,6 +82,10 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   boolean isInterrupted(){
     String message = getGokbResponseValue("job_result.message")
     if (message != null && message.contains("tipps have not been loaded because of validation errors")){
+      return true
+    }
+    message = getGokbResponseValue("result")
+    if (message != null && message.contains("error")){
       return true
     }
     // else
@@ -84,7 +103,11 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
   @Override
   String getGokbResponseValue(String responseKey){
-    gokbStatusResponse = getGokbStatusResponse(getJobId())
+    def jobId = getJobId()
+    if (jobId == null){
+      return null
+    }
+    gokbStatusResponse = getGokbStatusResponse(jobId)
     String[] path = responseKey.split("\\.")
     def response = gokbStatusResponse
     for (String subField in path){
@@ -98,7 +121,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   protected Map getGokbStatusResponse(String jobId){
-    if (user == null || password == null){
+    if (user == null || password == null || jobId == null){
       return null
     }
     def uri = grailsApplication.config.gokbApi.xrJobInfo.toString().concat("/").concat(jobId)

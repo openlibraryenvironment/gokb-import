@@ -37,6 +37,7 @@ class Enrichment{
     JSON,
     PACKAGE,
     TITLES,
+    PACKAGE_WITH_TITLEDATA,
     RAW
   }
 
@@ -284,8 +285,8 @@ class Enrichment{
   static Enrichment fromJsonFile(def file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
-    enrichment.setTippPlatformNameMapping()
-    enrichment.setTippPlatformUrlMapping()
+    enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
+    enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
   }
@@ -363,19 +364,19 @@ class Enrichment{
   }
 
 
-  FieldKeyMapping setTippPlatformNameMapping(){
+  FieldKeyMapping setTippPlatformNameMapping(String platformName){
     FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformNameMapping.val)){
-      platformNameMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.name
+      platformNameMapping.val = platformName
     }
     platformNameMapping
   }
 
 
-  FieldKeyMapping setTippPlatformUrlMapping(){
+  FieldKeyMapping setTippPlatformUrlMapping(String platformUrl){
     FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformUrlMapping.val)){
-      platformUrlMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.url
+      platformUrlMapping.val = platformUrl
     }
     platformUrlMapping
   }

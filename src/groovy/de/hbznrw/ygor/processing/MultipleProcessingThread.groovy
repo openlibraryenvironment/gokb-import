@@ -49,7 +49,7 @@ class MultipleProcessingThread extends Thread {
 
   MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     enrichment = en
-    apiCalls = options.get('options')
+    apiCalls = decodeApiCalls(options.get('options'))
     delimiter = options.get('delimiter')
     quote = options.get('quote')
     quoteMode = options.get('quoteMode')
@@ -141,14 +141,16 @@ class MultipleProcessingThread extends Thread {
 
 
   private void processUiSettings() {
-    FieldKeyMapping tippNameMapping = enrichment.setTippPlatformNameMapping()
+    FieldKeyMapping tippNameMapping =
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
     enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping = enrichment.setTippPlatformUrlMapping()
+    FieldKeyMapping tippUrlMapping =
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
     enrichment.enrollMappingToRecords(tippUrlMapping)
   }
 
 
-  private void calculateProgressIncrement(String enrichmentFolder) {
+  private void calculateProgressIncrement(String enrichmentFolder){
     String file = new File(kbartFile).absolutePath.equals(kbartFile) ? kbartFile : enrichmentFolder.concat(kbartFile)
     double lines = (double) (countLines(file) - 1)
     if (lines > 0) {
@@ -156,6 +158,30 @@ class MultipleProcessingThread extends Thread {
       // division by 3 for number of tasks (Kbart, ZDB, EZB)
     } else {
       progressIncrement = 1 // dummy assignment
+    }
+  }
+
+
+  private List<String> decodeApiCalls(def apiCalls){
+    if (apiCalls == null){
+      return new ArrayList()
+    }
+    if (apiCalls instanceof Collection){
+      return new ArrayList(apiCalls)
+    }
+    if (apiCalls.getClass().isArray()){
+      return Arrays.asList(apiCalls)
+    }
+    if (apiCalls instanceof String){
+      // remove all kinds of braces
+      apiCalls = apiCalls.replaceAll("[{}[\\\\]()]", "")
+      def split = apiCalls.split(",")
+      // check if it is a comma-separated list
+      if (split.size() > 1){
+        return Arrays.asList(split)
+      }
+      // eventually split by semicolon
+      return Arrays.asList(split[0].split(";"))
     }
   }
 

@@ -18,7 +18,7 @@ import ygor.identifier.PrintIdentifier
 import ygor.identifier.ZdbIdentifier
 
 @Log4j
-class StatisticController{
+class StatisticController implements ControllersHelper{
 
   def grailsApplication
   static scope = "session"
@@ -382,8 +382,11 @@ class StatisticController{
     gokbUsername = params.gokbUsername
     gokbPassword = params.gokbPassword
     def enrichment = getCurrentEnrichment()
-    if (enrichment && !enrichment.hasBeenUploaded.get(fileType)){
-      String uri = getDestinationUri(fileType, enrichment.addOnly)
+    if (enrichment == null){
+      flash.error = message(code: 'error.enrichment.missing').toString().concat("<br>")
+    }
+    if (!enrichment.hasBeenUploaded.get(fileType)){
+      String uri = getDestinationUri(grailsApplication, fileType, enrichment.addOnly)
       UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
         SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
@@ -392,7 +395,7 @@ class StatisticController{
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(grailsApplication, enrichment, uri,
-            gokbUsername, gokbPassword, RequestContextUtils.getLocale(request).toString())
+            gokbUsername, gokbPassword, RequestContextUtils.getLocale(request).toString(), false)
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
       }
       if (uploadJob != null){
@@ -483,25 +486,6 @@ class StatisticController{
       stringJoiner.add('{"'.concat(entry.key).concat('":"').concat(entry.value.toString()).concat('"}'))
     }
     render stringJoiner.toString()
-  }
-
-
-  private String getDestinationUri(fileType, boolean addOnly){
-    def uri = fileType.equals(Enrichment.FileType.PACKAGE) ?
-        grailsApplication.config.gokbApi.xrPackageUri :
-        (fileType.equals(Enrichment.FileType.TITLES) ?
-            grailsApplication.config.gokbApi.xrTitleUri :
-            null
-        )
-    if (fileType.equals(Enrichment.FileType.PACKAGE)){
-      uri = uri.concat("?async=true")
-      // Titles are being sent 1 per request, there's no need for asynchronicity
-      if (addOnly){
-        uri = uri.concat("&addOnly=true")
-      }
-      // (addOnly has no effect for titles, it only needs to be set for packages)
-    }
-    return uri
   }
 
 
