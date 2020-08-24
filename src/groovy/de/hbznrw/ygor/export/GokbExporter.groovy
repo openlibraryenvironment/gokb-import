@@ -235,7 +235,9 @@ class GokbExporter {
       result.set("curatoryGroups", (curatoryGroups))
     }
     setPkgId(enrichment.dataContainer, identifiers)
-
+    if (enrichment.autoUpdate == true){
+      result.set("generateToken", new TextNode("true"))
+    }
     result.set("identifiers", identifiers)
 
     enrichment.dataContainer.packageHeader = result

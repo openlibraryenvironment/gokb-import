@@ -168,10 +168,15 @@ class Enrichment{
     result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
+    result.append("\"autoUpdate\":\"").append(String.valueOf(autoUpdate)).append("\",")
     result.append("\"enrichmentFolder\":\"").append(enrichmentFolder).append("\",")
     String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
+    }
+    String token = dataContainer.packageHeader?.token
+    if (token){
+      result.append("\"token\":\"").append(token).append("\",")
     }
     result.append("\"records\":").append(JsonToolkit.setToJson(dataContainer.records)).append(",")
     result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
@@ -235,6 +240,7 @@ class Enrichment{
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
+    en.autoUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "autoUpdate"))
     en.enrichmentFolder = JsonToolkit.fromJson(rootNode, "enrichmentFolder")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
@@ -264,6 +270,9 @@ class Enrichment{
     en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
     en.dataContainer.pkg.packageHeader.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
+    if (null != JsonToolkit.fromJson(rootNode, "token")){
+      en.dataContainer.pkg.packageHeader.token = JsonToolkit.fromJson(rootNode, "token")
+    }
     en.greenRecords = JsonToolkit.fromJsonNode(rootNode.get("greenRecords"))
     if (en.greenRecords == null){
       en.greenRecords = new HashMap<>()

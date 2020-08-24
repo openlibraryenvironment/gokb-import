@@ -48,6 +48,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     }
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
     result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
+    enrichment.dataContainer.pkg.packageHeader.token = result.updateToken
   }
 
 

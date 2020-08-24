@@ -495,9 +495,6 @@ class EnrichmentController implements ControllersHelper{
         )
       }
       else{
-        if (en.autoUpdate){
-          AutoUpdateService.addEnrichmentJob(en)
-        }
         redirect(
             controller: 'Statistic',
             action: 'show',
