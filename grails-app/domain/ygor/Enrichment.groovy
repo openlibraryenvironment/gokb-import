@@ -160,6 +160,14 @@ class Enrichment{
 
   void save(){
     log.info("Saving enrichment...")
+    String result = asJson(true)
+    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
+    file.getParentFile().mkdirs()
+    file.write(JsonOutput.prettyPrint(result), "UTF-8")
+    log.info("Saving enrichment finished.")
+  }
+
+  String asJson(boolean includeRecords){
     StringWriter result = new StringWriter()
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
@@ -174,21 +182,20 @@ class Enrichment{
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
-    String token = dataContainer.packageHeader?.token
+    if (includeRecords){
+      result.append("\"records\":").append(JsonToolkit.setToJson(dataContainer.records)).append(",")
+      result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
+      result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
+      result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
+    }
+    String token = dataContainer.pkg?.packageHeader?.token
     if (token){
       result.append("\"token\":\"").append(token).append("\",")
     }
-    result.append("\"records\":").append(JsonToolkit.setToJson(dataContainer.records)).append(",")
-    result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
-    result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
-    result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
     result.append("\"configuration\":")
     result.append(this.getConfiguration())
     result.append("}")
-    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
-    file.getParentFile().mkdirs()
-    file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
-    log.info("Saving enrichment finished.")
+    result.toString()
   }
 
 

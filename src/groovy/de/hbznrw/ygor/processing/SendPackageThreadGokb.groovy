@@ -5,6 +5,7 @@ import groovy.util.logging.Log4j
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import ygor.AutoUpdateService
 import ygor.Enrichment
 
 import javax.annotation.Nonnull
@@ -48,7 +49,6 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     }
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
     result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
-    enrichment.dataContainer.pkg.packageHeader.token = result.updateToken
   }
 
 
@@ -61,6 +61,13 @@ class SendPackageThreadGokb extends UploadThreadGokb{
         Integer foundInt = Integer.valueOf(matcher.group(1))
         if (foundInt != null){
           count = foundInt
+        }
+      }
+      String token = getGokbResponseValue("job_result.updateToken")
+      if (token != null){
+        enrichment.dataContainer.pkg.packageHeader.token = token
+        if (enrichment.autoUpdate == true){
+          AutoUpdateService.addEnrichmentJob(enrichment)
         }
       }
     }

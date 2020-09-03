@@ -7,12 +7,10 @@ import java.nio.charset.Charset
 
 class AutoUpdateService {
 
-  static String updatesLocation = grails.util.Holders.grailsApplication.config.ygor.autoUpdateJobsLocation
-
   static void addEnrichmentJob(Enrichment enrichment){
-    String fileName = enrichment.originPathName.concat("_").(UUID.randomUUID().toString())
-    FileWriter fileWriter = new FileWriter(updatesLocation.concat(fileName))
-    fileWriter.write(enrichment.getConfiguration())
+    String fileName = enrichment.originPathName.concat("_").concat(UUID.randomUUID().toString())
+    FileWriter fileWriter = new FileWriter(grails.util.Holders.grailsApplication.config.ygor.autoUpdateJobsLocation.concat(fileName))
+    fileWriter.write(enrichment.asJson(false))
     fileWriter.close()
   }
 
