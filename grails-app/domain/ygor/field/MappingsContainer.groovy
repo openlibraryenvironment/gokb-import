@@ -129,7 +129,7 @@ class MappingsContainer {
 
   void asJson(JsonGenerator jsonGenerator) {
     jsonGenerator.writeStartObject()
-    jsonGenerator.writeStringField("mappingsFile", mappingsFile)
+    jsonGenerator.writeStringField("mappingsFile", String.valueOf(mappingsFile))
 
     jsonGenerator.writeFieldName("ygorMappings")
     jsonGenerator.writeStartArray()

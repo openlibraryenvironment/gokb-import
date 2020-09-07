@@ -99,12 +99,6 @@
 					<td>tipps.title.identifiers.eissn</td>
 					<td>005A:0</td>
 				</tr>
-				<tr>
-					<td>ZDB / GBV</td>
-					<td>title.identifiers.issn</td>
-					<td></td>
-					<td>005P:0</td>
-				</tr>
 				
 				<tr>
 					<td>ZDB / GBV</td>

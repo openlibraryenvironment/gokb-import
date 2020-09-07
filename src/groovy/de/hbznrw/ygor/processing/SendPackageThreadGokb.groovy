@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.processing
 
 import de.hbznrw.ygor.export.GokbExporter
+import grails.util.Holders
 import groovy.util.logging.Log4j
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
@@ -15,16 +16,15 @@ import java.util.regex.Pattern
 @Log4j
 class SendPackageThreadGokb extends UploadThreadGokb{
 
-  def grailsApplication
   final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
   String gokbJobId
   Map gokbStatusResponse
   boolean integrateWithTitleData
+  boolean isUpdate
 
-  SendPackageThreadGokb(def grailsApplication, @Nonnull Enrichment enrichment, @Nonnull String uri,
-                        @Nonnull String user, @Nonnull String password, @Nonnull locale,
+  SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri,
+                        @Nonnull String user, @Nonnull String password, @Nonnull String locale,
                         boolean integrateWithTitleData){
-    this.grailsApplication = grailsApplication
     this.enrichment = enrichment
     this.uri = uri
     this.user = user
@@ -35,6 +35,18 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     gokbStatusResponse = [:]
     this.locale = locale
     this.integrateWithTitleData = integrateWithTitleData
+    this.isUpdate = false
+  }
+
+  SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, @Nonnull String locale){
+    this.enrichment = enrichment
+    this.uri = uri
+    total += enrichment.yellowRecords?.size()
+    total += enrichment.greenRecords?.size()
+    result = []
+    gokbStatusResponse = [:]
+    this.locale = locale
+    this.isUpdate = true
   }
 
 
@@ -48,7 +60,12 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
     }
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
-    result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
+    if (isUpdate){
+      result << GokbExporter.sendUpdate(uri.concat(enrichment.dataContainer), json.getText(), locale)
+    }
+    else{
+      result << GokbExporter.sendText(uri, json.getText(), user, password, locale, isUpdate)
+    }
   }
 
 
@@ -64,8 +81,10 @@ class SendPackageThreadGokb extends UploadThreadGokb{
         }
       }
       String token = getGokbResponseValue("job_result.updateToken")
-      if (token != null){
+      String uuid = getGokbResponseValue("job_result.uuid")
+      if (token != null && uuid != null){
         enrichment.dataContainer.pkg.packageHeader.token = token
+        enrichment.dataContainer.pkg.packageHeader.uuid = uuid
         if (enrichment.autoUpdate == true){
           AutoUpdateService.addEnrichmentJob(enrichment)
         }
@@ -132,7 +151,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     if (user == null || password == null || jobId == null){
       return null
     }
-    def uri = grailsApplication.config.gokbApi.xrJobInfo.toString().concat("/").concat(jobId)
+    def uri = Holders.config.gokbApi.xrJobInfo.toString().concat("/").concat(jobId)
     def http = new HTTPBuilder(uri)
     Map<String, Object> result = new HashMap<>()
     http.auth.basic user, password

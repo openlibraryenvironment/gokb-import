@@ -60,10 +60,17 @@ class Enrichment{
   String resultName
   String resultHash
   String enrichmentFolder
-
   File sessionFolder
+
+  def kbartDelimiter
+  def kbartQuote
+  def kbartQuoteMode
+  def kbartRecordSeparator
+
   String ygorVersion
+  String processingOptions
   String date
+  def locale
   boolean addOnly
   boolean isZdbIntegrated
   boolean isEzbIntegrated
@@ -192,6 +199,10 @@ class Enrichment{
     if (token){
       result.append("\"token\":\"").append(token).append("\",")
     }
+    String uuid = dataContainer.pkg?.packageHeader?.uuid
+    if (uuid){
+      result.append("\"uuid\":\"").append(uuid).append("\",")
+    }
     result.append("\"configuration\":")
     result.append(this.getConfiguration())
     result.append("}")
@@ -227,10 +238,18 @@ class Enrichment{
     }
     if (dataContainer.pkg?.packageHeader?.nominalPlatform != null){
       result.append("\"nominalPlatform\":{")
-      result.append("\"name\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.name).append("\",")
-      result.append("\"url\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.url).append("\"")
+        result.append("\"name\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.name).append("\",")
+        result.append("\"url\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.url).append("\"")
       result.append("},")
     }
+    result.append("\"kbart\":{")
+      result.append("\"delimiter\":\"").append(kbartDelimiter).append("\",")
+      result.append("\"quote\":\"").append(kbartQuote).append("\",")
+      result.append("\"quoteMode\":\"").append(kbartQuoteMode).append("\",")
+      result.append("\"recordSeparator\":\"").append(kbartRecordSeparator).append("\"")
+    result.append("},")
+    result.append("\"locale\":\"").append(locale).append("\",")
+    result.append("\"processingOptions\":\"").append(processingOptions).append("\",")
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
     result.append("}")
@@ -260,7 +279,12 @@ class Enrichment{
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
     en.isEzbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isEzbIntegrated"))
-
+    en.kbartDelimiter = JsonToolkit.fromJson(rootNode, "configuration.kbartDelimiter")
+    en.kbartQuote = JsonToolkit.fromJson(rootNode, "configuration.kbartQuote")
+    en.kbartQuoteMode = JsonToolkit.fromJson(rootNode, "configuration.kbartQuoteMode")
+    en.kbartRecordSeparator = JsonToolkit.fromJson(rootNode, "configuration.kbartRecordSeparator")
+    en.processingOptions = JsonToolkit.fromJson(rootNode, "configuration.processingOptions")
+    en.locale = JsonToolkit.fromJson(rootNode, "configuration.locale")
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
       en.dataContainer.curatoryGroup = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")
     }
@@ -279,6 +303,9 @@ class Enrichment{
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
     if (null != JsonToolkit.fromJson(rootNode, "token")){
       en.dataContainer.pkg.packageHeader.token = JsonToolkit.fromJson(rootNode, "token")
+    }
+    if (null != JsonToolkit.fromJson(rootNode, "uuid")){
+      en.dataContainer.pkg.packageHeader.uuid = JsonToolkit.fromJson(rootNode, "uuid")
     }
     en.greenRecords = JsonToolkit.fromJsonNode(rootNode.get("greenRecords"))
     if (en.greenRecords == null){

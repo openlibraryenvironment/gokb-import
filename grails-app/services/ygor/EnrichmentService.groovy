@@ -1,8 +1,15 @@
 package ygor
 
 import de.hbznrw.ygor.export.structure.Pod
-import groovyx.net.http.HTTPBuilder
+import de.hbznrw.ygor.processing.SendPackageThreadGokb
+import de.hbznrw.ygor.processing.YgorProcessingException
+import de.hbznrw.ygor.readers.KbartReader
+import grails.util.Holders
+import org.apache.commons.io.IOUtils
+import org.mozilla.universalchardet.UniversalDetector
+import ygor.field.FieldKeyMapping
 
+import javax.annotation.Nonnull
 import javax.servlet.http.HttpSession
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
@@ -12,6 +19,7 @@ class EnrichmentService{
 
   def grailsApplication
   GokbService gokbService
+  KbartReader kbartReader
 
   Enrichment fromCommonsMultipartFile(CommonsMultipartFile file){
     Enrichment en = fromFilename(file.originalFilename)
@@ -201,4 +209,102 @@ class EnrichmentService{
     }
     sessionFolder
   }
+
+
+  Enrichment enrichmentFromFile(CommonsMultipartFile commonsMultipartFile,
+                                def foDelimiter, def foQuote, def foQuoteMode){
+    String fileName = commonsMultipartFile.originalFilename
+    String encoding = getEncoding(commonsMultipartFile)
+    if (encoding != "UTF-8"){
+      log.error(String.format("Transferred file has encoding %s. Aborting.", encoding))
+      return
+    }
+    try{
+      kbartReader = new KbartReader(new InputStreamReader(commonsMultipartFile.getInputStream()), foDelimiter)
+      kbartReader.checkHeader()
+    }
+    catch (YgorProcessingException ype){
+      log.error("Aborting on KBart header check for file " + fileName)
+      return
+    }
+    Enrichment enrichment = addFileAndFormat(commonsMultipartFile, foDelimiter, foQuote, foQuoteMode)
+    return enrichment
+  }
+
+
+  UploadJob processCompleteNoInteraction(Enrichment enrichment, def pmOptions, def foDelimiter, foQuote, foQuoteMode,
+                                         recordSeparator, addOnly, gokbUsername, gokbPassword, String locale){
+    enrichment.kbartRecordSeparator = recordSeparator
+    enrichment.processingOptions = pmOptions
+    enrichment.kbartDelimiter = foDelimiter
+    enrichment.kbartQuote = foQuote
+    enrichment.kbartQuoteMode = foQuoteMode
+    enrichment.locale = locale
+    processComplete(enrichment, recordSeparator, addOnly, gokbUsername, gokbPassword, false, null)
+  }
+
+
+  UploadJob processCompleteUpdate(Enrichment enrichment){
+    processComplete(enrichment, enrichment.addOnly, null, null, true,
+        enrichment.dataContainer.pkg.packageHeader.token)
+  }
+
+
+  private UploadJob processComplete(Enrichment enrichment, boolean addOnly, String gokbUsername, String gokbPassword,
+                                    boolean isUpdate, String token){
+    FieldKeyMapping tippNameMapping =
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
+    enrichment.enrollMappingToRecords(tippNameMapping)
+    FieldKeyMapping tippUrlMapping =
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
+    enrichment.enrollMappingToRecords(tippUrlMapping)
+    def options = [
+        'options'        : enrichment.processingOptions,
+        'delimiter'      : enrichment.kbartDelimiter,
+        'quote'          : enrichment.kbartQuote,
+        'quoteMode'      : enrichment.kbartQuoteMode,
+        'recordSeparator': enrichment.kbartRecordSeparator,
+        'addOnly'        : addOnly,
+        'ygorVersion'    : Holders.config.ygor.version,
+        'ygorType'       : Holders.config.ygor.type
+    ]
+    enrichment.process(options, kbartReader)
+    while (enrichment.status != Enrichment.ProcessingState.FINISHED){
+      Thread.sleep(1000)
+    }
+    // Main processing finished here.
+    // Upload is following - send package with integrated title data
+    String uri = Holders.config.gokbApi.packageUpdateUri
+    SendPackageThreadGokb sendPackageThreadGokb
+    if (isUpdate){
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale)
+    }
+    else{
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri,
+          gokbUsername, gokbPassword, enrichment.locale, true)
+    }
+    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
+    uploadJob.start()
+    return uploadJob
+  }
+
+
+  String getEncoding(def inputStream){
+    String encoding
+    try{
+      encoding = UniversalDetector.detectCharset(inputStream)
+    }
+    catch (IllegalStateException ise){
+      ByteArrayOutputStream baos = new ByteArrayOutputStream()
+      IOUtils.copy(inputStream, baos)
+      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
+      encoding = UniversalDetector.detectCharset(inputStream)
+    }
+    log.debug("Detected encoding ${encoding}")
+    encoding
+  }
+
+
+
+
 }

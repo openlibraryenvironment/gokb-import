@@ -1,15 +1,12 @@
 package ygor
 
 import de.hbznrw.ygor.readers.KbartFromUrlReader
-import de.hbznrw.ygor.processing.SendPackageThreadGokb
-import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.mozilla.universalchardet.UniversalDetector
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.springframework.web.servlet.support.RequestContextUtils
-import ygor.field.FieldKeyMapping
 
 import java.nio.charset.Charset
 
@@ -104,7 +101,7 @@ class EnrichmentController implements ControllersHelper{
       file = request.session.lastUpdate.file
     }
 
-    String encoding = getEncoding(file.getInputStream())
+    String encoding = enrichmentService.getEncoding(file.getInputStream())
     if (encoding && encoding != "UTF-8"){
       flash.info = null
       flash.warning = null
@@ -206,8 +203,11 @@ class EnrichmentController implements ControllersHelper{
     // load file from URL
     String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
     Enrichment enrichment = enrichmentService.fromFilename(kbartFileName)
+    enrichment.kbartDelimiter = request.session.lastUpdate.foDelimiterUrl
+    enrichment.addOnly = false
+    enrichment.processingOptions = null
     try {
-      kbartReader = new KbartFromUrlReader(new URL(urlString) , request.parameterMap['formatDelimiterUrl'][0],
+      kbartReader = new KbartFromUrlReader(new URL(urlString) , request.session.lastUpdate.foDelimiterUrl,
                                            Charset.forName("UTF-8"), new File (enrichment.enrichmentFolder))
       kbartReader.checkHeader()
     }
@@ -261,22 +261,6 @@ class EnrichmentController implements ControllersHelper{
     request.session.lastUpdate.foQuoteMode = foQuoteMode
     request.session.lastUpdate.recordSeparator = recordSeparator
     request.session.lastUpdate.addOnly = addOnly
-  }
-
-
-  private String getEncoding(def inputStream){
-    String encoding
-    try{
-      encoding = UniversalDetector.detectCharset(inputStream)
-    }
-    catch (IllegalStateException ise){
-      ByteArrayOutputStream baos = new ByteArrayOutputStream()
-      IOUtils.copy(inputStream, baos)
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
-      encoding = UniversalDetector.detectCharset(inputStream)
-    }
-    log.debug("Detected encoding ${encoding}")
-    encoding
   }
 
 
@@ -355,6 +339,7 @@ class EnrichmentController implements ControllersHelper{
    */
   def processCompleteNoInteraction = {
     CommonsMultipartFile file = request.getFile('uploadFile')
+    def locale = RequestContextUtils.getLocale(request).getLanguage()
     if (file == null){
       log.error("Received request missing a file. Aborting.")
       return
@@ -363,64 +348,42 @@ class EnrichmentController implements ControllersHelper{
       log.error("Received request with empty file. Aborting.")
       return
     }
-    String fileName = file.originalFilename
-    String encoding = getEncoding(file)
-    if (encoding != "UTF-8"){
-      log.error(String.format("Transferred file has encoding %s. Aborting.", encoding))
-      return
-    }
-    def foDelimiter = params.get('formatDelimiter')      // inactive, set null
+    def foDelimiter = params.get('formatDelimiter')
     def foQuote = params.get('formatQuote')              // inactive, set null
     def foQuoteMode = params.get('formatQuoteMode')      // inactive, set null
-    def recordSeparator = params.get('recordSeparator')  //
+    def recordSeparator = params.get('recordSeparator')  // inactive, set null
     def addOnly = params.get('addOnly')                  // "on" or "off"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
-    try{
-      kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()), foDelimiter)
-      kbartReader.checkHeader()
-    }
-    catch (YgorProcessingException ype){
-      log.error("Aborting on KBart header check for file " + fileName)
-      return
-    }
-    Enrichment enrichment = enrichmentService.addFileAndFormat(file, foDelimiter, foQuote, foQuoteMode)
-    enrichmentService.prepareFile(enrichment, request.parameterMap)
-    FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
-    enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
-    enrichment.enrollMappingToRecords(tippUrlMapping)
-    def options = [
-        'options'         : pmOptions,
-        'delimiter'       : foDelimiter,
-        'quote'           : foQuote,
-        'quoteMode'       : foQuoteMode,
-        'recordSeparator' : recordSeparator,
-        'addOnly'         : addOnly,
-        'ygorVersion'     : grailsApplication.config.ygor.version,
-        'ygorType'        : grailsApplication.config.ygor.type
-    ]
-    enrichment.process(options, kbartReader)
-    while (enrichment.status != Enrichment.ProcessingState.FINISHED){
-      Thread.sleep(1000)
-    }
-    // Main processing finished here.
-    // Upload following.
     def gokbUsername = params.gokbUsername
     def gokbPassword = params.gokbPassword
-    // send package with integrated title data
-    String uri = getDestinationUri(grailsApplication, Enrichment.FileType.PACKAGE, enrichment.addOnly)
-    def locale = RequestContextUtils.getLocale(request).getLanguage()
-    SendPackageThreadGokb sendPackageThreadGokb = new SendPackageThreadGokb(grailsApplication, enrichment, uri,
-        gokbUsername, gokbPassword, locale, true)
-    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
-    uploadJob.start()
+    Enrichment enrichment = enrichmentService.enrichmentFromFile(file, foDelimiter, foQuote, foQuoteMode)
+    enrichment.kbartDelimiter = foDelimiter
+    enrichment.addOnly = (addOnly.equals("on")) ? true : false
+    enrichment.processingOptions = pmOptions
+    enrichmentService.prepareFile(enrichment, request.parameterMap)
+    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, foDelimiter, foQuote,
+        foQuoteMode, recordSeparator, addOnly, gokbUsername, gokbPassword, locale)
     render(
         model: [
-            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, fileName)
+            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
         ]
     )
+  }
+
+
+  def processCompleteNoInteraction(Enrichment enrichment){
+    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(
+        enrichment,
+        enrichment.processingOptions,
+        enrichment.kbartDelimiter,
+        enrichment.kbartQuote,
+        enrichment.kbartQuoteMode,
+        enrichment.kbartRecordSeparator,
+        enrichment.addOnly,
+        null,
+        null,
+        enrichment.locale)
+    watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
   }
 
 

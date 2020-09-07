@@ -530,4 +530,38 @@ class GokbExporter {
     }
   }
 
+
+  static Map sendUpdate(@Nonnull String url, @Nonnull String text, @Nonnull String locale){
+    def http = new HTTPBuilder(url)
+    http.request(Method.POST, ContentType.JSON){ request ->
+      headers.'User-Agent' = 'ygor'
+      headers.'Accept-Language' = locale
+      body = text
+      response.success = { response, html ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (response.status < 400){
+            return ['info': html]
+          }
+          else{
+            return ['warning': html]
+          }
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.failure = { response, html ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          return ['error': html]
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.'401' = { response ->
+        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+      }
+    }
+  }
+
 }
