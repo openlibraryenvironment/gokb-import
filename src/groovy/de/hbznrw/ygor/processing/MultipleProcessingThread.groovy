@@ -8,6 +8,7 @@ import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
 import groovy.util.logging.Log4j
 import ygor.Enrichment
+import ygor.EnrichmentService
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.identifier.OnlineIdentifier
@@ -49,7 +50,7 @@ class MultipleProcessingThread extends Thread {
 
   MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     enrichment = en
-    apiCalls = decodeApiCalls(options.get('options'))
+    apiCalls = EnrichmentService.decodeApiCalls(options.get('options'))
     delimiter = options.get('delimiter')
     quote = options.get('quote')
     quoteMode = options.get('quoteMode')
@@ -158,30 +159,6 @@ class MultipleProcessingThread extends Thread {
       // division by 3 for number of tasks (Kbart, ZDB, EZB)
     } else {
       progressIncrement = 1 // dummy assignment
-    }
-  }
-
-
-  private List<String> decodeApiCalls(def apiCalls){
-    if (apiCalls == null){
-      return new ArrayList()
-    }
-    if (apiCalls instanceof Collection){
-      return new ArrayList(apiCalls)
-    }
-    if (apiCalls.getClass().isArray()){
-      return Arrays.asList(apiCalls)
-    }
-    if (apiCalls instanceof String){
-      // remove all kinds of braces
-      apiCalls = apiCalls.replaceAll("[{}[\\\\]()]", "")
-      def split = apiCalls.split(",")
-      // check if it is a comma-separated list
-      if (split.size() > 1){
-        return Arrays.asList(split)
-      }
-      // eventually split by semicolon
-      return Arrays.asList(split[0].split(";"))
     }
   }
 

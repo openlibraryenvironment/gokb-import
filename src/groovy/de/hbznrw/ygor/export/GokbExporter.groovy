@@ -66,6 +66,9 @@ class GokbExporter {
     log.debug("extracting package ...")
     pkg.set("packageHeader", extractPackageHeader(enrichment))
     pkg.set("tipps", extractTipps(enrichment, type))
+    if (enrichment.dataContainer.pkg.packageHeader.token != null){
+      pkg.put("updateToken", enrichment.dataContainer.pkg.packageHeader.token)
+    }
     log.debug("extracting package finished")
     pkg
   }

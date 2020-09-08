@@ -3,6 +3,7 @@ package ygor
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.YgorProcessingException
+import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.util.Holders
 import org.apache.commons.io.IOUtils
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpSession
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
+
+import java.nio.charset.Charset
 
 class EnrichmentService{
 
@@ -232,7 +235,7 @@ class EnrichmentService{
   }
 
 
-  UploadJob processCompleteNoInteraction(Enrichment enrichment, def pmOptions, def foDelimiter, foQuote, foQuoteMode,
+  UploadJob processCompleteNoInteraction(Enrichment enrichment, List<String> pmOptions, def foDelimiter, foQuote, foQuoteMode,
                                          recordSeparator, addOnly, gokbUsername, gokbPassword, String locale){
     enrichment.kbartRecordSeparator = recordSeparator
     enrichment.processingOptions = pmOptions
@@ -245,8 +248,17 @@ class EnrichmentService{
 
 
   UploadJob processCompleteUpdate(Enrichment enrichment){
-    processComplete(enrichment, enrichment.addOnly, null, null, true,
-        enrichment.dataContainer.pkg.packageHeader.token)
+    try{
+      URL originUrl = new URL(enrichment.originUrl)
+      kbartReader = new KbartFromUrlReader(originUrl, enrichment.kbartDelimiter, Charset.forName("UTF-8"),
+          enrichment.sessionFolder)
+      enrichment.dataContainer.records = []
+      processComplete(enrichment, enrichment.addOnly, null, null, true,
+          enrichment.dataContainer.pkg.packageHeader.token)
+    }
+    catch (Exception e){
+      log.error("Could not process update ".concat(enrichment?.resultName))
+    }
   }
 
 
@@ -274,7 +286,7 @@ class EnrichmentService{
     }
     // Main processing finished here.
     // Upload is following - send package with integrated title data
-    String uri = Holders.config.gokbApi.packageUpdateUri
+    String uri = Holders.config.gokbApi.xrPackageUri
     SendPackageThreadGokb sendPackageThreadGokb
     if (isUpdate){
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale)
@@ -305,6 +317,26 @@ class EnrichmentService{
   }
 
 
-
-
+  static List<String> decodeApiCalls(def apiCalls){
+    if (apiCalls == null){
+      return new ArrayList()
+    }
+    if (apiCalls instanceof Collection){
+      return new ArrayList(apiCalls)
+    }
+    if (apiCalls.getClass().isArray()){
+      return Arrays.asList(apiCalls)
+    }
+    if (apiCalls instanceof String){
+      // remove all kinds of braces
+      apiCalls = apiCalls.replaceAll("[{}[\\\\]()]", "")
+      def split = apiCalls.split(",")
+      // check if it is a comma-separated list
+      if (split.size() > 1){
+        return Arrays.asList(split)
+      }
+      // eventually split by semicolon
+      return Arrays.asList(split[0].split(";"))
+    }
+  }
 }

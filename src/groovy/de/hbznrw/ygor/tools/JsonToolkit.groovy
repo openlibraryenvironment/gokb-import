@@ -71,7 +71,6 @@ class JsonToolkit {
 
 
   static ObjectNode getTitleJsonFromRecord(String target, Record record, YgorFormatter formatter) {
-
     getJsonFromRecord(new ArrayList(Arrays.asList("\$TITLE")), target, record, formatter)
   }
 
@@ -272,7 +271,17 @@ class JsonToolkit {
   }
 
 
-  synchronized static List listFromJson(String jsonString, Class targetType){
+  static List listFromJson(JsonNode root, String subField){
+    String[] pathSplit = subField.split("\\.", 2)
+    JsonNode subNode = root.path(pathSplit[0])
+    if (pathSplit.length > 1) {
+      return fromJson(subNode, pathSplit[1])
+    }
+
+  }
+
+
+  static List listFromJson(String jsonString, Class targetType){
     return MAPPER.readValue(jsonString, MAPPER.getTypeFactory().constructCollectionType(List.class, targetType))
   }
 

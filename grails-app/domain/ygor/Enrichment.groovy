@@ -68,7 +68,7 @@ class Enrichment{
   def kbartRecordSeparator
 
   String ygorVersion
-  String processingOptions
+  List<String> processingOptions
   String date
   def locale
   boolean addOnly
@@ -174,6 +174,7 @@ class Enrichment{
     log.info("Saving enrichment finished.")
   }
 
+
   String asJson(boolean includeRecords){
     StringWriter result = new StringWriter()
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
@@ -249,7 +250,7 @@ class Enrichment{
       result.append("\"recordSeparator\":\"").append(kbartRecordSeparator).append("\"")
     result.append("},")
     result.append("\"locale\":\"").append(locale).append("\",")
-    result.append("\"processingOptions\":\"").append(processingOptions).append("\",")
+    result.append("\"processingOptions\":").append(JsonToolkit.listToJson(processingOptions)).append(",")
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
     result.append("}")
@@ -279,10 +280,10 @@ class Enrichment{
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
     en.isEzbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isEzbIntegrated"))
-    en.kbartDelimiter = JsonToolkit.fromJson(rootNode, "configuration.kbartDelimiter")
-    en.kbartQuote = JsonToolkit.fromJson(rootNode, "configuration.kbartQuote")
-    en.kbartQuoteMode = JsonToolkit.fromJson(rootNode, "configuration.kbartQuoteMode")
-    en.kbartRecordSeparator = JsonToolkit.fromJson(rootNode, "configuration.kbartRecordSeparator")
+    en.kbartDelimiter = JsonToolkit.fromJson(rootNode, "configuration.kbart.delimiter")
+    en.kbartQuote = JsonToolkit.fromJson(rootNode, "configuration.kbart.quote")
+    en.kbartQuoteMode = JsonToolkit.fromJson(rootNode, "configuration.kbart.quoteMode")
+    en.kbartRecordSeparator = JsonToolkit.fromJson(rootNode, "configuration.kbart.recordSeparator")
     en.processingOptions = JsonToolkit.fromJson(rootNode, "configuration.processingOptions")
     en.locale = JsonToolkit.fromJson(rootNode, "configuration.locale")
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){

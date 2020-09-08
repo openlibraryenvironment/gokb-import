@@ -47,6 +47,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     gokbStatusResponse = [:]
     this.locale = locale
     this.isUpdate = true
+    integrateWithTitleData = true
   }
 
 
@@ -61,10 +62,10 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     }
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
     if (isUpdate){
-      result << GokbExporter.sendUpdate(uri.concat(enrichment.dataContainer), json.getText(), locale)
+      result << GokbExporter.sendUpdate(uri.concat("/").concat(enrichment.dataContainer.pkg.packageHeader.uuid), json.getText(), locale)
     }
     else{
-      result << GokbExporter.sendText(uri, json.getText(), user, password, locale, isUpdate)
+      result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
     }
   }
 

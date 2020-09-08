@@ -3,8 +3,6 @@ package ygor
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
-import org.apache.commons.io.IOUtils
-import org.mozilla.universalchardet.UniversalDetector
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.springframework.web.servlet.support.RequestContextUtils
 
@@ -359,7 +357,7 @@ class EnrichmentController implements ControllersHelper{
     Enrichment enrichment = enrichmentService.enrichmentFromFile(file, foDelimiter, foQuote, foQuoteMode)
     enrichment.kbartDelimiter = foDelimiter
     enrichment.addOnly = (addOnly.equals("on")) ? true : false
-    enrichment.processingOptions = pmOptions
+    enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
     enrichmentService.prepareFile(enrichment, request.parameterMap)
     UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, foDelimiter, foQuote,
         foQuoteMode, recordSeparator, addOnly, gokbUsername, gokbPassword, locale)
@@ -387,7 +385,7 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private String watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
+  String watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
     while (true){
       uploadJob.updateCount()
       uploadJob.refreshStatus()
@@ -439,6 +437,8 @@ class EnrichmentController implements ControllersHelper{
                 'ygorVersion': grailsApplication.config.ygor.version,
                 'ygorType'   : grailsApplication.config.ygor.type
             ]
+            en.processingOptions = Arrays.asList(pmOptions)
+            en.kbartDelimiter = format.get('delimiter')
             en.process(options, kbartReader)
           }
         }
