@@ -97,7 +97,7 @@ environments {
       uploadLocation = '/tmp/ygor/dev'
       enableGokbUpload = true
       autoUpdateJobsLocation = '/var/lib/ygor/automaticUpdates/'
-      autoUpdateJobsInterval = '30 30 3 * * 1-7' // check for updates every day at 03:30:30am
+      autoUpdateJobsInterval = '30 30 3 ? * * *' // check for updates every day at 03:30:30am
     }
     gokbApi {
       baseUri           = 'http://localhost:8080/gokb/'
@@ -124,7 +124,7 @@ environments {
       uploadLocation = '/tmp/ygor/prod'
       enableGokbUpload = false
       autoUpdateJobsLocation = '/var/lib/ygor/automaticUpdates/'
-      autoUpdateJobsInterval = '30 30 4 * * 1-7' // check for updates every day at 04:30:30am
+      autoUpdateJobsInterval = '30 30 4 ? * * *' // check for updates every day at 04:30:30am
     }
     gokbApi {
       baseUri           = 'http://phaeton.hbz-nrw.de/gokb/'
