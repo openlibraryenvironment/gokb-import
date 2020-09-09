@@ -1,4 +1,3 @@
-<%@ page import="de.hbznrw.ygor.export.structure.FixedValues" %>
 <meta name="layout" content="enrichment">
 
 <div class="row">
