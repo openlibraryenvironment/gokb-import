@@ -62,7 +62,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     }
     log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
     if (isUpdate){
-      result << GokbExporter.sendUpdate(uri.concat("/").concat(enrichment.dataContainer.pkg.packageHeader.uuid), json.getText(), locale)
+      result << GokbExporter.sendUpdate(uri.concat("/").concat(enrichment.dataContainer?.pkgHeader?.uuid), json.getText(), locale)
     }
     else{
       result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
@@ -84,8 +84,8 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       String token = getGokbResponseValue("job_result.updateToken")
       String uuid = getGokbResponseValue("job_result.uuid")
       if (token != null && uuid != null){
-        enrichment.dataContainer.pkg.packageHeader.token = token
-        enrichment.dataContainer.pkg.packageHeader.uuid = uuid
+        enrichment.dataContainer?.pkgHeader?.token = token
+        enrichment.dataContainer?.pkgHeader?.uuid = uuid
         if (enrichment.autoUpdate == true){
           AutoUpdateService.addEnrichmentJob(enrichment)
         }

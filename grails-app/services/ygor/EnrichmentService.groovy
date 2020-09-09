@@ -69,7 +69,7 @@ class EnrichmentService{
     if (enrichment == null || pm == null){
       return
     }
-    def ph = enrichment.dataContainer.pkg.packageHeader
+    def ph = enrichment.dataContainer.pkgHeader
     if (pm['pkgTitle']){
       ph.name = new Pod(pm['pkgTitle'][0])
       enrichment.packageName = pm['pkgTitle'][0]
@@ -254,7 +254,7 @@ class EnrichmentService{
           enrichment.sessionFolder)
       enrichment.dataContainer.records = []
       processComplete(enrichment, enrichment.addOnly, null, null, true,
-          enrichment.dataContainer.pkg.packageHeader.token)
+          enrichment.dataContainer?.pkgHeader?.token)
     }
     catch (Exception e){
       log.error("Could not process update ".concat(enrichment?.resultName))
@@ -265,10 +265,10 @@ class EnrichmentService{
   private UploadJob processComplete(Enrichment enrichment, boolean addOnly, String gokbUsername, String gokbPassword,
                                     boolean isUpdate, String token){
     FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
     enrichment.enrollMappingToRecords(tippNameMapping)
     FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
     enrichment.enrollMappingToRecords(tippUrlMapping)
     def options = [
         'options'        : enrichment.processingOptions,

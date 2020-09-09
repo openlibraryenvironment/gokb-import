@@ -143,10 +143,10 @@ class MultipleProcessingThread extends Thread {
 
   private void processUiSettings() {
     FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
     enrichment.enrollMappingToRecords(tippNameMapping)
     FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
     enrichment.enrollMappingToRecords(tippUrlMapping)
   }
 

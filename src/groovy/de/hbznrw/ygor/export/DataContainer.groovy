@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.hbznrw.ygor.export.structure.Meta
-import de.hbznrw.ygor.export.structure.Package
+import de.hbznrw.ygor.export.structure.PackageHeader
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.RecordFileFilter
 import groovy.util.logging.Log4j
@@ -18,7 +18,7 @@ class DataContainer {
   static JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance
 
   Meta info
-  Package pkg
+  PackageHeader pkgHeader
   String  pkgId
   String  pkgIdNamespace
   String  isil
@@ -48,7 +48,7 @@ class DataContainer {
         stash: [:],
         namespace_title_id: ""
     )
-    pkg = new Package()
+    pkgHeader = new PackageHeader()
 
     records = []
     recordsPerId = [:]

@@ -196,11 +196,11 @@ class Enrichment{
       result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
       result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
     }
-    String token = dataContainer.pkg?.packageHeader?.token
+    String token = dataContainer.pkgHeader?.token
     if (token){
       result.append("\"token\":\"").append(token).append("\",")
     }
-    String uuid = dataContainer.pkg?.packageHeader?.uuid
+    String uuid = dataContainer.pkgHeader?.uuid
     if (uuid){
       result.append("\"uuid\":\"").append(uuid).append("\",")
     }
@@ -234,13 +234,13 @@ class Enrichment{
     if (dataContainer.isil != null){
       result.append("\"isil\":\"").append(dataContainer.isil).append("\",")
     }
-    if (dataContainer.pkg?.packageHeader?.nominalProvider != null){
-      result.append("\"nominalProvider\":\"").append(dataContainer.pkg.packageHeader.nominalProvider).append("\",")
+    if (dataContainer.pkgHeader?.nominalProvider != null){
+      result.append("\"nominalProvider\":\"").append(dataContainer?.pkgHeader?.nominalProvider).append("\",")
     }
-    if (dataContainer.pkg?.packageHeader?.nominalPlatform != null){
+    if (dataContainer.pkgHeader?.nominalPlatform != null){
       result.append("\"nominalPlatform\":{")
-        result.append("\"name\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.name).append("\",")
-        result.append("\"url\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.url).append("\"")
+        result.append("\"name\":\"").append(dataContainer.pkgHeader?.nominalPlatform.name).append("\",")
+        result.append("\"url\":\"").append(dataContainer.pkgHeader?.nominalPlatform.url).append("\"")
       result.append("},")
     }
     result.append("\"kbart\":{")
@@ -298,15 +298,15 @@ class Enrichment{
     if (null != JsonToolkit.fromJson(rootNode, "configuration.isil")){
       en.dataContainer.isil = JsonToolkit.fromJson(rootNode, "configuration.isil")
     }
-    en.dataContainer.pkg.packageHeader = new PackageHeader()
-    en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
-    en.dataContainer.pkg.packageHeader.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
+    en.dataContainer.pkgHeader = new PackageHeader()
+    en.dataContainer?.pkgHeader?.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
+    en.dataContainer?.pkgHeader?.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
     if (null != JsonToolkit.fromJson(rootNode, "token")){
-      en.dataContainer.pkg.packageHeader.token = JsonToolkit.fromJson(rootNode, "token")
+      en.dataContainer?.pkgHeader?.token = JsonToolkit.fromJson(rootNode, "token")
     }
     if (null != JsonToolkit.fromJson(rootNode, "uuid")){
-      en.dataContainer.pkg.packageHeader.uuid = JsonToolkit.fromJson(rootNode, "uuid")
+      en.dataContainer?.pkgHeader?.uuid = JsonToolkit.fromJson(rootNode, "uuid")
     }
     en.greenRecords = JsonToolkit.fromJsonNode(rootNode.get("greenRecords"))
     if (en.greenRecords == null){
@@ -329,8 +329,8 @@ class Enrichment{
   static Enrichment fromJsonFile(def file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
-    enrichment.setTippPlatformNameMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name)
-    enrichment.setTippPlatformUrlMapping(enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url)
+    enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
+    enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
   }

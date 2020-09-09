@@ -66,8 +66,8 @@ class GokbExporter {
     log.debug("extracting package ...")
     pkg.set("packageHeader", extractPackageHeader(enrichment))
     pkg.set("tipps", extractTipps(enrichment, type))
-    if (enrichment.dataContainer.pkg.packageHeader.token != null){
-      pkg.put("updateToken", enrichment.dataContainer.pkg.packageHeader.token)
+    if (enrichment.dataContainer?.pkgHeader?.token != null){
+      pkg.put("updateToken", enrichment.dataContainer?.pkgHeader?.token)
     }
     log.debug("extracting package finished")
     pkg
@@ -212,7 +212,7 @@ class GokbExporter {
     // this currently parses the old package header
     // TODO: refactor
     log.debug("parsing package header ...")
-    def packageHeader = enrichment.dataContainer.pkg.packageHeader
+    def packageHeader = enrichment.dataContainer.pkgHeader
     def result = new ObjectNode(NODE_FACTORY)
     def identifiers = new ArrayNode(NODE_FACTORY)
 
