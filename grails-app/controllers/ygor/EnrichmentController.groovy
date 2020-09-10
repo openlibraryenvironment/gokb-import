@@ -206,7 +206,7 @@ class EnrichmentController implements ControllersHelper{
     enrichment.processingOptions = null
     try {
       kbartReader = new KbartFromUrlReader(new URL(urlString) , request.session.lastUpdate.foDelimiterUrl,
-                                           Charset.forName("UTF-8"), new File (enrichment.enrichmentFolder))
+          new File (enrichment.enrichmentFolder))
       kbartReader.checkHeader()
     }
     catch (Exception e) {

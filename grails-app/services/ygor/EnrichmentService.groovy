@@ -250,13 +250,13 @@ class EnrichmentService{
   UploadJob processCompleteUpdate(Enrichment enrichment){
     try{
       URL originUrl = new URL(enrichment.originUrl)
-      kbartReader = new KbartFromUrlReader(originUrl, enrichment.kbartDelimiter, Charset.forName("UTF-8"),
-          enrichment.sessionFolder)
+      kbartReader = new KbartFromUrlReader(originUrl, enrichment.kbartDelimiter, enrichment.sessionFolder)
       enrichment.dataContainer.records = []
       processComplete(enrichment, enrichment.addOnly, null, null, true,
           enrichment.dataContainer?.pkgHeader?.token)
     }
     catch (Exception e){
+      log.error(e.getMessage())
       log.error("Could not process update ".concat(enrichment?.resultName))
     }
   }

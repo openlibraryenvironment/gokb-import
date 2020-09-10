@@ -1,13 +1,21 @@
 package de.hbznrw.ygor.readers
 
 import jdk.nashorn.api.scripting.URLReader
+import ygor.EnrichmentService
 
 import java.nio.charset.Charset
 
 class KbartFromUrlReader extends KbartReader{
 
-  KbartFromUrlReader(URL url, String delimiter, Charset charset, File sessionFolder) throws Exception{
-    URLReader urlReader = new URLReader(url, charset)
+  EnrichmentService enrichmentService = new EnrichmentService()
+
+  KbartFromUrlReader(URL url, String delimiter, File sessionFolder) throws Exception{
+    String encoding = enrichmentService.getEncoding(url.openStream())
+    if (!("UTF-8".equals(encoding))){
+      throw new IllegalFormatException("Encoding of KBart file at ".concat(url.toExternalForm()).concat(" was ")
+          .concat(encoding).concat(" Only UTF-8 is allowed."))
+    }
+    URLReader urlReader = new URLReader(url, Charset.forName("UTF-8"))
     String fileData = urlReader.getText()
     init(fileData, delimiter)
     // copy content to local file
