@@ -6,6 +6,10 @@ A spare hand when needed ..
 
     $ git clone https://github.com/hbz/laser-ygor.git
 
+For automatic updates, set up the following directory:
+
+    $ mkdir -p /var/lib/ygor/automaticUpdates
+    
 ### Config
 
 Upload json result to GOKb
