@@ -3,12 +3,12 @@ package ygor
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
+import groovy.util.logging.Log4j
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.springframework.web.servlet.support.RequestContextUtils
 
-import java.nio.charset.Charset
 
-
+@Log4j
 class EnrichmentController implements ControllersHelper{
 
   static scope = "session"
@@ -385,7 +385,7 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  String watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
+  static String watchUpload(UploadJob uploadJob, Enrichment.FileType fileType, String fileName){
     while (true){
       uploadJob.updateCount()
       uploadJob.refreshStatus()
