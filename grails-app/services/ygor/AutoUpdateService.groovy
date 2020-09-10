@@ -18,7 +18,7 @@ class AutoUpdateService {
     return true // DUMMY --> TODO
   }
 
-  static void processUpdate(File updateConfiguration, File updateSessionFolder) throws Exception{
+  static void processUpdate(File updateConfiguration) throws Exception{
     Enrichment enrichment = Enrichment.fromRawJson(JsonToolkit.jsonNodeFromFile(updateConfiguration), false)
     UploadJob uploadJob = ENRICHMENT_SERVICE.processCompleteUpdate(enrichment)
     ENRICHMENT_CONTROLLER.watchUpload(uploadJob, Enrichment.FileType.PACKAGE_WITH_TITLEDATA, enrichment.resultName)

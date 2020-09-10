@@ -18,14 +18,12 @@ class AutoKbartUrlUpdateJob {
         return
       }
     }
-    File updateSessionFolder = new File(updatesContainer.absolutePath.concat(LocalTime.now().toString()))
-
     File[] updateConfigurations = updatesContainer.listFiles()
     for (File updateFile in updateConfigurations){
       if (AutoUpdateService.urlHasBeenUpdated(updateFile)){
         log.info("Start automatic update for : ".concat(updateFile.absolutePath))
         try{
-          AutoUpdateService.processUpdate(updateFile, updateSessionFolder)
+          AutoUpdateService.processUpdate(updateFile)
         }
         catch (Exception e){
           log.error("Exception occurred while trying to auto-update : ".concat(updateFile.absolutePath))
