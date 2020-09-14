@@ -3,7 +3,6 @@ package de.hbznrw.ygor.readers
 import org.apache.commons.csv.QuoteMode
 
 class KbartReaderConfiguration {
-  def delimiter
   def quote
   def quoteMode
   def recordSeparator
@@ -19,8 +18,7 @@ class KbartReaderConfiguration {
       'none'       : QuoteMode.NONE
   ]
 
-  KbartReaderConfiguration(def delimiter, def quote, def quoteMode, def recordSeparator) {
-    this.delimiter = resolver.get(delimiter)
+  KbartReaderConfiguration(def quote, def quoteMode, def recordSeparator) {
     this.quote = resolver.get(quote)
     this.quoteMode = resolver.get(quoteMode)
     this.recordSeparator = recordSeparator

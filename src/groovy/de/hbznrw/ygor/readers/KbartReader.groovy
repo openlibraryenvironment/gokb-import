@@ -39,28 +39,25 @@ class KbartReader {
     // not in use
   }
 
-  KbartReader(Reader kbartFileReader, String delimiter) throws Exception{
+  KbartReader(Reader kbartFileReader) throws Exception{
     String fileData = kbartFileReader.getText()
-    init(fileData, delimiter)
+    init(fileData)
   }
 
-  protected void init(String fileData, String delimiter){
+  protected void init(String fileData){
     // remove the BOM from the Data
     fileData = fileData.replace('\uFEFF', '')
-    // automatic delimiter adaptation
+    // automatic delimiter adaptation by selection of the character with biggest count
     int maxCount = 0
-    String favourite = delimiter;
+    String delimiter
     for (String prop : ['comma', 'semicolon', 'tab']){
       int num = StringUtils.countMatches(fileData, resolver.get(prop).toString())
       if (maxCount < num){
         maxCount = num
-        favourite = prop
+        delimiter = prop
       }
     }
-    if (delimiter != favourite){
-      log.warn("delimiter automagically changed from '" + delimiter + "' to '" + favourite + "'")
-    }
-    char delimiterChar = resolver.get(favourite)
+    char delimiterChar = resolver.get(delimiter)
     csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar).withIgnoreSurroundingSpaces()
     try{
       csv = CSVParser.parse(fileData, csvFormat)
@@ -181,9 +178,6 @@ class KbartReader {
 
 
   KbartReader setConfiguration(KbartReaderConfiguration configuration) {
-    if (null != configuration.delimiter) {
-      csvFormat = csvFormat.withDelimiter((char) configuration.delimiter)
-    }
     if (null != configuration.quote) {
       if ('null' == configuration.quote) {
         csvFormat = csvFormat.withQuote(null)

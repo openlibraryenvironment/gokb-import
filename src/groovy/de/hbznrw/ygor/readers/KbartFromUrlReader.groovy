@@ -9,7 +9,7 @@ class KbartFromUrlReader extends KbartReader{
 
   EnrichmentService enrichmentService = new EnrichmentService()
 
-  KbartFromUrlReader(URL url, String delimiter, File sessionFolder) throws Exception{
+  KbartFromUrlReader(URL url, File sessionFolder) throws Exception{
     String encoding = enrichmentService.getEncoding(url.openStream())
     if (!("UTF-8".equals(encoding))){
       throw new IllegalFormatException("Encoding of KBart file at ".concat(url.toExternalForm()).concat(" was ")
@@ -17,7 +17,7 @@ class KbartFromUrlReader extends KbartReader{
     }
     URLReader urlReader = new URLReader(url, Charset.forName("UTF-8"))
     String fileData = urlReader.getText()
-    init(fileData, delimiter)
+    init(fileData)
     // copy content to local file
     file = sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
     FileWriter fileWriter = new FileWriter(file)

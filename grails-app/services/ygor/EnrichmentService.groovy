@@ -34,10 +34,9 @@ class EnrichmentService{
     return new Enrichment(getSessionFolder(), filename)
   }
 
-  void addFileAndFormat(Enrichment en, String delimiter, String quote, String quoteMode){
+  void addFileAndFormat(Enrichment en, String quote, String quoteMode){
     en.setStatus(Enrichment.ProcessingState.PREPARE_1)
     def tmp = [:]
-    tmp << ['delimiter': delimiter]
     tmp << ['quote': quote]
     tmp << ['quoteMode': quoteMode]
     def formats = getSessionFormats()
@@ -214,8 +213,7 @@ class EnrichmentService{
   }
 
 
-  Enrichment enrichmentFromFile(CommonsMultipartFile commonsMultipartFile,
-                                def foDelimiter, def foQuote, def foQuoteMode){
+  Enrichment enrichmentFromFile(CommonsMultipartFile commonsMultipartFile, def foQuote, def foQuoteMode){
     String fileName = commonsMultipartFile.originalFilename
     String encoding = getEncoding(commonsMultipartFile)
     if (encoding != "UTF-8"){
@@ -223,23 +221,22 @@ class EnrichmentService{
       return
     }
     try{
-      kbartReader = new KbartReader(new InputStreamReader(commonsMultipartFile.getInputStream()), foDelimiter)
+      kbartReader = new KbartReader(new InputStreamReader(commonsMultipartFile.getInputStream()))
       kbartReader.checkHeader()
     }
     catch (YgorProcessingException ype){
       log.error("Aborting on KBart header check for file " + fileName)
       return
     }
-    Enrichment enrichment = addFileAndFormat(commonsMultipartFile, foDelimiter, foQuote, foQuoteMode)
+    Enrichment enrichment = addFileAndFormat(commonsMultipartFile, foQuote, foQuoteMode)
     return enrichment
   }
 
 
-  UploadJob processCompleteNoInteraction(Enrichment enrichment, List<String> pmOptions, def foDelimiter, foQuote, foQuoteMode,
+  UploadJob processCompleteNoInteraction(Enrichment enrichment, List<String> pmOptions, foQuote, foQuoteMode,
                                          recordSeparator, addOnly, gokbUsername, gokbPassword, String locale){
     enrichment.kbartRecordSeparator = recordSeparator
     enrichment.processingOptions = pmOptions
-    enrichment.kbartDelimiter = foDelimiter
     enrichment.kbartQuote = foQuote
     enrichment.kbartQuoteMode = foQuoteMode
     enrichment.locale = locale
@@ -250,7 +247,7 @@ class EnrichmentService{
   UploadJob processCompleteUpdate(Enrichment enrichment){
     try{
       URL originUrl = new URL(enrichment.originUrl)
-      kbartReader = new KbartFromUrlReader(originUrl, enrichment.kbartDelimiter, enrichment.sessionFolder)
+      kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
       enrichment.dataContainer.records = []
       processComplete(enrichment, enrichment.addOnly, null, null, true,
           enrichment.dataContainer?.pkgHeader?.token)
@@ -272,7 +269,6 @@ class EnrichmentService{
     enrichment.enrollMappingToRecords(tippUrlMapping)
     def options = [
         'options'        : enrichment.processingOptions,
-        'delimiter'      : enrichment.kbartDelimiter,
         'quote'          : enrichment.kbartQuote,
         'quoteMode'      : enrichment.kbartQuoteMode,
         'recordSeparator': enrichment.kbartRecordSeparator,
