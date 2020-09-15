@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.enums.Status
+import de.hbznrw.ygor.normalizers.CaseNormalizer
 import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.normalizers.EditionNormalizer
 import de.hbznrw.ygor.tools.JsonToolkit
@@ -143,6 +144,7 @@ class Record{
     for (MultiField multiField in multiFields.values()) {
       multiField.normalize(namespace)
     }
+    CaseNormalizer.normalize(multiFields.get("publicationType"), CaseNormalizer.Case.LOWER, CaseNormalizer.Selection.ALL)
   }
 
 
