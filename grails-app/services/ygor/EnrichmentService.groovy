@@ -34,11 +34,9 @@ class EnrichmentService{
     return new Enrichment(getSessionFolder(), filename)
   }
 
-  void addFileAndFormat(Enrichment en, String quote, String quoteMode){
+  void addFileAndFormat(Enrichment en){
     en.setStatus(Enrichment.ProcessingState.PREPARE_1)
     def tmp = [:]
-    tmp << ['quote': quote]
-    tmp << ['quoteMode': quoteMode]
     def formats = getSessionFormats()
     formats << ["${en.originHash}": tmp]
     getSessionEnrichments() << ["${en.resultHash.toString()}": en]
@@ -213,7 +211,7 @@ class EnrichmentService{
   }
 
 
-  Enrichment enrichmentFromFile(CommonsMultipartFile commonsMultipartFile, def foQuote, def foQuoteMode){
+  Enrichment enrichmentFromFile(CommonsMultipartFile commonsMultipartFile){
     String fileName = commonsMultipartFile.originalFilename
     String encoding = getEncoding(commonsMultipartFile)
     if (encoding != "UTF-8"){
@@ -228,19 +226,16 @@ class EnrichmentService{
       log.error("Aborting on KBart header check for file " + fileName)
       return
     }
-    Enrichment enrichment = addFileAndFormat(commonsMultipartFile, foQuote, foQuoteMode)
+    Enrichment enrichment = addFileAndFormat(commonsMultipartFile)
     return enrichment
   }
 
 
-  UploadJob processCompleteNoInteraction(Enrichment enrichment, List<String> pmOptions, foQuote, foQuoteMode,
-                                         recordSeparator, addOnly, gokbUsername, gokbPassword, String locale){
-    enrichment.kbartRecordSeparator = recordSeparator
+  UploadJob processCompleteNoInteraction(Enrichment enrichment, List<String> pmOptions, addOnly,
+                                         gokbUsername, gokbPassword, String locale){
     enrichment.processingOptions = pmOptions
-    enrichment.kbartQuote = foQuote
-    enrichment.kbartQuoteMode = foQuoteMode
     enrichment.locale = locale
-    processComplete(enrichment, recordSeparator, addOnly, gokbUsername, gokbPassword, false, null)
+    processComplete(enrichment, addOnly, gokbUsername, gokbPassword, false, null)
   }
 
 
@@ -269,9 +264,6 @@ class EnrichmentService{
     enrichment.enrollMappingToRecords(tippUrlMapping)
     def options = [
         'options'        : enrichment.processingOptions,
-        'quote'          : enrichment.kbartQuote,
-        'quoteMode'      : enrichment.kbartQuoteMode,
-        'recordSeparator': enrichment.kbartRecordSeparator,
         'addOnly'        : addOnly,
         'ygorVersion'    : Holders.config.ygor.version,
         'ygorType'       : Holders.config.ygor.type

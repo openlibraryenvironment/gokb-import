@@ -62,10 +62,6 @@ class Enrichment{
   String enrichmentFolder
   File sessionFolder
 
-  def kbartQuote
-  def kbartQuoteMode
-  def kbartRecordSeparator
-
   String ygorVersion
   List<String> processingOptions
   String date
@@ -242,11 +238,6 @@ class Enrichment{
         result.append("\"url\":\"").append(dataContainer.pkgHeader?.nominalPlatform.url).append("\"")
       result.append("},")
     }
-    result.append("\"kbart\":{")
-      result.append("\"quote\":\"").append(kbartQuote).append("\",")
-      result.append("\"quoteMode\":\"").append(kbartQuoteMode).append("\",")
-      result.append("\"recordSeparator\":\"").append(kbartRecordSeparator).append("\"")
-    result.append("},")
     result.append("\"locale\":\"").append(locale).append("\",")
     result.append("\"processingOptions\":").append(JsonToolkit.listToJson(processingOptions)).append(",")
     result.append("\"mappingsContainer\":")
@@ -278,9 +269,6 @@ class Enrichment{
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
     en.isEzbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isEzbIntegrated"))
-    en.kbartQuote = JsonToolkit.fromJson(rootNode, "configuration.kbart.quote")
-    en.kbartQuoteMode = JsonToolkit.fromJson(rootNode, "configuration.kbart.quoteMode")
-    en.kbartRecordSeparator = JsonToolkit.fromJson(rootNode, "configuration.kbart.recordSeparator")
     en.processingOptions = JsonToolkit.fromJson(rootNode, "configuration.processingOptions")
     en.locale = JsonToolkit.fromJson(rootNode, "configuration.locale")
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){

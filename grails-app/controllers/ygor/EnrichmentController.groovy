@@ -111,12 +111,10 @@ class EnrichmentController implements ControllersHelper{
       return
     }
 
-    def foQuote = null                  // = request.parameterMap['formatQuote'][0]
-    def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
     def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
     def addOnly = false
 
-    setInputFieldDataToLastUpdate(file, foQuote, foQuoteMode, recordSeparator, addOnly)
+    setInputFieldDataToLastUpdate(file, recordSeparator, addOnly)
 
     if (file.empty){
       flash.info = null
@@ -162,7 +160,7 @@ class EnrichmentController implements ControllersHelper{
 
 
     Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
-    enrichmentService.addFileAndFormat(enrichment, foQuote, foQuoteMode)
+    enrichmentService.addFileAndFormat(enrichment)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
     redirect(
         action: 'process',
@@ -228,7 +226,7 @@ class EnrichmentController implements ControllersHelper{
     if (request.parameterMap['urlAutoUpdate'] != null){
       enrichment.autoUpdate = request.parameterMap['urlAutoUpdate'][0].equals("on")
     }
-    enrichmentService.addFileAndFormat(enrichment, null, null)
+    enrichmentService.addFileAndFormat(enrichment)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
 
     redirect(
@@ -245,13 +243,11 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private void setInputFieldDataToLastUpdate(file, foQuote, foQuoteMode, String recordSeparator, boolean addOnly){
+  private void setInputFieldDataToLastUpdate(file, String recordSeparator, boolean addOnly){
     if (!request.session.lastUpdate){
       request.session.lastUpdate = [:]
     }
     request.session.lastUpdate.file = file
-    request.session.lastUpdate.foQuote = foQuote
-    request.session.lastUpdate.foQuoteMode = foQuoteMode
     request.session.lastUpdate.recordSeparator = recordSeparator
     request.session.lastUpdate.addOnly = addOnly
   }
@@ -307,20 +303,10 @@ class EnrichmentController implements ControllersHelper{
    * Current Test configuration via Postman:
    *
    * POST /ygor/enrichment/processCompleteNoInteraction?
-   * formatQuote=null&
-   * formatQuoteMode=null&
-   * recordSeparator=null&
    * addOnly=false&
    * processOption=kbart,zdb,ezb&
-   * gokbUsername=<aValidGokbUser>&
-   * gokbPassword=<theUser'sPassword>&
-   * pkgTitle=<yourPackageTitle>&
-   * pkgIsil&
-   * pkgCuratoryGroup=<yourCuratoryGroupName>&
-   * pkgNominalProvider=Organisation for Economic Co-operation and Development&
-   * pkgNominalPlatform=org.gokb.cred.Platform:408671;OECD UN iLibrary
-   *
-   * (examples given for pkgNominalProvider and pkgNominalPlatform)
+   * pkgId=<yourPackageId>&
+   * packageToken=<packageToken>
    *
    * HTTP/1.1
    * Host: localhost:8092
@@ -340,19 +326,15 @@ class EnrichmentController implements ControllersHelper{
       log.error("Received request with empty file. Aborting.")
       return
     }
-    def foQuote = params.get('formatQuote')              // inactive, set null
-    def foQuoteMode = params.get('formatQuoteMode')      // inactive, set null
-    def recordSeparator = params.get('recordSeparator')  // inactive, set null
     def addOnly = params.get('addOnly')                  // "on" or "off"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
     def gokbUsername = params.gokbUsername
     def gokbPassword = params.gokbPassword
-    Enrichment enrichment = enrichmentService.enrichmentFromFile(file, foQuote, foQuoteMode)
+    Enrichment enrichment = enrichmentService.enrichmentFromFile(file)
     enrichment.addOnly = (addOnly.equals("on")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
     enrichmentService.prepareFile(enrichment, request.parameterMap)
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, foQuote,
-        foQuoteMode, recordSeparator, addOnly, gokbUsername, gokbPassword, locale)
+    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, addOnly, gokbUsername, gokbPassword, locale)
     render(
         model: [
             message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
@@ -365,9 +347,6 @@ class EnrichmentController implements ControllersHelper{
     UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(
         enrichment,
         enrichment.processingOptions,
-        enrichment.kbartQuote,
-        enrichment.kbartQuoteMode,
-        enrichment.kbartRecordSeparator,
         enrichment.addOnly,
         null,
         null,
