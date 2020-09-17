@@ -231,11 +231,8 @@ class EnrichmentService{
   }
 
 
-  UploadJob processCompleteNoInteraction(Enrichment enrichment, List<String> pmOptions, addOnly,
-                                         gokbUsername, gokbPassword, String locale){
-    enrichment.processingOptions = pmOptions
-    enrichment.locale = locale
-    processComplete(enrichment, addOnly, gokbUsername, gokbPassword, false, null)
+  UploadJob processCompleteNoInteraction(Enrichment enrichment, String gokbUsername, String gokbPassword){
+    processComplete(enrichment, gokbUsername, gokbPassword, false, null)
   }
 
 
@@ -244,8 +241,7 @@ class EnrichmentService{
       URL originUrl = new URL(enrichment.originUrl)
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
       enrichment.dataContainer.records = []
-      processComplete(enrichment, enrichment.addOnly, null, null, true,
-          enrichment.dataContainer?.pkgHeader?.token)
+      processComplete(enrichment, null, null, true, enrichment.dataContainer?.pkgHeader?.token)
     }
     catch (Exception e){
       log.error(e.getMessage())
@@ -254,7 +250,7 @@ class EnrichmentService{
   }
 
 
-  private UploadJob processComplete(Enrichment enrichment, boolean addOnly, String gokbUsername, String gokbPassword,
+  private UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword,
                                     boolean isUpdate, String token){
     FieldKeyMapping tippNameMapping =
         enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
@@ -264,7 +260,7 @@ class EnrichmentService{
     enrichment.enrollMappingToRecords(tippUrlMapping)
     def options = [
         'options'        : enrichment.processingOptions,
-        'addOnly'        : addOnly,
+        'addOnly'        : enrichment.addOnly,
         'ygorVersion'    : Holders.config.ygor.version,
         'ygorType'       : Holders.config.ygor.type
     ]

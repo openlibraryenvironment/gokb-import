@@ -334,7 +334,7 @@ class EnrichmentController implements ControllersHelper{
     enrichment.addOnly = (addOnly.equals("on")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
     enrichmentService.prepareFile(enrichment, request.parameterMap)
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, addOnly, gokbUsername, gokbPassword, locale)
+    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, gokbUsername, gokbPassword)
     render(
         model: [
             message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
@@ -344,13 +344,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processCompleteNoInteraction(Enrichment enrichment){
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(
-        enrichment,
-        enrichment.processingOptions,
-        enrichment.addOnly,
-        null,
-        null,
-        enrichment.locale)
+    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, null, null)
     watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
   }
 
