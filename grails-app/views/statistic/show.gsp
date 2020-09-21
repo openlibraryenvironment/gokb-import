@@ -231,138 +231,132 @@
     <g:set var="lineCounter" value="${0}"/>
     <g:set var="displayZDB" value="true"/>
 
-    <g:if test="${redRecords != null && !(redRecords.getAt("data")?.isEmpty())}">
-        <div class="col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading-red">
-                    <h3 class="panel-title">${redRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.red"/></h3>
-                </div>
-
-                <div class="statistics-data">
-                    <table id="red-records" class="statistics-details">
-                        <thead><tr>
-                            <th>Title</th>
-                            <g:if test="${displayZDB}">
-                                <th>ZDB</th>
-                                <th>ZDB ID</th>
-                            </g:if>
-                            <th>eISSN</th>
-                        </tr></thead>
-                        <tbody>
-                        <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${redRecords?.getAt("data")}" var="record">
-                            <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell">
-                                    <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.getAt(4)}">${record.getAt(0) == null || record.getAt(0) == "" ?
-                                            "<" + message(code: 'missing') + ">" : record.getAt(0)}</g:link>
-                                </td>
-                                <g:if test="${displayZDB}">
-                                    <td><g:if test="${record.getAt(1)}">
-                                        <a href="${record.getAt(1)}" class="link-icon"></a>
-                                    </g:if></td>
-                                    <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
-                                        ${record.getAt(2)}<br/>
-                                    </g:if></td>
-                                </g:if>
-                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
-                                    ${record.getAt(3)}<br/>
-                                </g:if></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:each>
-                        </tbody>
-                    </table>
-                </div>
+    <div id="red-frame" class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading-red">
+                <h3 class="panel-title">${redRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.red"/></h3>
             </div>
-        </div>
-    </g:if>
 
-    <g:if test="${displayZDB && yellowRecords != null && !(yellowRecords.getAt("data")?.isEmpty())}">
-        <div class="col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading-yellow">
-                    <h3 class="panel-title">${yellowRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.yellow"/></h3>
-                </div>
-                <div class="statistics-data">
-                    <table id="yellow-records"class="statistics-details">
-                        <thead><tr>
-                            <th>Title</th>
+            <div class="statistics-data">
+                <table id="red-records" class="statistics-details">
+                    <thead><tr>
+                        <th>Title</th>
+                        <g:if test="${displayZDB}">
                             <th>ZDB</th>
                             <th>ZDB ID</th>
-                            <th>eISSN</th>
-                        </tr></thead>
-                        <tbody>
-                        <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${yellowRecords?.getAt("data")}" var="record">
-                            <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
-                                <td class="statistics-cell">
-                                    <g:link action="edit" params="[resultHash: resultHash]"
-                                            id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
-                                            "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
-                                </td>
+                        </g:if>
+                        <th>eISSN</th>
+                    </tr></thead>
+                    <tbody>
+                    <g:set var="lineCounter" value="${0}"/>
+                    <g:each in="${redRecords?.getAt("data")}" var="record">
+                        <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                            <td class="statistics-cell">
+                                <g:link action="edit" params="[resultHash: resultHash]"
+                                        id="${record.getAt(4)}">${record.getAt(0) == null || record.getAt(0) == "" ?
+                                        "<" + message(code: 'missing') + ">" : record.getAt(0)}</g:link>
+                            </td>
+                            <g:if test="${displayZDB}">
                                 <td><g:if test="${record.getAt(1)}">
                                     <a href="${record.getAt(1)}" class="link-icon"></a>
                                 </g:if></td>
                                 <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
                                     ${record.getAt(2)}<br/>
                                 </g:if></td>
-                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
-                                    ${record.getAt(3)}<br/>
-                                </g:if></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:each>
-                        </tbody>
-                    </table>
-                </div>
+                            </g:if>
+                            <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                ${record.getAt(3)}<br/>
+                            </g:if></td>
+                        </tr>
+                        <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                    </g:each>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </g:if>
+    </div>
 
-    <g:if test="${greenRecords != null && !(greenRecords.getAt("data")?.isEmpty())}">
-        <div class="col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading-green">
-                    <h3 class="panel-title">${greenRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.green"/></h3>
-                </div>
-
-                <div class="statistics-data">
-                    <table id="green-records" class="statistics-details">
-                        <thead><tr>
-                            <th>Title</th>
-                            <th>ZDB</th>
-                            <th>ZDB ID</th>
-                            <th>eISSN</th>
-                        </tr></thead>
-                        <tbody>
-                        <g:set var="lineCounter" value="${0}"/>
-                        <g:each in="${greenRecords?.getAt("data")}" var="record">
-                            <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+    <div id="yellow-frame" class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading-yellow">
+                <h3 class="panel-title">${yellowRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.yellow"/></h3>
+            </div>
+            <div class="statistics-data">
+                <table id="yellow-records"class="statistics-details">
+                    <thead><tr>
+                        <th>Title</th>
+                        <th>ZDB</th>
+                        <th>ZDB ID</th>
+                        <th>eISSN</th>
+                    </tr></thead>
+                    <tbody>
+                    <g:set var="lineCounter" value="${0}"/>
+                    <g:each in="${yellowRecords?.getAt("data")}" var="record">
+                        <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
                             <td class="statistics-cell">
                                 <g:link action="edit" params="[resultHash: resultHash]"
-                                id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                        id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
                                         "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
-                                <g:if test="${displayZDB}">
-                                    <td><g:if test="${record.getAt(1)}">
-                                        <a href="${record.getAt(1)}" class="link-icon"></a>
-                                    </g:if></td>
-                                    <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
-                                        ${record.getAt(2)}<br/>
-                                    </g:if></td>
-                                </g:if>
-                                <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
-                                    ${record.getAt(3)}<br/>
-                                </g:if></td>
-                            </tr>
-                            <g:set var="lineCounter" value="${lineCounter + 1}"/>
-                        </g:each>
-                        </tbody>
-                    </table>
-                </div>
+                            </td>
+                            <td><g:if test="${record.getAt(1)}">
+                                <a href="${record.getAt(1)}" class="link-icon"></a>
+                            </g:if></td>
+                            <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                ${record.getAt(2)}<br/>
+                            </g:if></td>
+                            <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                ${record.getAt(3)}<br/>
+                            </g:if></td>
+                        </tr>
+                        <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                    </g:each>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </g:if>
+    </div>
+
+    <div id="green-frame" class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading-green">
+                <h3 class="panel-title">${greenRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.green"/></h3>
+            </div>
+
+            <div class="statistics-data">
+                <table id="green-records" class="statistics-details">
+                    <thead><tr>
+                        <th>Title</th>
+                        <th>ZDB</th>
+                        <th>ZDB ID</th>
+                        <th>eISSN</th>
+                    </tr></thead>
+                    <tbody>
+                    <g:set var="lineCounter" value="${0}"/>
+                    <g:each in="${greenRecords?.getAt("data")}" var="record">
+                        <tr class="${(lineCounter % 2) == 0 ? 'even hover' : 'odd hover'}">
+                        <td class="statistics-cell">
+                            <g:link action="edit" params="[resultHash: resultHash]"
+                            id="${record.getAt(4)}">${org.apache.commons.lang.StringUtils.isEmpty(record.getAt(0)) ?
+                                    "<"+message(code: 'missing')+">" : record.getAt(0)}</g:link>
+                            <g:if test="${displayZDB}">
+                                <td><g:if test="${record.getAt(1)}">
+                                    <a href="${record.getAt(1)}" class="link-icon"></a>
+                                </g:if></td>
+                                <td class="statistics-cell"><g:if test="${record.getAt(2) != null}">
+                                    ${record.getAt(2)}<br/>
+                                </g:if></td>
+                            </g:if>
+                            <td class="statistics-cell"><g:if test="${record.getAt(3) != null}">
+                                ${record.getAt(3)}<br/>
+                            </g:if></td>
+                        </tr>
+                        <g:set var="lineCounter" value="${lineCounter + 1}"/>
+                    </g:each>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <g:form>
         <g:hiddenField name="originHash" value="${originHash}"/>
@@ -559,7 +553,12 @@
                     "type": "string",
                     "width": "14%"
                 }
-            ]
+            ],
+            fnInitComplete : function() {
+                if ($(this).find('tbody tr').length <= 1) {
+                    $(this).parent().parent().parent().hide();
+                }
+            }
         });
         $('#yellow-records').DataTable( {
             ajax: {
@@ -598,7 +597,13 @@
                     "type": "string",
                     "width": "14%"
                 }
-            ]
+            ],
+            fnInitComplete : function() {
+                if ($(this).find('tbody tr').length <= 1) {
+                    $(this).parent().hide();
+                    $(this).parent().parent().parent().hide();
+                }
+            }
         });
         $('#green-records').dataTable( {
             ajax: {
@@ -637,7 +642,13 @@
                     "type": "string",
                     "width": "14%"
                 }
-            ]
+            ],
+            fnInitComplete : function() {
+                if ($(this).find('tbody tr').length <= 1) {
+                    $(this).parent().hide();
+                    $(this).parent().parent().parent().hide();
+                }
+            }
         });
     });
 </script>

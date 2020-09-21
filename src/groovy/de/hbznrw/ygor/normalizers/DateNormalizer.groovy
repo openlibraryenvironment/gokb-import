@@ -66,7 +66,7 @@ class DateNormalizer {
         return str.concat("-12-31")
       }
       if (str.matches("^[\\d]{4}-[\\d]{2}\$")){
-        YearMonth yearMonth = new YearMonth( str.substring(0,4), Month.of(Integer.valueOf(str.substring(5))))
+        YearMonth yearMonth = new YearMonth(Integer.valueOf(str.substring(0,4)), Integer.valueOf(str.substring(5)))
         LocalDate endOfMonth = yearMonth.atEndOfMonth()
         return TARGET_FORMATTER.format(endOfMonth)
       }

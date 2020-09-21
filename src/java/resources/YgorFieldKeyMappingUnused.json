@@ -86,63 +86,6 @@
     }
   },
   {
-    "ygor" : "listpriceEur",
-    "in" : {
-      "kbart" : "listprice_eur",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "Number",
-    "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
-    }
-  },
-  {
-    "ygor" : "listpriceGbp",
-    "in" : {
-      "kbart" : "listprice_gbp",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "Number",
-    "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
-    }
-  },
-  {
-    "ygor" : "listpriceUsd",
-    "in" : {
-      "kbart" : "listprice_usd",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : []
-    },
-    "order" : ["kbart"],
-    "type" : "Number",
-    "flags" : {
-      "valid" : "ok",
-      "invalid" : "ok",
-      "missing" : "ok",
-      "undefined" : "ok"
-    }
-  },
-  {
     "ygor" : "oaApcEur",
     "in" : {
       "kbart" : "oa_apc_eur",
