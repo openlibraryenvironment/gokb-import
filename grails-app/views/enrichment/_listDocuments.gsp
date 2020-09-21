@@ -39,6 +39,7 @@
                         <br />
                         <div id="progress-${enrichment.resultHash}" class="progress">
                             <g:if test="${enrichment.status == Enrichment.ProcessingState.FINISHED}">
+                                FINISHED!
                                 <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%;">100%</div>
                             </g:if>
                             <g:else>
@@ -203,30 +204,30 @@
 
                         <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_2}">
 
-                            ${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
+                            ${enrichment.dataContainer?.pkgHeader?.nominalPlatform.name ? '' : raw('<div class="alert alert-danger" role="alert">') +
                                     message(code:'listDocuments.js.message.noplatformname') +
                                     raw('</div>')}
                             <div class="input-group custom-control">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.platformname" /></span>
-                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.name}</span>
+                                <span class="form-control" >${enrichment.dataContainer?.pkgHeader?.nominalPlatform.name}</span>
                             </div>
                             <br />
 
-                            ${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">') +
+                            ${enrichment.dataContainer?.pkgHeader?.nominalPlatform.url ? '' : raw('<div class="alert alert-danger" role="alert">') +
                                     message(code:'listDocuments.js.message.noplatformurl') +
                                     raw('</div>')}
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em>  <g:message code="listDocuments.key.platformurl" /></span>
-                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.nominalPlatform.url}</span>
+                                <span class="form-control" >${enrichment.dataContainer?.pkgHeader?.nominalPlatform.url}</span>
                             </div>
                             <br />
 
-                            ${enrichment.dataContainer.pkg.packageHeader.nominalProvider ? '' : raw('<div class="alert alert-danger" role="alert">') +
+                            ${enrichment.dataContainer?.pkgHeader?.nominalProvider ? '' : raw('<div class="alert alert-danger" role="alert">') +
                                     message(code:'listDocuments.js.message.noprovider') +
                                     raw('</div>')}
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.provider" /></span>
-                                <span class="form-control" >${enrichment.dataContainer.pkg.packageHeader.nominalProvider}</span>
+                                <span class="form-control" >${enrichment.dataContainer?.pkgHeader?.nominalProvider}</span>
                             </div>
                             <br />
 
@@ -239,7 +240,7 @@
                                     <div class="checkbox">
                                         <label>
                                             <g:checkBox name="processOption" required="true" checked="true" value="${KbartReader.IDENTIFIER}"/>
-                                            KBART <code><g:message code="listDocuments.enrichment.file" /></code>
+                                            KBart <code><g:message code="listDocuments.enrichment.file" /></code>
                                         </label>
                                     &nbsp;
                                         <label>

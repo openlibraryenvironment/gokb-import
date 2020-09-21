@@ -214,7 +214,7 @@ class FieldKeyMapping {
   void asJson(JsonGenerator jsonGenerator) {
     jsonGenerator.writeStartObject()
     jsonGenerator.writeStringField(MappingsContainer.YGOR, ygorKey)
-    jsonGenerator.writeStringField("displayName", displayName)
+    jsonGenerator.writeStringField("displayName", String.valueOf(displayName))
     jsonGenerator.writeStringField(MappingsContainer.TYPE, type)
     jsonGenerator.writeStringField("value", val)
     jsonGenerator.writeStringField("valueIsFix", String.valueOf(valIsFix))

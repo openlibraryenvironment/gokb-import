@@ -2,6 +2,7 @@ package de.hbznrw.ygor.export
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -41,8 +42,13 @@ class GokbExporter {
       case FileType.ORIGIN:
         return new File(enrichment.originPathName)
       case FileType.PACKAGE:
-        ObjectNode result = GokbExporter.extractPackage(enrichment)
+        ObjectNode result = GokbExporter.extractPackage(enrichment, type)
         def file = new File(enrichment.enrichmentFolder + ".package.json")
+        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        return file
+      case FileType.PACKAGE_WITH_TITLEDATA:
+        ObjectNode result = GokbExporter.extractPackage(enrichment, type)
+        def file = new File(enrichment.enrichmentFolder + ".packageWithTitleData.json")
         file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
         return file
       case FileType.TITLES:
@@ -55,28 +61,41 @@ class GokbExporter {
   }
 
 
-  static ObjectNode extractPackage(Enrichment enrichment) {
+  static ObjectNode extractPackage(Enrichment enrichment, FileType type) {
     ObjectNode pkg = new ObjectNode(NODE_FACTORY)
     log.debug("extracting package ...")
     pkg.set("packageHeader", extractPackageHeader(enrichment))
-    pkg.set("tipps", extractTipps(enrichment))
+    pkg.set("tipps", extractTipps(enrichment, type))
+    if (enrichment.dataContainer?.pkgHeader?.token != null){
+      pkg.put("updateToken", enrichment.dataContainer?.pkgHeader?.token)
+    }
     log.debug("extracting package finished")
     pkg
   }
 
 
-  static ArrayNode extractTipps(Enrichment enrichment) {
+  static ArrayNode extractTipps(Enrichment enrichment, FileType type) {
     log.debug("extracting tipps ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (String recId in enrichment.dataContainer.records) {
       Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId,
           enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
-        ObjectNode tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        ObjectNode tipp
+        if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
+          tipp = JsonToolkit.getCombinedTitleTippJsonFromRecord("gokb", record, FORMATTER)
+        }
+        else{
+          tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+        }
         tipp = postProcessIssnIsbn(tipp, record, FileType.PACKAGE)
+        if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
+          // additionally rename title identifiers
+          postProcessIssnIsbn(tipp, record, FileType.TITLES)
+        }
         tipp = removeEmptyFields(tipp)
-        tipp = removeEmptyIdentifiers(tipp, FileType.PACKAGE)
-        tipp = postProcessTitleIdentifiers(tipp, FileType.PACKAGE,
+        tipp = removeEmptyIdentifiers(tipp, type)
+        tipp = postProcessTitleIdentifiers(tipp, type,
             enrichment.dataContainer.info.namespace_title_id)
         tipps.add(tipp)
       }
@@ -166,6 +185,10 @@ class GokbExporter {
     else if (type.equals(FileType.PACKAGE)) {
       postProcessTitleId(item.title.identifiers, namespace)
     }
+    else if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)) {
+      postProcessTitleId(item.identifiers, namespace)
+      postProcessTitleId(item.title.identifiers, namespace)
+    }
     item
   }
 
@@ -177,6 +200,10 @@ class GokbExporter {
     else if (type.equals(FileType.PACKAGE)) {
       removeEmptyIds(item.title.identifiers)
     }
+    else if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)) {
+      removeEmptyIds(item.identifiers)
+      removeEmptyIds(item.title.identifiers)
+    }
     item
   }
 
@@ -185,7 +212,7 @@ class GokbExporter {
     // this currently parses the old package header
     // TODO: refactor
     log.debug("parsing package header ...")
-    def packageHeader = enrichment.dataContainer.pkg.packageHeader
+    def packageHeader = enrichment.dataContainer.pkgHeader
     def result = new ObjectNode(NODE_FACTORY)
     def identifiers = new ArrayNode(NODE_FACTORY)
 
@@ -211,7 +238,9 @@ class GokbExporter {
       result.set("curatoryGroups", (curatoryGroups))
     }
     setPkgId(enrichment.dataContainer, identifiers)
-
+    if (enrichment.autoUpdate == true){
+      result.set("generateToken", new TextNode("true"))
+    }
     result.set("identifiers", identifiers)
 
     enrichment.dataContainer.packageHeader = result
@@ -473,6 +502,40 @@ class GokbExporter {
     def http = new HTTPBuilder(url)
     http.auth.basic user, password
 
+    http.request(Method.POST, ContentType.JSON){ request ->
+      headers.'User-Agent' = 'ygor'
+      headers.'Accept-Language' = locale
+      body = text
+      response.success = { response, html ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (response.status < 400){
+            return ['info': html]
+          }
+          else{
+            return ['warning': html]
+          }
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.failure = { response, html ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          return ['error': html]
+        }
+        else{
+          return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+        }
+      }
+      response.'401' = { response ->
+        return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
+      }
+    }
+  }
+
+
+  static Map sendUpdate(@Nonnull String url, @Nonnull String text, @Nonnull String locale){
+    def http = new HTTPBuilder(url)
     http.request(Method.POST, ContentType.JSON){ request ->
       headers.'User-Agent' = 'ygor'
       headers.'Accept-Language' = locale

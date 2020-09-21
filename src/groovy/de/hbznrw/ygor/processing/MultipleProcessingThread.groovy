@@ -8,6 +8,7 @@ import de.hbznrw.ygor.readers.KbartReaderConfiguration
 import de.hbznrw.ygor.readers.ZdbReader
 import groovy.util.logging.Log4j
 import ygor.Enrichment
+import ygor.EnrichmentService
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.identifier.OnlineIdentifier
@@ -49,7 +50,7 @@ class MultipleProcessingThread extends Thread {
 
   MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     enrichment = en
-    apiCalls = options.get('options')
+    apiCalls = EnrichmentService.decodeApiCalls(options.get('options'))
     delimiter = options.get('delimiter')
     quote = options.get('quote')
     quoteMode = options.get('quoteMode')
@@ -84,7 +85,7 @@ class MultipleProcessingThread extends Thread {
             KbartReaderConfiguration conf =
                 new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
             KbartIntegrationService kbartIntegrationService = new KbartIntegrationService(enrichment.mappingsContainer)
-            calculateProgressIncrement()
+            calculateProgressIncrement(enrichment.enrichmentFolder)
             kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)
             break
           case EzbReader.IDENTIFIER:
@@ -141,15 +142,18 @@ class MultipleProcessingThread extends Thread {
 
 
   private void processUiSettings() {
-    FieldKeyMapping tippNameMapping = enrichment.setTippPlatformNameMapping()
+    FieldKeyMapping tippNameMapping =
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
     enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping = enrichment.setTippPlatformUrlMapping()
+    FieldKeyMapping tippUrlMapping =
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
     enrichment.enrollMappingToRecords(tippUrlMapping)
   }
 
 
-  private void calculateProgressIncrement() {
-    double lines = (double) (countLines(kbartFile) - 1)
+  private void calculateProgressIncrement(String enrichmentFolder){
+    String file = new File(kbartFile).absolutePath.equals(kbartFile) ? kbartFile : enrichmentFolder.concat(kbartFile)
+    double lines = (double) (countLines(file) - 1)
     if (lines > 0) {
       progressIncrement = 100.0 / lines / (double) apiCalls.size()
       // division by 3 for number of tasks (Kbart, ZDB, EZB)

@@ -66,22 +66,27 @@ class JsonToolkit {
 
 
   static ObjectNode getTippJsonFromRecord(String target, Record record, YgorFormatter formatter) {
-    getJsonFromRecord("\$TIPP", target, record, formatter)
+    getJsonFromRecord(new ArrayList(Arrays.asList("\$TIPP")), target, record, formatter)
   }
 
 
   static ObjectNode getTitleJsonFromRecord(String target, Record record, YgorFormatter formatter) {
-    getJsonFromRecord("\$TITLE", target, record, formatter)
+    getJsonFromRecord(new ArrayList(Arrays.asList("\$TITLE")), target, record, formatter)
   }
 
 
-  private static ObjectNode getJsonFromRecord(String typeFilter, String target, Record record,
+  static ObjectNode getCombinedTitleTippJsonFromRecord(String target, Record record, YgorFormatter formatter) {
+    getJsonFromRecord(new ArrayList(Arrays.asList("\$TITLE", "\$TIPP")), target, record, formatter)
+  }
+
+
+  private static ObjectNode getJsonFromRecord(List<String> typeFilter, String target, Record record,
                                               YgorFormatter formatter) {
     ObjectNode result = MAPPER.createObjectNode()
     for (MultiField multiField in record.multiFields.values()) {
       if (multiField.keyMapping == null) {
         def value = multiField.getFirstPrioValue()
-        ArrayList concatKey = Arrays.asList(typeFilter)
+        ArrayList concatKey = new ArrayList<>(typeFilter)
         Iterator it = multiField.fields.iterator()
         if (it.hasNext()){
           concatKey.addAll(it.next().key)
@@ -92,7 +97,7 @@ class JsonToolkit {
         Set qualifiedKeys = multiField.keyMapping."${target}"
         qualifiedKeys.each { qualifiedKey ->
           ArrayList splitKey = qualifiedKey.split("\\.") as ArrayList
-          if (splitKey.size() > 1 && splitKey[0].equals(typeFilter)) {
+          if (splitKey.size() > 1 && splitKey[0] in typeFilter) {
             def value = multiField.getFirstPrioValue()
             upsertIntoJsonNode(result, splitKey, value, multiField.type, formatter,
                 multiField.keyMapping.keepIfEmpty)
@@ -100,7 +105,7 @@ class JsonToolkit {
         }
       }
     }
-    if (typeFilter.equals("\$TITLE") && record.historyEvents.size() > 0){
+    if ("\$TITLE" in typeFilter && record.historyEvents.size() > 0){
       ArrayNode historyEvents = MAPPER.createArrayNode()
       for (HistoryEvent he in record.historyEvents){
         if (he.isValid()){
@@ -266,7 +271,17 @@ class JsonToolkit {
   }
 
 
-  synchronized static List listFromJson(String jsonString, Class targetType){
+  static List listFromJson(JsonNode root, String subField){
+    String[] pathSplit = subField.split("\\.", 2)
+    JsonNode subNode = root.path(pathSplit[0])
+    if (pathSplit.length > 1) {
+      return fromJson(subNode, pathSplit[1])
+    }
+
+  }
+
+
+  static List listFromJson(String jsonString, Class targetType){
     return MAPPER.readValue(jsonString, MAPPER.getTypeFactory().constructCollectionType(List.class, targetType))
   }
 

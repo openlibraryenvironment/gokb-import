@@ -37,6 +37,7 @@ class Enrichment{
     JSON,
     PACKAGE,
     TITLES,
+    PACKAGE_WITH_TITLEDATA,
     RAW
   }
 
@@ -50,6 +51,7 @@ class Enrichment{
   String apiMessage
   double apiProgress = 0.0
 
+  String originUrl
   String originName
   String originHash
   String originPathName
@@ -58,13 +60,21 @@ class Enrichment{
   String resultName
   String resultHash
   String enrichmentFolder
-
   File sessionFolder
+
+  def kbartDelimiter
+  def kbartQuote
+  def kbartQuoteMode
+  def kbartRecordSeparator
+
   String ygorVersion
+  List<String> processingOptions
   String date
+  def locale
   boolean addOnly
   boolean isZdbIntegrated
   boolean isEzbIntegrated
+  boolean autoUpdate
 
   def thread
   MappingsContainer mappingsContainer
@@ -92,6 +102,7 @@ class Enrichment{
     dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
     isZdbIntegrated = false
     isEzbIntegrated = false
+    autoUpdate = false
   }
 
 
@@ -156,6 +167,15 @@ class Enrichment{
 
   void save(){
     log.info("Saving enrichment...")
+    String result = asJson(true)
+    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
+    file.getParentFile().mkdirs()
+    file.write(JsonOutput.prettyPrint(result), "UTF-8")
+    log.info("Saving enrichment finished.")
+  }
+
+
+  String asJson(boolean includeRecords){
     StringWriter result = new StringWriter()
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
@@ -164,16 +184,40 @@ class Enrichment{
     result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
+    result.append("\"autoUpdate\":\"").append(String.valueOf(autoUpdate)).append("\",")
     result.append("\"enrichmentFolder\":\"").append(enrichmentFolder).append("\",")
     String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
     if (pn){
       result.append("\"packageName\":\"").append(pn).append("\",")
     }
-    result.append("\"records\":").append(JsonToolkit.setToJson(dataContainer.records)).append(",")
-    result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
-    result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
-    result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
-    result.append("\"configuration\":{")
+    if (includeRecords){
+      result.append("\"records\":").append(JsonToolkit.setToJson(dataContainer.records)).append(",")
+      result.append("\"greenRecords\":").append(JsonToolkit.mapToJson(greenRecords)).append(",")
+      result.append("\"yellowRecords\":").append(JsonToolkit.mapToJson(yellowRecords)).append(",")
+      result.append("\"redRecords\":").append(JsonToolkit.mapToJson(redRecords)).append(",")
+    }
+    String token = dataContainer.pkgHeader?.token
+    if (token){
+      result.append("\"token\":\"").append(token).append("\",")
+    }
+    String uuid = dataContainer.pkgHeader?.uuid
+    if (uuid){
+      result.append("\"uuid\":\"").append(uuid).append("\",")
+    }
+    result.append("\"configuration\":")
+    result.append(this.getConfiguration())
+    result.append("}")
+    result.toString()
+  }
+
+
+  @SuppressWarnings('JpaAttributeMemberSignatureInspection')
+  String getConfiguration(){
+    StringWriter result = new StringWriter()
+    result.append("{")
+    if (originUrl != null){
+      result.append("\"originUrl\":\"").append(originUrl).append("\",")
+    }
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
     result.append("\"isZdbIntegrated\":\"").append(String.valueOf(isZdbIntegrated)).append("\",")
@@ -190,22 +234,27 @@ class Enrichment{
     if (dataContainer.isil != null){
       result.append("\"isil\":\"").append(dataContainer.isil).append("\",")
     }
-    if (dataContainer.pkg?.packageHeader?.nominalProvider != null){
-      result.append("\"nominalProvider\":\"").append(dataContainer.pkg.packageHeader.nominalProvider).append("\",")
+    if (dataContainer.pkgHeader?.nominalProvider != null){
+      result.append("\"nominalProvider\":\"").append(dataContainer?.pkgHeader?.nominalProvider).append("\",")
     }
-    if (dataContainer.pkg?.packageHeader?.nominalPlatform != null){
+    if (dataContainer.pkgHeader?.nominalPlatform != null){
       result.append("\"nominalPlatform\":{")
-      result.append("\"name\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.name).append("\",")
-      result.append("\"url\":\"").append(dataContainer.pkg?.packageHeader?.nominalPlatform.url).append("\"")
+        result.append("\"name\":\"").append(dataContainer.pkgHeader?.nominalPlatform.name).append("\",")
+        result.append("\"url\":\"").append(dataContainer.pkgHeader?.nominalPlatform.url).append("\"")
       result.append("},")
     }
+    result.append("\"kbart\":{")
+      result.append("\"delimiter\":\"").append(kbartDelimiter).append("\",")
+      result.append("\"quote\":\"").append(kbartQuote).append("\",")
+      result.append("\"quoteMode\":\"").append(kbartQuoteMode).append("\",")
+      result.append("\"recordSeparator\":\"").append(kbartRecordSeparator).append("\"")
+    result.append("},")
+    result.append("\"locale\":\"").append(locale).append("\",")
+    result.append("\"processingOptions\":").append(JsonToolkit.listToJson(processingOptions)).append(",")
     result.append("\"mappingsContainer\":")
     result.append(JsonToolkit.toJson(mappingsContainer))
-    result.append("}}")
-    File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
-    file.getParentFile().mkdirs()
-    file.write(JsonOutput.prettyPrint(result.toString()), "UTF-8")
-    log.info("Saving enrichment finished.")
+    result.append("}")
+    return result.toString()
   }
 
 
@@ -218,6 +267,7 @@ class Enrichment{
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
+    en.autoUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "autoUpdate"))
     en.enrichmentFolder = JsonToolkit.fromJson(rootNode, "enrichmentFolder")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)
@@ -225,11 +275,17 @@ class Enrichment{
         DataContainer.fromJson(en.sessionFolder, en.enrichmentFolder, en.resultHash, en.mappingsContainer, loadRecordData)
     en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.markDuplicateIds()
+    en.originUrl = JsonToolkit.fromJson(rootNode, "configuration.originUrl")
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
     en.isEzbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isEzbIntegrated"))
-
+    en.kbartDelimiter = JsonToolkit.fromJson(rootNode, "configuration.kbart.delimiter")
+    en.kbartQuote = JsonToolkit.fromJson(rootNode, "configuration.kbart.quote")
+    en.kbartQuoteMode = JsonToolkit.fromJson(rootNode, "configuration.kbart.quoteMode")
+    en.kbartRecordSeparator = JsonToolkit.fromJson(rootNode, "configuration.kbart.recordSeparator")
+    en.processingOptions = JsonToolkit.fromJson(rootNode, "configuration.processingOptions")
+    en.locale = JsonToolkit.fromJson(rootNode, "configuration.locale")
     if (null != JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")){
       en.dataContainer.curatoryGroup = JsonToolkit.fromJson(rootNode, "configuration.curatoryGroup")
     }
@@ -242,10 +298,16 @@ class Enrichment{
     if (null != JsonToolkit.fromJson(rootNode, "configuration.isil")){
       en.dataContainer.isil = JsonToolkit.fromJson(rootNode, "configuration.isil")
     }
-    en.dataContainer.pkg.packageHeader = new PackageHeader()
-    en.dataContainer.pkg.packageHeader.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
-    en.dataContainer.pkg.packageHeader.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
+    en.dataContainer.pkgHeader = new PackageHeader()
+    en.dataContainer?.pkgHeader?.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
+    en.dataContainer?.pkgHeader?.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
+    if (null != JsonToolkit.fromJson(rootNode, "token")){
+      en.dataContainer?.pkgHeader?.token = JsonToolkit.fromJson(rootNode, "token")
+    }
+    if (null != JsonToolkit.fromJson(rootNode, "uuid")){
+      en.dataContainer?.pkgHeader?.uuid = JsonToolkit.fromJson(rootNode, "uuid")
+    }
     en.greenRecords = JsonToolkit.fromJsonNode(rootNode.get("greenRecords"))
     if (en.greenRecords == null){
       en.greenRecords = new HashMap<>()
@@ -267,8 +329,8 @@ class Enrichment{
   static Enrichment fromJsonFile(def file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
-    enrichment.setTippPlatformNameMapping()
-    enrichment.setTippPlatformUrlMapping()
+    enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
+    enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
   }
@@ -346,19 +408,19 @@ class Enrichment{
   }
 
 
-  FieldKeyMapping setTippPlatformNameMapping(){
+  FieldKeyMapping setTippPlatformNameMapping(String platformName){
     FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformNameMapping.val)){
-      platformNameMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.name
+      platformNameMapping.val = platformName
     }
     platformNameMapping
   }
 
 
-  FieldKeyMapping setTippPlatformUrlMapping(){
+  FieldKeyMapping setTippPlatformUrlMapping(String platformUrl){
     FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
     if (StringUtils.isEmpty(platformUrlMapping.val)){
-      platformUrlMapping.val = dataContainer.pkg.packageHeader.nominalPlatform.url
+      platformUrlMapping.val = platformUrl
     }
     platformUrlMapping
   }

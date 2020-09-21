@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.readers
 
-import de.hbznrw.ygor.processing.YgorProcessingException
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -22,6 +21,7 @@ class KbartReader {
   private List<String> csvHeader
   private Iterator<CSVRecord> iterator
   private CSVRecord lastItemReturned
+  String file
 
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
@@ -35,16 +35,24 @@ class KbartReader {
       'zdb_id': ['zdb-id', 'ZDB_ID', 'ZDB-ID']
   ]
 
-  KbartReader(Reader kbartFile, String delimiter) throws YgorProcessingException{
-    String fileData = kbartFile.getText()
+  KbartReader(){
+    // not in use
+  }
+
+  KbartReader(Reader kbartFileReader, String delimiter) throws Exception{
+    String fileData = kbartFileReader.getText()
+    init(fileData, delimiter)
+  }
+
+  protected void init(String fileData, String delimiter){
     // remove the BOM from the Data
     fileData = fileData.replace('\uFEFF', '')
     // automatic delimiter adaptation
     int maxCount = 0
     String favourite = delimiter;
-    for (String prop : ['comma', 'semicolon', 'tab']) {
+    for (String prop : ['comma', 'semicolon', 'tab']){
       int num = StringUtils.countMatches(fileData, resolver.get(prop).toString())
-      if (maxCount < num) {
+      if (maxCount < num){
         maxCount = num
         favourite = prop
       }
@@ -57,10 +65,10 @@ class KbartReader {
     try{
       csv = CSVParser.parse(fileData, csvFormat)
     }
-    catch(IllegalArgumentException iae){
+    catch (IllegalArgumentException iae){
       String duplicateName = iae.getMessage().minus("The header contains a duplicate name: \"")
       duplicateName = duplicateName.substring(0, duplicateName.indexOf("\""))
-      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.multipleColumn').toString()
+      throw new Exception(VALIDATION_TAG_LIB.message(code: 'error.kbart.multipleColumn').toString()
           .replace("{}", duplicateName)
           .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }
@@ -127,18 +135,20 @@ class KbartReader {
   }
 
 
-  void checkHeader() throws YgorProcessingException {
+  void checkHeader() throws Exception {
     def missingKeys = []
     if (!csvHeader) {
-      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader').toString()
+      throw new Exception(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingHeader').toString()
           .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }
     // check mandatory fields
+    List<String> headerFields = new ArrayList<>()
+    headerFields.addAll(csvHeader)
     MANDATORY_KBART_KEYS.each { kbk ->
-      if (!csvHeader.contains(kbk)) {
+      if (!headerFields.contains(kbk)) {
         boolean isMissing = true
         for (def alias : ALIASES[kbk]) {
-          if (csvHeader.contains(alias)) {
+          if (headerFields.contains(alias)) {
             isMissing = false
           }
         }
@@ -148,7 +158,7 @@ class KbartReader {
       }
     }
     if (missingKeys.size() > 0) {
-      throw new YgorProcessingException(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingColumns').toString()
+      throw new Exception(VALIDATION_TAG_LIB.message(code: 'error.kbart.missingColumns').toString()
           .replace("{}", missingKeys.toString())
           .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
     }
