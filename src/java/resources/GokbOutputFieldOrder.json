@@ -42,5 +42,8 @@
   "publishedTo",
   "publisherHistoryEndDate",
   "publisherHistoryStartDate",
-  "publisherHistoryStatus"
+  "publisherHistoryStatus",
+  "listprice_eur",
+  "listprice_gbp",
+  "listprice_usd"
 ]

@@ -164,6 +164,7 @@ class GokbExporter {
       title = postProcessIssnIsbn(title, record, FileType.TITLES)
       title = removeEmptyFields(title)
       title = removeEmptyIdentifiers(title, FileType.TITLES)
+      title = removeEmptyPrices(title)
       title = postProcessTitleIdentifiers(title, FileType.TITLES,
           enrichment.dataContainer.info.namespace_title_id)
       if (printPretty){
@@ -389,7 +390,8 @@ class GokbExporter {
       if (idNode.elements().size() == 1 && idNode.get("type") != null) {
         // identifier has "type" only ==> remove
         idsToBeRemoved << count
-      } else if (idNode.elements().size() > 1 && idNode.get("value").asText().trim() == "\"\"") {
+      }
+      else if (idNode.elements().size() > 1 && idNode.get("value").asText().trim() == "\"\"") {
         idsToBeRemoved << count
       }
       count++
@@ -397,6 +399,28 @@ class GokbExporter {
     for (int i = idsToBeRemoved.size() - 1; i > -1; i--) {
       identifiers.remove(idsToBeRemoved[i])
     }
+  }
+
+
+  static ObjectNode removeEmptyPrices(ObjectNode item) {
+    def count = 0
+    def pricesToBeRemoved = []
+    for (ObjectNode priceNode in item.get("prices").elements()) {
+      if (priceNode.get("amount") == null || priceNode.get("amount").asText().trim() == "\"\"") {
+        pricesToBeRemoved << count
+      }
+      else if (priceNode.get("currency") == null || priceNode.get("currency").asText().trim() == "\"\"") {
+        pricesToBeRemoved << count
+      }
+      else if (priceNode.get("type") == null || priceNode.get("type").asText().trim() == "\"\"") {
+        pricesToBeRemoved << count
+      }
+      count++
+    }
+    for (int i = pricesToBeRemoved.size() - 1; i > -1; i--) {
+      item.get("prices").remove(pricesToBeRemoved[i])
+    }
+    item
   }
 
 
