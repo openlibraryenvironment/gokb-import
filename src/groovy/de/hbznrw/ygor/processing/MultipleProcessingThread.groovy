@@ -33,7 +33,6 @@ class MultipleProcessingThread extends Thread {
 
   private Enrichment enrichment
   private apiCalls
-  private delimiter
   private quote
   private quoteMode
   private recordSeparator
@@ -51,7 +50,6 @@ class MultipleProcessingThread extends Thread {
   MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader) throws YgorProcessingException{
     enrichment = en
     apiCalls = EnrichmentService.decodeApiCalls(options.get('options'))
-    delimiter = options.get('delimiter')
     quote = options.get('quote')
     quoteMode = options.get('quoteMode')
     recordSeparator = options.get('recordSeparator')
@@ -83,7 +81,7 @@ class MultipleProcessingThread extends Thread {
         switch (call) {
           case KbartReader.IDENTIFIER:
             KbartReaderConfiguration conf =
-                new KbartReaderConfiguration(delimiter, quote, quoteMode, recordSeparator)
+                new KbartReaderConfiguration(quote, quoteMode, recordSeparator)
             KbartIntegrationService kbartIntegrationService = new KbartIntegrationService(enrichment.mappingsContainer)
             calculateProgressIncrement(enrichment.enrichmentFolder)
             kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)

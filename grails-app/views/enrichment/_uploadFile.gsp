@@ -18,43 +18,6 @@
                             <input class="form-control" type="text" id="uploadFileLabel" name="uploadFileLabel" readonly
                                    value="${filename}" size="46"/>
                         </div>
-                        <br>
-                        <div class="input-group">
-                            <span class="input-group-addon"><g:message code="uploadFile.separator.label"/></span>
-                            <span class="form-control">
-                                <div class="radio">
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.foDelimiter == null || session.lastUpdate?.foDelimiter == "tab"}">
-                                            <g:radio name="formatDelimiter" checked="true" value="tab"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="formatDelimiter" value="tab"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.separator.tabulator"/>  <code>(\t)</code>
-                                    </label>
-                                    &nbsp;
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.foDelimiter == "comma"}">
-                                            <g:radio name="formatDelimiter" checked="true" value="comma"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="formatDelimiter" value="comma"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.separator.comma"/> <code>(,)</code>
-                                    </label>
-                                    &nbsp;
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.foDelimiter == "semicolon"}">
-                                            <g:radio name="formatDelimiter" checked="true" value="semicolon"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="formatDelimiter" value="semicolon"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.separator.semicolon"/>  <code>(;)</code>
-                                    </label>
-                                </div>
-                            </span>
-                        </div>
                     </li>
                 </ul>
                 <ul class="list-group content-list">
@@ -106,43 +69,6 @@
                             <span class="input-group-addon"><g:message code="uploadUrl.url.label"/></span>
                             <input class="form-control" type="text" id="uploadUrlText" name="uploadUrlText"
                                    type="url" value="${url}" size="46"/>
-                        </div>
-                        <br>
-                        <div class="input-group">
-                            <span class="input-group-addon"><g:message code="uploadFile.separator.label"/></span>
-                            <span class="form-control">
-                                <div class="radio">
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.foDelimiterUrl == null || session.lastUpdate?.foDelimiterUrl == "tab"}">
-                                            <g:radio name="formatDelimiterUrl" checked="true" value="tab"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="formatDelimiterUrl" value="tab"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.separator.tabulator"/>  <code>(\t)</code>
-                                    </label>
-                                    &nbsp;
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.foDelimiterUrl == "comma"}">
-                                            <g:radio name="formatDelimiterUrl" checked="true" value="comma"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="formatDelimiterUrl" value="comma"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.separator.comma"/> <code>(,)</code>
-                                    </label>
-                                    &nbsp;
-                                    <label>
-                                        <g:if test="${session.lastUpdate?.foDelimiterUrl == "semicolon"}">
-                                            <g:radio name="formatDelimiterUrl" checked="true" value="semicolon"/>
-                                        </g:if>
-                                        <g:else>
-                                            <g:radio name="formatDelimiterUrl" value="semicolon"/>
-                                        </g:else>
-                                        <g:message code="uploadFile.separator.semicolon"/>  <code>(;)</code>
-                                    </label>
-                                </div>
-                            </span>
                         </div>
                         <br>
                         <div>

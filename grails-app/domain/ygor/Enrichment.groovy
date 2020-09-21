@@ -62,7 +62,6 @@ class Enrichment{
   String enrichmentFolder
   File sessionFolder
 
-  def kbartDelimiter
   def kbartQuote
   def kbartQuoteMode
   def kbartRecordSeparator
@@ -244,7 +243,6 @@ class Enrichment{
       result.append("},")
     }
     result.append("\"kbart\":{")
-      result.append("\"delimiter\":\"").append(kbartDelimiter).append("\",")
       result.append("\"quote\":\"").append(kbartQuote).append("\",")
       result.append("\"quoteMode\":\"").append(kbartQuoteMode).append("\",")
       result.append("\"recordSeparator\":\"").append(kbartRecordSeparator).append("\"")
@@ -280,7 +278,6 @@ class Enrichment{
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
     en.isEzbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isEzbIntegrated"))
-    en.kbartDelimiter = JsonToolkit.fromJson(rootNode, "configuration.kbart.delimiter")
     en.kbartQuote = JsonToolkit.fromJson(rootNode, "configuration.kbart.quote")
     en.kbartQuoteMode = JsonToolkit.fromJson(rootNode, "configuration.kbart.quoteMode")
     en.kbartRecordSeparator = JsonToolkit.fromJson(rootNode, "configuration.kbart.recordSeparator")

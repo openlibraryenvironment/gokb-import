@@ -110,14 +110,13 @@ class EnrichmentController implements ControllersHelper{
       )
       return
     }
-    def foDelimiter = request.parameterMap['formatDelimiter'][0]
 
     def foQuote = null                  // = request.parameterMap['formatQuote'][0]
     def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
     def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
     def addOnly = false
 
-    setInputFieldDataToLastUpdate(file, foDelimiter, foQuote, foQuoteMode, recordSeparator, addOnly)
+    setInputFieldDataToLastUpdate(file, foQuote, foQuoteMode, recordSeparator, addOnly)
 
     if (file.empty){
       flash.info = null
@@ -139,7 +138,7 @@ class EnrichmentController implements ControllersHelper{
       return
     }
     try {
-      kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()), foDelimiter)
+      kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
       kbartReader.checkHeader()
     }
     catch (Exception ype) {
@@ -163,7 +162,7 @@ class EnrichmentController implements ControllersHelper{
 
 
     Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
-    enrichmentService.addFileAndFormat(enrichment, foDelimiter, foQuote, foQuoteMode)
+    enrichmentService.addFileAndFormat(enrichment, foQuote, foQuoteMode)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
     redirect(
         action: 'process',
@@ -193,7 +192,6 @@ class EnrichmentController implements ControllersHelper{
       request.session.lastUpdate = [:]
     }
     request.session.lastUpdate.url = urlString
-    request.session.lastUpdate.foDelimiterUrl = request.parameterMap['formatDelimiterUrl'][0]
     request.session.lastUpdate.foQuoteUrl = null
     request.session.lastUpdate.foQuoteModeUrl = null
     request.session.lastUpdate.recordSeparatorUrl = "none"
@@ -201,12 +199,10 @@ class EnrichmentController implements ControllersHelper{
     // load file from URL
     String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
     Enrichment enrichment = enrichmentService.fromFilename(kbartFileName)
-    enrichment.kbartDelimiter = request.session.lastUpdate.foDelimiterUrl
     enrichment.addOnly = false
     enrichment.processingOptions = null
     try {
-      kbartReader = new KbartFromUrlReader(new URL(urlString) , request.session.lastUpdate.foDelimiterUrl,
-          new File (enrichment.enrichmentFolder))
+      kbartReader = new KbartFromUrlReader(new URL(urlString), new File (enrichment.enrichmentFolder))
       kbartReader.checkHeader()
     }
     catch (Exception e) {
@@ -232,7 +228,7 @@ class EnrichmentController implements ControllersHelper{
     if (request.parameterMap['urlAutoUpdate'] != null){
       enrichment.autoUpdate = request.parameterMap['urlAutoUpdate'][0].equals("on")
     }
-    enrichmentService.addFileAndFormat(enrichment, request.parameterMap['formatDelimiterUrl'][0], null, null)
+    enrichmentService.addFileAndFormat(enrichment, null, null)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
 
     redirect(
@@ -249,12 +245,11 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private void setInputFieldDataToLastUpdate(file, String foDelimiter, foQuote, foQuoteMode, String recordSeparator, boolean addOnly){
+  private void setInputFieldDataToLastUpdate(file, foQuote, foQuoteMode, String recordSeparator, boolean addOnly){
     if (!request.session.lastUpdate){
       request.session.lastUpdate = [:]
     }
     request.session.lastUpdate.file = file
-    request.session.lastUpdate.foDelimiter = foDelimiter
     request.session.lastUpdate.foQuote = foQuote
     request.session.lastUpdate.foQuoteMode = foQuoteMode
     request.session.lastUpdate.recordSeparator = recordSeparator
@@ -312,7 +307,6 @@ class EnrichmentController implements ControllersHelper{
    * Current Test configuration via Postman:
    *
    * POST /ygor/enrichment/processCompleteNoInteraction?
-   * formatDelimiter=null&
    * formatQuote=null&
    * formatQuoteMode=null&
    * recordSeparator=null&
@@ -346,7 +340,6 @@ class EnrichmentController implements ControllersHelper{
       log.error("Received request with empty file. Aborting.")
       return
     }
-    def foDelimiter = params.get('formatDelimiter')
     def foQuote = params.get('formatQuote')              // inactive, set null
     def foQuoteMode = params.get('formatQuoteMode')      // inactive, set null
     def recordSeparator = params.get('recordSeparator')  // inactive, set null
@@ -354,12 +347,11 @@ class EnrichmentController implements ControllersHelper{
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
     def gokbUsername = params.gokbUsername
     def gokbPassword = params.gokbPassword
-    Enrichment enrichment = enrichmentService.enrichmentFromFile(file, foDelimiter, foQuote, foQuoteMode)
-    enrichment.kbartDelimiter = foDelimiter
+    Enrichment enrichment = enrichmentService.enrichmentFromFile(file, foQuote, foQuoteMode)
     enrichment.addOnly = (addOnly.equals("on")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
     enrichmentService.prepareFile(enrichment, request.parameterMap)
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, foDelimiter, foQuote,
+    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, foQuote,
         foQuoteMode, recordSeparator, addOnly, gokbUsername, gokbPassword, locale)
     render(
         model: [
@@ -373,7 +365,6 @@ class EnrichmentController implements ControllersHelper{
     UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(
         enrichment,
         enrichment.processingOptions,
-        enrichment.kbartDelimiter,
         enrichment.kbartQuote,
         enrichment.kbartQuoteMode,
         enrichment.kbartRecordSeparator,
@@ -431,14 +422,12 @@ class EnrichmentController implements ControllersHelper{
             def format = getCurrentFormat()
             def options = [
                 'options'    : pmOptions,
-                'delimiter'  : format.get('delimiter'),
                 'quote'      : format.get('quote'),
                 'quoteMode'  : format.get('quoteMode'),
                 'ygorVersion': grailsApplication.config.ygor.version,
                 'ygorType'   : grailsApplication.config.ygor.type
             ]
             en.processingOptions = Arrays.asList(pmOptions)
-            en.kbartDelimiter = format.get('delimiter')
             en.process(options, kbartReader)
           }
         }
