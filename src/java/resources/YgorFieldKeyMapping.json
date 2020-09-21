@@ -935,7 +935,7 @@
     "ygor" : "series",
     "display" : "Series",
     "in" : {
-      "kbart" : ["series"],
+      "kbart" : ["monograph_parent_collection_title"],
       "zdb" : "",
       "ezb" : ""
     },
