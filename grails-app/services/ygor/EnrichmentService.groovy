@@ -100,12 +100,26 @@ class EnrichmentService{
   }
 
 
+  getNominalPlatform(String platformId){
+    // TODO
+  }
+
+
+  getPackage(String packageId){
+    // TODO
+  }
+
+
   private def getPlatform(Map pm){
+    if (pm['pkgNominalPlatform'] == null){
+      log.error("ParameterMap missing nominalPlatform.")
+      return null
+    }
     log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
     def platformSplit = splitPlatformString(pm['pkgNominalPlatform'][0])
     if (platformSplit == null || platformSplit.size() != 2){
       log.error("Could not split platform string.")
-      return
+      return null
     }
     def platform = pickPlatform(platformSplit[0], platformSplit[1])
     if (platform == null){
@@ -213,7 +227,7 @@ class EnrichmentService{
 
   Enrichment enrichmentFromFile(CommonsMultipartFile commonsMultipartFile){
     String fileName = commonsMultipartFile.originalFilename
-    String encoding = getEncoding(commonsMultipartFile)
+    String encoding = getEncoding(commonsMultipartFile.getInputStream())
     if (encoding != "UTF-8"){
       log.error(String.format("Transferred file has encoding %s. Aborting.", encoding))
       return
@@ -231,17 +245,15 @@ class EnrichmentService{
   }
 
 
-  UploadJob processCompleteNoInteraction(Enrichment enrichment, String gokbUsername, String gokbPassword){
-    processComplete(enrichment, gokbUsername, gokbPassword, false, null)
-  }
-
-
+  /**
+   * used by AutoUpdateService
+   */
   UploadJob processCompleteUpdate(Enrichment enrichment){
     try{
       URL originUrl = new URL(enrichment.originUrl)
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
       enrichment.dataContainer.records = []
-      processComplete(enrichment, null, null, true, enrichment.dataContainer?.pkgHeader?.token)
+      processComplete(enrichment, null, null, true)
     }
     catch (Exception e){
       log.error(e.getMessage())
@@ -250,8 +262,11 @@ class EnrichmentService{
   }
 
 
-  private UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword,
-                                    boolean isUpdate, String token){
+  /**
+   * used by AutoUpdateService --> processCompleteUpdate
+   * used by                       processCompleteWithToken
+   */
+  private UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate){
     FieldKeyMapping tippNameMapping =
         enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
     enrichment.enrollMappingToRecords(tippNameMapping)

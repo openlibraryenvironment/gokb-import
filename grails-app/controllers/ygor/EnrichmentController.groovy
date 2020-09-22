@@ -302,20 +302,18 @@ class EnrichmentController implements ControllersHelper{
   /**
    * Current Test configuration via Postman:
    *
-   * POST /ygor/enrichment/processCompleteNoInteraction?
+   * POST /ygor/enrichment/processCompleteWithToken?
    * addOnly=false&
    * processOption=kbart,zdb,ezb&
    * pkgId=<yourPackageId>&
-   * packageToken=<packageToken>
-   *
-   * HTTP/1.1
-   * Host: localhost:8092
-   * cache-control: no-cache
-   * Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+   * pkgNominalPlatformId=<theIdOfThePlatformBelongingToThisPackage>&
+   * updateToken=<packageUpdateToken>&
+   * titleIdNamespace=<theNamespaceForTheTitleId>
    *
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
-  def processCompleteNoInteraction = {
+  def processCompleteWithToken(){
+    // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
     def locale = RequestContextUtils.getLocale(request).getLanguage()
     if (file == null){
@@ -328,24 +326,21 @@ class EnrichmentController implements ControllersHelper{
     }
     def addOnly = params.get('addOnly')                  // "on" or "off"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
-    def gokbUsername = params.gokbUsername
-    def gokbPassword = params.gokbPassword
-    Enrichment enrichment = enrichmentService.enrichmentFromFile(file)
-    enrichment.addOnly = (addOnly.equals("on")) ? true : false
+    File sessionFolder = enrichmentService.getSessionFolder()
+    String fileName = file.originalFilename
+    Enrichment enrichment = new Enrichment(sessionFolder, fileName)
+    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
+
+    // TODO get parameters from IDs and add to pm
+
     enrichmentService.prepareFile(enrichment, request.parameterMap)
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, gokbUsername, gokbPassword)
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
     render(
         model: [
             message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
         ]
     )
-  }
-
-
-  def processCompleteNoInteraction(Enrichment enrichment){
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, null, null)
-    watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
   }
 
 
@@ -533,5 +528,15 @@ class EnrichmentController implements ControllersHelper{
     def result = [:]
     result.items = gokbService.getNamespaceList()
     render result as JSON
+  }
+
+
+  private void addParameterToParameterMap(String parameterName, String parameterValue, Map<String, String[]> parameterMap){
+    if (parameterMap == null){
+      parameterMap = new HashMap<>()
+    }
+    String[] value = new String[1]
+    value[0] = parameterValue
+    parameterMap.put(parameterName, value)
   }
 }

@@ -15,6 +15,7 @@ import grails.util.Holders
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
+import org.springframework.web.multipart.commons.CommonsMultipartFile
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
@@ -86,6 +87,22 @@ class Enrichment{
 
 
   Enrichment(File sessionFolder, String originalFilename){
+    this.sessionFolder = sessionFolder
+    originName = originalFilename.replaceAll(/\s+/, '_')
+    originHash = FileToolkit.getMD5Hash(originName + Math.random())
+    originPathName = this.sessionFolder.getPath() + File.separator + originHash
+    resultHash = FileToolkit.getMD5Hash(originName + Math.random())
+    enrichmentFolder = sessionFolder.getPath() + File.separator + resultHash + File.separator
+    new File(enrichmentFolder).mkdirs()
+    mappingsContainer = new MappingsContainer()
+    dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
+    isZdbIntegrated = false
+    isEzbIntegrated = false
+    autoUpdate = false
+  }
+
+
+  Enrichment(CommonsMultipartFile commonsMultipartFile){
     this.sessionFolder = sessionFolder
     originName = originalFilename.replaceAll(/\s+/, '_')
     originHash = FileToolkit.getMD5Hash(originName + Math.random())
