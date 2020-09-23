@@ -281,6 +281,8 @@ class EnrichmentController implements ControllersHelper{
   def prepareFile = {
     Enrichment enrichment = getCurrentEnrichment()
     enrichmentService.prepareFile(enrichment, request.parameterMap)
+    enrichmentService.preparePackageHeader(enrichment, request.parameterMap)
+    enrichment.setStatus(Enrichment.ProcessingState.PREPARE_2)
     if (request.session.lastUpdate != null){
       request.session.lastUpdate.parameterMap = request.parameterMap
     }
@@ -332,7 +334,17 @@ class EnrichmentController implements ControllersHelper{
     enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
 
-    // TODO get parameters from IDs and add to pm
+    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
+    Map<String, Object> platform = enrichmentService.getPackage(params.get('platformId'))
+
+    addParameterToParameterMap("pkgTitle", pkg.get("title"), request.parameterMap)
+    addParameterToParameterMap("pkgIsil", pkg.get("isil"), request.parameterMap)
+    addParameterToParameterMap("pkgCuratoryGroup", pkg.get("curatoryGroup"), request.parameterMap)
+    addParameterToParameterMap("pkgId", pkg.get("id"), request.parameterMap)
+    addParameterToParameterMap("pkgIdNamespace", pkg.get("idNamespace"), request.parameterMap)
+    addParameterToParameterMap("pkgNominalProvider", pkg.get("nominalProvider"), request.parameterMap)
+    addParameterToParameterMap("pkgTitleId", pkg.get("titleIdNamespace"), request.parameterMap)
+
 
     enrichmentService.prepareFile(enrichment, request.parameterMap)
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)

@@ -6,7 +6,11 @@ import de.hbznrw.ygor.processing.YgorProcessingException
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.util.Holders
+import groovyx.net.http.ContentType
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.Method
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
 import org.mozilla.universalchardet.UniversalDetector
 import ygor.field.FieldKeyMapping
 
@@ -66,9 +70,7 @@ class EnrichmentService{
     if (enrichment == null || pm == null){
       return
     }
-    def ph = enrichment.dataContainer.pkgHeader
     if (pm['pkgTitle']){
-      ph.name = new Pod(pm['pkgTitle'][0])
       enrichment.packageName = pm['pkgTitle'][0]
     }
     if (pm['addOnly'] && pm['addOnly'][0] in ["on", "true"]){
@@ -86,6 +88,20 @@ class EnrichmentService{
     if (pm['pkgIdNamespace'] && "" != pm['pkgIdNamespace'][0].trim()){
       enrichment.dataContainer.pkgIdNamespace = (pm['pkgIdNamespace'][0])
     }
+    if (pm['pkgTitleId']){
+      enrichment.dataContainer.info.namespace_title_id = pm['pkgTitleId'][0]
+    }
+  }
+
+
+  void preparePackageHeader(Enrichment enrichment, Map pm){
+    if (enrichment == null || pm == null){
+      return
+    }
+    def ph = enrichment.dataContainer.pkgHeader
+    if (pm['pkgTitle']){
+      ph.name = new Pod(pm['pkgTitle'][0])
+    }
     def platform = getPlatform(pm)
     if (platform != null){
       applyPlatformToPackageHeader(platform, ph)
@@ -93,20 +109,98 @@ class EnrichmentService{
     if (pm['pkgNominalProvider']){
       ph.nominalProvider = pm['pkgNominalProvider'][0]
     }
-    if (pm['pkgTitleId']){
-      enrichment.dataContainer.info.namespace_title_id = pm['pkgTitleId'][0]
+  }
+
+
+  Map<String, Object> getNominalPlatform(String platformId){
+    if (StringUtils.isEmpty(platformId)){
+      return null
     }
-    enrichment.setStatus(Enrichment.ProcessingState.PREPARE_2)
+    def uri = Holders.config.gokbApi.platformInfo.toString().concat(platformId)
+    def http = new HTTPBuilder(uri)
+    Map<String, Object> result = new HashMap<>()
+    http.request(Method.GET, ContentType.JSON){ req ->
+      response.success = { response, resultMap ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (response.status < 400){
+            if (resultMap.result.equals("ERROR")){
+              result.put('responseStatus', 'error')
+              result.putAll(resultMap)
+            }
+            else{
+              result.put('responseStatus', 'ok')
+              result.putAll(resultMap)
+            }
+          }
+          else{
+            result.put('responseStatus', 'warning')
+            result.putAll(resultMap)
+          }
+        }
+        else{
+          result.put('responseStatus', 'authenticationError')
+        }
+      }
+      response.failure = { response, resultMap ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          result.put('responseStatus', 'error')
+          result.putAll(resultMap)
+        }
+        else{
+          result.put('responseStatus', 'authenticationError')
+        }
+      }
+      response.'401'= {resp ->
+        result.put('responseStatus', 'authenticationError')
+      }
+    }
+    result
   }
 
 
-  getNominalPlatform(String platformId){
-    // TODO
-  }
-
-
-  getPackage(String packageId){
-    // TODO
+  Map<String, Object> getPackage(String packageId){
+    if (StringUtils.isEmpty(packageId)){
+      return null
+    }
+    def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
+    def http = new HTTPBuilder(uri)
+    Map<String, Object> result = new HashMap<>()
+    http.request(Method.GET, ContentType.JSON){ req ->
+      response.success = { response, resultMap ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          if (response.status < 400){
+            if (resultMap.result.equals("ERROR")){
+              result.put('responseStatus', 'error')
+              result.putAll(resultMap)
+            }
+            else{
+              result.put('responseStatus', 'ok')
+              result.putAll(resultMap)
+            }
+          }
+          else{
+            result.put('responseStatus', 'warning')
+            result.putAll(resultMap)
+          }
+        }
+        else{
+          result.put('responseStatus', 'authenticationError')
+        }
+      }
+      response.failure = { response, resultMap ->
+        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          result.put('responseStatus', 'error')
+          result.putAll(resultMap)
+        }
+        else{
+          result.put('responseStatus', 'authenticationError')
+        }
+      }
+      response.'401'= {resp ->
+        result.put('responseStatus', 'authenticationError')
+      }
+    }
+    result
   }
 
 
@@ -134,9 +228,9 @@ class EnrichmentService{
     def pkgNomPlatform = null
     log.debug("Got platforms: ${platforms}")
     platforms.each{
-      if (it.name == queryTerm && it.status == "Current" && it.oid == platFormId){
+      if ((queryTerm == null || it.name == queryTerm) && it.status == "Current" && it.oid == platFormId){
         if (pkgNomPlatform){
-          log.warn("Multiple platforms found named: ".concat(it.name))
+          log.warn("Multiple platforms found named: ".concat(pkgNomPlatform.name).concat(" and ").concat(it.name))
         }
         else{
           log.debug("Set ${it.name} as nominalPlatform.")
@@ -144,7 +238,7 @@ class EnrichmentService{
         }
       }
       else{
-        if (it.name != queryTerm){
+        if (queryTerm != null && it.name != queryTerm){
           log.debug("No name match: ${it.name} - ${queryTerm}")
         }
         if (it.status != "Current"){
