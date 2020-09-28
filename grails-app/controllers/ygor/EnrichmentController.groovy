@@ -326,16 +326,19 @@ class EnrichmentController implements ControllersHelper{
       log.error("Received request with empty file. Aborting.")
       return
     }
+
+    // String encoding = enrichmentService.getEncoding(file.getInputStream())
+    enrichmentService.kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
+    enrichmentService.kbartReader.checkHeader()
+
     def addOnly = params.get('addOnly')                  // "on" or "off"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
-    File sessionFolder = enrichmentService.getSessionFolder()
-    String fileName = file.originalFilename
-    Enrichment enrichment = new Enrichment(sessionFolder, fileName)
+    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
     enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
 
     Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
-    // Map<String, Object> platform = enrichmentService.getPlatform(params.get('platformId'))
+    Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
     Map<String, Object> parameterMap = new HashMap<>()
     parameterMap.putAll(request.parameterMap)
 
@@ -345,8 +348,11 @@ class EnrichmentController implements ControllersHelper{
     addParameterToParameterMap("pkgNominalPlatform", String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
         .concat(pkg.get("nominalPlatform")?.get("name")), parameterMap)
     addParameterToParameterMap("pkgNominalProvider", pkg.get("provider")?.get("name"), parameterMap)
+    parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
 
     enrichmentService.prepareFile(enrichment, parameterMap)
+    enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
+    enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
     render(
         model: [

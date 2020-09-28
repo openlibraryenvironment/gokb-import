@@ -23,7 +23,7 @@ class UploadJob{
 
   void start(){
     status = Status.STARTED
-    if (fileType in [Enrichment.FileType.TITLES, Enrichment.FileType.PACKAGE]){
+    if (fileType in [Enrichment.FileType.TITLES, Enrichment.FileType.PACKAGE, Enrichment.FileType.PACKAGE_WITH_TITLEDATA]){
       uploadThread.start()
     }
     // else there is nothing to do

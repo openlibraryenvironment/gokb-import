@@ -154,8 +154,8 @@ class MultipleProcessingThread extends Thread {
     double lines = (double) (countLines(file) - 1)
     if (lines > 0) {
       progressIncrement = 100.0 / lines / (double) apiCalls.size()
-      // division by 3 for number of tasks (Kbart, ZDB, EZB)
-    } else {
+    }
+    else {
       progressIncrement = 1 // dummy assignment
     }
   }

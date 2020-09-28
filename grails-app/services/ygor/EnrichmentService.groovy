@@ -331,13 +331,7 @@ class EnrichmentService{
    * used by AutoUpdateService --> processCompleteUpdate
    * used by                       processCompleteWithToken
    */
-  private UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate){
-    FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
-    enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
-    enrichment.enrollMappingToRecords(tippUrlMapping)
+  UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate){
     def options = [
         'options'        : enrichment.processingOptions,
         'addOnly'        : enrichment.addOnly,
@@ -348,6 +342,12 @@ class EnrichmentService{
     while (enrichment.status != Enrichment.ProcessingState.FINISHED){
       Thread.sleep(1000)
     }
+    FieldKeyMapping tippNameMapping =
+        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
+    enrichment.enrollMappingToRecords(tippNameMapping)
+    FieldKeyMapping tippUrlMapping =
+        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
+    enrichment.enrollMappingToRecords(tippUrlMapping)
     // Main processing finished here.
     // Upload is following - send package with integrated title data
     String uri = Holders.config.gokbApi.xrPackageUri
@@ -359,8 +359,11 @@ class EnrichmentService{
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri,
           gokbUsername, gokbPassword, enrichment.locale, true)
     }
-    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThreadGokb)
+    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
     uploadJob.start()
+    while (uploadJob.status in [UploadJob.Status.PREPARATION, UploadJob.Status.STARTED]){
+      Thread.sleep(1000)
+    }
     return uploadJob
   }
 
