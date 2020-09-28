@@ -112,58 +112,27 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> getNominalPlatform(String platformId){
-    if (StringUtils.isEmpty(platformId)){
-      return null
-    }
-    def uri = Holders.config.gokbApi.platformInfo.toString().concat(platformId)
-    def http = new HTTPBuilder(uri)
-    Map<String, Object> result = new HashMap<>()
-    http.request(Method.GET, ContentType.JSON){ req ->
-      response.success = { response, resultMap ->
-        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          if (response.status < 400){
-            if (resultMap.result.equals("ERROR")){
-              result.put('responseStatus', 'error')
-              result.putAll(resultMap)
-            }
-            else{
-              result.put('responseStatus', 'ok')
-              result.putAll(resultMap)
-            }
-          }
-          else{
-            result.put('responseStatus', 'warning')
-            result.putAll(resultMap)
-          }
-        }
-        else{
-          result.put('responseStatus', 'authenticationError')
-        }
-      }
-      response.failure = { response, resultMap ->
-        if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
-          result.put('responseStatus', 'error')
-          result.putAll(resultMap)
-        }
-        else{
-          result.put('responseStatus', 'authenticationError')
-        }
-      }
-      response.'401'= {resp ->
-        result.put('responseStatus', 'authenticationError')
-      }
-    }
-    result
-  }
-
-
   Map<String, Object> getPackage(String packageId){
-    if (StringUtils.isEmpty(packageId)){
+    def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
+    return gokbRestApiRequest(uri, null, null, Arrays.asList("id", "name", "nominalPlatform", "provider",
+                                                              "uuid", "_embedded"))
+  }
+
+
+  Map<String, Object> getPlatform(String platformId){
+    def uri = Holders.config.gokbApi.platformInfo.toString().concat(platformId)
+    return gokbRestApiRequest(uri, null, null, Arrays.asList("id", "name", "primaryUrl", "provider", "uuid", "_embedded"))
+  }
+
+
+  Map<String, Object> gokbRestApiRequest(String uri, String user, String password, List<String> resultFields){
+    if (StringUtils.isEmpty(uri)){
       return null
     }
-    def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
     def http = new HTTPBuilder(uri)
+    if (user != null && password != null){
+      http.auth.basic user, password
+    }
     Map<String, Object> result = new HashMap<>()
     http.request(Method.GET, ContentType.JSON){ req ->
       response.success = { response, resultMap ->
@@ -175,7 +144,9 @@ class EnrichmentService{
             }
             else{
               result.put('responseStatus', 'ok')
-              result.putAll(resultMap)
+              for (String resultField in resultFields){
+                result.put(resultField, resultMap.get(resultField))
+              }
             }
           }
           else{
@@ -204,7 +175,7 @@ class EnrichmentService{
   }
 
 
-  private def getPlatform(Map pm){
+  def getPlatform(Map pm){
     if (pm['pkgNominalPlatform'] == null){
       log.error("ParameterMap missing nominalPlatform.")
       return null

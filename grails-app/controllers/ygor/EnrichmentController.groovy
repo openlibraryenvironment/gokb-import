@@ -335,18 +335,18 @@ class EnrichmentController implements ControllersHelper{
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
 
     Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
-    Map<String, Object> platform = enrichmentService.getPackage(params.get('platformId'))
+    // Map<String, Object> platform = enrichmentService.getPlatform(params.get('platformId'))
+    Map<String, Object> parameterMap = new HashMap<>()
+    parameterMap.putAll(request.parameterMap)
 
-    addParameterToParameterMap("pkgTitle", pkg.get("title"), request.parameterMap)
-    addParameterToParameterMap("pkgIsil", pkg.get("isil"), request.parameterMap)
-    addParameterToParameterMap("pkgCuratoryGroup", pkg.get("curatoryGroup"), request.parameterMap)
-    addParameterToParameterMap("pkgId", pkg.get("id"), request.parameterMap)
-    addParameterToParameterMap("pkgIdNamespace", pkg.get("idNamespace"), request.parameterMap)
-    addParameterToParameterMap("pkgNominalProvider", pkg.get("nominalProvider"), request.parameterMap)
-    addParameterToParameterMap("pkgTitleId", pkg.get("titleIdNamespace"), request.parameterMap)
+    addParameterToParameterMap("pkgTitle", pkg.get("name"), parameterMap)
+    addParameterToParameterMap("pkgCuratoryGroup", pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name"), parameterMap)
+    addParameterToParameterMap("pkgId", String.valueOf(pkg.get("id")), parameterMap)
+    addParameterToParameterMap("pkgNominalPlatform", String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
+        .concat(pkg.get("nominalPlatform")?.get("name")), parameterMap)
+    addParameterToParameterMap("pkgNominalProvider", pkg.get("provider")?.get("name"), parameterMap)
 
-
-    enrichmentService.prepareFile(enrichment, request.parameterMap)
+    enrichmentService.prepareFile(enrichment, parameterMap)
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
     render(
         model: [
