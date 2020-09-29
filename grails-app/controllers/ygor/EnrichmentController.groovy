@@ -331,11 +331,12 @@ class EnrichmentController implements ControllersHelper{
     enrichmentService.kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
     enrichmentService.kbartReader.checkHeader()
 
-    def addOnly = params.get('addOnly')                  // "on" or "off"
+    def addOnly = params.get('addOnly')                  // "true" or "false"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
     Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
     enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
+    enrichment.dataContainer.pkgHeader.token = params.get('updateToken')
 
     Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
@@ -351,6 +352,7 @@ class EnrichmentController implements ControllersHelper{
     parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
 
     enrichmentService.prepareFile(enrichment, parameterMap)
+    enrichment.dataContainer.pkgHeader.uuid = pkg.get("uuid")
     enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
     enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)

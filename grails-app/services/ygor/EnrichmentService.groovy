@@ -350,10 +350,12 @@ class EnrichmentService{
     // Upload is following - send package with integrated title data
     String uri = Holders.config.gokbApi.xrPackageUri
     SendPackageThreadGokb sendPackageThreadGokb
-    if (isUpdate){
+    if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
+      // send with token-based authentification
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale)
     }
     else{
+      // send with basic auth
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri,
           gokbUsername, gokbPassword, enrichment.locale, true)
     }
