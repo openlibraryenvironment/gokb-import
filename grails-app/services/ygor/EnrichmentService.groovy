@@ -14,13 +14,10 @@ import org.apache.commons.lang.StringUtils
 import org.mozilla.universalchardet.UniversalDetector
 import ygor.field.FieldKeyMapping
 
-import javax.annotation.Nonnull
 import javax.servlet.http.HttpSession
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
-
-import java.nio.charset.Charset
 
 class EnrichmentService{
 
@@ -318,6 +315,7 @@ class EnrichmentService{
       URL originUrl = new URL(enrichment.originUrl)
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
       enrichment.dataContainer.records = []
+      new File(enrichment.enrichmentFolder).mkdirs()
       processComplete(enrichment, null, null, true)
     }
     catch (Exception e){
