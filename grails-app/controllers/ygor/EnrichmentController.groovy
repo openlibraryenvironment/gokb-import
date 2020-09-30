@@ -111,12 +111,10 @@ class EnrichmentController implements ControllersHelper{
       return
     }
 
-    def foQuote = null                  // = request.parameterMap['formatQuote'][0]
-    def foQuoteMode = null              // = request.parameterMap['formatQuoteMode'][0]
     def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
     def addOnly = false
 
-    setInputFieldDataToLastUpdate(file, foQuote, foQuoteMode, recordSeparator, addOnly)
+    setInputFieldDataToLastUpdate(file, recordSeparator, addOnly)
 
     if (file.empty){
       flash.info = null
@@ -162,7 +160,7 @@ class EnrichmentController implements ControllersHelper{
 
 
     Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
-    enrichmentService.addFileAndFormat(enrichment, foQuote, foQuoteMode)
+    enrichmentService.addFileAndFormat(enrichment)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
     redirect(
         action: 'process',
@@ -228,7 +226,7 @@ class EnrichmentController implements ControllersHelper{
     if (request.parameterMap['urlAutoUpdate'] != null){
       enrichment.autoUpdate = request.parameterMap['urlAutoUpdate'][0].equals("on")
     }
-    enrichmentService.addFileAndFormat(enrichment, null, null)
+    enrichmentService.addFileAndFormat(enrichment)
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
 
     redirect(
@@ -245,13 +243,11 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private void setInputFieldDataToLastUpdate(file, foQuote, foQuoteMode, String recordSeparator, boolean addOnly){
+  private void setInputFieldDataToLastUpdate(file, String recordSeparator, boolean addOnly){
     if (!request.session.lastUpdate){
       request.session.lastUpdate = [:]
     }
     request.session.lastUpdate.file = file
-    request.session.lastUpdate.foQuote = foQuote
-    request.session.lastUpdate.foQuoteMode = foQuoteMode
     request.session.lastUpdate.recordSeparator = recordSeparator
     request.session.lastUpdate.addOnly = addOnly
   }
@@ -285,6 +281,8 @@ class EnrichmentController implements ControllersHelper{
   def prepareFile = {
     Enrichment enrichment = getCurrentEnrichment()
     enrichmentService.prepareFile(enrichment, request.parameterMap)
+    enrichmentService.preparePackageHeader(enrichment, request.parameterMap)
+    enrichment.setStatus(Enrichment.ProcessingState.PREPARE_2)
     if (request.session.lastUpdate != null){
       request.session.lastUpdate.parameterMap = request.parameterMap
     }
@@ -306,30 +304,18 @@ class EnrichmentController implements ControllersHelper{
   /**
    * Current Test configuration via Postman:
    *
-   * POST /ygor/enrichment/processCompleteNoInteraction?
-   * formatQuote=null&
-   * formatQuoteMode=null&
-   * recordSeparator=null&
+   * POST /ygor/enrichment/processCompleteWithToken?
    * addOnly=false&
    * processOption=kbart,zdb,ezb&
-   * gokbUsername=<aValidGokbUser>&
-   * gokbPassword=<theUser'sPassword>&
-   * pkgTitle=<yourPackageTitle>&
-   * pkgIsil&
-   * pkgCuratoryGroup=<yourCuratoryGroupName>&
-   * pkgNominalProvider=Organisation for Economic Co-operation and Development&
-   * pkgNominalPlatform=org.gokb.cred.Platform:408671;OECD UN iLibrary
-   *
-   * (examples given for pkgNominalProvider and pkgNominalPlatform)
-   *
-   * HTTP/1.1
-   * Host: localhost:8092
-   * cache-control: no-cache
-   * Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+   * pkgId=<yourPackageId>&
+   * pkgNominalPlatformId=<theIdOfThePlatformBelongingToThisPackage>&
+   * updateToken=<packageUpdateToken>&
+   * titleIdNamespace=<theNamespaceForTheTitleId>
    *
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
-  def processCompleteNoInteraction = {
+  def processCompleteWithToken(){
+    // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
     def locale = RequestContextUtils.getLocale(request).getLanguage()
     if (file == null){
@@ -340,39 +326,41 @@ class EnrichmentController implements ControllersHelper{
       log.error("Received request with empty file. Aborting.")
       return
     }
-    def foQuote = params.get('formatQuote')              // inactive, set null
-    def foQuoteMode = params.get('formatQuoteMode')      // inactive, set null
-    def recordSeparator = params.get('recordSeparator')  // inactive, set null
-    def addOnly = params.get('addOnly')                  // "on" or "off"
+
+    // String encoding = enrichmentService.getEncoding(file.getInputStream())
+    enrichmentService.kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
+    enrichmentService.kbartReader.checkHeader()
+
+    def addOnly = params.get('addOnly')                  // "true" or "false"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
-    def gokbUsername = params.gokbUsername
-    def gokbPassword = params.gokbPassword
-    Enrichment enrichment = enrichmentService.enrichmentFromFile(file, foQuote, foQuoteMode)
-    enrichment.addOnly = (addOnly.equals("on")) ? true : false
+    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
+    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
-    enrichmentService.prepareFile(enrichment, request.parameterMap)
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(enrichment, pmOptions, foQuote,
-        foQuoteMode, recordSeparator, addOnly, gokbUsername, gokbPassword, locale)
+    enrichment.dataContainer.pkgHeader.token = params.get('updateToken')
+
+    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
+    Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
+    Map<String, Object> parameterMap = new HashMap<>()
+    parameterMap.putAll(request.parameterMap)
+
+    addParameterToParameterMap("pkgTitle", pkg.get("name"), parameterMap)
+    addParameterToParameterMap("pkgCuratoryGroup", pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name"), parameterMap)
+    addParameterToParameterMap("pkgId", String.valueOf(pkg.get("id")), parameterMap)
+    addParameterToParameterMap("pkgNominalPlatform", String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
+        .concat(pkg.get("nominalPlatform")?.get("name")), parameterMap)
+    addParameterToParameterMap("pkgNominalProvider", pkg.get("provider")?.get("name"), parameterMap)
+    parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
+
+    enrichmentService.prepareFile(enrichment, parameterMap)
+    enrichment.dataContainer.pkgHeader.uuid = pkg.get("uuid")
+    enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
+    enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
     render(
         model: [
             message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
         ]
     )
-  }
-
-
-  def processCompleteNoInteraction(Enrichment enrichment){
-    UploadJob uploadJob = enrichmentService.processCompleteNoInteraction(
-        enrichment,
-        enrichment.processingOptions,
-        enrichment.kbartQuote,
-        enrichment.kbartQuoteMode,
-        enrichment.kbartRecordSeparator,
-        enrichment.addOnly,
-        null,
-        null,
-        enrichment.locale)
-    watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
   }
 
 
@@ -560,5 +548,15 @@ class EnrichmentController implements ControllersHelper{
     def result = [:]
     result.items = gokbService.getNamespaceList()
     render result as JSON
+  }
+
+
+  private void addParameterToParameterMap(String parameterName, String parameterValue, Map<String, String[]> parameterMap){
+    if (parameterMap == null){
+      parameterMap = new HashMap<>()
+    }
+    String[] value = new String[1]
+    value[0] = parameterValue
+    parameterMap.put(parameterName, value)
   }
 }

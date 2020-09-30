@@ -14,10 +14,11 @@ class GokbService {
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
-      def json = null
+      def json
       if (suggest) {
         json = geElasticsearchSuggests(esQuery, "Platform", null) // 10000 is maximum value allowed by now
-      } else {
+      }
+      else {
         json = geElasticsearchFindings(esQuery, "Platform", null, 10)
       }
       result.records = []
