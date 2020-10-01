@@ -327,31 +327,29 @@ class EnrichmentController implements ControllersHelper{
       return
     }
 
-    // String encoding = enrichmentService.getEncoding(file.getInputStream())
     enrichmentService.kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
     enrichmentService.kbartReader.checkHeader()
 
     def addOnly = params.get('addOnly')                  // "true" or "false"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
-    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
-    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
-    enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
-    enrichment.dataContainer.pkgHeader.token = params.get('updateToken')
 
     Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
     Map<String, Object> parameterMap = new HashMap<>()
     parameterMap.putAll(request.parameterMap)
-
+    parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
     addParameterToParameterMap("pkgTitle", pkg.get("name"), parameterMap)
     addParameterToParameterMap("pkgCuratoryGroup", pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name"), parameterMap)
     addParameterToParameterMap("pkgId", String.valueOf(pkg.get("id")), parameterMap)
     addParameterToParameterMap("pkgNominalPlatform", String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
         .concat(pkg.get("nominalPlatform")?.get("name")), parameterMap)
     addParameterToParameterMap("pkgNominalProvider", pkg.get("provider")?.get("name"), parameterMap)
-    parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
 
+    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
     enrichmentService.prepareFile(enrichment, parameterMap)
+    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
+    enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
+    enrichment.dataContainer.pkgHeader.token = params.get('updateToken')
     enrichment.dataContainer.pkgHeader.uuid = pkg.get("uuid")
     enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
     enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl

@@ -121,10 +121,8 @@ class Enrichment{
   def process(HashMap options, KbartReader kbartReader) throws Exception{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')
-
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
-
     thread = new MultipleProcessingThread(this, options, kbartReader)
     date = LocalDateTime.now().toString()
     thread.start()

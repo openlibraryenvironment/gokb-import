@@ -58,7 +58,7 @@ class GokbService {
   Map queryElasticsearch(String url) {
     log.info("querying: " + url)
     def http = new HTTPBuilder(url)
-//         http.auth.basic user, pwd
+    // http.auth.basic user, pwd
     http.request(Method.GET) { req ->
       headers.'User-Agent' = 'ygor'
       response.success = { resp, html ->
@@ -67,7 +67,8 @@ class GokbService {
         log.debug("content length:  ${resp.headers.'Content-Length'}")
         if (resp.status > 400) {
           return ['warning': html]
-        } else {
+        }
+        else {
           return ['info': html]
         }
       }
