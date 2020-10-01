@@ -115,8 +115,7 @@ class MultipleProcessingThread extends Thread {
       return
     }
 
-    processUiSettings()
-
+    enrichment.enrollPlatformToRecords()
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
     enrichment.dataContainer.markDuplicateIds()
     enrichment.classifyAllRecords()
@@ -136,16 +135,6 @@ class MultipleProcessingThread extends Thread {
     }
     isRunning = false
     log.info('Stopped MultipleProcessingThread '.concat(String.valueOf(getId())))
-  }
-
-
-  private void processUiSettings() {
-    FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
-    enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
-    enrichment.enrollMappingToRecords(tippUrlMapping)
   }
 
 

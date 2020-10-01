@@ -329,8 +329,7 @@ class Enrichment{
   static Enrichment fromJsonFile(def file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
-    enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
-    enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
+    enrichment.enrollPlatformToRecords()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
   }
@@ -408,32 +407,31 @@ class Enrichment{
   }
 
 
-  FieldKeyMapping setTippPlatformNameMapping(String platformName){
-    FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
-    if (StringUtils.isEmpty(platformNameMapping.val)){
-      platformNameMapping.val = platformName
-    }
-    platformNameMapping
+  void enrollPlatformToRecords() {
+    enrollMappingToRecords("platformName", dataContainer?.pkgHeader?.nominalPlatform.name)
+    enrollMappingToRecords("platformUrl", dataContainer?.pkgHeader?.nominalPlatform.url)
   }
 
 
-  FieldKeyMapping setTippPlatformUrlMapping(String platformUrl){
-    FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
-    if (StringUtils.isEmpty(platformUrlMapping.val)){
-      platformUrlMapping.val = platformUrl
-    }
-    platformUrlMapping
-  }
-
-
-  void enrollMappingToRecords(FieldKeyMapping mapping){
-    MultiField multiField = new MultiField(mapping)
+  void enrollMappingToRecords(String ygorField, String value){
+    FieldKeyMapping tippNameMapping = createMappingWithValue(ygorField, value)
+    MultiField multiField = new MultiField(tippNameMapping)
     for (String recId in dataContainer.records){
       Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
       multiField.validate(dataContainer.info.namespace_title_id)
       record.addMultiField(multiField)
+      record.save(enrichmentFolder, resultHash)
     }
     return
+  }
+
+
+  FieldKeyMapping createMappingWithValue(String ygorField, String value){
+    FieldKeyMapping platformNameMapping = mappingsContainer.getMapping(ygorField, MappingsContainer.YGOR)
+    if (StringUtils.isEmpty(platformNameMapping.val)){
+      platformNameMapping.val = value
+    }
+    platformNameMapping
   }
 
 

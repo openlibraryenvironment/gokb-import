@@ -340,18 +340,13 @@ class EnrichmentService{
     while (enrichment.status != Enrichment.ProcessingState.FINISHED){
       Thread.sleep(1000)
     }
-    FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
-    enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
-    enrichment.enrollMappingToRecords(tippUrlMapping)
+    enrichment.enrollPlatformToRecords()
     // Main processing finished here.
     // Upload is following - send package with integrated title data
     String uri = Holders.config.gokbApi.xrPackageUri
     SendPackageThreadGokb sendPackageThreadGokb
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
-      // send with token-based authentification
+      // send with token-based authentication
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale)
     }
     else{
