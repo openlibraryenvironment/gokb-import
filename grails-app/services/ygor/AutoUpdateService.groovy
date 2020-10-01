@@ -20,7 +20,7 @@ class AutoUpdateService {
 
   static void processUpdate(File updateConfiguration) throws Exception{
     Enrichment enrichment = Enrichment.fromRawJson(JsonToolkit.jsonNodeFromFile(updateConfiguration), false)
-    UploadJob uploadJob = ENRICHMENT_SERVICE.processCompleteUpdate(enrichment)
+    UploadJob uploadJob = ENRICHMENT_SERVICE.buildCompleteUpdateProcess(enrichment)
     ENRICHMENT_CONTROLLER.watchUpload(uploadJob, Enrichment.FileType.PACKAGE_WITH_TITLEDATA, enrichment.resultName)
   }
 }

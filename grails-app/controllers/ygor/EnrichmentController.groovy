@@ -315,6 +315,17 @@ class EnrichmentController implements ControllersHelper{
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
   def processCompleteWithToken(){
+    Enrichment enrichment = buildCompleteTokenProcess()
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
+    render(
+        model: [
+            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
+        ]
+    )
+  }
+
+
+  private Enrichment buildCompleteTokenProcess(){
     // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
     def locale = RequestContextUtils.getLocale(request).getLanguage()
@@ -353,12 +364,6 @@ class EnrichmentController implements ControllersHelper{
     enrichment.dataContainer.pkgHeader.uuid = pkg.get("uuid")
     enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
     enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl
-    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
-    render(
-        model: [
-            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
-        ]
-    )
   }
 
 

@@ -310,7 +310,7 @@ class EnrichmentService{
   /**
    * used by AutoUpdateService
    */
-  UploadJob processCompleteUpdate(Enrichment enrichment){
+  UploadJob buildCompleteUpdateProcess(Enrichment enrichment){
     try{
       URL originUrl = new URL(enrichment.originUrl)
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
