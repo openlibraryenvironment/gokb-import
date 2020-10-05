@@ -7,6 +7,8 @@ import groovy.util.logging.Log4j
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.springframework.web.servlet.support.RequestContextUtils
 
+import javax.servlet.http.HttpServletRequest
+
 
 @Log4j
 class EnrichmentController implements ControllersHelper{
@@ -113,7 +115,6 @@ class EnrichmentController implements ControllersHelper{
 
     def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
     def addOnly = false
-
     setInputFieldDataToLastUpdate(file, recordSeparator, addOnly)
 
     if (file.empty){
@@ -136,14 +137,29 @@ class EnrichmentController implements ControllersHelper{
       return
     }
     try {
-      kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
+      Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
+      enrichment.addFileAndFormat()
+      enrichment.status = Enrichment.ProcessingState.PREPARE_1
+      kbartReader = new KbartReader(enrichment.transferredFile)
       kbartReader.checkHeader()
+      redirect(
+          action: 'process',
+          params: [
+              resultHash: enrichment.resultHash,
+              originHash: enrichment.originHash
+          ],
+          model: [
+              enrichment : enrichment,
+              currentView: 'process'
+          ]
+      )
     }
     catch (Exception ype) {
       flash.info = null
       flash.warning = null
       flash.error = ype.getMessage()
       Enrichment enrichment = getCurrentEnrichment()
+
       render(
           view: 'process',
           params: [
@@ -157,22 +173,6 @@ class EnrichmentController implements ControllersHelper{
       )
       return
     }
-
-
-    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
-    enrichmentService.addFileAndFormat(enrichment)
-    enrichment.status = Enrichment.ProcessingState.PREPARE_1
-    redirect(
-        action: 'process',
-        params: [
-            resultHash: enrichment.resultHash,
-            originHash: enrichment.originHash
-        ],
-        model: [
-            enrichment : enrichment,
-            currentView: 'process'
-        ]
-    )
   }
 
 
@@ -196,7 +196,7 @@ class EnrichmentController implements ControllersHelper{
     request.session.lastUpdate.addOnlyUrl = false
     // load file from URL
     String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
-    Enrichment enrichment = enrichmentService.fromFilename(kbartFileName)
+    Enrichment enrichment = Enrichment.fromFilename(kbartFileName)
     enrichment.addOnly = false
     enrichment.processingOptions = null
     try {
@@ -226,7 +226,7 @@ class EnrichmentController implements ControllersHelper{
     if (request.parameterMap['urlAutoUpdate'] != null){
       enrichment.autoUpdate = request.parameterMap['urlAutoUpdate'][0].equals("on")
     }
-    enrichmentService.addFileAndFormat(enrichment)
+    enrichment.addFileAndFormat()
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
 
     redirect(
@@ -262,7 +262,6 @@ class EnrichmentController implements ControllersHelper{
     }
     enrichment.setCurrentSession()
     enrichment.save()
-
     redirect(
         controller: 'Statistic',
         action: 'show',
@@ -338,7 +337,7 @@ class EnrichmentController implements ControllersHelper{
       return
     }
 
-    enrichmentService.kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
+    enrichmentService.kbartReader = new KbartReader(file)
     enrichmentService.kbartReader.checkHeader()
 
     def addOnly = params.get('addOnly')                  // "true" or "false"
@@ -356,7 +355,7 @@ class EnrichmentController implements ControllersHelper{
         .concat(pkg.get("nominalPlatform")?.get("name")), parameterMap)
     addParameterToParameterMap("pkgNominalProvider", pkg.get("provider")?.get("name"), parameterMap)
 
-    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
+    Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
     enrichmentService.prepareFile(enrichment, parameterMap)
     enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
@@ -499,6 +498,11 @@ class EnrichmentController implements ControllersHelper{
 
 
   Enrichment getCurrentEnrichment(){
+    return getCurrentEnrichmentStatic(enrichmentService, request)
+  }
+
+
+  static Enrichment getCurrentEnrichmentStatic(EnrichmentService enrichmentService, HttpServletRequest request){
     if (!request.parameterMap['resultHash'] || !(String) request.parameterMap['resultHash'][0]){
       return new Enrichment()
     }
@@ -514,7 +518,7 @@ class EnrichmentController implements ControllersHelper{
 
   HashMap getCurrentFormat(){
     def hash = (String) request.parameterMap['originHash'][0]
-    enrichmentService.getSessionFormats().get("${hash}")
+    enrichmentService.getSessionFormats().get(hash)
   }
 
 

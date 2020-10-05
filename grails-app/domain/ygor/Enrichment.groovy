@@ -56,6 +56,7 @@ class Enrichment{
   String originName
   String originHash
   String originPathName
+  File transferredFile
   String packageName
 
   String resultName
@@ -99,25 +100,38 @@ class Enrichment{
     isZdbIntegrated = false
     isEzbIntegrated = false
     autoUpdate = false
+    transferredFile = null
   }
 
 
-  Enrichment(CommonsMultipartFile commonsMultipartFile){
-    this.sessionFolder = sessionFolder
-    originName = originalFilename.replaceAll(/\s+/, '_')
-    originHash = FileToolkit.getMD5Hash(originName + Math.random())
-    originPathName = this.sessionFolder.getPath() + File.separator + originHash
-    resultHash = FileToolkit.getMD5Hash(originName + Math.random())
-    enrichmentFolder = sessionFolder.getPath() + File.separator + resultHash + File.separator
-    new File(enrichmentFolder).mkdirs()
-    mappingsContainer = new MappingsContainer()
-    dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
-    isZdbIntegrated = false
-    isEzbIntegrated = false
-    autoUpdate = false
+  static Enrichment fromCommonsMultipartFile(CommonsMultipartFile file){
+    Enrichment en = fromFilename(file.originalFilename)
+    en.transferredFile = new File(en.originPathName)
+    file.transferTo(en.transferredFile)
+    return en
   }
 
 
+  static Enrichment fromFilename(String filename){
+    return new Enrichment(EnrichmentService.getSessionFolder(), filename)
+  }
+
+
+  void addFileAndFormat(){
+    setStatus(Enrichment.ProcessingState.PREPARE_1)
+    def tmp = [:]
+    def formats = EnrichmentService.getSessionFormats()
+    formats.put(originHash, tmp)
+    EnrichmentService.getSessionEnrichments().put(resultHash, this)
+  }
+
+
+
+
+
+  /**
+   * Ygor's central processing method.
+   */
   def process(HashMap options, KbartReader kbartReader) throws Exception{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')

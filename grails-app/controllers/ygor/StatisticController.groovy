@@ -78,7 +78,7 @@ class StatisticController implements ControllersHelper{
   }
 
 
-  private def recordsPrivate(String resultHash, String colour, int start, int size, int draw){
+  synchronized private def recordsPrivate(String resultHash, String colour, int start, int size, int draw){
     Map records
     Enrichment enrichment = getCurrentEnrichment()
     switch (colour){
@@ -134,7 +134,6 @@ class StatisticController implements ControllersHelper{
         i++
       }
     }
-    log.debug("New data: ${result}")
     result
   }
 
@@ -498,13 +497,7 @@ class StatisticController implements ControllersHelper{
 
 
   Enrichment getCurrentEnrichment(){
-    def hash = (String) request.parameterMap['resultHash'][0]
-    def enrichments = enrichmentService.getSessionEnrichments()
-    Enrichment result = enrichments[hash]
-    if (null == result){
-      result = enrichments.get("${hash}")
-    }
-    result
+    return EnrichmentController.getCurrentEnrichmentStatic(enrichmentService, request)
   }
 
 

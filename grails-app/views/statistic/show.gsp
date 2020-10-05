@@ -234,7 +234,7 @@
     <div id="red-frame" class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading-red">
-                <h3 class="panel-title">${redRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.red"/></h3>
+                <h3 class="panel-title">${redRecords?.getAt("recordsTotal")} <g:message code="statistic.show.records.red"/></h3>
             </div>
 
             <div class="statistics-data">
@@ -279,7 +279,7 @@
     <div id="yellow-frame" class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading-yellow">
-                <h3 class="panel-title">${yellowRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.yellow"/></h3>
+                <h3 class="panel-title">${yellowRecords?.getAt("recordsTotal")} <g:message code="statistic.show.records.yellow"/></h3>
             </div>
             <div class="statistics-data">
                 <table id="yellow-records"class="statistics-details">
@@ -319,7 +319,7 @@
     <div id="green-frame" class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading-green">
-                <h3 class="panel-title">${greenRecords.getAt("recordsTotal")} <g:message code="statistic.show.records.green"/></h3>
+                <h3 class="panel-title">${greenRecords?.getAt("recordsTotal")} <g:message code="statistic.show.records.green"/></h3>
             </div>
 
             <div class="statistics-data">
