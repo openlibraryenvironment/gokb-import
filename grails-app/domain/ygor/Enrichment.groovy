@@ -66,7 +66,7 @@ class Enrichment{
 
   String ygorVersion
   List<String> processingOptions
-  String date
+  String lastProcessingDate
   def locale
   boolean addOnly
   boolean isZdbIntegrated
@@ -138,7 +138,7 @@ class Enrichment{
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
     thread = new MultipleProcessingThread(this, options, kbartReader)
-    date = LocalDateTime.now().toString()
+    lastProcessingDate = LocalDateTime.now().toString()
     thread.start()
   }
 
@@ -204,7 +204,7 @@ class Enrichment{
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
     result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
-    result.append("\"date\":\"").append(date).append("\",")
+    result.append("\"lastProcessingDate\":\"").append(lastProcessingDate).append("\",")
     result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
@@ -281,7 +281,7 @@ class Enrichment{
     String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
     def en = new Enrichment(new File(sessionFolder), originalFileName)
     en.ygorVersion = JsonToolkit.fromJson(rootNode, "ygorVersion") // TODO compare with current version and abort?
-    en.date = JsonToolkit.fromJson(rootNode, "date")
+    en.lastProcessingDate = JsonToolkit.fromJson(rootNode, "lastProcessingDate")
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
