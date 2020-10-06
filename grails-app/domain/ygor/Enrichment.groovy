@@ -53,6 +53,7 @@ class Enrichment{
   double apiProgress = 0.0
 
   String originUrl
+  String updateUrl
   String originName
   String originHash
   String originPathName
@@ -242,6 +243,9 @@ class Enrichment{
     if (originUrl != null){
       result.append("\"originUrl\":\"").append(originUrl).append("\",")
     }
+    if (updateUrl != null){
+      result.append("\"updateUrl\":\"").append(updateUrl).append("\",")
+    }
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
     result.append("\"isZdbIntegrated\":\"").append(String.valueOf(isZdbIntegrated)).append("\",")
@@ -294,6 +298,7 @@ class Enrichment{
     en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.markDuplicateIds()
     en.originUrl = JsonToolkit.fromJson(rootNode, "configuration.originUrl")
+    en.updateUrl = JsonToolkit.fromJson(rootNode, "configuration.updateUrl")
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))

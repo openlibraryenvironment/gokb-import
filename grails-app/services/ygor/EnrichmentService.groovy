@@ -269,7 +269,8 @@ class EnrichmentService{
    */
   UploadJob buildCompleteUpdateProcess(Enrichment enrichment){
     try{
-      URL originUrl = new URL(enrichment.originUrl)
+      String urlString = StringUtils.isEmpty(enrichment.updateUrl) ? enrichment.originUrl : enrichment.updateUrl
+      URL originUrl = new URL(urlString)
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
       enrichment.dataContainer.records = []
       new File(enrichment.enrichmentFolder).mkdirs()
