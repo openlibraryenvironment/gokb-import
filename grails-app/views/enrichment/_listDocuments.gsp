@@ -243,12 +243,17 @@
                                         </label>
                                     &nbsp;
                                         <label>
-                                            <g:checkBox name="processOption" checked="true" value="${ZdbReader.IDENTIFIER}"/>
+                                            <g:if test="${session.lastUpdate?.pmOptions?.contains(ZdbReader.IDENTIFIER)}">
+                                                <g:checkBox name="processOption" checked="true" value="${ZdbReader.IDENTIFIER}" />
+                                            </g:if>
+                                            <g:else>
+                                                <g:checkBox name="processOption" checked="false" value="${ZdbReader.IDENTIFIER}" />
+                                            </g:else>
                                             ZDB <em>@GBV</em> <code>API</code>
                                         </label>
                                         &nbsp;
                                         <label>
-                                            <g:if test="${session.lastUpdate?.pmOptions == null || session.lastUpdate?.pmOptions?.contains(EzbReader.IDENTIFIER)}">
+                                            <g:if test="${session.lastUpdate?.pmOptions?.contains(EzbReader.IDENTIFIER)}">
                                                 <g:checkBox name="processOption" checked="true" value="${EzbReader.IDENTIFIER}" />
                                             </g:if>
                                             <g:else>
