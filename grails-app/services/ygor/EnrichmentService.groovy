@@ -12,36 +12,15 @@ import groovyx.net.http.Method
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.mozilla.universalchardet.UniversalDetector
-import ygor.field.FieldKeyMapping
 
 import javax.servlet.http.HttpSession
-import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
 
 class EnrichmentService{
 
-  def grailsApplication
   GokbService gokbService
   KbartReader kbartReader
-
-  Enrichment fromCommonsMultipartFile(CommonsMultipartFile file){
-    Enrichment en = fromFilename(file.originalFilename)
-    file.transferTo(new File(en.originPathName))
-    return en
-  }
-
-  Enrichment fromFilename(String filename){
-    return new Enrichment(getSessionFolder(), filename)
-  }
-
-  void addFileAndFormat(Enrichment en){
-    en.setStatus(Enrichment.ProcessingState.PREPARE_1)
-    def tmp = [:]
-    def formats = getSessionFormats()
-    formats << ["${en.originHash}": tmp]
-    getSessionEnrichments() << ["${en.resultHash.toString()}": en]
-  }
 
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
@@ -55,9 +34,7 @@ class EnrichmentService{
       if (origin){
         origin.delete()
       }
-      getSessionEnrichments()?.remove("${enrichment.resultHash}")
       getSessionEnrichments()?.remove(enrichment.resultHash)
-      getSessionFormats()?.remove("${enrichment.originHash}")
       getSessionFormats()?.remove(enrichment.originHash)
     }
   }
@@ -250,11 +227,11 @@ class EnrichmentService{
     if (!session.enrichments){
       session.enrichments = [:]
     }
-    session.enrichments.put(enrichment.resultHash.toString(), enrichment)
+    session.enrichments.put(enrichment.resultHash, enrichment)
   }
 
 
-  def getSessionEnrichments(){
+  static def getSessionEnrichments(){
     HttpSession session = SessionToolkit.getSession()
     if (!session.enrichments){
       session.enrichments = [:]
@@ -263,7 +240,7 @@ class EnrichmentService{
   }
 
 
-  def getSessionFormats(){
+  static def getSessionFormats(){
     HttpSession session = SessionToolkit.getSession()
     if (!session.formats){
       session.formats = [:]
@@ -276,9 +253,9 @@ class EnrichmentService{
    * Return session depending directory for file upload.
    * Creates if not existing.
    */
-  File getSessionFolder(){
+  static File getSessionFolder(){
     def session = WebUtils.retrieveGrailsWebRequest().session
-    def path = grailsApplication.config.ygor.uploadLocation + File.separator + session.id
+    def path = grails.util.Holders.grailsApplication.config.ygor.uploadLocation + File.separator + session.id
     def sessionFolder = new File(path)
     if (!sessionFolder.exists()){
       sessionFolder.mkdirs()
@@ -287,30 +264,10 @@ class EnrichmentService{
   }
 
 
-  Enrichment enrichmentFromFile(CommonsMultipartFile commonsMultipartFile){
-    String fileName = commonsMultipartFile.originalFilename
-    String encoding = getEncoding(commonsMultipartFile.getInputStream())
-    if (encoding != "UTF-8"){
-      log.error(String.format("Transferred file has encoding %s. Aborting.", encoding))
-      return
-    }
-    try{
-      kbartReader = new KbartReader(new InputStreamReader(commonsMultipartFile.getInputStream()))
-      kbartReader.checkHeader()
-    }
-    catch (YgorProcessingException ype){
-      log.error("Aborting on KBart header check for file " + fileName)
-      return
-    }
-    Enrichment enrichment = addFileAndFormat(commonsMultipartFile)
-    return enrichment
-  }
-
-
   /**
    * used by AutoUpdateService
    */
-  UploadJob processCompleteUpdate(Enrichment enrichment){
+  UploadJob buildCompleteUpdateProcess(Enrichment enrichment){
     try{
       URL originUrl = new URL(enrichment.originUrl)
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
@@ -340,18 +297,13 @@ class EnrichmentService{
     while (enrichment.status != Enrichment.ProcessingState.FINISHED){
       Thread.sleep(1000)
     }
-    FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
-    enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
-    enrichment.enrollMappingToRecords(tippUrlMapping)
+    enrichment.enrollPlatformToRecords()
     // Main processing finished here.
     // Upload is following - send package with integrated title data
     String uri = Holders.config.gokbApi.xrPackageUri
     SendPackageThreadGokb sendPackageThreadGokb
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
-      // send with token-based authentification
+      // send with token-based authentication
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale)
     }
     else{

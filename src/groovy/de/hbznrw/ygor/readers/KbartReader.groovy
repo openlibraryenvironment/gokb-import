@@ -39,7 +39,10 @@ class KbartReader {
     // not in use
   }
 
-  KbartReader(Reader kbartFileReader) throws Exception{
+  KbartReader(def kbartFile) throws Exception{
+    InputStreamReader kbartFileReader = (kbartFile instanceof File) ?
+        new InputStreamReader(new FileInputStream(kbartFile)) :
+        new InputStreamReader(kbartFile.getInputStream())
     String fileData = kbartFileReader.getText()
     init(fileData)
   }

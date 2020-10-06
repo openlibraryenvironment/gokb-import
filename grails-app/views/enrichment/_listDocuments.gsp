@@ -39,7 +39,6 @@
                         <br />
                         <div id="progress-${enrichment.resultHash}" class="progress">
                             <g:if test="${enrichment.status == Enrichment.ProcessingState.FINISHED}">
-                                FINISHED!
                                 <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%;">100%</div>
                             </g:if>
                             <g:else>
@@ -325,7 +324,7 @@
                                         jQuery('#progress-${enrichment.resultHash} > .progress-bar').text(progress + '%');
 
                                         if(status == 'FINISHED') {
-
+                                            console.log("FINISHED: ${enrichment.originHash}");
                                             window.location = '${grailsApplication.config.grails.app.context}/statistic/show'
                                                 + '?originHash=${enrichment.originHash}&resultHash=${enrichment.resultHash}';
                                         }

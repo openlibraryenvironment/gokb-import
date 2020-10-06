@@ -56,6 +56,7 @@ class Enrichment{
   String originName
   String originHash
   String originPathName
+  File transferredFile
   String packageName
 
   String resultName
@@ -99,32 +100,43 @@ class Enrichment{
     isZdbIntegrated = false
     isEzbIntegrated = false
     autoUpdate = false
+    transferredFile = null
   }
 
 
-  Enrichment(CommonsMultipartFile commonsMultipartFile){
-    this.sessionFolder = sessionFolder
-    originName = originalFilename.replaceAll(/\s+/, '_')
-    originHash = FileToolkit.getMD5Hash(originName + Math.random())
-    originPathName = this.sessionFolder.getPath() + File.separator + originHash
-    resultHash = FileToolkit.getMD5Hash(originName + Math.random())
-    enrichmentFolder = sessionFolder.getPath() + File.separator + resultHash + File.separator
-    new File(enrichmentFolder).mkdirs()
-    mappingsContainer = new MappingsContainer()
-    dataContainer = new DataContainer(sessionFolder, enrichmentFolder, resultHash, mappingsContainer)
-    isZdbIntegrated = false
-    isEzbIntegrated = false
-    autoUpdate = false
+  static Enrichment fromCommonsMultipartFile(CommonsMultipartFile file){
+    Enrichment en = fromFilename(file.originalFilename)
+    en.transferredFile = new File(en.originPathName)
+    file.transferTo(en.transferredFile)
+    return en
   }
 
 
+  static Enrichment fromFilename(String filename){
+    return new Enrichment(EnrichmentService.getSessionFolder(), filename)
+  }
+
+
+  void addFileAndFormat(){
+    setStatus(Enrichment.ProcessingState.PREPARE_1)
+    def tmp = [:]
+    def formats = EnrichmentService.getSessionFormats()
+    formats.put(originHash, tmp)
+    EnrichmentService.getSessionEnrichments().put(resultHash, this)
+  }
+
+
+
+
+
+  /**
+   * Ygor's central processing method.
+   */
   def process(HashMap options, KbartReader kbartReader) throws Exception{
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')
-
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
-
     thread = new MultipleProcessingThread(this, options, kbartReader)
     date = LocalDateTime.now().toString()
     thread.start()
@@ -331,8 +343,7 @@ class Enrichment{
   static Enrichment fromJsonFile(def file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
-    enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
-    enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
+    enrichment.enrollPlatformToRecords()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
   }
@@ -410,32 +421,31 @@ class Enrichment{
   }
 
 
-  FieldKeyMapping setTippPlatformNameMapping(String platformName){
-    FieldKeyMapping platformNameMapping = mappingsContainer.getMapping("platformName", MappingsContainer.YGOR)
-    if (StringUtils.isEmpty(platformNameMapping.val)){
-      platformNameMapping.val = platformName
-    }
-    platformNameMapping
+  void enrollPlatformToRecords() {
+    enrollMappingToRecords("platformName", dataContainer?.pkgHeader?.nominalPlatform.name)
+    enrollMappingToRecords("platformUrl", dataContainer?.pkgHeader?.nominalPlatform.url)
   }
 
 
-  FieldKeyMapping setTippPlatformUrlMapping(String platformUrl){
-    FieldKeyMapping platformUrlMapping = mappingsContainer.getMapping("platformUrl", MappingsContainer.YGOR)
-    if (StringUtils.isEmpty(platformUrlMapping.val)){
-      platformUrlMapping.val = platformUrl
-    }
-    platformUrlMapping
-  }
-
-
-  void enrollMappingToRecords(FieldKeyMapping mapping){
-    MultiField multiField = new MultiField(mapping)
+  void enrollMappingToRecords(String ygorField, String value){
+    FieldKeyMapping tippNameMapping = createMappingWithValue(ygorField, value)
+    MultiField multiField = new MultiField(tippNameMapping)
     for (String recId in dataContainer.records){
       Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
       multiField.validate(dataContainer.info.namespace_title_id)
       record.addMultiField(multiField)
+      record.save(enrichmentFolder, resultHash)
     }
     return
+  }
+
+
+  FieldKeyMapping createMappingWithValue(String ygorField, String value){
+    FieldKeyMapping platformNameMapping = mappingsContainer.getMapping(ygorField, MappingsContainer.YGOR)
+    if (StringUtils.isEmpty(platformNameMapping.val)){
+      platformNameMapping.val = value
+    }
+    platformNameMapping
   }
 
 

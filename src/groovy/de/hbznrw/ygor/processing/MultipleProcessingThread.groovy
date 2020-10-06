@@ -115,8 +115,7 @@ class MultipleProcessingThread extends Thread {
       return
     }
 
-    processUiSettings()
-
+    enrichment.enrollPlatformToRecords()
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
     enrichment.dataContainer.markDuplicateIds()
     enrichment.classifyAllRecords()
@@ -139,19 +138,12 @@ class MultipleProcessingThread extends Thread {
   }
 
 
-  private void processUiSettings() {
-    FieldKeyMapping tippNameMapping =
-        enrichment.setTippPlatformNameMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.name)
-    enrichment.enrollMappingToRecords(tippNameMapping)
-    FieldKeyMapping tippUrlMapping =
-        enrichment.setTippPlatformUrlMapping(enrichment.dataContainer?.pkgHeader?.nominalPlatform.url)
-    enrichment.enrollMappingToRecords(tippUrlMapping)
-  }
-
-
   private void calculateProgressIncrement(String enrichmentFolder){
     String file = new File(kbartFile).absolutePath.equals(kbartFile) ? kbartFile :
         enrichmentFolder.concat(File.separator).concat(kbartFile)
+    if (!new File(file).exists()){
+      file = enrichmentFolder.concat(File.separator).concat(enrichment.resultHash).concat(File.separator).concat(kbartFile)
+    }
     double lines = (double) (countLines(file) - 1)
     if (lines > 0) {
       progressIncrement = 100.0 / lines / (double) apiCalls.size()

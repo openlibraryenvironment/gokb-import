@@ -7,6 +7,8 @@ import groovy.util.logging.Log4j
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.springframework.web.servlet.support.RequestContextUtils
 
+import javax.servlet.http.HttpServletRequest
+
 
 @Log4j
 class EnrichmentController implements ControllersHelper{
@@ -113,7 +115,6 @@ class EnrichmentController implements ControllersHelper{
 
     def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
     def addOnly = false
-
     setInputFieldDataToLastUpdate(file, recordSeparator, addOnly)
 
     if (file.empty){
@@ -136,14 +137,29 @@ class EnrichmentController implements ControllersHelper{
       return
     }
     try {
-      kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
+      Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
+      enrichment.addFileAndFormat()
+      enrichment.status = Enrichment.ProcessingState.PREPARE_1
+      kbartReader = new KbartReader(enrichment.transferredFile)
       kbartReader.checkHeader()
+      redirect(
+          action: 'process',
+          params: [
+              resultHash: enrichment.resultHash,
+              originHash: enrichment.originHash
+          ],
+          model: [
+              enrichment : enrichment,
+              currentView: 'process'
+          ]
+      )
     }
     catch (Exception ype) {
       flash.info = null
       flash.warning = null
       flash.error = ype.getMessage()
       Enrichment enrichment = getCurrentEnrichment()
+
       render(
           view: 'process',
           params: [
@@ -157,22 +173,6 @@ class EnrichmentController implements ControllersHelper{
       )
       return
     }
-
-
-    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
-    enrichmentService.addFileAndFormat(enrichment)
-    enrichment.status = Enrichment.ProcessingState.PREPARE_1
-    redirect(
-        action: 'process',
-        params: [
-            resultHash: enrichment.resultHash,
-            originHash: enrichment.originHash
-        ],
-        model: [
-            enrichment : enrichment,
-            currentView: 'process'
-        ]
-    )
   }
 
 
@@ -196,7 +196,7 @@ class EnrichmentController implements ControllersHelper{
     request.session.lastUpdate.addOnlyUrl = false
     // load file from URL
     String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
-    Enrichment enrichment = enrichmentService.fromFilename(kbartFileName)
+    Enrichment enrichment = Enrichment.fromFilename(kbartFileName)
     enrichment.addOnly = false
     enrichment.processingOptions = null
     try {
@@ -226,7 +226,7 @@ class EnrichmentController implements ControllersHelper{
     if (request.parameterMap['urlAutoUpdate'] != null){
       enrichment.autoUpdate = request.parameterMap['urlAutoUpdate'][0].equals("on")
     }
-    enrichmentService.addFileAndFormat(enrichment)
+    enrichment.addFileAndFormat()
     enrichment.status = Enrichment.ProcessingState.PREPARE_1
 
     redirect(
@@ -262,7 +262,6 @@ class EnrichmentController implements ControllersHelper{
     }
     enrichment.setCurrentSession()
     enrichment.save()
-
     redirect(
         controller: 'Statistic',
         action: 'show',
@@ -315,6 +314,17 @@ class EnrichmentController implements ControllersHelper{
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
   def processCompleteWithToken(){
+    Enrichment enrichment = buildCompleteTokenProcess()
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
+    render(
+        model: [
+            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
+        ]
+    )
+  }
+
+
+  private Enrichment buildCompleteTokenProcess(){
     // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
     def locale = RequestContextUtils.getLocale(request).getLanguage()
@@ -327,40 +337,32 @@ class EnrichmentController implements ControllersHelper{
       return
     }
 
-    // String encoding = enrichmentService.getEncoding(file.getInputStream())
-    enrichmentService.kbartReader = new KbartReader(new InputStreamReader(file.getInputStream()))
+    enrichmentService.kbartReader = new KbartReader(file)
     enrichmentService.kbartReader.checkHeader()
 
     def addOnly = params.get('addOnly')                  // "true" or "false"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
-    Enrichment enrichment = enrichmentService.fromCommonsMultipartFile(file)
-    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
-    enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
-    enrichment.dataContainer.pkgHeader.token = params.get('updateToken')
 
     Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
     Map<String, Object> parameterMap = new HashMap<>()
     parameterMap.putAll(request.parameterMap)
-
+    parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
     addParameterToParameterMap("pkgTitle", pkg.get("name"), parameterMap)
     addParameterToParameterMap("pkgCuratoryGroup", pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name"), parameterMap)
     addParameterToParameterMap("pkgId", String.valueOf(pkg.get("id")), parameterMap)
     addParameterToParameterMap("pkgNominalPlatform", String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
         .concat(pkg.get("nominalPlatform")?.get("name")), parameterMap)
     addParameterToParameterMap("pkgNominalProvider", pkg.get("provider")?.get("name"), parameterMap)
-    parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
 
+    Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
     enrichmentService.prepareFile(enrichment, parameterMap)
+    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
+    enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
+    enrichment.dataContainer.pkgHeader.token = params.get('updateToken')
     enrichment.dataContainer.pkgHeader.uuid = pkg.get("uuid")
     enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
     enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl
-    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
-    render(
-        model: [
-            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
-        ]
-    )
   }
 
 
@@ -496,6 +498,11 @@ class EnrichmentController implements ControllersHelper{
 
 
   Enrichment getCurrentEnrichment(){
+    return getCurrentEnrichmentStatic(enrichmentService, request)
+  }
+
+
+  static Enrichment getCurrentEnrichmentStatic(EnrichmentService enrichmentService, HttpServletRequest request){
     if (!request.parameterMap['resultHash'] || !(String) request.parameterMap['resultHash'][0]){
       return new Enrichment()
     }
@@ -511,7 +518,7 @@ class EnrichmentController implements ControllersHelper{
 
   HashMap getCurrentFormat(){
     def hash = (String) request.parameterMap['originHash'][0]
-    enrichmentService.getSessionFormats().get("${hash}")
+    enrichmentService.getSessionFormats().get(hash)
   }
 
 
