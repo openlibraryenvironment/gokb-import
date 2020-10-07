@@ -1,6 +1,5 @@
 package ygor
 
-import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
 
 @Log4j
@@ -20,17 +19,9 @@ class AutoKbartUrlUpdateJob {
     File[] updateConfigurations = updatesContainer.listFiles()
     for (File updateFile in updateConfigurations){
       try{
-        Enrichment enrichment = Enrichment.fromFilename(updateFile.getAbsolutePath())
-        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(updateFile)
-        for (URL updateUrl in updateUrls){
-          if (UrlToolkit.urlExists(updateUrl)){
-            enrichment.updateUrl = updateUrl
-            log.info("Start automatic update for : ".concat(updateFile.absolutePath).concat(" with URL : ").concat(updateUrl))
-            AutoUpdateService.processUpdate(enrichment)
-          }
-        }
+        AutoUpdateService.processUpdateConfiguration(updateFile)
       }
-      catch (Exception e){
+      catch(Exception e){
         log.error("Exception occurred while trying to auto-update : ".concat(updateFile.absolutePath))
         e.printStackTrace()
       }

@@ -2,7 +2,9 @@ package ygor
 
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.UrlToolkit
+import groovy.util.logging.Log4j
 
+@Log4j
 class AutoUpdateService {
 
   static EnrichmentController ENRICHMENT_CONTROLLER = new EnrichmentController()
@@ -15,8 +17,21 @@ class AutoUpdateService {
     fileWriter.close()
   }
 
-  static List<URL> getUpdateUrls(File checkForUpdate){
-    Enrichment enrichment = Enrichment.fromFilename(checkForUpdate.absolutePath)
+
+  static void processUpdateConfiguration(File updateFile) throws Exception{
+    Enrichment enrichment = Enrichment.fromJsonFile(updateFile, false)
+    List<URL> updateUrls = getUpdateUrls(enrichment)
+    for (URL updateUrl in updateUrls){
+      if (UrlToolkit.urlExists(updateUrl)){
+        enrichment.updateUrl = updateUrl
+        log.info("Start automatic update for : ".concat(updateFile.absolutePath).concat(" with URL : ").concat(updateUrl))
+        processUpdate(enrichment)
+      }
+    }
+  }
+
+
+  static List<URL> getUpdateUrls(Enrichment enrichment){
     String url = enrichment.originUrl
     String lastProcessingDate = enrichment.lastProcessingDate
     if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)){

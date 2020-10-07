@@ -345,7 +345,7 @@ class Enrichment{
   }
 
 
-  static Enrichment fromJsonFile(def file, boolean loadRecordData){
+  static Enrichment fromJsonFile(File file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
     enrichment.enrollPlatformToRecords()
