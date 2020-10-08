@@ -349,7 +349,6 @@ class Enrichment{
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
     enrichment.enrollPlatformToRecords()
-    enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
   }
 
@@ -368,6 +367,7 @@ class Enrichment{
       for (File recordFile in recordFiles){
         enrichment.dataContainer.records.add(JsonToolkit.fromJson(JsonToolkit.jsonNodeFromFile(recordFile), "uid"))
       }
+      enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
       return enrichment
     }
     return null

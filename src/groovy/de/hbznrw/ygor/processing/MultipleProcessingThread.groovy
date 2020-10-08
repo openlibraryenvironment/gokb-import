@@ -77,26 +77,9 @@ class MultipleProcessingThread extends Thread {
     try {
       ezbIntegrationService = new EzbIntegrationService(enrichment.mappingsContainer)
       zdbIntegrationService = new ZdbIntegrationService(enrichment.mappingsContainer)
-      for (String call : apiCalls) {
-        switch (call) {
-          case KbartReader.IDENTIFIER:
-            KbartReaderConfiguration conf =
-                new KbartReaderConfiguration(quote, quoteMode, recordSeparator)
-            KbartIntegrationService kbartIntegrationService = new KbartIntegrationService(enrichment.mappingsContainer)
-            calculateProgressIncrement(enrichment.sessionFolder.absolutePath)
-            kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)
-            break
-          case EzbReader.IDENTIFIER:
-            enrichment.isEzbIntegrated = true
-            ezbIntegrationService.integrate(this, enrichment.dataContainer)
-            break
-          case ZdbReader.IDENTIFIER:
-            enrichment.isZdbIntegrated = true
-            zdbIntegrationService.integrate(this, enrichment.dataContainer)
-            break
-        }
-      }
-      log.info('Done MultipleProcessingThread '.concat(String.valueOf(getId())))
+      enrich()
+      log.info('Finished MultipleProcessingThread '.concat(String.valueOf(getId())).concat(' creating ')
+          .concat(enrichment.dataContainer.records.size().toString()).concat(" records."))
     }
     catch (YgorProcessingException e) { // TODO Throw it in ...IntegrationService and / or ...Reader
       enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
@@ -121,6 +104,28 @@ class MultipleProcessingThread extends Thread {
     enrichment.classifyAllRecords()
     enrichment.save()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+  }
+
+  synchronized private void enrich(){
+    for (String call : apiCalls){
+      switch (call){
+        case KbartReader.IDENTIFIER:
+          KbartReaderConfiguration conf =
+              new KbartReaderConfiguration(quote, quoteMode, recordSeparator)
+          KbartIntegrationService kbartIntegrationService = new KbartIntegrationService(enrichment.mappingsContainer)
+          calculateProgressIncrement(enrichment.sessionFolder.absolutePath)
+          kbartIntegrationService.integrate(this, enrichment.dataContainer, conf)
+          break
+        case EzbReader.IDENTIFIER:
+          enrichment.isEzbIntegrated = true
+          ezbIntegrationService.integrate(this, enrichment.dataContainer)
+          break
+        case ZdbReader.IDENTIFIER:
+          enrichment.isZdbIntegrated = true
+          zdbIntegrationService.integrate(this, enrichment.dataContainer)
+          break
+      }
+    }
   }
 
 

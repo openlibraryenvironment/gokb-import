@@ -295,6 +295,7 @@ class StatisticController implements ControllersHelper{
               log.info("getting enrichment from file... ".concat(resultHash))
               Enrichment enrichment = Enrichment.fromJsonFile(subFile, false)
               enrichmentService.addSessionEnrichment(enrichment)
+              enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
               log.info("getting enrichment from file... ".concat(resultHash).concat(" finished."))
               return enrichment
             }

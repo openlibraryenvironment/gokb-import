@@ -24,7 +24,7 @@ class AutoUpdateService {
     for (URL updateUrl in updateUrls){
       if (UrlToolkit.urlExists(updateUrl)){
         enrichment.updateUrl = updateUrl
-        log.info("Start automatic update for : ".concat(updateFile.absolutePath).concat(" with URL : ").concat(updateUrl))
+        log.info("Start automatic update for : ".concat(updateFile.absolutePath).concat(" with URL : ").concat(updateUrl.toExternalForm()))
         processUpdate(enrichment)
       }
     }

@@ -274,7 +274,7 @@ class EnrichmentService{
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
       enrichment.dataContainer.records = []
       new File(enrichment.enrichmentFolder).mkdirs()
-      processComplete(enrichment, null, null, true)
+      return processComplete(enrichment, null, null, true)
     }
     catch (Exception e){
       log.error(e.getMessage())
@@ -298,7 +298,6 @@ class EnrichmentService{
     while (enrichment.status != Enrichment.ProcessingState.FINISHED){
       Thread.sleep(1000)
     }
-    enrichment.enrollPlatformToRecords()
     // Main processing finished here.
     // Upload is following - send package with integrated title data
     String uri = Holders.config.gokbApi.xrPackageUri
