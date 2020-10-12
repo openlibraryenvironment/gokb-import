@@ -320,12 +320,26 @@ class EnrichmentService{
   }
 
 
-  String getEncoding(def inputStream){
+  String getEncoding(def inputStream, URL uri){
     String encoding
     try{
       encoding = UniversalDetector.detectCharset(inputStream)
+      if (encoding == null){
+        encoding = URLConnection.guessContentTypeFromStream(inputStream)
+        if (encoding == null){
+          if (uri != null){
+            encoding = URLConnection.guessContentTypeFromName(uri.toString())
+          }
+          if (encoding == null){
+            throw new IllegalStateException("Could not determine encoding of the KBart file.")
+          }
+        }
+        if (StringUtils.containsIgnoreCase(encoding, "UTF-8")){
+          return "UTF-8"
+        }
+      }
     }
-    catch (IllegalStateException ise){
+    catch (Exception e){
       ByteArrayOutputStream baos = new ByteArrayOutputStream()
       IOUtils.copy(inputStream, baos)
       ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
