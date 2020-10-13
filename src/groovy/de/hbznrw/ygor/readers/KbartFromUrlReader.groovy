@@ -1,9 +1,7 @@
 package de.hbznrw.ygor.readers
 
-import jdk.nashorn.api.scripting.URLReader
+import org.apache.commons.io.FileUtils
 import ygor.EnrichmentService
-
-import java.nio.charset.Charset
 
 class KbartFromUrlReader extends KbartReader{
 
@@ -21,24 +19,45 @@ class KbartFromUrlReader extends KbartReader{
       throw new RuntimeException("URL Connection was not established.")
     }
     connection.connect()
-    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-      String encoding = enrichmentService.getEncoding(connection.getInputStream(), url)
-      if (encoding in ["text/plain" /* add further "encoding-neutral" content types here*/ ]){
-        throw new IllegalArgumentException(messageSource.getMessage("error.kbart.noEncoding", ["foo"] as Object[], locale))
+    fileName = sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
+    File file = new File(fileName)
+    // connection.setConnectTimeout(2000)
+    // connection.setReadTimeout(30000)
+    byte[] content = getByteContent(connection.getInputStream())
+    InputStream inputStream = new ByteArrayInputStream(content)
+    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+      String encoding = enrichmentService.getEncoding(inputStream, url)
+      if (encoding in ["text/plain" /* add further "encoding-neutral" content types here*/]){
+        // There was no encoding found in the url connection.
+        encoding = enrichmentService.getEncoding(inputStream, null)
+        if (encoding == null){
+          throw new IllegalArgumentException(messageSource.getMessage("error.kbart.noEncoding", ["foo"] as Object[], locale))
+        }
       }
       if (!("UTF-8".equals(encoding))){
         throw new IllegalArgumentException(messageSource.getMessage("error.kbart.invalidEncoding", ["foo"] as Object[], locale))
       }
     }
-    URLReader urlReader = new URLReader(url, Charset.forName("UTF-8"))
-    String fileData = urlReader.getText()
+    FileUtils.copyInputStreamToFile(new ByteArrayInputStream(content), file)
+    String fileData = file.getText()
     init(fileData)
     // copy content to local file
-    file = sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
     FileWriter fileWriter = new FileWriter(file)
     fileWriter.write(fileData)
     fileWriter.close()
   }
+
+
+  private byte[] getByteContent(InputStream inputStream){
+    ByteArrayOutputStream baos = new ByteArrayOutputStream()
+    byte[] buf = new byte[4096]
+    int n = 0
+    while ((n = inputStream.read(buf)) >= 0){
+      baos.write(buf, 0, n)
+    }
+    baos.toByteArray()
+  }
+
 
   static String urlStringToFileString(String url){
     url.replace("://", "_").replace(".", "_").replace("/", "_")

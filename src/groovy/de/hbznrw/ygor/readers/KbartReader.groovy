@@ -21,7 +21,7 @@ class KbartReader {
   private List<String> csvHeader
   private Iterator<CSVRecord> iterator
   private CSVRecord lastItemReturned
-  String file
+  String fileName
 
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 

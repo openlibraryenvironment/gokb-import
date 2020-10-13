@@ -101,7 +101,7 @@ class EnrichmentController implements ControllersHelper{
       file = request.session.lastUpdate.file
     }
 
-    String encoding = enrichmentService.getEncoding(file.getInputStream())
+    String encoding = enrichmentService.getEncoding(file.getInputStream(), null)
     if (encoding && encoding != "UTF-8"){
       flash.info = null
       flash.warning = null
