@@ -10,6 +10,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.LocaleUtils
 import org.apache.commons.lang.StringUtils
 import org.mozilla.universalchardet.UniversalDetector
 
@@ -271,7 +272,7 @@ class EnrichmentService{
     try{
       String urlString = StringUtils.isEmpty(enrichment.updateUrl) ? enrichment.originUrl : enrichment.updateUrl
       URL originUrl = new URL(urlString)
-      kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder)
+      kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder, LocaleUtils.toLocale(enrichment.locale))
       enrichment.dataContainer.records = []
       new File(enrichment.enrichmentFolder).mkdirs()
       return processComplete(enrichment, null, null, true)

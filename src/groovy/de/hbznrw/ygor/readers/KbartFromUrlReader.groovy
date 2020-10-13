@@ -9,7 +9,9 @@ class KbartFromUrlReader extends KbartReader{
 
   EnrichmentService enrichmentService = new EnrichmentService()
 
-  KbartFromUrlReader(URL url, File sessionFolder) throws Exception{
+  def messageSource = grails.util.Holders.applicationContext.getBean("messageSource")
+
+  KbartFromUrlReader(URL url, File sessionFolder, Locale locale) throws Exception{
     HttpURLConnection connection
     try {
       connection = (HttpURLConnection) url.openConnection()
@@ -21,13 +23,11 @@ class KbartFromUrlReader extends KbartReader{
     connection.connect()
     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
       String encoding = enrichmentService.getEncoding(connection.getInputStream(), url)
-      if (encoding in ["text/plain" /* add further encoding "neutral" content types here*/ ]){
-        throw new IllegalArgumentException("No encoding found for KBart file at ".concat(url.toExternalForm())
-            .concat(". File needs to be UTF-8 encoded."))
+      if (encoding in ["text/plain" /* add further "encoding-neutral" content types here*/ ]){
+        throw new IllegalArgumentException(messageSource.getMessage("error.kbart.noEncoding", ["foo"] as Object[], locale))
       }
       if (!("UTF-8".equals(encoding))){
-        throw new IllegalArgumentException("Encoding of KBart file at ".concat(url.toExternalForm()).concat(" was ")
-            .concat(encoding).concat(". Only UTF-8 is allowed."))
+        throw new IllegalArgumentException(messageSource.getMessage("error.kbart.invalidEncoding", ["foo"] as Object[], locale))
       }
     }
     URLReader urlReader = new URLReader(url, Charset.forName("UTF-8"))
