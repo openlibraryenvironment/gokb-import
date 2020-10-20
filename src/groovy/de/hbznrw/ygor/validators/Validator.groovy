@@ -205,10 +205,11 @@ class Validator {
    * @param str
    * @return
    */
-  static isValidURL(String str) {
+  static Status isValidURL(String str) {
     if (StringUtils.isEmpty(str)) {
       return Status.MISSING
-    } else if (str.contains("|")) {
+    }
+    else if (str.contains("|")) {
       return Status.UNDEFINED
     }
     if (URL_VALIDATOR.isValid(str)) {

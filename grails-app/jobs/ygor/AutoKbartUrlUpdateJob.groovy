@@ -2,8 +2,6 @@ package ygor
 
 import groovy.util.logging.Log4j
 
-import java.time.LocalTime
-
 @Log4j
 class AutoKbartUrlUpdateJob {
 
@@ -20,18 +18,12 @@ class AutoKbartUrlUpdateJob {
     }
     File[] updateConfigurations = updatesContainer.listFiles()
     for (File updateFile in updateConfigurations){
-      if (AutoUpdateService.urlHasBeenUpdated(updateFile)){
-        log.info("Start automatic update for : ".concat(updateFile.absolutePath))
-        try{
-          AutoUpdateService.processUpdate(updateFile)
-        }
-        catch (Exception e){
-          log.error("Exception occurred while trying to auto-update : ".concat(updateFile.absolutePath))
-          e.printStackTrace()
-        }
+      try{
+        AutoUpdateService.processUpdateConfiguration(updateFile)
       }
-      else{
-        log.info("No URL update found for : ".concat(updateFile.absolutePath))
+      catch(Exception e){
+        log.error("Exception occurred while trying to auto-update : ".concat(updateFile.absolutePath))
+        e.printStackTrace()
       }
     }
   }

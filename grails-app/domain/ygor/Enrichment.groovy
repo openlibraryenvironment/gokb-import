@@ -53,6 +53,7 @@ class Enrichment{
   double apiProgress = 0.0
 
   String originUrl
+  String updateUrl
   String originName
   String originHash
   String originPathName
@@ -66,7 +67,7 @@ class Enrichment{
 
   String ygorVersion
   List<String> processingOptions
-  String date
+  String lastProcessingDate
   def locale
   boolean addOnly
   boolean isZdbIntegrated
@@ -138,7 +139,7 @@ class Enrichment{
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
     thread = new MultipleProcessingThread(this, options, kbartReader)
-    date = LocalDateTime.now().toString()
+    lastProcessingDate = LocalDateTime.now().toString()
     thread.start()
   }
 
@@ -204,7 +205,7 @@ class Enrichment{
     result.append("{\"sessionFolder\":\"").append(sessionFolder.absolutePath).append("\",")
     result.append("\"originalFileName\":\"").append(originName).append("\",")
     result.append("\"ygorVersion\":\"").append(ygorVersion).append("\",")
-    result.append("\"date\":\"").append(date).append("\",")
+    result.append("\"lastProcessingDate\":\"").append(lastProcessingDate).append("\",")
     result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
@@ -241,6 +242,9 @@ class Enrichment{
     result.append("{")
     if (originUrl != null){
       result.append("\"originUrl\":\"").append(originUrl).append("\",")
+    }
+    if (updateUrl != null){
+      result.append("\"updateUrl\":\"").append(updateUrl).append("\",")
     }
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
@@ -281,7 +285,7 @@ class Enrichment{
     String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
     def en = new Enrichment(new File(sessionFolder), originalFileName)
     en.ygorVersion = JsonToolkit.fromJson(rootNode, "ygorVersion") // TODO compare with current version and abort?
-    en.date = JsonToolkit.fromJson(rootNode, "date")
+    en.lastProcessingDate = JsonToolkit.fromJson(rootNode, "lastProcessingDate")
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
@@ -294,6 +298,7 @@ class Enrichment{
     en.dataContainer.records = JsonToolkit.fromJson(rootNode, "records")
     en.dataContainer.markDuplicateIds()
     en.originUrl = JsonToolkit.fromJson(rootNode, "configuration.originUrl")
+    en.updateUrl = JsonToolkit.fromJson(rootNode, "configuration.updateUrl")
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
@@ -340,11 +345,10 @@ class Enrichment{
   }
 
 
-  static Enrichment fromJsonFile(def file, boolean loadRecordData){
+  static Enrichment fromJsonFile(File file, boolean loadRecordData){
     JsonNode rootNode = JsonToolkit.jsonNodeFromFile(file)
     Enrichment enrichment = Enrichment.fromRawJson(rootNode, loadRecordData)
     enrichment.enrollPlatformToRecords()
-    enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
     enrichment
   }
 
@@ -363,6 +367,7 @@ class Enrichment{
       for (File recordFile in recordFiles){
         enrichment.dataContainer.records.add(JsonToolkit.fromJson(JsonToolkit.jsonNodeFromFile(recordFile), "uid"))
       }
+      enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
       return enrichment
     }
     return null

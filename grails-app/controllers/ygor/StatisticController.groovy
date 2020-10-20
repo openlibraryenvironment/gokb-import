@@ -58,7 +58,7 @@ class StatisticController implements ControllersHelper{
             resultHash      : resultHash,
             currentView     : 'statistic',
             ygorVersion     : enrichment.ygorVersion,
-            date            : enrichment.date,
+            date            : enrichment.lastProcessingDate,
             filename        : enrichment.originName,
             greenRecords    : recordsPrivate(resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
             yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
@@ -151,7 +151,7 @@ class StatisticController implements ControllersHelper{
             yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
             redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
             ygorVersion     : enrichment.ygorVersion,
-            date            : enrichment.date,
+            date            : enrichment.lastProcessingDate,
             filename        : enrichment.originName,
             packageName     : enrichment.packageName,
             runningJobIds   : runningUploadJobs.keySet(),
@@ -206,7 +206,7 @@ class StatisticController implements ControllersHelper{
             yellowRecords   : recordsPrivate(resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
             redRecords      : recordsPrivate(resultHash, RecordFlag.Colour.RED.toString(), 0, 10, 1),
             ygorVersion     : enrichment.ygorVersion,
-            date            : enrichment.date,
+            date            : enrichment.lastProcessingDate,
             filename        : enrichment.originName,
             packageName     : enrichment.packageName,
             runningJobIds   : runningUploadJobs.keySet(),
@@ -295,6 +295,7 @@ class StatisticController implements ControllersHelper{
               log.info("getting enrichment from file... ".concat(resultHash))
               Enrichment enrichment = Enrichment.fromJsonFile(subFile, false)
               enrichmentService.addSessionEnrichment(enrichment)
+              enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
               log.info("getting enrichment from file... ".concat(resultHash).concat(" finished."))
               return enrichment
             }
@@ -411,7 +412,7 @@ class StatisticController implements ControllersHelper{
             resultHash      : enrichment.resultHash,
             currentView     : 'statistic',
             ygorVersion     : enrichment.ygorVersion,
-            date            : enrichment.date,
+            date            : enrichment.lastProcessingDate,
             filename        : enrichment.originName,
             greenRecords    : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.GREEN.toString(), 0, 10, 1),
             yellowRecords   : recordsPrivate(enrichment.resultHash, RecordFlag.Colour.YELLOW.toString(), 0, 10, 1),
