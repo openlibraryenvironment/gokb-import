@@ -101,11 +101,11 @@ class EnrichmentController implements ControllersHelper{
       file = request.session.lastUpdate.file
     }
 
-    String encoding = enrichmentService.getEncoding(file.getInputStream())
+    String encoding = enrichmentService.getEncoding(file.getInputStream(), null)
     if (encoding && encoding != "UTF-8"){
       flash.info = null
       flash.warning = null
-      flash.error = message(code: 'error.kbart.noUtf8Encoding').toString().concat("<br>")
+      flash.error = message(code: 'error.kbart.invalidEncoding').toString().concat("<br>")
           .concat(message(code: 'error.kbart.messageFooter').toString())
       redirect(
           action: 'process'
@@ -200,7 +200,7 @@ class EnrichmentController implements ControllersHelper{
     enrichment.addOnly = false
     enrichment.processingOptions = null
     try {
-      kbartReader = new KbartFromUrlReader(new URL(urlString), new File (enrichment.enrichmentFolder))
+      kbartReader = new KbartFromUrlReader(new URL(urlString), new File (enrichment.enrichmentFolder), request.locale)
       kbartReader.checkHeader()
     }
     catch (Exception e) {
