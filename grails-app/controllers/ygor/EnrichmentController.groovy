@@ -363,6 +363,7 @@ class EnrichmentController implements ControllersHelper{
     enrichment.dataContainer.pkgHeader.uuid = pkg.get("uuid")
     enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
     enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl
+    enrichment
   }
 
 
