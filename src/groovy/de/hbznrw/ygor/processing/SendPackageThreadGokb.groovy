@@ -38,7 +38,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.isUpdate = false
   }
 
-  SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, @Nonnull String locale){
+  SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, @Nonnull String locale, boolean integrateWithTitleData){
     this.enrichment = enrichment
     this.uri = uri
     total += enrichment.yellowRecords?.size()
@@ -47,7 +47,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     gokbStatusResponse = [:]
     this.locale = locale
     this.isUpdate = true
-    integrateWithTitleData = true
+    this.integrateWithTitleData = integrateWithTitleData
   }
 
 

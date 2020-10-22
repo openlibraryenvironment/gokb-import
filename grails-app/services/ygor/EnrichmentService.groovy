@@ -305,7 +305,7 @@ class EnrichmentService{
     SendPackageThreadGokb sendPackageThreadGokb
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
       // send with token-based authentication
-      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale)
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale, true)
     }
     else{
       // send with basic auth
