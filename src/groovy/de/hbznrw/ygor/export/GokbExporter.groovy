@@ -405,7 +405,7 @@ class GokbExporter {
   static ObjectNode removeEmptyPrices(ObjectNode item) {
     def count = 0
     def pricesToBeRemoved = []
-    for (ObjectNode priceNode in item.get("prices").elements()) {
+    for (ObjectNode priceNode in item.get("prices")?.elements()) {
       if (priceNode.get("amount") == null || priceNode.get("amount").asText().trim() == "\"\"") {
         pricesToBeRemoved << count
       }
@@ -418,7 +418,7 @@ class GokbExporter {
       count++
     }
     for (int i = pricesToBeRemoved.size() - 1; i > -1; i--) {
-      item.get("prices").remove(pricesToBeRemoved[i])
+      item.get("prices")?.remove(pricesToBeRemoved[i])
     }
     item
   }
