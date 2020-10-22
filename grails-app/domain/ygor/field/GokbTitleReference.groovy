@@ -42,7 +42,7 @@ class GokbTitleReference{
       doiIdentifier = referencedRecord.doiId
       onlineIdentifier = referencedRecord.onlineIdentifier
       printIdentifier = referencedRecord.printIdentifier
-      publicationTitle = referencedRecord.multiFields.get("publicationTitle").getFirstPrioValue()
+      publicationTitle = referencedRecord.multiFields.get("publicationTitleKbart").getFirstPrioValue()
     }
     this.publicationType = publicationType
   }

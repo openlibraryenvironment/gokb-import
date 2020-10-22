@@ -750,7 +750,7 @@
     }
   },
   {
-    "ygor" : "publicationTitle",
+    "ygor" : "publicationTitleApis",
     "display" : "name",
     "in" : {
       "kbart" : "",
