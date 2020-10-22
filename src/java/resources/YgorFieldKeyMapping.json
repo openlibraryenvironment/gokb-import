@@ -431,7 +431,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.prices.$ARRAY.(currency:EUR,type:list,amount)"]
+      "gokb" : ["$TIPP.prices.$ARRAY.(currency:EUR,type:list,amount)"]
     },
     "order" : ["kbart"],
     "type" : "Amount",
@@ -450,7 +450,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.prices.$ARRAY.(currency:GBP,type:list,amount)"]
+      "gokb" : ["$TIPP.prices.$ARRAY.(currency:GBP,type:list,amount)"]
     },
     "order" : ["kbart"],
     "type" : "Amount",
@@ -469,7 +469,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.prices.$ARRAY.(currency:USD,type:list,amount)"]
+      "gokb" : ["$TIPP.prices.$ARRAY.(currency:USD,type:list,amount)"]
     },
     "order" : ["kbart"],
     "type" : "Amount",
@@ -940,7 +940,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.series"]
+      "gokb" : ["$TIPP.series"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -980,7 +980,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.subjectArea"]
+      "gokb" : ["$TIPP.subjectArea"]
     },
     "order" : ["kbart"],
     "type" : "String",
