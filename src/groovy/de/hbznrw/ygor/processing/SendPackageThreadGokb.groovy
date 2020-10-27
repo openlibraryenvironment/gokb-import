@@ -16,7 +16,7 @@ import java.util.regex.Pattern
 @Log4j
 class SendPackageThreadGokb extends UploadThreadGokb{
 
-  final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("with (\\d+) TIPPs")
+  final static Pattern INT_FROM_MESSAGE_REGEX = Pattern.compile("(with|but) (\\d+) TIPPs")
   String gokbJobId
   Map gokbStatusResponse
   boolean integrateWithTitleData
@@ -35,6 +35,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.locale = enrichment.locale
     this.integrateWithTitleData = integrateWithTitleData
     this.isUpdate = enrichment.isUpdate
+    status = UploadThreadGokb.Status.PREPARATION
   }
 
   SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, boolean integrateWithTitleData){
@@ -47,11 +48,13 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.locale = enrichment.locale
     this.isUpdate = enrichment.isUpdate
     this.integrateWithTitleData = integrateWithTitleData
+    status = UploadThreadGokb.Status.PREPARATION
   }
 
 
   @Override
   void run(){
+    status = UploadThreadGokb.Status.STARTED
     def json
     if (integrateWithTitleData){
       json = enrichment.getAsFile(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, true)

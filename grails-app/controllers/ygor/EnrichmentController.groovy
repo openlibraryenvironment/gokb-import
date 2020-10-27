@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
@@ -316,9 +317,10 @@ class EnrichmentController implements ControllersHelper{
   def processCompleteWithToken(){
     Enrichment enrichment = buildCompleteTokenProcess()
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
+    String message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
     render(
         model: [
-            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
+            message : message
         ]
     )
   }
@@ -371,16 +373,16 @@ class EnrichmentController implements ControllersHelper{
     while (true){
       uploadJob.updateCount()
       uploadJob.refreshStatus()
-      if (uploadJob.status == UploadJob.Status.STARTED){
+      if (uploadJob.status == UploadThreadGokb.Status.STARTED){
         // still running
         Thread.sleep(1000)
       }
-      if (uploadJob.status == UploadJob.Status.ERROR){
+      if (uploadJob.status == UploadThreadGokb.Status.ERROR){
         String message = "Aborting. Couldn't upload " + fileType.toString() + " for file " + fileName
         log.error(message)
         return message
       }
-      if (uploadJob.status == UploadJob.Status.SUCCESS || uploadJob.status == UploadJob.Status.FINISHED_UNDEFINED){
+      if (uploadJob.status == UploadThreadGokb.Status.SUCCESS || uploadJob.status == UploadThreadGokb.Status.FINISHED_UNDEFINED){
         String message = "Success. Finished upload for file " + fileName
         log.info(message)
         return message

@@ -3,7 +3,6 @@ package de.hbznrw.ygor.processing
 import de.hbznrw.ygor.export.GokbExporter
 import groovy.util.logging.Log4j
 import ygor.Enrichment
-import ygor.UploadJob
 
 import javax.annotation.Nonnull
 
@@ -20,11 +19,13 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
     this.total += enrichment.greenRecords?.size()
     result = []
     this.locale = locale
+    status = UploadThreadGokb.Status.PREPARATION
   }
 
 
   @Override
   void run(){
+    status = UploadThreadGokb.Status.STARTED
     for (def recId in enrichment.dataContainer.records){
       String titleText = GokbExporter.extractTitle(enrichment, recId, false)
       log.info("export Record " + recId + " to " + uri)

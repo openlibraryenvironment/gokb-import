@@ -2,6 +2,7 @@ package ygor
 
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
+import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.util.Holders
@@ -312,7 +313,7 @@ class EnrichmentService{
     }
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
     uploadJob.start()
-    while (uploadJob.status in [UploadJob.Status.PREPARATION, UploadJob.Status.STARTED]){
+    while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
       Thread.sleep(1000)
     }
     return uploadJob
