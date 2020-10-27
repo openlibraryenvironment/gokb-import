@@ -305,12 +305,11 @@ class EnrichmentService{
     SendPackageThreadGokb sendPackageThreadGokb
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
       // send with token-based authentication
-      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale, true)
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, true)
     }
     else{
       // send with basic auth
-      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri,
-          gokbUsername, gokbPassword, enrichment.locale, true)
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword, true)
     }
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
     uploadJob.start()
