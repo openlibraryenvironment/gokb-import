@@ -62,7 +62,7 @@ class UploadJob{
       if (uploadThread.count >= uploadThread.total){
         status = Status.FINISHED_UNDEFINED
       }
-      String responseStatus = uploadThread.getGokbResponseValue("responseStatus")
+      String responseStatus = uploadThread.getGokbResponseValue("responseStatus", true)
       if (responseStatus == null && status == Status.STARTED){
         if (uploadThread.result.size() > 0 && uploadThread.result[0].get("error") != null){
           status = Status.ERROR
@@ -73,7 +73,7 @@ class UploadJob{
         status = Status.ERROR
         return
       }
-      String innerResponseStatus = uploadThread.getGokbResponseValue("job_result.result")
+      String innerResponseStatus = uploadThread.getGokbResponseValue("job_result.result", false)
       if (innerResponseStatus != null && "error" == innerResponseStatus.toLowerCase()){
         status = Status.ERROR
         return

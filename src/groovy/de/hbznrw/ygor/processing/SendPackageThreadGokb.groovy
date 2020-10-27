@@ -70,7 +70,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   void updateCount(){
-    String message = getGokbResponseValue("job_result.message")
+    String message = getGokbResponseValue("job_result.message", true)
     if (message != null){
       // get count from finished process
       Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
@@ -80,8 +80,8 @@ class SendPackageThreadGokb extends UploadThreadGokb{
           count = foundInt
         }
       }
-      String token = getGokbResponseValue("job_result.updateToken")
-      String uuid = getGokbResponseValue("job_result.uuid")
+      String token = getGokbResponseValue("job_result.updateToken", false)
+      String uuid = getGokbResponseValue("job_result.uuid", false)
       if (token != null && uuid != null){
         enrichment.dataContainer?.pkgHeader?.token = token
         enrichment.dataContainer?.pkgHeader?.uuid = uuid
@@ -91,13 +91,13 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       }
     }
     else{
-      String error = getGokbResponseValue("error")
+      String error = getGokbResponseValue("error", false)
       if (error != null){
         count = total
       }
       else{
         // get count from ongoing process
-        String countString = getGokbResponseValue("progress")
+        String countString = getGokbResponseValue("progress", false)
         if (countString != null){
           count = Double.valueOf(countString) / 100.0 * total
         }
@@ -107,11 +107,11 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   boolean isInterrupted(){
-    String message = getGokbResponseValue("job_result.message")
+    String message = getGokbResponseValue("job_result.message", true)
     if (message != null && message.contains("tipps have not been loaded because of validation errors")){
       return true
     }
-    message = getGokbResponseValue("result")
+    message = getGokbResponseValue("result", false)
     if (message != null && message.contains("error")){
       return true
     }
@@ -129,12 +129,14 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
 
   @Override
-  String getGokbResponseValue(String responseKey){
+  String getGokbResponseValue(String responseKey, boolean updateResponse){
     def jobId = getJobId()
     if (jobId == null){
       return null
     }
-    gokbStatusResponse = getGokbStatusResponse(jobId)
+    if (updateResponse){
+      gokbStatusResponse = getGokbStatusResponse(jobId)
+    }
     String[] path = responseKey.split("\\.")
     def response = gokbStatusResponse
     for (String subField in path){

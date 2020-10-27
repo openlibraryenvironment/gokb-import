@@ -71,7 +71,7 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
 
 
   @Override
-  String getGokbResponseValue(String responseKey){
+  String getGokbResponseValue(String responseKey, boolean updateResponse){
     // TODO
     return "TODO!"
   }

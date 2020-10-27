@@ -16,6 +16,6 @@ abstract class UploadThreadGokb extends Thread{
 
   abstract Map getResultsTable();
 
-  abstract String getGokbResponseValue(String responseKey);
+  abstract String getGokbResponseValue(String responseKey, boolean updateResponse);
 
 }
