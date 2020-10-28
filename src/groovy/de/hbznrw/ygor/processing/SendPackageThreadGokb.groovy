@@ -6,6 +6,7 @@ import groovy.util.logging.Log4j
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.commons.lang.StringUtils
 import ygor.AutoUpdateService
 import ygor.Enrichment
 
@@ -139,7 +140,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       return null
     }
     if (updateResponse){
-      gokbStatusResponse = getGokbStatusResponse(jobId)
+      gokbStatusResponse = getGokbStatusResponse(jobId, enrichment?.dataContainer?.pkgHeader?.token)
     }
     String[] path = responseKey.split("\\.")
     def response = gokbStatusResponse
@@ -153,14 +154,19 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   }
 
 
-  protected Map getGokbStatusResponse(String jobId){
-    if (user == null || password == null || jobId == null){
+  protected Map getGokbStatusResponse(String jobId, String token){
+    if (jobId == null){
       return null
     }
     def uri = Holders.config.gokbApi.xrJobInfo.toString().concat("/").concat(jobId)
+    if (!StringUtils.isEmpty(token)){
+      uri = uri.concat("?updateToken=").concat(token)
+    }
     def http = new HTTPBuilder(uri)
     Map<String, Object> result = new HashMap<>()
-    http.auth.basic user, password
+    if (user != null && password != null){
+      http.auth.basic user, password
+    }
     http.request(Method.GET, ContentType.JSON){ req ->
       response.success = { response, resultMap ->
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
