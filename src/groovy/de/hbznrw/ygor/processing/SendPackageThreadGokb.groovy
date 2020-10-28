@@ -69,6 +69,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     else{
       result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
     }
+    gokbJobId = result[0].get("info")?.get("job_id")?.toString()
   }
 
 
@@ -125,7 +126,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
 
   private String getJobId(){
     if (gokbJobId == null && result != null && result.size() > 0 && result[0].get("info") != null){
-      gokbJobId = result[0].get("info")?.get("job_id")
+      gokbJobId = result[0].get("info")?.get("job_id").toString()
     }
     return gokbJobId
   }

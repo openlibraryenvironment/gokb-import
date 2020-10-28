@@ -21,9 +21,6 @@ abstract class UploadThreadGokb extends Thread{
 
   void refreshStatus(){
     if (status == Status.STARTED){
-      if (count >= total){
-        status = Status.FINISHED_UNDEFINED
-      }
       String responseStatus = getGokbResponseValue("responseStatus", true)
       if (responseStatus == null && status == Status.STARTED){
         if (result.size() > 0 && result[0].get("error") != null){
@@ -39,6 +36,9 @@ abstract class UploadThreadGokb extends Thread{
       if (innerResponseStatus != null && "error" == innerResponseStatus.toLowerCase()){
         status = Status.ERROR
         return
+      }
+      if (count >= total){
+        status = Status.SUCCESS
       }
     }
   }

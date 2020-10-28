@@ -301,7 +301,7 @@ class EnrichmentService{
     }
     // Main processing finished here.
     // Upload is following - send package with integrated title data
-    String uri = Holders.config.gokbApi.xrPackageUri
+    String uri = Holders.config.gokbApi.xrPackageUri.concat("?async=true")
     SendPackageThreadGokb sendPackageThreadGokb
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
       // send with token-based authentication
@@ -315,6 +315,8 @@ class EnrichmentService{
     uploadJob.start()
     while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
       Thread.sleep(1000)
+      uploadJob.updateCount()
+      uploadJob.refreshStatus()
     }
     return uploadJob
   }
