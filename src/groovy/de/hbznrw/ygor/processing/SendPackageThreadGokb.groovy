@@ -80,7 +80,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       // get count from finished process
       Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
       if (matcher.find()){
-        Integer foundInt = Integer.valueOf(matcher.group(1))
+        Integer foundInt = Integer.valueOf(matcher.group(2))
         if (foundInt != null){
           count = foundInt
         }
