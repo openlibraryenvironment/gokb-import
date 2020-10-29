@@ -43,14 +43,17 @@ class AutoUpdateService {
   }
 
 
+  // obsolete. TODO: delete
   static void processUpdate(File updateConfiguration) throws Exception{
     log.info("Start automatic update for : ".concat(updateConfiguration.absolutePath))
     Enrichment enrichment = Enrichment.fromRawJson(JsonToolkit.jsonNodeFromFile(updateConfiguration), false)
+    enrichment.isUpdate = true
     processUpdate(enrichment)
   }
 
 
   static void processUpdate(Enrichment enrichment) throws Exception{
+    enrichment.isUpdate = true
     UploadJob uploadJob = ENRICHMENT_SERVICE.buildCompleteUpdateProcess(enrichment)
     ENRICHMENT_CONTROLLER.watchUpload(uploadJob, Enrichment.FileType.PACKAGE_WITH_TITLEDATA, enrichment.resultName)
   }

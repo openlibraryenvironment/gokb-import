@@ -9,7 +9,7 @@ trait ControllersHelper{
         grailsApplication.config.gokbApi.xrTitleUri :
         null
       )
-    if (fileType.equals(Enrichment.FileType.PACKAGE)){
+    if (fileType in [Enrichment.FileType.PACKAGE, Enrichment.FileType.PACKAGE_WITH_TITLEDATA]){
       uri = uri.concat("?async=true")
       // Titles are being sent 1 per request, there's no need for asynchronicity
       if (addOnly){

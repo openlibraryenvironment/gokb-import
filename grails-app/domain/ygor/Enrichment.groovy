@@ -72,7 +72,8 @@ class Enrichment{
   boolean addOnly
   boolean isZdbIntegrated
   boolean isEzbIntegrated
-  boolean autoUpdate
+  boolean autoUpdate                // shall be auto-updated in future times
+  boolean isUpdate                  // this enrichment is part of an update
 
   def thread
   MappingsContainer mappingsContainer
@@ -101,6 +102,7 @@ class Enrichment{
     isZdbIntegrated = false
     isEzbIntegrated = false
     autoUpdate = false
+    isUpdate = false
     transferredFile = null
   }
 

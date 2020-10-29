@@ -523,8 +523,9 @@ class GokbExporter {
   static Map sendText(@Nonnull String url, @Nonnull String text,
                       @Nonnull String user, @Nonnull String password, @Nonnull String locale){
     def http = new HTTPBuilder(url)
-    http.auth.basic user, password
-
+    if (user != null && password != null){
+      http.auth.basic user, password
+    }
     http.request(Method.POST, ContentType.JSON){ request ->
       headers.'User-Agent' = 'ygor'
       headers.'Accept-Language' = locale

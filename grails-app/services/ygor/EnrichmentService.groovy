@@ -2,7 +2,7 @@ package ygor
 
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
-import de.hbznrw.ygor.processing.YgorProcessingException
+import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.util.Holders
@@ -301,21 +301,22 @@ class EnrichmentService{
     }
     // Main processing finished here.
     // Upload is following - send package with integrated title data
-    String uri = Holders.config.gokbApi.xrPackageUri
+    String uri = Holders.config.gokbApi.xrPackageUri.concat("?async=true")
     SendPackageThreadGokb sendPackageThreadGokb
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
       // send with token-based authentication
-      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale, true)
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, true)
     }
     else{
       // send with basic auth
-      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri,
-          gokbUsername, gokbPassword, enrichment.locale, true)
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword, true)
     }
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
     uploadJob.start()
-    while (uploadJob.status in [UploadJob.Status.PREPARATION, UploadJob.Status.STARTED]){
+    while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
       Thread.sleep(1000)
+      uploadJob.updateCount()
+      uploadJob.refreshStatus()
     }
     return uploadJob
   }
