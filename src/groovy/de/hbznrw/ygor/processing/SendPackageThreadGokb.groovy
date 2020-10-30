@@ -163,11 +163,12 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       uri = uri.concat("?updateToken=").concat(token)
     }
     def http = new HTTPBuilder(uri)
-    Map<String, Object> result = new HashMap<>()
     if (user != null && password != null){
       http.auth.basic user, password
     }
+    Map<String, Object> result = new HashMap<>()
     http.request(Method.GET, ContentType.JSON){ req ->
+      // TODO : cleanup : unify result structure and adapt method callers accordingly
       response.success = { response, resultMap ->
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
           if (response.status < 400){
@@ -197,6 +198,11 @@ class SendPackageThreadGokb extends UploadThreadGokb{
         else{
           result.put('responseStatus', 'authenticationError')
         }
+      }
+      response.'400'= {resp, resultMap ->
+        result.put('responseStatus', 'error')
+        result.put('message', resultMap.message)
+        result.put('errors', resultMap.errors)
       }
       response.'401'= {resp ->
         result.put('responseStatus', 'authenticationError')
