@@ -78,6 +78,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     String message = getGokbResponseValue("job_result.message", true)
     if (message != null){
       // get count from finished process
+      log.debug("Job Result Message : ".concat(message))
       Matcher matcher = INT_FROM_MESSAGE_REGEX.matcher(message)
       if (matcher.find()){
         Integer foundInt = Integer.valueOf(matcher.group(2))
@@ -86,7 +87,9 @@ class SendPackageThreadGokb extends UploadThreadGokb{
         }
       }
       String token = getGokbResponseValue("job_result.updateToken", false)
+      log.debug("Token : ".concat(token))
       String uuid = getGokbResponseValue("job_result.uuid", false)
+      log.debug("UUID  : ".concat(uuid))
       if (token != null && uuid != null){
         enrichment.dataContainer?.pkgHeader?.token = token
         enrichment.dataContainer?.pkgHeader?.uuid = uuid

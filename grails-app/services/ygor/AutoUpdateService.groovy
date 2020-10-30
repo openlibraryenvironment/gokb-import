@@ -12,6 +12,7 @@ class AutoUpdateService {
 
   static void addEnrichmentJob(Enrichment enrichment){
     String fileName = enrichment.originPathName.concat("_").concat(UUID.randomUUID().toString())
+    log.debug("Add update for enrichment : ".concat(fileName))
     FileWriter fileWriter = new FileWriter(grails.util.Holders.grailsApplication.config.ygor.autoUpdateJobsLocation.concat(fileName))
     fileWriter.write(enrichment.asJson(false))
     fileWriter.close()
