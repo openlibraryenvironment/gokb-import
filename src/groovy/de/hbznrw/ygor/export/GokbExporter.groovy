@@ -405,17 +405,19 @@ class GokbExporter {
   static ObjectNode removeEmptyPrices(ObjectNode item) {
     def count = 0
     def pricesToBeRemoved = []
-    for (ObjectNode priceNode in item.get("prices").elements()) {
-      if (priceNode.get("amount") == null || priceNode.get("amount").asText().trim() == "\"\"") {
-        pricesToBeRemoved << count
+    if (item.get("prices") != null){
+      for (ObjectNode priceNode in item.get("prices").elements()) {
+        if (priceNode.get("amount") == null || priceNode.get("amount").asText().trim() == "\"\"") {
+          pricesToBeRemoved << count
+        }
+        else if (priceNode.get("currency") == null || priceNode.get("currency").asText().trim() == "\"\"") {
+          pricesToBeRemoved << count
+        }
+        else if (priceNode.get("type") == null || priceNode.get("type").asText().trim() == "\"\"") {
+          pricesToBeRemoved << count
+        }
+        count++
       }
-      else if (priceNode.get("currency") == null || priceNode.get("currency").asText().trim() == "\"\"") {
-        pricesToBeRemoved << count
-      }
-      else if (priceNode.get("type") == null || priceNode.get("type").asText().trim() == "\"\"") {
-        pricesToBeRemoved << count
-      }
-      count++
     }
     for (int i = pricesToBeRemoved.size() - 1; i > -1; i--) {
       item.get("prices").remove(pricesToBeRemoved[i])
