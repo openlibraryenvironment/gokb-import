@@ -68,7 +68,7 @@ class Enrichment{
   String ygorVersion
   List<String> processingOptions
   String lastProcessingDate
-  def locale
+  String locale
   boolean addOnly
   boolean isZdbIntegrated
   boolean isEzbIntegrated

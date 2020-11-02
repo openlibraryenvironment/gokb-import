@@ -200,6 +200,7 @@ class EnrichmentController implements ControllersHelper{
     Enrichment enrichment = Enrichment.fromFilename(kbartFileName)
     enrichment.addOnly = false
     enrichment.processingOptions = null
+    enrichment.locale = request.locale
     try {
       kbartReader = new KbartFromUrlReader(new URL(urlString), new File (enrichment.enrichmentFolder), request.locale)
       kbartReader.checkHeader()
