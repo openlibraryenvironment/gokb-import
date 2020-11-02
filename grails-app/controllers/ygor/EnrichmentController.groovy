@@ -5,6 +5,7 @@ import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 import org.springframework.web.servlet.support.RequestContextUtils
 
@@ -299,6 +300,33 @@ class EnrichmentController implements ControllersHelper{
             currentView: 'process'
         ]
     )
+  }
+
+
+  def processGokbPackage(){
+    Map<String, String> response = [:]
+    List<String> missingParams = []
+    String pkgId = params.get('pkgId')
+    if (StringUtils.isEmpty(pkgId)){
+      missingParams.add("pkgId")
+    }
+    String token = params.get('updateToken')
+    if (StringUtils.isEmpty(token)){
+      missingParams.add("updateToken")
+    }
+    if (!missingParams.isEmpty()){
+      response.status = "error"
+      response.missingParams = missingParams
+      return response as JSON
+    }
+
+    Map<String, Object> pkg = enrichmentService.getPackage(pkgId)
+
+    // TODO : proceed
+
+    // DUMMY:
+    response.status = "working"
+    return response as JSON
   }
 
 
