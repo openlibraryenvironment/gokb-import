@@ -222,6 +222,7 @@
         const rvm = new Object();
         rvm["listDocuments.gokb.response.titles"] = "${g.message(code:"listDocuments.gokb.response.titles")}";
         rvm["listDocuments.gokb.response.package"] = "${g.message(code:"listDocuments.gokb.response.package")}";
+        rvm["listDocuments.gokb.response.packageWithTitles"] = "${g.message(code:"listDocuments.gokb.response.packageWithTitles")}";
         return rvm;
     }
 
@@ -389,6 +390,19 @@
                         <g:message code="listDocuments.button.sendPackageFile"/>
                     </button>
                 </g:else>
+                <g:if test="${packageUploaded == true}">
+                    <!-- Package has already been uploaded -> disable upload button -->
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="packageWithTitles"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                        <g:message code="listDocuments.button.sendIntegratedPackageFile"/>
+                    </button>
+                </g:if>
+                <g:else>
+                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="packageWithTitles"
+                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                        <g:message code="listDocuments.button.sendIntegratedPackageFile"/>
+                    </button>
+                </g:else>
                 <div class="modal fade" id="credentialsModal" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -396,7 +410,6 @@
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h4 class="modal-title"><g:message code="listDocuments.gokb.credentials"/></h4>
                             </div>
-
                             <div class="modal-body">
                                 <g:form>
                                     <div class="input-group">
@@ -433,6 +446,9 @@
                             if (uri.localeCompare('package') == 0) {
                                 $(this).find('#cred-modal-btn-send').attr('name', '_action_sendPackageFile');
                             }
+                            else if (uri.localeCompare('packageWithTitles') == 0) {
+                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendIntegratedPackageFile');
+                            }
                             else if (uri.localeCompare('titles') == 0) {
                                 $(this).find('#cred-modal-btn-send').attr('name', '_action_sendTitlesFile');
                             }
@@ -441,6 +457,12 @@
                 </script>
             </g:if>
             <g:else>
+                <g:actionSubmit action="sendIntegratedPackageFile"
+                                value="${message(code: 'listDocuments.button.sendIntegratedPackageFile')}"
+                                class="btn btn-success disabled btn-same-width"
+                                data-toggle="tooltip" data-placement="top"
+                                title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}"
+                                disabled="disabled"/>
                 <g:actionSubmit action="sendPackageFile"
                                 value="${message(code: 'listDocuments.button.sendPackageFile')}"
                                 class="btn btn-success disabled btn-same-width"
@@ -460,6 +482,9 @@
                             class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadPackageFile"
                             value="${message(code: 'listDocuments.button.downloadPackageFile')}"
+                            class="btn btn-default btn-same-width"/>
+            <g:actionSubmit action="downloadIntegratedPackageFile"
+                            value="${message(code: 'listDocuments.button.downloadIntegratedPackageFile')}"
                             class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
                             class="btn btn-default btn-same-width"/>
