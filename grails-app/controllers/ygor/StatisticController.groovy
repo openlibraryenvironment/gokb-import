@@ -372,6 +372,10 @@ class StatisticController implements ControllersHelper{
   }
 
 
+  def sendIntegratedPackageFile = {
+    sendFile(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
+  }
+
 
   def sendTitlesFile = {
     sendFile(Enrichment.FileType.TITLES)
@@ -397,6 +401,11 @@ class StatisticController implements ControllersHelper{
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
             false)
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
+      }
+      else if (fileType.equals(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)){
+        SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
+            true)
+        uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThread)
       }
       if (uploadJob != null){
         runningUploadJobs.put(uploadJob.uuid, uploadJob)
