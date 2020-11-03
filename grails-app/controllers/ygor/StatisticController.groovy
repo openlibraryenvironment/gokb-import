@@ -343,6 +343,18 @@ class StatisticController implements ControllersHelper{
   }
 
 
+  def downloadIntegratedPackageFile = {
+    def en = getCurrentEnrichment()
+    if (en){
+      def result = enrichmentService.getFile(en, Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
+      render(file: result, fileName: "${en.resultName}.packageWithTitleData.json")
+    }
+    else{
+      noValidEnrichment()
+    }
+  }
+
+
   def downloadTitlesFile = {
     def en = getCurrentEnrichment()
     if (en){

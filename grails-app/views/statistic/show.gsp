@@ -223,7 +223,6 @@
         rvm["listDocuments.gokb.response.titles"] = "${g.message(code:"listDocuments.gokb.response.titles")}";
         rvm["listDocuments.gokb.response.package"] = "${g.message(code:"listDocuments.gokb.response.package")}";
         rvm["listDocuments.gokb.response.packageWithTitles"] = "${g.message(code:"listDocuments.gokb.response.packageWithTitles")}";
-        packageWithTitles
         return rvm;
     }
 
@@ -483,6 +482,9 @@
                             class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadPackageFile"
                             value="${message(code: 'listDocuments.button.downloadPackageFile')}"
+                            class="btn btn-default btn-same-width"/>
+            <g:actionSubmit action="downloadIntegratedPackageFile"
+                            value="${message(code: 'listDocuments.button.downloadIntegratedPackageFile')}"
                             class="btn btn-default btn-same-width"/>
             <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
                             class="btn btn-default btn-same-width"/>
