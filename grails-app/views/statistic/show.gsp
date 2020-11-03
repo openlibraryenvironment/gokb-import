@@ -555,8 +555,15 @@
                 }
             ],
             fnInitComplete : function() {
-                if ($(this).find('tbody tr').length <= 1) {
+                if ($(this).find('tbody tr').length < 1) {
+                    // table has no data rows --> remove
                     $(this).parent().parent().parent().hide();
+                }
+                else if ($(this).find('tbody tr').length == 1) {
+                    if ($(this).find('tbody tr td')[0].colSpan == 4) {
+                        // table has no data rows, only a DataTables message row --> remove
+                        $(this).parent().parent().parent().hide();
+                    }
                 }
             }
         });
@@ -599,9 +606,15 @@
                 }
             ],
             fnInitComplete : function() {
-                if ($(this).find('tbody tr').length <= 1) {
-                    $(this).parent().hide();
+                if ($(this).find('tbody tr').length < 1) {
+                    // table has no data rows --> remove
                     $(this).parent().parent().parent().hide();
+                }
+                else if ($(this).find('tbody tr').length == 1) {
+                    if ($(this).find('tbody tr td')[0].colSpan == 4) {
+                        // table has no data rows, only a DataTables message row --> remove
+                        $(this).parent().parent().parent().hide();
+                    }
                 }
             }
         });
@@ -644,9 +657,15 @@
                 }
             ],
             fnInitComplete : function() {
-                if ($(this).find('tbody tr').length <= 1) {
-                    $(this).parent().hide();
+                if ($(this).find('tbody tr').length < 1) {
+                    // table has no data rows --> remove
                     $(this).parent().parent().parent().hide();
+                }
+                else if ($(this).find('tbody tr').length == 1) {
+                    if ($(this).find('tbody tr td')[0].colSpan == 4) {
+                        // table has no data rows, only a DataTables message row --> remove
+                        $(this).parent().parent().parent().hide();
+                    }
                 }
             }
         });
