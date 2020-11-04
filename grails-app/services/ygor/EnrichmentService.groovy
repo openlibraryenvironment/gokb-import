@@ -256,7 +256,7 @@ class EnrichmentService{
    */
   static File getSessionFolder(){
     def session = WebUtils.retrieveGrailsWebRequest().session
-    def path = grails.util.Holders.grailsApplication.config.ygor.uploadLocation + File.separator + session.id
+    def path = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString().concat(File.separator).concat(session.id)
     def sessionFolder = new File(path)
     if (!sessionFolder.exists()){
       sessionFolder.mkdirs()
