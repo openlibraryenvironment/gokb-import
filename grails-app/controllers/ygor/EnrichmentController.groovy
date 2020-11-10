@@ -346,7 +346,7 @@ class EnrichmentController implements ControllersHelper{
   def processCompleteWithToken(){
     Enrichment enrichment = buildCompleteTokenProcess()
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
-    String message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
+    String message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
     render(
         model: [
             message : message
