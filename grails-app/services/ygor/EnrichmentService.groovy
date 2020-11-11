@@ -90,12 +90,24 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> getPackage(String packageId, boolean embedSource, String... fields){
+  Map<String, Object> getPackage(String packageId, List<String> embeddedFields, String[] fields){
     def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
-    if (embedSource){
-      uri = uri.concat("?_embed=source")
+    if (!CollectionUtils.isEmpty(embeddedFields)){
+      uri = uri.concat("?_embed=")
+      for (String field : embeddedFields){
+        if (uri.endsWith("=")){
+          uri = uri.concat(field)
+        }
+        else{
+          uri = uri.concat(",").concat(field)
+        }
+      }
     }
-    return gokbRestApiRequest(uri, null, null, Arrays.asList(fields))
+    List<String, Object> fieldList = new ArrayList()
+    if (fields != null){
+      fieldList.addAll(fields)
+    }
+    return gokbRestApiRequest(uri, null, null, fieldList)
   }
 
 

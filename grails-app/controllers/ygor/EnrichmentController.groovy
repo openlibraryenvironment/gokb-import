@@ -5,9 +5,10 @@ import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import groovy.util.logging.Log4j
-import org.apache.commons.collections.CollectionUtils
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.web.multipart.commons.CommonsMultipartFile
+import ygor.field.MappingsContainer
 
 import javax.servlet.http.HttpServletRequest
 
@@ -320,18 +321,21 @@ class EnrichmentController implements ControllersHelper{
       return response as JSON
     }
 
-    Map<String, Object> pkg = enrichmentService.getPackage(pkgId, true, "lastUpdated", "source")
+    Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
-    if (CollectionUtils.isEmpty(pkg)){
+    if (MapUtils.isEmpty(pkg)){
       response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No package found for id ".concat(pkgId)
     }
-    else if (CollectionUtils.isEmpty(src)){
+    else if (MapUtils.isEmpty(src)){
       response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No source found for package with id ".concat(pkgId)
     }
     else{
-      Enrichment enrichment = buildEnrichmentFromPkgAndSource(pkg, src)
+      String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString() + File.separator + UUID.randomUUID()
+      Locale locale = new Locale("en")                                    // TODO get from request or package
+      kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
+      Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
       UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
       response.status = uploadJob.getStatus()
     }
@@ -386,7 +390,7 @@ class EnrichmentController implements ControllersHelper{
         "id", "name", "nominalPlatform", "provider", "uuid", "_embedded")
     String pkgTitleId = request.parameterMap.get("titleIdNamespace")
     String pkgTitle = pkg.get("name")
-    String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name")
+    String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name") // TODO query embed CG
     String pkgId = String.valueOf(pkg.get("id"))
     String pkgNominalPlatform = String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
         .concat(pkg.get("nominalPlatform")?.get("name"))
@@ -400,9 +404,29 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private Enrichment buildEnrichmentFromPkgAndSource(def pkg, def src){
-    Enrichment enrichment
-    // TODO
+  private Enrichment buildEnrichmentFromPkgAndSource(String updateToken, String sessionFolder, def pkg, def src){
+    Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
+    String addOnly = "false"
+    List<String> pmOptions = Arrays.asList(MappingsContainer.KBART)
+    if (pkg.zdbMatch){
+      pmOptions.add(MappingsContainer.ZDB)
+    }
+    if (pkg.ezbMatch){
+      pmOptions.add(MappingsContainer.EZB)
+    }
+    String platformName = pkg._embedded?.nominalPlatform?.name
+    String platformId = pkg._embedded?.nominalPlatform?.id
+    String platformUrl = pkg._embedded?.nominalPlatform?.primaryUrl
+    Map<String, Object> params = new HashMap<>()
+    String pkgTitleId                                  // TODO
+    String pkgTitle = pkg.name
+    String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name")
+    String pkgId = pkg.id
+    String pkgNominalPlatform = platformId.concat(";").concat(platformName)
+    String pkgNominalProvider = pkg.provider?.name
+    String uuid = pkg.uuid
+    enrichment = setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,
+        pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform, pkgNominalProvider, updateToken, uuid)
     return enrichment
   }
 
