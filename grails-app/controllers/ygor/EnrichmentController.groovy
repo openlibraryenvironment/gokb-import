@@ -320,7 +320,7 @@ class EnrichmentController implements ControllersHelper{
       return response as JSON
     }
 
-    Map<String, Object> pkg = enrichmentService.getPackage(pkgId)
+    Map<String, Object> pkg = enrichmentService.getPackage(pkgId, "lastUpdated", "source")
 
     // TODO : proceed
 
@@ -374,7 +374,8 @@ class EnrichmentController implements ControllersHelper{
     def addOnly = params.get('addOnly')                  // "true" or "false"
     def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
 
-    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
+    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'),
+        "id", "name", "nominalPlatform", "provider", "uuid", "_embedded")
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
     Map<String, Object> parameterMap = new HashMap<>()
     parameterMap.putAll(request.parameterMap)

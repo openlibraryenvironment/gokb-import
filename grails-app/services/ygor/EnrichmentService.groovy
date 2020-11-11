@@ -87,10 +87,9 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> getPackage(String packageId){
+  Map<String, Object> getPackage(String packageId, String... fields){
     def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
-    return gokbRestApiRequest(uri, null, null, Arrays.asList("id", "name", "nominalPlatform", "provider",
-                                                              "uuid", "_embedded"))
+    return gokbRestApiRequest(uri, null, null, Arrays.asList(fields))
   }
 
 
