@@ -9,11 +9,13 @@ import grails.util.Holders
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.LocaleUtils
 import org.apache.commons.lang.StringUtils
 import org.mozilla.universalchardet.UniversalDetector
 
+import javax.annotation.Nonnull
 import javax.servlet.http.HttpSession
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
@@ -22,6 +24,7 @@ class EnrichmentService{
 
   GokbService gokbService
   KbartReader kbartReader
+  Map<String, UploadJob> uploadJobs = new HashMap<>()
 
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
@@ -87,8 +90,11 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> getPackage(String packageId, String... fields){
+  Map<String, Object> getPackage(String packageId, boolean embedSource, String... fields){
     def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
+    if (embedSource){
+      uri = uri.concat("?_embed=source")
+    }
     return gokbRestApiRequest(uri, null, null, Arrays.asList(fields))
   }
 
@@ -99,7 +105,7 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> gokbRestApiRequest(String uri, String user, String password, List<String> resultFields){
+  Map<String, Object> gokbRestApiRequest(@Nonnull String uri, String user, String password, List<String> resultFields){
     if (StringUtils.isEmpty(uri)){
       return null
     }
@@ -118,8 +124,13 @@ class EnrichmentService{
             }
             else{
               result.put('responseStatus', 'ok')
-              for (String resultField in resultFields){
-                result.put(resultField, resultMap.get(resultField))
+              if (CollectionUtils.isEmpty(resultFields)){
+                result.putAll(resultMap)
+              }
+              else{
+                for (String resultField in resultFields){
+                  result.put(resultField, resultMap.get(resultField))
+                }
               }
             }
           }
@@ -372,5 +383,10 @@ class EnrichmentService{
       // eventually split by semicolon
       return Arrays.asList(split[0].split(";"))
     }
+  }
+
+
+  void addUploadJob(UploadJob uploadJob){
+    uploadJobs.put(uploadJob.uuid, uploadJob)
   }
 }

@@ -120,6 +120,11 @@ class Enrichment{
   }
 
 
+  static Enrichment fromFilename(String sessionFolder, String filename){
+    return new Enrichment(new File(sessionFolder), filename)
+  }
+
+
   void addFileAndFormat(){
     setStatus(Enrichment.ProcessingState.PREPARE_1)
     def tmp = [:]
@@ -457,7 +462,7 @@ class Enrichment{
 
 
   void setCurrentSession(){
-    sessionFolder = new File(Holders.config.ygor.uploadLocation + File.separator + SessionToolkit.getSession().id)
+    sessionFolder = new File(Holders.config.ygor.uploadLocation.toString() + File.separator + SessionToolkit.getSession().id)
     enrichmentFolder = sessionFolder.absolutePath + File.separator + resultHash
     dataContainer.enrichmentFolder = enrichmentFolder + File.separator
   }
