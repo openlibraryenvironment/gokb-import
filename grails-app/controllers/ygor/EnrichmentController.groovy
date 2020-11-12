@@ -338,16 +338,18 @@ class EnrichmentController implements ControllersHelper{
       kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
       Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
       enrichment.originPathName = kbartReader.fileName
-      UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
+      UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
       if (uploadJob == null){
         response.status = UploadThreadGokb.Status.ERROR.toString()
         response.message = "Could not finish process."
       }
       else{
-        response.status = uploadJob.getStatus()
+        response.uploadStatus = uploadJob.getStatus().toString()
+        response.jobId = uploadJob.uuid
+        enrichmentService.addUploadJob(uploadJob)
       }
     }
-    return response as JSON
+    render response as JSON
   }
 
 
@@ -366,7 +368,7 @@ class EnrichmentController implements ControllersHelper{
    */
   def processCompleteWithToken(){
     Enrichment enrichment = buildEnrichmentFromRequest()
-    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
     enrichmentService.addUploadJob(uploadJob)
     String message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
     render(
@@ -465,9 +467,13 @@ class EnrichmentController implements ControllersHelper{
 
   def getStatus(){
     String jobId = params.get('jobId')
+    def response = [:]
     UploadJob uploadJob = enrichmentService.uploadJobs.get(jobId)
+    uploadJob.updateCount()
     uploadJob.refreshStatus()
-    return ["status" : uploadJob.status] as JSON
+    response.uploadStatus = uploadJob.status.toString()
+    response.gokbJobId = uploadJob.uploadThread?.gokbJobId
+    render response as JSON
   }
 
 

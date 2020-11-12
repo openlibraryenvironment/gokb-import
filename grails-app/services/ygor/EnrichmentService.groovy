@@ -297,7 +297,7 @@ class EnrichmentService{
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder, LocaleUtils.toLocale(enrichment.locale))
       enrichment.dataContainer.records = []
       new File(enrichment.enrichmentFolder).mkdirs()
-      return processComplete(enrichment, null, null, true)
+      return processComplete(enrichment, null, null, true, true)
     }
     catch (Exception e){
       log.error(e.getMessage())
@@ -309,8 +309,10 @@ class EnrichmentService{
   /**
    * used by AutoUpdateService --> processCompleteUpdate
    * used by                       processCompleteWithToken
+   * used by                       processGokbPackage
    */
-  UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate){
+  UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate,
+                            boolean waitForFinish){
     def options = [
         'options'        : enrichment.processingOptions,
         'addOnly'        : enrichment.addOnly,
@@ -340,10 +342,12 @@ class EnrichmentService{
     }
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
     uploadJob.start()
-    while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
-      Thread.sleep(1000)
-      uploadJob.updateCount()
-      uploadJob.refreshStatus()
+    if (waitForFinish){
+      while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
+        Thread.sleep(1000)
+        uploadJob.updateCount()
+        uploadJob.refreshStatus()
+      }
     }
     return uploadJob
   }
@@ -405,5 +409,10 @@ class EnrichmentService{
 
   void addUploadJob(UploadJob uploadJob){
     uploadJobs.put(uploadJob.uuid, uploadJob)
+  }
+
+
+  UploadJob getUploadJob(String uuid){
+    return uploadJobs.get(uuid)
   }
 }
