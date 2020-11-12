@@ -318,10 +318,15 @@ class EnrichmentService{
         'ygorType'       : Holders.config.ygor.type
     ]
     enrichment.process(options, kbartReader)
-    while (enrichment.status != Enrichment.ProcessingState.FINISHED){
+    while (enrichment.status in [Enrichment.ProcessingState.PREPARE_1, Enrichment.ProcessingState.PREPARE_2,
+                                 Enrichment.ProcessingState.WORKING, null]){
       Thread.sleep(1000)
     }
     // Main processing finished here.
+    if (enrichment.status == Enrichment.ProcessingState.ERROR){
+      // TODO return reason for error
+      return null
+    }
     // Upload is following - send package with integrated title data
     String uri = Holders.config.gokbApi.xrPackageUri.concat("?async=true")
     SendPackageThreadGokb sendPackageThreadGokb

@@ -332,12 +332,20 @@ class EnrichmentController implements ControllersHelper{
       response.message = "No source found for package with id ".concat(pkgId)
     }
     else{
-      String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString() + File.separator + UUID.randomUUID()
+      String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
+          .concat(File.separator).concat(UUID.randomUUID().toString())
       Locale locale = new Locale("en")                                    // TODO get from request or package
-      kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
+      kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
       Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+      enrichment.originPathName = kbartReader.fileName
       UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
-      response.status = uploadJob.getStatus()
+      if (uploadJob == null){
+        response.status = UploadThreadGokb.Status.ERROR.toString()
+        response.message = "Could not finish process."
+      }
+      else{
+        response.status = uploadJob.getStatus()
+      }
     }
     return response as JSON
   }
