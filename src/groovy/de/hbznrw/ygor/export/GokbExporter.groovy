@@ -288,6 +288,10 @@ class GokbExporter {
       }
       titleNode.set("name", new TextNode(title))    // Disabled ramification and subtitle enrichment temporarily, delete line to roll back
     }
+    if (StringUtils.isEmpty(title)){
+      // there was no title name read from ZDB API - take publication title
+      titleNode.set("name", new TextNode(record.getMultiField("publicationTitleKbart")?.getFirstPrioValue()))
+    }
     return titleNode
   }
 
