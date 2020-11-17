@@ -765,7 +765,7 @@
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}],
-      "missing" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}],
+      "missing" : [{"serial" : "warning", "monograph" : "ok", "other" : "ok"}],
       "undefined" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}]
     }
   },
