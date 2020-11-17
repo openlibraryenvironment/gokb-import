@@ -43,12 +43,22 @@ class GokbExporter {
       case FileType.PACKAGE:
         ObjectNode result = GokbExporter.extractPackage(enrichment, type)
         def file = new File(enrichment.enrichmentFolder + ".package.json")
-        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        if (enrichment.dataContainer.records.size() > 1000){
+          file.write(JSON_OBJECT_MAPPER.writeValueAsString(result), "UTF-8")
+        }
+        else{
+          file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        }
         return file
       case FileType.PACKAGE_WITH_TITLEDATA:
         ObjectNode result = GokbExporter.extractPackage(enrichment, type)
         def file = new File(enrichment.enrichmentFolder + ".packageWithTitleData.json")
-        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        if (enrichment.dataContainer.records.size() > 1000){
+          file.write(JSON_OBJECT_MAPPER.writeValueAsString(result), "UTF-8")
+        }
+        else{
+          file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        }
         return file
       case FileType.TITLES:
         return extractTitles(enrichment)
