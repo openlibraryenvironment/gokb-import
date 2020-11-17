@@ -68,11 +68,12 @@ class Enrichment{
   String ygorVersion
   List<String> processingOptions
   String lastProcessingDate
-  def locale
+  String locale
   boolean addOnly
   boolean isZdbIntegrated
   boolean isEzbIntegrated
-  boolean autoUpdate
+  boolean autoUpdate                // shall be auto-updated in future times
+  boolean isUpdate                  // this enrichment is part of an update
 
   def thread
   MappingsContainer mappingsContainer
@@ -101,6 +102,7 @@ class Enrichment{
     isZdbIntegrated = false
     isEzbIntegrated = false
     autoUpdate = false
+    isUpdate = false
     transferredFile = null
   }
 
@@ -115,6 +117,11 @@ class Enrichment{
 
   static Enrichment fromFilename(String filename){
     return new Enrichment(EnrichmentService.getSessionFolder(), filename)
+  }
+
+
+  static Enrichment fromFilename(String sessionFolder, String filename){
+    return new Enrichment(new File(sessionFolder), filename)
   }
 
 
@@ -455,7 +462,7 @@ class Enrichment{
 
 
   void setCurrentSession(){
-    sessionFolder = new File(Holders.config.ygor.uploadLocation + File.separator + SessionToolkit.getSession().id)
+    sessionFolder = new File(Holders.config.ygor.uploadLocation.toString() + File.separator + SessionToolkit.getSession().id)
     enrichmentFolder = sessionFolder.absolutePath + File.separator + resultHash
     dataContainer.enrichmentFolder = enrichmentFolder + File.separator
   }

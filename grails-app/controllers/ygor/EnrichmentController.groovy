@@ -1,11 +1,14 @@
 package ygor
 
+import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import groovy.util.logging.Log4j
+import org.apache.commons.collections.MapUtils
+import org.apache.commons.lang.StringUtils
 import org.springframework.web.multipart.commons.CommonsMultipartFile
-import org.springframework.web.servlet.support.RequestContextUtils
+import ygor.field.MappingsContainer
 
 import javax.servlet.http.HttpServletRequest
 
@@ -199,6 +202,7 @@ class EnrichmentController implements ControllersHelper{
     Enrichment enrichment = Enrichment.fromFilename(kbartFileName)
     enrichment.addOnly = false
     enrichment.processingOptions = null
+    enrichment.locale = request.locale
     try {
       kbartReader = new KbartFromUrlReader(new URL(urlString), new File (enrichment.enrichmentFolder), request.locale)
       kbartReader.checkHeader()
@@ -300,6 +304,55 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
+  def processGokbPackage(){
+    Map<String, String> response = [:]
+    List<String> missingParams = []
+    String pkgId = params.get('pkgId')
+    if (StringUtils.isEmpty(pkgId)){
+      missingParams.add("pkgId")
+    }
+    String token = params.get('updateToken')
+    if (StringUtils.isEmpty(token)){
+      missingParams.add("updateToken")
+    }
+    if (!missingParams.isEmpty()){
+      response.status = "error"
+      response.missingParams = missingParams
+      return response as JSON
+    }
+
+    Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
+    Map<String, Object> src = pkg?.get("_embedded")?.get("source")
+    if (MapUtils.isEmpty(pkg)){
+      response.status = UploadThreadGokb.Status.ERROR.toString()
+      response.message = "No package found for id ".concat(pkgId)
+    }
+    else if (MapUtils.isEmpty(src)){
+      response.status = UploadThreadGokb.Status.ERROR.toString()
+      response.message = "No source found for package with id ".concat(pkgId)
+    }
+    else{
+      String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
+          .concat(File.separator).concat(UUID.randomUUID().toString())
+      Locale locale = new Locale("en")                                    // TODO get from request or package
+      kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
+      Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+      enrichment.originPathName = kbartReader.fileName
+      UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
+      if (uploadJob == null){
+        response.status = UploadThreadGokb.Status.ERROR.toString()
+        response.message = "Could not finish process."
+      }
+      else{
+        response.uploadStatus = uploadJob.getStatus().toString()
+        response.jobId = uploadJob.uuid
+        enrichmentService.addUploadJob(uploadJob)
+      }
+    }
+    render response as JSON
+  }
+
+
   /**
    * Current Test configuration via Postman:
    *
@@ -314,20 +367,21 @@ class EnrichmentController implements ControllersHelper{
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
   def processCompleteWithToken(){
-    Enrichment enrichment = buildCompleteTokenProcess()
-    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false)
+    Enrichment enrichment = buildEnrichmentFromRequest()
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
+    enrichmentService.addUploadJob(uploadJob)
+    String message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
     render(
         model: [
-            message : watchUpload(uploadJob, Enrichment.FileType.PACKAGE, file.originalFilename)
+            message : message
         ]
     )
   }
 
 
-  private Enrichment buildCompleteTokenProcess(){
+  private Enrichment buildEnrichmentFromRequest(){
     // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
-    def locale = RequestContextUtils.getLocale(request).getLanguage()
     if (file == null){
       log.error("Received request missing a file. Aborting.")
       return
@@ -336,34 +390,90 @@ class EnrichmentController implements ControllersHelper{
       log.error("Received request with empty file. Aborting.")
       return
     }
-
     enrichmentService.kbartReader = new KbartReader(file)
-    enrichmentService.kbartReader.checkHeader()
-
-    def addOnly = params.get('addOnly')                  // "true" or "false"
-    def pmOptions = params.get('processOption')          // "kbart", "zdb", "ezb"
-
-    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'))
-    Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
-    Map<String, Object> parameterMap = new HashMap<>()
-    parameterMap.putAll(request.parameterMap)
-    parameterMap.put("pkgTitleId", request.parameterMap.get("titleIdNamespace"))
-    addParameterToParameterMap("pkgTitle", pkg.get("name"), parameterMap)
-    addParameterToParameterMap("pkgCuratoryGroup", pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name"), parameterMap)
-    addParameterToParameterMap("pkgId", String.valueOf(pkg.get("id")), parameterMap)
-    addParameterToParameterMap("pkgNominalPlatform", String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
-        .concat(pkg.get("nominalPlatform")?.get("name")), parameterMap)
-    addParameterToParameterMap("pkgNominalProvider", pkg.get("provider")?.get("name"), parameterMap)
-
     Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
+    String addOnly = params.get('addOnly').toString()                     // "true" or "false"
+    def pmOptions = params.get('processOption')                           // "kbart", "zdb", "ezb"
+
+    Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
+    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'), false,
+        "id", "name", "nominalPlatform", "provider", "uuid", "_embedded")
+    String pkgTitleId = request.parameterMap.get("titleIdNamespace")
+    String pkgTitle = pkg.get("name")
+    String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name") // TODO query embed CG
+    String pkgId = String.valueOf(pkg.get("id"))
+    String pkgNominalPlatform = String.valueOf(pkg.get("nominalPlatform")?.get("id"))?.concat(";")
+        .concat(pkg.get("nominalPlatform")?.get("name"))
+    String pkgNominalProvider = pkg.get("provider")?.get("name")
+    String updateToken = params.get('updateToken')
+    String uuid = pkg.get("uuid")
+
+    return setupEnrichment(enrichment, enrichmentService.kbartReader, addOnly, pmOptions, platform.name,
+        platform.primaryUrl, request.parameterMap, pkgTitleId, pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform,
+        pkgNominalProvider, updateToken, uuid)
+  }
+
+
+  private Enrichment buildEnrichmentFromPkgAndSource(String updateToken, String sessionFolder, def pkg, def src){
+    Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
+    String addOnly = "false"
+    List<String> pmOptions = Arrays.asList(MappingsContainer.KBART)
+    if (pkg.zdbMatch){
+      pmOptions.add(MappingsContainer.ZDB)
+    }
+    if (pkg.ezbMatch){
+      pmOptions.add(MappingsContainer.EZB)
+    }
+    String platformName = pkg._embedded?.nominalPlatform?.name
+    String platformId = pkg._embedded?.nominalPlatform?.id
+    String platformUrl = pkg._embedded?.nominalPlatform?.primaryUrl
+    Map<String, Object> params = new HashMap<>()
+    String pkgTitleId                                  // TODO
+    String pkgTitle = pkg.name
+    String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name")
+    String pkgId = pkg.id
+    String pkgNominalPlatform = platformId.concat(";").concat(platformName)
+    String pkgNominalProvider = pkg.provider?.name
+    String uuid = pkg.uuid
+    enrichment = setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,
+        pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform, pkgNominalProvider, updateToken, uuid)
+    return enrichment
+  }
+
+
+  private Enrichment setupEnrichment(Enrichment enrichment, KbartReader kbartReader, String addOnly, def pmOptions,
+                                     String platformName, String platformUrl, def params, pkgTitleId,
+                                     String pkgTitle, String pkgCuratoryGroup, String pkgId, String pkgNominalPlatform,
+                                     String pkgNominalProvider, String updateToken, String uuid){
+    kbartReader.checkHeader()
+    Map<String, Object> parameterMap = new HashMap<>()
+    parameterMap.putAll(params)
+    parameterMap.put("pkgTitleId", pkgTitleId)
+    addParameterToParameterMap("pkgTitle", pkgTitle, parameterMap)
+    addParameterToParameterMap("pkgCuratoryGroup", pkgCuratoryGroup, parameterMap)
+    addParameterToParameterMap("pkgId", pkgId, parameterMap)
+    addParameterToParameterMap("pkgNominalPlatform", pkgNominalPlatform, parameterMap)
+    addParameterToParameterMap("pkgNominalProvider", pkgNominalProvider, parameterMap)
     enrichmentService.prepareFile(enrichment, parameterMap)
     enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
-    enrichment.dataContainer.pkgHeader.token = params.get('updateToken')
-    enrichment.dataContainer.pkgHeader.uuid = pkg.get("uuid")
-    enrichment.dataContainer.pkgHeader.nominalPlatform.name = platform.name
-    enrichment.dataContainer?.pkgHeader?.nominalPlatform.url = platform.primaryUrl
+    enrichment.dataContainer.pkgHeader.token = updateToken
+    enrichment.dataContainer.pkgHeader.uuid = uuid
+    enrichment.dataContainer.pkgHeader.nominalPlatform.name = platformName
+    enrichment.dataContainer.pkgHeader.nominalPlatform.url = platformUrl
     enrichment
+  }
+
+
+  def getStatus(){
+    String jobId = params.get('jobId')
+    def response = [:]
+    UploadJob uploadJob = enrichmentService.uploadJobs.get(jobId)
+    uploadJob.updateCount()
+    uploadJob.refreshStatus()
+    response.uploadStatus = uploadJob.status.toString()
+    response.gokbJobId = uploadJob.uploadThread?.gokbJobId
+    render response as JSON
   }
 
 
@@ -371,16 +481,16 @@ class EnrichmentController implements ControllersHelper{
     while (true){
       uploadJob.updateCount()
       uploadJob.refreshStatus()
-      if (uploadJob.status == UploadJob.Status.STARTED){
+      if (uploadJob.status == UploadThreadGokb.Status.STARTED){
         // still running
         Thread.sleep(1000)
       }
-      if (uploadJob.status == UploadJob.Status.ERROR){
+      if (uploadJob.status == UploadThreadGokb.Status.ERROR){
         String message = "Aborting. Couldn't upload " + fileType.toString() + " for file " + fileName
         log.error(message)
         return message
       }
-      if (uploadJob.status == UploadJob.Status.SUCCESS || uploadJob.status == UploadJob.Status.FINISHED_UNDEFINED){
+      if (uploadJob.status == UploadThreadGokb.Status.SUCCESS || uploadJob.status == UploadThreadGokb.Status.FINISHED_UNDEFINED){
         String message = "Success. Finished upload for file " + fileName
         log.info(message)
         return message

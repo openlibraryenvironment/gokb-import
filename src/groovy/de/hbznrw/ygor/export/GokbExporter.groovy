@@ -43,12 +43,22 @@ class GokbExporter {
       case FileType.PACKAGE:
         ObjectNode result = GokbExporter.extractPackage(enrichment, type)
         def file = new File(enrichment.enrichmentFolder + ".package.json")
-        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        if (enrichment.dataContainer.records.size() > 1000){
+          file.write(JSON_OBJECT_MAPPER.writeValueAsString(result), "UTF-8")
+        }
+        else{
+          file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        }
         return file
       case FileType.PACKAGE_WITH_TITLEDATA:
         ObjectNode result = GokbExporter.extractPackage(enrichment, type)
         def file = new File(enrichment.enrichmentFolder + ".packageWithTitleData.json")
-        file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        if (enrichment.dataContainer.records.size() > 1000){
+          file.write(JSON_OBJECT_MAPPER.writeValueAsString(result), "UTF-8")
+        }
+        else{
+          file.write(JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(result), "UTF-8")
+        }
         return file
       case FileType.TITLES:
         return extractTitles(enrichment)
@@ -405,17 +415,19 @@ class GokbExporter {
   static ObjectNode removeEmptyPrices(ObjectNode item) {
     def count = 0
     def pricesToBeRemoved = []
-    for (ObjectNode priceNode in item.get("prices")?.elements()) {
-      if (priceNode.get("amount") == null || priceNode.get("amount").asText().trim() == "\"\"") {
-        pricesToBeRemoved << count
+    if (item.get("prices") != null){
+      for (ObjectNode priceNode in item.get("prices").elements()) {
+        if (priceNode.get("amount") == null || priceNode.get("amount").asText().trim() == "\"\"") {
+          pricesToBeRemoved << count
+        }
+        else if (priceNode.get("currency") == null || priceNode.get("currency").asText().trim() == "\"\"") {
+          pricesToBeRemoved << count
+        }
+        else if (priceNode.get("type") == null || priceNode.get("type").asText().trim() == "\"\"") {
+          pricesToBeRemoved << count
+        }
+        count++
       }
-      else if (priceNode.get("currency") == null || priceNode.get("currency").asText().trim() == "\"\"") {
-        pricesToBeRemoved << count
-      }
-      else if (priceNode.get("type") == null || priceNode.get("type").asText().trim() == "\"\"") {
-        pricesToBeRemoved << count
-      }
-      count++
     }
     for (int i = pricesToBeRemoved.size() - 1; i > -1; i--) {
       item.get("prices")?.remove(pricesToBeRemoved[i])
@@ -523,8 +535,9 @@ class GokbExporter {
   static Map sendText(@Nonnull String url, @Nonnull String text,
                       @Nonnull String user, @Nonnull String password, @Nonnull String locale){
     def http = new HTTPBuilder(url)
-    http.auth.basic user, password
-
+    if (user != null && password != null){
+      http.auth.basic user, password
+    }
     http.request(Method.POST, ContentType.JSON){ request ->
       headers.'User-Agent' = 'ygor'
       headers.'Accept-Language' = locale

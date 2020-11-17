@@ -62,6 +62,9 @@ class ExternalIntegrationService {
     if (readData.size() == 1) {
       return readData.get(0)
     }
+    if (keyOrderCount >= owner.KEY_ORDER.size()){
+      return new HashMap<String, String>()
+    }
     String key = owner.KEY_ORDER.get(keyOrderCount)
     if (key) {
       List<Map<String, List<String>>> narrowedResult = new ArrayList<>()

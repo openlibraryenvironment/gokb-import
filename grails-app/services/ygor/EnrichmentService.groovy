@@ -2,18 +2,20 @@ package ygor
 
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
-import de.hbznrw.ygor.processing.YgorProcessingException
+import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.util.Holders
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.LocaleUtils
 import org.apache.commons.lang.StringUtils
 import org.mozilla.universalchardet.UniversalDetector
 
+import javax.annotation.Nonnull
 import javax.servlet.http.HttpSession
 import org.codehaus.groovy.grails.web.util.WebUtils
 import de.hbznrw.ygor.tools.*
@@ -22,6 +24,7 @@ class EnrichmentService{
 
   GokbService gokbService
   KbartReader kbartReader
+  Map<String, UploadJob> uploadJobs = new HashMap<>()
 
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
@@ -87,10 +90,24 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> getPackage(String packageId){
+  Map<String, Object> getPackage(String packageId, List<String> embeddedFields, String[] fields){
     def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
-    return gokbRestApiRequest(uri, null, null, Arrays.asList("id", "name", "nominalPlatform", "provider",
-                                                              "uuid", "_embedded"))
+    if (!CollectionUtils.isEmpty(embeddedFields)){
+      uri = uri.concat("?_embed=")
+      for (String field : embeddedFields){
+        if (uri.endsWith("=")){
+          uri = uri.concat(field)
+        }
+        else{
+          uri = uri.concat(",").concat(field)
+        }
+      }
+    }
+    List<String, Object> fieldList = new ArrayList()
+    if (fields != null){
+      fieldList.addAll(fields)
+    }
+    return gokbRestApiRequest(uri, null, null, fieldList)
   }
 
 
@@ -100,7 +117,7 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> gokbRestApiRequest(String uri, String user, String password, List<String> resultFields){
+  Map<String, Object> gokbRestApiRequest(@Nonnull String uri, String user, String password, List<String> resultFields){
     if (StringUtils.isEmpty(uri)){
       return null
     }
@@ -119,8 +136,13 @@ class EnrichmentService{
             }
             else{
               result.put('responseStatus', 'ok')
-              for (String resultField in resultFields){
-                result.put(resultField, resultMap.get(resultField))
+              if (CollectionUtils.isEmpty(resultFields)){
+                result.putAll(resultMap)
+              }
+              else{
+                for (String resultField in resultFields){
+                  result.put(resultField, resultMap.get(resultField))
+                }
               }
             }
           }
@@ -256,7 +278,7 @@ class EnrichmentService{
    */
   static File getSessionFolder(){
     def session = WebUtils.retrieveGrailsWebRequest().session
-    def path = grails.util.Holders.grailsApplication.config.ygor.uploadLocation + File.separator + session.id
+    def path = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString().concat(File.separator).concat(session.id)
     def sessionFolder = new File(path)
     if (!sessionFolder.exists()){
       sessionFolder.mkdirs()
@@ -275,7 +297,7 @@ class EnrichmentService{
       kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder, LocaleUtils.toLocale(enrichment.locale))
       enrichment.dataContainer.records = []
       new File(enrichment.enrichmentFolder).mkdirs()
-      return processComplete(enrichment, null, null, true)
+      return processComplete(enrichment, null, null, true, true)
     }
     catch (Exception e){
       log.error(e.getMessage())
@@ -287,8 +309,10 @@ class EnrichmentService{
   /**
    * used by AutoUpdateService --> processCompleteUpdate
    * used by                       processCompleteWithToken
+   * used by                       processGokbPackage
    */
-  UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate){
+  UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate,
+                            boolean waitForFinish){
     def options = [
         'options'        : enrichment.processingOptions,
         'addOnly'        : enrichment.addOnly,
@@ -296,26 +320,34 @@ class EnrichmentService{
         'ygorType'       : Holders.config.ygor.type
     ]
     enrichment.process(options, kbartReader)
-    while (enrichment.status != Enrichment.ProcessingState.FINISHED){
+    while (enrichment.status in [Enrichment.ProcessingState.PREPARE_1, Enrichment.ProcessingState.PREPARE_2,
+                                 Enrichment.ProcessingState.WORKING, null]){
       Thread.sleep(1000)
     }
     // Main processing finished here.
+    if (enrichment.status == Enrichment.ProcessingState.ERROR){
+      // TODO return reason for error
+      return null
+    }
     // Upload is following - send package with integrated title data
-    String uri = Holders.config.gokbApi.xrPackageUri
+    String uri = Holders.config.gokbApi.xrPackageUri.concat("?async=true")
     SendPackageThreadGokb sendPackageThreadGokb
     if (!StringUtils.isEmpty(enrichment.dataContainer.pkgHeader.token)){
       // send with token-based authentication
-      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, enrichment.locale, true)
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, true)
     }
     else{
       // send with basic auth
-      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri,
-          gokbUsername, gokbPassword, enrichment.locale, true)
+      sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword, true)
     }
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
     uploadJob.start()
-    while (uploadJob.status in [UploadJob.Status.PREPARATION, UploadJob.Status.STARTED]){
-      Thread.sleep(1000)
+    if (waitForFinish){
+      while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
+        Thread.sleep(1000)
+        uploadJob.updateCount()
+        uploadJob.refreshStatus()
+      }
     }
     return uploadJob
   }
@@ -372,5 +404,15 @@ class EnrichmentService{
       // eventually split by semicolon
       return Arrays.asList(split[0].split(";"))
     }
+  }
+
+
+  void addUploadJob(UploadJob uploadJob){
+    uploadJobs.put(uploadJob.uuid, uploadJob)
+  }
+
+
+  UploadJob getUploadJob(String uuid){
+    return uploadJobs.get(uuid)
   }
 }

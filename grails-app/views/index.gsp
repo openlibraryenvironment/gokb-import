@@ -37,6 +37,9 @@
 						<div id="versions" class="panel-collapse collapse">
 							<div class="panel-body">
 								<dl>
+									<br /><dt>0.95</dt><br />
+
+									<dd>- <g:message code="version.095.0" /></dd>
 									<br /><dt>0.94</dt><br />
 
 									<dd>- <g:message code="version.094.0" /></dd>
