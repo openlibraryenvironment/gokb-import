@@ -430,7 +430,7 @@ class GokbExporter {
       }
     }
     for (int i = pricesToBeRemoved.size() - 1; i > -1; i--) {
-      item.get("prices").remove(pricesToBeRemoved[i])
+      item.get("prices")?.remove(pricesToBeRemoved[i])
     }
     item
   }

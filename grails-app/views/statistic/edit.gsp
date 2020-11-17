@@ -12,7 +12,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <g:message
-                                code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitle")?.getFirstPrioValue()}
+                                code="statistic.edit.record"/> - ${record.multiFields.get("publicationTitleKbart")?.getFirstPrioValue()}
                         <g:if test="${displayZDB && record.zdbIntegrationUrl}">
                             <a href="${record.zdbIntegrationUrl}" class="link-icon-header"></a>
                         </g:if>
