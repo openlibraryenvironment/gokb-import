@@ -261,31 +261,33 @@ class GokbExporter {
 
   private static ObjectNode postProcessPublicationTitle(ObjectNode titleNode, Record record){
     String title = titleNode.get("name").asText()
-    List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
-    if (ramifications != null && !ramifications.isEmpty()){
-      String extendedTitle = title
-      for (String ramification in ramifications){
-        if (!StringUtils.isEmpty(ramification)){
-          extendedTitle = extendedTitle.concat(" / ").concat(ramification)
+    if (record.zdbIntegrationDate != null){
+      List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
+      if (ramifications != null && !ramifications.isEmpty()){
+        String extendedTitle = title
+        for (String ramification in ramifications){
+          if (!StringUtils.isEmpty(ramification)){
+            extendedTitle = extendedTitle.concat(" / ").concat(ramification)
+          }
+        }
+        titleNode.set("name", new TextNode(extendedTitle))
+      }
+      else{
+        for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
+          String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
+          if (!StringUtils.isEmpty(extendedTitle)){
+            if (isRoughlySubString(title, extendedTitle)){
+              titleNode.set("name", new TextNode(extendedTitle))
+            }
+            else{
+              titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
+            }
+            return titleNode
+          }
         }
       }
-      titleNode.set("name", new TextNode(extendedTitle))
+      titleNode.set("name", new TextNode(title))    // Disabled ramification and subtitle enrichment temporarily, delete line to roll back
     }
-    else{
-      for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
-        String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
-        if (!StringUtils.isEmpty(extendedTitle)){
-          if (isRoughlySubString(title, extendedTitle)){
-            titleNode.set("name", new TextNode(extendedTitle))
-          }
-          else{
-            titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
-          }
-          return titleNode
-        }
-      }
-    }
-    titleNode.set("name", new TextNode(title))    // Disabled ramification and subtitle enrichment temporarily, delete line to roll back
     return titleNode
   }
 
