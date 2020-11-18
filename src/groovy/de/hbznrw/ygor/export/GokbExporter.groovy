@@ -26,6 +26,9 @@ import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
 import java.nio.charset.Charset
 
+// TODO: Refactor. Postprocessing methods should only be used once within an export, not twice as some are used for
+//       Tipps and for Titles by now.
+
 @Log4j
 class GokbExporter {
 
@@ -104,6 +107,7 @@ class GokbExporter {
         }
         tipp = removeEmptyFields(tipp)
         tipp = removeEmptyIdentifiers(tipp, type)
+        tipp.set("title", postProcessPublicationTitle(tipp.get("title"), record))
         tipp = postProcessTitleIdentifiers(tipp, type,
             enrichment.dataContainer.info.namespace_title_id)
         tipps.add(tipp)
@@ -260,14 +264,20 @@ class GokbExporter {
 
 
   private static ObjectNode postProcessPublicationTitle(ObjectNode titleNode, Record record){
-    String title = titleNode.get("name").asText()
+    String title = titleNode.get("name")?.asText()
+    if (title == null){
+      title = ""
+    }
     if (record.zdbIntegrationDate != null){
       List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
       if (ramifications != null && !ramifications.isEmpty()){
         String extendedTitle = title
         for (String ramification in ramifications){
           if (!StringUtils.isEmpty(ramification)){
-            extendedTitle = extendedTitle.concat(" / ").concat(ramification)
+            if (!StringUtils.isEmpty(extendedTitle)){
+              extendedTitle = extendedTitle.concat(" / ")
+            }
+            extendedTitle = extendedTitle.concat(ramification)
           }
         }
         titleNode.set("name", new TextNode(extendedTitle))
@@ -286,7 +296,6 @@ class GokbExporter {
           }
         }
       }
-      titleNode.set("name", new TextNode(title))    // Disabled ramification and subtitle enrichment temporarily, delete line to roll back
     }
     if (StringUtils.isEmpty(title)){
       // there was no title name read from ZDB API - take publication title
