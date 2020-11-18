@@ -163,9 +163,7 @@ class GokbService {
 
   def getCuratoryGroupsList() {
     String cgsUrl = grailsApplication.config.gokbApi.baseUri.toString() + "api/groups"
-    def placeholderCuratoryGroup = messageSource.getMessage('listDocuments.js.placeholder.curatorygroup', null, Locale.default)
-    def result = [[id: '', text: placeholderCuratoryGroup]]
-
+    def result = []
     log.debug("Quering curatory groups via: ${cgsUrl}")
     try {
       def json = queryElasticsearch(cgsUrl)

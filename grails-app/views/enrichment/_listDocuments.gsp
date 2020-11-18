@@ -124,7 +124,9 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><em>GOKb</em> Curatory Group</span>
                                     <g:select name="pkgCuratoryGroup" id="pkgCuratoryGroup" from="${curatoryGroups}"
-                                              optionKey="text" optionValue="text" class="form-control" required="true"/>
+                                              optionKey="text" optionValue="text" class="form-control"
+                                              required="required"
+                                              noSelection="${['':message(code:'listDocuments.js.placeholder.curatorygroup')]}"/>
                                     <g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup}">
                                         <script>
                                             $('#pkgCuratoryGroup').val('${session.lastUpdate?.parameterMap?.pkgCuratoryGroup[0]}').select();
