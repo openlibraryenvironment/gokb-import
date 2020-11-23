@@ -5,6 +5,10 @@ import groovy.util.logging.Log4j
 @Log4j
 class AutoKbartUrlUpdateJob {
 
+  static def schedule(ConfigObject configObject, Map map){
+    return false
+  }
+
   def execute(context){
     log.info("Start AutoKbartUrlUpdateJob.")
     File updatesContainer = new File(context.jobDataMap.get("updatesContainer"))

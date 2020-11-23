@@ -218,7 +218,12 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   @Override
   Map getResultsTable(){
     Map results = [:]
-    results.put("listDocuments.gokb.response.type", "listDocuments.gokb.response.package")
+    if (integrateWithTitleData){
+      results.put("listDocuments.gokb.response.type", "listDocuments.gokb.response.packageWithTitles")
+    }
+    else{
+      results.put("listDocuments.gokb.response.type", "listDocuments.gokb.response.package")
+    }
     results.put("listDocuments.gokb.response.status", gokbStatusResponse.get("result"))
     Map jobResult = gokbStatusResponse.get("job_result")
     if (jobResult != null){
