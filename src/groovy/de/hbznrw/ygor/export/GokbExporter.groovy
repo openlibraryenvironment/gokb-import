@@ -104,6 +104,7 @@ class GokbExporter {
         }
         tipp = removeEmptyFields(tipp)
         tipp = removeEmptyIdentifiers(tipp, type)
+        tipp.set("title", postProcessPublicationTitle(tipp.get("title"), record))
         tipp = postProcessTitleIdentifiers(tipp, type,
             enrichment.dataContainer.info.namespace_title_id)
         tipps.add(tipp)
@@ -260,7 +261,10 @@ class GokbExporter {
 
 
   private static ObjectNode postProcessPublicationTitle(ObjectNode titleNode, Record record){
-    String title = titleNode.get("name").asText()
+    String title = titleNode.get("name")?.asText()
+    if (title == null){
+      title = ""
+    }
     List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
     if (ramifications != null && !ramifications.isEmpty()){
       String extendedTitle = title
@@ -285,7 +289,10 @@ class GokbExporter {
         }
       }
     }
-    titleNode.set("name", new TextNode(title))    // Disabled ramification and subtitle enrichment temporarily, delete line to roll back
+    if (StringUtils.isEmpty(title)){
+      title = record.multiFields.get("publicationTitleKbart").getFirstPrioValue()
+      titleNode.set("name", new TextNode(title))
+    }
     return titleNode
   }
 
