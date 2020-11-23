@@ -324,11 +324,11 @@ class EnrichmentController implements ControllersHelper{
 
     Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
-    if (MapUtils.isEmpty(pkg)){
+    if (MapUtils.isEmpty(pkg) || pkg.result?.equals("ERROR")){
       response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No package found for id ".concat(pkgId)
     }
-    else if (MapUtils.isEmpty(src)){
+    else if (MapUtils.isEmpty(src) || src.result?.equals("ERROR")){
       response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No source found for package with id ".concat(pkgId)
     }
