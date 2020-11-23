@@ -103,7 +103,7 @@ class EnrichmentService{
         }
       }
     }
-    System.out("EnrichmentService.getPackage() : built uri : ".concat(uri))
+    System.out.println("EnrichmentService.getPackage() : built uri : ".concat(uri))
     List<String, Object> fieldList = new ArrayList()
     if (fields != null){
       fieldList.addAll(fields)
@@ -119,7 +119,7 @@ class EnrichmentService{
 
 
   Map<String, Object> gokbRestApiRequest(@Nonnull String uri, String user, String password, List<String> resultFields){
-    System.out("EnrichmentService.gokbRestApiRequest() : Requesting GOKb REST API with uri ".concat(uri))
+    System.out.println("EnrichmentService.gokbRestApiRequest() : Requesting GOKb REST API with uri ".concat(uri))
     if (StringUtils.isEmpty(uri)){
       return null
     }
