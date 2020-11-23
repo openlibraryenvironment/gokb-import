@@ -349,7 +349,6 @@ class EnrichmentController implements ControllersHelper{
         else{
           result.uploadStatus = uploadJob.getStatus().toString()
           result.jobId = uploadJob.uuid
-          enrichmentService.addUploadJob(uploadJob)
         }
       }
       catch (Exception e) {
