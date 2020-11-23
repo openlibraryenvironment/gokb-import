@@ -305,7 +305,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processGokbPackage(){
-    Map<String, String> response = [:]
+    Map<String, String> result = [:]
     List<String> missingParams = []
     String pkgId = params.get('pkgId')
     if (StringUtils.isEmpty(pkgId)){
@@ -316,40 +316,48 @@ class EnrichmentController implements ControllersHelper{
       missingParams.add("updateToken")
     }
     if (!missingParams.isEmpty()){
-      response.status = "error"
-      response.missingParams = missingParams
-      render response as JSON
-      return
+      result.status = "error"
+      result.missingParams = missingParams
+      return result as JSON
     }
 
     Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
-    if (MapUtils.isEmpty(pkg) || pkg.result?.equals("ERROR")){
-      response.status = UploadThreadGokb.Status.ERROR.toString()
-      response.message = "No package found for id ".concat(pkgId)
+    if (MapUtils.isEmpty(pkg)){
+      result.status = UploadThreadGokb.Status.ERROR.toString()
+      response.status = 404
+      result.message = "No package found for id ".concat(pkgId)
     }
-    else if (MapUtils.isEmpty(src) || src.result?.equals("ERROR")){
-      response.status = UploadThreadGokb.Status.ERROR.toString()
-      response.message = "No source found for package with id ".concat(pkgId)
+    else if (MapUtils.isEmpty(src)){
+      result.status = UploadThreadGokb.Status.ERROR.toString()
+      response.status = 404
+      result.message = "No source found for package with id ".concat(pkgId)
     }
     else{
-      String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
-          .concat(File.separator).concat(UUID.randomUUID().toString())
-      Locale locale = new Locale("en")                                    // TODO get from request or package
-      kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
-      Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
-      enrichment.originPathName = kbartReader.fileName
-      UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
-      if (uploadJob == null){
-        response.status = UploadThreadGokb.Status.ERROR.toString()
-        response.message = "Could not finish process."
+      try {
+        String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
+            .concat(File.separator).concat(UUID.randomUUID().toString())
+        Locale locale = new Locale("en")                                    // TODO get from request or package
+        kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
+        Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+        enrichment.originPathName = kbartReader.fileName
+        UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
+        if (uploadJob == null){
+          result.status = UploadThreadGokb.Status.ERROR.toString()
+          result.message = "Could not finish process."
+        }
+        else{
+          result.uploadStatus = uploadJob.getStatus().toString()
+          result.jobId = uploadJob.uuid
+        }
       }
-      else{
-        response.uploadStatus = uploadJob.getStatus().toString()
-        response.jobId = uploadJob.uuid
+      catch (Exception e) {
+        result.status = UploadThreadGokb.Status.ERROR.toString()
+        response.status = 500
+        result.message = "Unable to process KBART file at the specified source url."
       }
     }
-    render response as JSON
+    render result as JSON
   }
 
 
@@ -367,15 +375,13 @@ class EnrichmentController implements ControllersHelper{
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
   def processCompleteWithToken(){
+    def result = [:]
     Enrichment enrichment = buildEnrichmentFromRequest()
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
     enrichmentService.addUploadJob(uploadJob)
-    String message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
-    render(
-        model: [
-            message : message
-        ]
-    )
+    result.message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
+
+    render result as JSON
   }
 
 
@@ -396,8 +402,7 @@ class EnrichmentController implements ControllersHelper{
     def pmOptions = params.get('processOption')                           // "kbart", "zdb", "ezb"
 
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
-    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'), false,
-        "id", "name", "nominalPlatform", "provider", "uuid", "_embedded")
+    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'), ["source", "curatoryGroups", "nominalPlatform"], null)
     String pkgTitleId = request.parameterMap.get("titleIdNamespace")
     String pkgTitle = pkg.get("name")
     String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name") // TODO query embed CG
