@@ -322,8 +322,11 @@ class EnrichmentController implements ControllersHelper{
       return
     }
 
+    log.info("Querying package for id.")
     Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
+    log.info("Got package: ".concat(MapUtils.debugPrint(System.out, "Map as String", pkg)))
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
+    log.info("Got source: ".concat(MapUtils.debugPrint(System.out, "Map as String", src)))
     if (MapUtils.isEmpty(pkg)){
       response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No package found for id ".concat(pkgId)
