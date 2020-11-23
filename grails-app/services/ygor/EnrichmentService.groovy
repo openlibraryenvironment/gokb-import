@@ -118,6 +118,7 @@ class EnrichmentService{
 
 
   Map<String, Object> gokbRestApiRequest(@Nonnull String uri, String user, String password, List<String> resultFields){
+    log.info("Requesting GOKb REST API with uri ".concat(uri))
     if (StringUtils.isEmpty(uri)){
       return null
     }
