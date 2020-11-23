@@ -103,6 +103,7 @@ class EnrichmentService{
         }
       }
     }
+    log.info("getPackage : built uri : ".concat(uri))
     List<String, Object> fieldList = new ArrayList()
     if (fields != null){
       fieldList.addAll(fields)
