@@ -318,7 +318,8 @@ class EnrichmentController implements ControllersHelper{
     if (!missingParams.isEmpty()){
       response.status = "error"
       response.missingParams = missingParams
-      return response as JSON
+      render response as JSON
+      return
     }
 
     Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
@@ -346,7 +347,6 @@ class EnrichmentController implements ControllersHelper{
       else{
         response.uploadStatus = uploadJob.getStatus().toString()
         response.jobId = uploadJob.uuid
-        enrichmentService.addUploadJob(uploadJob)
       }
     }
     render response as JSON
@@ -469,11 +469,19 @@ class EnrichmentController implements ControllersHelper{
     String jobId = params.get('jobId')
     def response = [:]
     UploadJob uploadJob = enrichmentService.uploadJobs.get(jobId)
-    uploadJob.updateCount()
-    uploadJob.refreshStatus()
-    response.uploadStatus = uploadJob.status.toString()
-    response.gokbJobId = uploadJob.uploadThread?.gokbJobId
-    render response as JSON
+    if (uploadJob == null){
+      log.info("Received status request for uploadJob ".concat(jobId).concat(" but there is no according job."))
+      response.status = "error"
+      response.message = "No job found for this id."
+      render response as JSON
+    }
+    else{
+      uploadJob.updateCount()
+      uploadJob.refreshStatus()
+      response.uploadStatus = uploadJob.status.toString()
+      response.gokbJobId = uploadJob.uploadThread?.gokbJobId
+      render response as JSON
+    }
   }
 
 

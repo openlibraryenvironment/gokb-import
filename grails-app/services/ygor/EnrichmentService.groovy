@@ -341,6 +341,7 @@ class EnrichmentService{
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword, true)
     }
     UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
+    addUploadJob(uploadJob)
     uploadJob.start()
     if (waitForFinish){
       while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
@@ -408,7 +409,9 @@ class EnrichmentService{
 
 
   void addUploadJob(UploadJob uploadJob){
-    uploadJobs.put(uploadJob.uuid, uploadJob)
+    if (uploadJob != null){
+      uploadJobs.put(uploadJob.uuid, uploadJob)
+    }
   }
 
 
