@@ -339,7 +339,7 @@ class EnrichmentController implements ControllersHelper{
         String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
             .concat(File.separator).concat(UUID.randomUUID().toString())
         Locale locale = new Locale("en")                                    // TODO get from request or package
-        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(src.url, pkg.lastUpdated)
+        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun)
         updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
         Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
         while(urlsIterator.hasPrevious()){
