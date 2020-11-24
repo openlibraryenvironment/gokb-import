@@ -32,8 +32,17 @@ class AutoUpdateService {
 
 
   static List<URL> getUpdateUrls(Enrichment enrichment){
-    String url = enrichment.originUrl
-    String lastProcessingDate = enrichment.lastProcessingDate
+    if (enrichment == null){
+      return new ArrayList<URL>()
+    }
+    return getUpdateUrls(enrichment.originUrl, enrichment.lastProcessingDate)
+  }
+
+
+  static List<URL> getUpdateUrls(String url, String lastProcessingDate){
+    if (url == null || lastProcessingDate == null){
+      return new ArrayList<URL>()
+    }
     if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)){
       return UrlToolkit.getUpdateUrlList(url, lastProcessingDate)
     }

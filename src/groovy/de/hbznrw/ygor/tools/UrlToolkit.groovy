@@ -3,6 +3,7 @@ package de.hbznrw.ygor.tools
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.validator.routines.UrlValidator
+import org.springframework.util.CollectionUtils
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,6 +23,7 @@ class UrlToolkit {
 
   static boolean urlExists(URL url){
     HttpURLConnection huc = (HttpURLConnection) url.openConnection()
+    huc.setRequestMethod("HEAD")                                        // don't request for body, speeds up
     return HttpURLConnection.HTTP_OK.equals(huc.getResponseCode())
   }
 
@@ -146,6 +148,19 @@ class UrlToolkit {
       connection.connect()
     }
     connection
+  }
+
+
+  static List<URL> removeNonExistentURLs(List<URL> urls){
+    List<URL> result = new ArrayList<>()
+    if (urls != null){
+      for (URL url in urls){
+        if (urlExists(url)){
+          result.add(url)
+        }
+      }
+    }
+    return result
   }
 
 }

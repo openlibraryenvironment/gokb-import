@@ -3,6 +3,7 @@ package ygor
 import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
+import de.hbznrw.ygor.tools.UrlToolkit
 import grails.converters.JSON
 import groovy.util.logging.Log4j
 import org.apache.commons.collections.MapUtils
@@ -338,17 +339,23 @@ class EnrichmentController implements ControllersHelper{
         String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
             .concat(File.separator).concat(UUID.randomUUID().toString())
         Locale locale = new Locale("en")                                    // TODO get from request or package
-        kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
-        Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
-        enrichment.originPathName = kbartReader.fileName
-        UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
-        if (uploadJob == null){
-          result.status = UploadThreadGokb.Status.ERROR.toString()
-          result.message = "Could not finish process."
-        }
-        else{
-          result.uploadStatus = uploadJob.getStatus().toString()
-          result.jobId = uploadJob.uuid
+        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(src.url, pkg.lastUpdated)
+        updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
+        Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
+        while(urlsIterator.hasPrevious()){
+          URL url = urlsIterator.previous()
+          kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
+          Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+          enrichment.originPathName = kbartReader.fileName
+          UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
+          if (uploadJob == null){
+            result.status = UploadThreadGokb.Status.ERROR.toString()
+            result.message = "Could not finish process."
+          }
+          else{
+            result.uploadStatus = uploadJob.getStatus().toString()
+            result.jobId = uploadJob.uuid
+          }
         }
       }
       catch (Exception e) {
