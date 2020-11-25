@@ -32,11 +32,8 @@ class KbartFromUrlReader extends KbartReader{
       if (encoding in ["text/plain", "text/tab-separated-values" /* add further "encoding-neutral" content types here*/]){
         // There was no encoding found in the url connection.
         encoding = enrichmentService.getEncoding(inputStream, null)
-        if (encoding == null){
-          throw new IllegalArgumentException(messageSource.getMessage("error.kbart.noEncoding", ["foo"] as Object[], locale))
-        }
       }
-      if (!("UTF-8".equals(encoding))){
+      if (!(encoding in [null, "UTF-8"])){
         throw new IllegalArgumentException(messageSource.getMessage("error.kbart.invalidEncoding", ["foo"] as Object[], locale))
       }
     }
