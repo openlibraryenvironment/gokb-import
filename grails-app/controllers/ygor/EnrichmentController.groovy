@@ -339,7 +339,16 @@ class EnrichmentController implements ControllersHelper{
         String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
             .concat(File.separator).concat(UUID.randomUUID().toString())
         Locale locale = new Locale("en")                                    // TODO get from request or package
-        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
+        List<URL> updateUrls
+        if (Integer.valueOf(pkg._tippCount) == 0){
+          // this is obviously a new package --> update with older timestamps
+          updateUrls = new ArrayList<>()
+          updateUrls.add(new URL(src.url))
+        }
+        else{
+          // this package had already been filled with data
+          updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
+        }
         updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
         Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
         while(urlsIterator.hasPrevious()){
@@ -347,7 +356,7 @@ class EnrichmentController implements ControllersHelper{
           kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
           Enrichment enrichment
           try {
-            enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+            enrichment = prepareEnrichment(token, sessionFolder, pkg, src)
           }
           catch (Exception e) {
             String message = "Could not build enrichment for package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid)
@@ -440,7 +449,7 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private Enrichment buildEnrichmentFromPkgAndSource(String updateToken, String sessionFolder, def pkg, def src)
+  private Enrichment prepareEnrichment(String updateToken, String sessionFolder, def pkg, def src)
       throws Exception{
     Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
     String addOnly = "false"
