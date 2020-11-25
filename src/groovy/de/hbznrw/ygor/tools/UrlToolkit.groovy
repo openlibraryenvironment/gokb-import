@@ -24,6 +24,7 @@ class UrlToolkit {
 
   static boolean urlExists(URL url){
     HttpURLConnection huc = (HttpURLConnection) url.openConnection()
+    huc.addRequestProperty("User-Agent", "Mozilla/5.0")
     huc.setRequestMethod("HEAD")                                        // don't request for body, speeds up
     return HttpURLConnection.HTTP_OK.equals(huc.getResponseCode())
   }
@@ -130,12 +131,12 @@ class UrlToolkit {
       }
       catch(IllegalArgumentException | DateTimeParseException e){
         // this is a simple fallback - TODO: work out how far to go back in time
-        fromDateTime = LocalDateTime.now().minusMonths(1)
+        fromDateTime = LocalDateTime.now().minusMonths(12)
       }
       DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       fromDateTime.format(dateFormatter)
       UrlValidator urlValidator = new UrlValidator()
-      for (LocalDate date = fromDateTime.toLocalDate(); date.isBefore(lastDate); date = date.plusDays(1)){
+      for (LocalDate date = fromDateTime.toLocalDate(); date.isBefore(lastDate.plusDays(1)); date = date.plusDays(1)){
         String urlString = prefix.concat(date.format(dateFormatter)).concat(appendix)
         if (urlValidator.isValid(urlString)){
           result.add(new URL(urlString))
