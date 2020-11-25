@@ -3,6 +3,7 @@ package ygor
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
 
 @Log4j
 class AutoUpdateService {
@@ -35,12 +36,15 @@ class AutoUpdateService {
     if (enrichment == null){
       return new ArrayList<URL>()
     }
-    return getUpdateUrls(enrichment.originUrl, enrichment.lastProcessingDate)
+    return getUpdateUrls(enrichment.originUrl, enrichment.lastProcessingDate, null)
   }
 
 
-  static List<URL> getUpdateUrls(String url, String lastProcessingDate){
-    if (url == null || lastProcessingDate == null){
+  static List<URL> getUpdateUrls(String url, String lastProcessingDate, String packageCreationDate){
+    if (StringUtils.isEmpty(lastProcessingDate)){
+      lastProcessingDate = packageCreationDate
+    }
+    if (StringUtils.isEmpty(url) || StringUtils.isEmpty(lastProcessingDate)){
       return new ArrayList<URL>()
     }
     if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)){

@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -123,11 +124,18 @@ class UrlToolkit {
     if (urlMatcher.matches()){
       String prefix = urlMatcher.group(1)
       String appendix = urlMatcher.group(3)
-      LocalDateTime fromDateTime = DateToolkit.fromString(from)
+      LocalDateTime fromDateTime
+      try {
+        fromDateTime = DateToolkit.fromString(from)
+      }
+      catch(IllegalArgumentException | DateTimeParseException e){
+        // this is a simple fallback - TODO: work out how far to go back in time
+        fromDateTime = LocalDateTime.now().minusMonths(1)
+      }
       DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       fromDateTime.format(dateFormatter)
       UrlValidator urlValidator = new UrlValidator()
-      for (LocalDate date = fromDateTime; date.isBefore(lastDate); date = date.plusDays(1)){
+      for (LocalDate date = fromDateTime.toLocalDate(); date.isBefore(lastDate); date = date.plusDays(1)){
         String urlString = prefix.concat(date.format(dateFormatter)).concat(appendix)
         if (urlValidator.isValid(urlString)){
           result.add(new URL(urlString))

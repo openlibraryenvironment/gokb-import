@@ -339,22 +339,36 @@ class EnrichmentController implements ControllersHelper{
         String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
             .concat(File.separator).concat(UUID.randomUUID().toString())
         Locale locale = new Locale("en")                                    // TODO get from request or package
-        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun)
+        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
         updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
         Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
         while(urlsIterator.hasPrevious()){
           URL url = urlsIterator.previous()
           kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
-          Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+          Enrichment enrichment
+          try {
+            enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+          }
+          catch (Exception e) {
+            String message = "Could not build enrichment for package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid)
+            log.error(message)
+            result.status = UploadThreadGokb.Status.ERROR.toString()
+            result.message = message
+            continue
+          }
           enrichment.originPathName = kbartReader.fileName
           UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
           if (uploadJob == null){
+            String message = "Could not upload processed package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid)
+            log.error(message)
             result.status = UploadThreadGokb.Status.ERROR.toString()
-            result.message = "Could not finish process."
+            result.message = message
+            continue
           }
           else{
             result.uploadStatus = uploadJob.getStatus().toString()
             result.jobId = uploadJob.uuid
+            break
           }
         }
       }
@@ -426,7 +440,8 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private Enrichment buildEnrichmentFromPkgAndSource(String updateToken, String sessionFolder, def pkg, def src){
+  private Enrichment buildEnrichmentFromPkgAndSource(String updateToken, String sessionFolder, def pkg, def src)
+      throws Exception{
     Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
     String addOnly = "false"
     List<String> pmOptions = Arrays.asList(MappingsContainer.KBART)
