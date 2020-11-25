@@ -3,6 +3,7 @@ package ygor
 import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
+import de.hbznrw.ygor.tools.UrlToolkit
 import grails.converters.JSON
 import groovy.util.logging.Log4j
 import org.apache.commons.collections.MapUtils
@@ -338,17 +339,37 @@ class EnrichmentController implements ControllersHelper{
         String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
             .concat(File.separator).concat(UUID.randomUUID().toString())
         Locale locale = new Locale("en")                                    // TODO get from request or package
-        kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(new URL(src.url), new File(sessionFolder), locale)
-        Enrichment enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
-        enrichment.originPathName = kbartReader.fileName
-        UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
-        if (uploadJob == null){
-          result.status = UploadThreadGokb.Status.ERROR.toString()
-          result.message = "Could not finish process."
-        }
-        else{
-          result.uploadStatus = uploadJob.getStatus().toString()
-          result.jobId = uploadJob.uuid
+        List<URL> updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
+        updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
+        Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
+        while(urlsIterator.hasPrevious()){
+          URL url = urlsIterator.previous()
+          kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
+          Enrichment enrichment
+          try {
+            enrichment = buildEnrichmentFromPkgAndSource(token, sessionFolder, pkg, src)
+          }
+          catch (Exception e) {
+            String message = "Could not build enrichment for package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid)
+            log.error(message)
+            result.status = UploadThreadGokb.Status.ERROR.toString()
+            result.message = message
+            continue
+          }
+          enrichment.originPathName = kbartReader.fileName
+          UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
+          if (uploadJob == null){
+            String message = "Could not upload processed package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid)
+            log.error(message)
+            result.status = UploadThreadGokb.Status.ERROR.toString()
+            result.message = message
+            continue
+          }
+          else{
+            result.uploadStatus = uploadJob.getStatus().toString()
+            result.jobId = uploadJob.uuid
+            break
+          }
         }
       }
       catch (Exception e) {
@@ -419,7 +440,8 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private Enrichment buildEnrichmentFromPkgAndSource(String updateToken, String sessionFolder, def pkg, def src){
+  private Enrichment buildEnrichmentFromPkgAndSource(String updateToken, String sessionFolder, def pkg, def src)
+      throws Exception{
     Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
     String addOnly = "false"
     List<String> pmOptions = Arrays.asList(MappingsContainer.KBART)

@@ -120,7 +120,7 @@ class Enrichment{
   }
 
 
-  static Enrichment fromFilename(String sessionFolder, String filename){
+  static Enrichment fromFilename(String sessionFolder, String filename) throws Exception{
     return new Enrichment(new File(sessionFolder), filename)
   }
 

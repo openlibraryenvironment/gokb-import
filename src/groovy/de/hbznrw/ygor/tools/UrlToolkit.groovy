@@ -3,10 +3,12 @@ package de.hbznrw.ygor.tools
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.validator.routines.UrlValidator
+import org.springframework.util.CollectionUtils
 
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -22,6 +24,7 @@ class UrlToolkit {
 
   static boolean urlExists(URL url){
     HttpURLConnection huc = (HttpURLConnection) url.openConnection()
+    huc.setRequestMethod("HEAD")                                        // don't request for body, speeds up
     return HttpURLConnection.HTTP_OK.equals(huc.getResponseCode())
   }
 
@@ -121,11 +124,18 @@ class UrlToolkit {
     if (urlMatcher.matches()){
       String prefix = urlMatcher.group(1)
       String appendix = urlMatcher.group(3)
-      LocalDateTime fromDateTime = DateToolkit.fromString(from)
+      LocalDateTime fromDateTime
+      try {
+        fromDateTime = DateToolkit.fromString(from)
+      }
+      catch(IllegalArgumentException | DateTimeParseException e){
+        // this is a simple fallback - TODO: work out how far to go back in time
+        fromDateTime = LocalDateTime.now().minusMonths(1)
+      }
       DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       fromDateTime.format(dateFormatter)
       UrlValidator urlValidator = new UrlValidator()
-      for (LocalDate date = fromDateTime; date.isBefore(lastDate); date = date.plusDays(1)){
+      for (LocalDate date = fromDateTime.toLocalDate(); date.isBefore(lastDate); date = date.plusDays(1)){
         String urlString = prefix.concat(date.format(dateFormatter)).concat(appendix)
         if (urlValidator.isValid(urlString)){
           result.add(new URL(urlString))
@@ -146,6 +156,19 @@ class UrlToolkit {
       connection.connect()
     }
     connection
+  }
+
+
+  static List<URL> removeNonExistentURLs(List<URL> urls){
+    List<URL> result = new ArrayList<>()
+    if (urls != null){
+      for (URL url in urls){
+        if (urlExists(url)){
+          result.add(url)
+        }
+      }
+    }
+    return result
   }
 
 }

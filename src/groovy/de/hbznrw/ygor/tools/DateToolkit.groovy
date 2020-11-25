@@ -5,6 +5,7 @@ import groovy.time.TimeCategory
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 class DateToolkit {
 
@@ -23,8 +24,13 @@ class DateToolkit {
   }
 
 
-  static LocalDateTime fromString(String dateString){
-    return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+  static LocalDateTime fromString(String dateString) throws IllegalArgumentException, DateTimeParseException{
+    try{
+      return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+    }
+    catch(IllegalArgumentException | DateTimeParseException e){
+      return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    }
   }
 
 
