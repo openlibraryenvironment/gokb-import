@@ -504,18 +504,23 @@ class EnrichmentController implements ControllersHelper{
   def getStatus(){
     String jobId = params.get('jobId')
     def response = [:]
-    UploadJob uploadJob = enrichmentService.uploadJobs.get(jobId)
+    UploadJobFrame uploadJob = enrichmentService.uploadJobs.get(jobId)
     if (uploadJob == null){
       log.info("Received status request for uploadJob ".concat(jobId).concat(" but there is no according job."))
       response.status = "error"
       response.message = "No job found for this id."
       render response as JSON
     }
-    else{
+    else if (uploadJob instanceof UploadJob) {
       uploadJob.updateCount()
       uploadJob.refreshStatus()
-      response.uploadStatus = uploadJob.status.toString()
+      response.uploadStatus = uploadJob.getStatus().toString()
       response.gokbJobId = uploadJob.uploadThread?.gokbJobId
+      render response as JSON
+    }
+    else{
+      // uploadJob is instance of UploadJobFrame
+      response.status = UploadThreadGokb.Status.PREPARATION.toString()
       render response as JSON
     }
   }
@@ -525,16 +530,16 @@ class EnrichmentController implements ControllersHelper{
     while (true){
       uploadJob.updateCount()
       uploadJob.refreshStatus()
-      if (uploadJob.status == UploadThreadGokb.Status.STARTED){
+      if (uploadJob.getStatus() == UploadThreadGokb.Status.STARTED){
         // still running
         Thread.sleep(1000)
       }
-      if (uploadJob.status == UploadThreadGokb.Status.ERROR){
+      if (uploadJob.getStatus() == UploadThreadGokb.Status.ERROR){
         String message = "Aborting. Couldn't upload " + fileType.toString() + " for file " + fileName
         log.error(message)
         return message
       }
-      if (uploadJob.status == UploadThreadGokb.Status.SUCCESS || uploadJob.status == UploadThreadGokb.Status.FINISHED_UNDEFINED){
+      if (uploadJob.getStatus() == UploadThreadGokb.Status.SUCCESS || uploadJob.getStatus() == UploadThreadGokb.Status.FINISHED_UNDEFINED){
         String message = "Success. Finished upload for file " + fileName
         log.info(message)
         return message

@@ -466,7 +466,7 @@ class StatisticController implements ControllersHelper{
       render '{}'
     }
     else{
-      render '{"status":"' + uploadJob.status + '"}'
+      render '{"status":"' + uploadJob.getStatus() + '"}'
     }
   }
 
@@ -475,7 +475,7 @@ class StatisticController implements ControllersHelper{
     UploadJob uploadJob = runningUploadJobs.get(params.uid)
     if (uploadJob != null){
       uploadJob.refreshStatus()
-      if (uploadJob.status.toString() in ['FINISHED_UNDEFINED', 'SUCCESS', 'ERROR']){
+      if (uploadJob.getStatus().toString() in ['FINISHED_UNDEFINED', 'SUCCESS', 'ERROR']){
         runningUploadJobs.remove(params.uid)
         finishedUploadJobs.put(params.uid, uploadJob)
       }

@@ -307,12 +307,22 @@ class EnrichmentService{
 
 
   /**
-   * used by AutoUpdateService --> processCompleteUpdate
-   * used by                       processCompleteWithToken
-   * used by                       processGokbPackage
+   * used by AutoUpdateService    --> processCompleteUpdate
+   * used by EnrichmentController --> processCompleteWithToken
    */
   UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate,
-                            boolean waitForFinish){
+                            boolean waitForFinish) {
+    UploadJobFrame uploadJob = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
+    return processComplete(uploadJob, enrichment, gokbUsername, gokbPassword, isUpdate, waitForFinish)
+  }
+
+
+  /**
+   * used by EnrichmentController --> processGokbPackage
+   * used by EnrichmentService    --> processComplete
+   */
+  UploadJob processComplete(@Nonnull UploadJobFrame uploadJobFrame, @Nonnull Enrichment enrichment, String gokbUsername,
+                            String gokbPassword, boolean isUpdate, boolean waitForFinish) {
     def options = [
         'options'        : enrichment.processingOptions,
         'addOnly'        : enrichment.addOnly,
@@ -340,11 +350,11 @@ class EnrichmentService{
       // send with basic auth
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword, true)
     }
-    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
+    UploadJob uploadJob = uploadJobFrame.toUploadJob(sendPackageThreadGokb)
     addUploadJob(uploadJob)
     uploadJob.start()
     if (waitForFinish){
-      while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
+      while (uploadJob.getStatus() in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
         Thread.sleep(1000)
         uploadJob.updateCount()
         uploadJob.refreshStatus()

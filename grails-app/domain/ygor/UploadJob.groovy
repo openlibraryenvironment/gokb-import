@@ -4,16 +4,18 @@ import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
 
 @SuppressWarnings("JpaObjectClassSignatureInspection")
-class UploadJob{
+class UploadJob extends UploadJobFrame{
 
-  Enrichment.FileType fileType
-  String uuid
   def uploadThread
   int total
 
   UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread){
-    this.fileType = fileType
-    uuid = UUID.randomUUID().toString()
+    super(fileType)
+    fillFrame(uploadThread)
+  }
+
+
+  UploadJob fillFrame(UploadThreadGokb uploadThread){
     this.uploadThread = uploadThread
     total = uploadThread.total
   }
@@ -38,7 +40,7 @@ class UploadJob{
 
 
   @SuppressWarnings("JpaAttributeMemberSignatureInspection")
-  int getCount(){
+  Integer getCount(){
     return uploadThread.count
   }
 
