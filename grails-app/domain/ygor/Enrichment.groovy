@@ -76,6 +76,7 @@ class Enrichment{
   boolean isUpdate                  // this enrichment is part of an update
 
   def thread
+  KbartReader kbartReader
   MappingsContainer mappingsContainer
   def dataContainer
 
@@ -141,6 +142,7 @@ class Enrichment{
    * Ygor's central processing method.
    */
   def process(HashMap options, KbartReader kbartReader) throws Exception{
+    this.kbartReader = kbartReader
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')
     dataContainer.info.file = originName
