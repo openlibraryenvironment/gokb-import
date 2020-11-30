@@ -86,10 +86,10 @@ class CompleteProcessingThread extends Thread {
     Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
     String addOnly = "false"
     List<String> pmOptions = Arrays.asList(MappingsContainer.KBART)
-    if (pkg.zdbMatch){
+    if (src.zdbMatch){
       pmOptions.add(MappingsContainer.ZDB)
     }
-    if (pkg.ezbMatch){
+    if (src.ezbMatch){
       pmOptions.add(MappingsContainer.EZB)
     }
     String platformName = pkg._embedded?.nominalPlatform?.name
