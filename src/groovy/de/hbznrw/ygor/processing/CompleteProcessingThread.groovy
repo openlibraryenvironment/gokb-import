@@ -6,77 +6,79 @@ import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
 import ygor.AutoUpdateService
 import ygor.Enrichment
+import ygor.EnrichmentService
 import ygor.UploadJob
+import ygor.UploadJobFrame
 import ygor.field.MappingsContainer
 
 @Log4j
 class CompleteProcessingThread extends Thread {
 
+  EnrichmentService enrichmentService
   KbartReader kbartReader
   Map<String, Object> pkg
   Map<String, Object> src
   String token
+  UploadJobFrame uploadJobFrame
 
-  CompleteProcessingThread(KbartReader kbartReader, Map<String, Object> pkg, Map<String, Object> src, String token){
+  /**
+   * used by EnrichmentController.processGokbPackage()
+   * @param kbartReader
+   * @param pkg
+   * @param src
+   * @param token
+   */
+  CompleteProcessingThread(KbartReader kbartReader, Map<String, Object> pkg, Map<String, Object> src, String token,
+      UploadJobFrame uploadJobFrame){
+    enrichmentService = new EnrichmentService()
     this.kbartReader = kbartReader
     this.pkg = pkg
     this.src = src
     this.token = token
+    this.uploadJobFrame = uploadJobFrame
   }
 
   @Override
-  void run() {
-    Map<String, String> result = [:]
-    try {
-      String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
-          .concat(File.separator).concat(UUID.randomUUID().toString())
-      Locale locale = new Locale("en")                                    // TODO get from request or package
-      List<URL> updateUrls
-      if (Integer.valueOf(pkg._tippCount) == 0){
-        // this is obviously a new package --> update with older timestamps
-        updateUrls = new ArrayList<>()
-        updateUrls.add(new URL(src.url))
+  void run() throws Exception {
+    String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
+        .concat(File.separator).concat(UUID.randomUUID().toString())
+    Locale locale = new Locale("en")                                    // TODO get from request or package
+    List<URL> updateUrls
+    if (Integer.valueOf(pkg._tippCount) == 0){
+      // this is obviously a new package --> update with older timestamp
+      updateUrls = new ArrayList<>()
+      updateUrls.add(new URL(src.url))
+    }
+    else{
+      // this package had already been filled with data
+      updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
+    }
+    updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
+    Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
+    while(urlsIterator.hasPrevious()){
+      URL url = urlsIterator.previous()
+      kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
+      Enrichment enrichment
+      try {
+        enrichment = prepareEnrichment(token, sessionFolder, pkg, src)
+      }
+      catch (Exception e) {
+        log.error("Could not build enrichment for package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid))
+        uploadJobFrame
+        continue
+      }
+      enrichment.originPathName = kbartReader.fileName
+      UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
+      enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
+      if (uploadJob == null){
+        uploadJob
+        log.error("Could not upload processed package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid))
+        continue
       }
       else{
-        // this package had already been filled with data
-        updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
+        // successfully proceeded upload
+        break
       }
-      updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
-      Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
-      while(urlsIterator.hasPrevious()){
-        URL url = urlsIterator.previous()
-        kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
-        Enrichment enrichment
-        try {
-          enrichment = prepareEnrichment(token, sessionFolder, pkg, src)
-        }
-        catch (Exception e) {
-          String message = "Could not build enrichment for package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid)
-          log.error(message)
-          result.status = UploadThreadGokb.Status.ERROR.toString()
-          result.message = message
-          continue
-        }
-        enrichment.originPathName = kbartReader.fileName
-        UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, false)
-        if (uploadJob == null){
-          String message = "Could not upload processed package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid)
-          log.error(message)
-          result.status = UploadThreadGokb.Status.ERROR.toString()
-          result.message = message
-          continue
-        }
-        else{
-          result.uploadStatus = uploadJob.getStatus().toString()
-          result.jobId = uploadJob.uuid
-          break
-        }
-      }
-    }
-    catch (Exception e) {
-      result.status = UploadThreadGokb.Status.ERROR.toString()
-      response.status = 500
-      result.message = "Unable to process KBART file at the specified source url."
     }
   }
 
@@ -103,7 +105,7 @@ class CompleteProcessingThread extends Thread {
     String pkgNominalPlatform = platformId.concat(";").concat(platformName)
     String pkgNominalProvider = pkg.provider?.name
     String uuid = pkg.uuid
-    enrichment = setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,
+    enrichment = enrichmentService.setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,
         pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform, pkgNominalProvider, updateToken, uuid)
     return enrichment
   }

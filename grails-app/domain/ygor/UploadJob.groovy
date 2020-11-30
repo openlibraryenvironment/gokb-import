@@ -7,7 +7,7 @@ import de.hbznrw.ygor.processing.UploadThreadGokb
 class UploadJob extends UploadJobFrame{
 
   def uploadThread
-  int total
+  Integer total
 
   UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread){
     super(fileType)
@@ -18,6 +18,7 @@ class UploadJob extends UploadJobFrame{
   UploadJob fillFrame(UploadThreadGokb uploadThread){
     this.uploadThread = uploadThread
     total = uploadThread.total
+    return this
   }
 
 
@@ -45,6 +46,7 @@ class UploadJob extends UploadJobFrame{
   }
 
 
+  @Override
   @SuppressWarnings("JpaAttributeMemberSignatureInspection")
   UploadThreadGokb.Status getStatus(){
     return uploadThread.status

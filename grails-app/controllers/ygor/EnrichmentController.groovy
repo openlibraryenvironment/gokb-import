@@ -9,7 +9,6 @@ import groovy.util.logging.Log4j
 import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.web.multipart.commons.CommonsMultipartFile
-import ygor.field.MappingsContainer
 
 import javax.servlet.http.HttpServletRequest
 
@@ -335,8 +334,21 @@ class EnrichmentController implements ControllersHelper{
       result.message = "No source found for package with id ".concat(pkgId)
     }
     else{
-      CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token)
-      completeProcessingThread.run()
+      UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
+      CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token,
+          uploadJobFrame)
+      try {
+        completeProcessingThread.run()
+        result.status = UploadThreadGokb.Status.STARTED.toString()
+        response.status = 200
+        result.message = "Started upload job for package ".concat(pkgId)
+        result.jobId = uploadJobFrame.uuid
+      }
+      catch(Exception e){
+        result.status = UploadThreadGokb.Status.ERROR.toString()
+        response.status = 500
+        result.message = "Unable to process KBART file at the specified source url. Exception was: ".concat(e.message)
+      }
     }
     render result as JSON
   }
@@ -394,33 +406,9 @@ class EnrichmentController implements ControllersHelper{
     String updateToken = params.get('updateToken')
     String uuid = pkg.get("uuid")
 
-    return setupEnrichment(enrichment, enrichmentService.kbartReader, addOnly, pmOptions, platform.name,
+    return enrichmentService.setupEnrichment(enrichment, enrichmentService.kbartReader, addOnly, pmOptions, platform.name,
         platform.primaryUrl, request.parameterMap, pkgTitleId, pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform,
         pkgNominalProvider, updateToken, uuid)
-  }
-
-
-  private Enrichment setupEnrichment(Enrichment enrichment, KbartReader kbartReader, String addOnly, def pmOptions,
-                                     String platformName, String platformUrl, def params, pkgTitleId,
-                                     String pkgTitle, String pkgCuratoryGroup, String pkgId, String pkgNominalPlatform,
-                                     String pkgNominalProvider, String updateToken, String uuid){
-    kbartReader.checkHeader()
-    Map<String, Object> parameterMap = new HashMap<>()
-    parameterMap.putAll(params)
-    parameterMap.put("pkgTitleId", pkgTitleId)
-    addParameterToParameterMap("pkgTitle", pkgTitle, parameterMap)
-    addParameterToParameterMap("pkgCuratoryGroup", pkgCuratoryGroup, parameterMap)
-    addParameterToParameterMap("pkgId", pkgId, parameterMap)
-    addParameterToParameterMap("pkgNominalPlatform", pkgNominalPlatform, parameterMap)
-    addParameterToParameterMap("pkgNominalProvider", pkgNominalProvider, parameterMap)
-    enrichmentService.prepareFile(enrichment, parameterMap)
-    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
-    enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
-    enrichment.dataContainer.pkgHeader.token = updateToken
-    enrichment.dataContainer.pkgHeader.uuid = uuid
-    enrichment.dataContainer.pkgHeader.nominalPlatform.name = platformName
-    enrichment.dataContainer.pkgHeader.nominalPlatform.url = platformUrl
-    enrichment
   }
 
 
@@ -430,14 +418,14 @@ class EnrichmentController implements ControllersHelper{
     UploadJobFrame uploadJob = enrichmentService.uploadJobs.get(jobId)
     if (uploadJob == null){
       log.info("Received status request for uploadJob ".concat(jobId).concat(" but there is no according job."))
-      response.status = "error"
+      response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No job found for this id."
       render response as JSON
     }
     else if (uploadJob instanceof UploadJob) {
       uploadJob.updateCount()
       uploadJob.refreshStatus()
-      response.uploadStatus = uploadJob.getStatus().toString()
+      response.status = uploadJob.getStatus().toString()
       response.gokbJobId = uploadJob.uploadThread?.gokbJobId
       render response as JSON
     }
@@ -640,13 +628,4 @@ class EnrichmentController implements ControllersHelper{
     render result as JSON
   }
 
-
-  private void addParameterToParameterMap(String parameterName, String parameterValue, Map<String, String[]> parameterMap){
-    if (parameterMap == null){
-      parameterMap = new HashMap<>()
-    }
-    String[] value = new String[1]
-    value[0] = parameterValue
-    parameterMap.put(parameterName, value)
-  }
 }
