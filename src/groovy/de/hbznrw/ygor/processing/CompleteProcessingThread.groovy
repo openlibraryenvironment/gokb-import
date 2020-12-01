@@ -71,7 +71,6 @@ class CompleteProcessingThread extends Thread {
       UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
       enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
       if (uploadJob == null){
-        uploadJob
         log.error("Could not upload processed package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid))
         continue
       }

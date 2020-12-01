@@ -24,7 +24,7 @@ class EnrichmentService{
 
   GokbService gokbService
   KbartReader kbartReader
-  Map<String, UploadJob> uploadJobs = new HashMap<>()
+  static Map<String, UploadJob> UPLOAD_JOBS = new HashMap<>()
 
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
@@ -419,13 +419,13 @@ class EnrichmentService{
 
   void addUploadJob(UploadJob uploadJob){
     if (uploadJob != null){
-      uploadJobs.put(uploadJob.uuid, uploadJob)
+      UPLOAD_JOBS.put(uploadJob.uuid, uploadJob)
     }
   }
 
 
   UploadJob getUploadJob(String uuid){
-    return uploadJobs.get(uuid)
+    return UPLOAD_JOBS.get(uuid)
   }
 
 

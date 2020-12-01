@@ -415,7 +415,7 @@ class EnrichmentController implements ControllersHelper{
   def getStatus(){
     String jobId = params.get('jobId')
     def response = [:]
-    UploadJobFrame uploadJob = enrichmentService.uploadJobs.get(jobId)
+    UploadJobFrame uploadJob = enrichmentService.UPLOAD_JOBS.get(jobId)
     if (uploadJob == null){
       log.info("Received status request for uploadJob ".concat(jobId).concat(" but there is no according job."))
       response.status = UploadThreadGokb.Status.ERROR.toString()
