@@ -1,9 +1,11 @@
 package ygor
 
+import com.fasterxml.jackson.databind.JsonNode
 import de.hbznrw.ygor.processing.CompleteProcessingThread
 import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
+import de.hbznrw.ygor.tools.JsonToolkit
 import grails.converters.JSON
 import groovy.util.logging.Log4j
 import org.apache.commons.collections.MapUtils
@@ -371,7 +373,7 @@ class EnrichmentController implements ControllersHelper{
     def result = [:]
     Enrichment enrichment = buildEnrichmentFromRequest()
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
-    enrichmentService.addUploadJob(uploadJob)
+    enrichmentService.saveUploadJob(uploadJob)
     result.message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
 
     render result as JSON
@@ -415,25 +417,44 @@ class EnrichmentController implements ControllersHelper{
   def getStatus(){
     String jobId = params.get('jobId')
     def response = [:]
-    UploadJobFrame uploadJob = enrichmentService.uploadJobs.get(jobId)
+    UploadJobFrame uploadJob
+    JsonNode uploadJobNode = JsonToolkit.jsonNodeFromFile(UploadJobFrame.uploadJobsPath.concat(jobId))
+    if (uploadJobNode == null){
+      log.info("Received status request for uploadJob ".concat(jobId).concat(" but there was no fitting Json data found."))
+      response.status = UploadThreadGokb.Status.ERROR.toString()
+      response.message = "No json data found for this id."
+      return render(response as JSON)
+    }
+    try{
+      // try to create full UploadJob first
+      uploadJob = UploadJob.fromJson(uploadJobNode)
+    }
+    catch(Exception e1){
+      try{
+        // try to create UploadJobFrame alternatively
+        uploadJob = UploadJobFrame.fromJson(uploadJobNode)
+      }
+      catch(Exception e2){
+        // action is processed in next if statement
+      }
+    }
     if (uploadJob == null){
       log.info("Received status request for uploadJob ".concat(jobId).concat(" but there is no according job."))
       response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No job found for this id."
-      render response as JSON
+      return render(response as JSON)
     }
-    else if (uploadJob instanceof UploadJob) {
+    if (uploadJob instanceof UploadJob) {
       uploadJob.updateCount()
       uploadJob.refreshStatus()
       response.status = uploadJob.getStatus().toString()
       response.gokbJobId = uploadJob.uploadThread?.gokbJobId
-      render response as JSON
+      return render(response as JSON)
     }
-    else{
-      // uploadJob is instance of UploadJobFrame
-      response.status = UploadThreadGokb.Status.PREPARATION.toString()
-      render response as JSON
-    }
+    // else
+    // uploadJob is instance of UploadJobFrame
+    response.status = UploadThreadGokb.Status.PREPARATION.toString()
+    render response as JSON
   }
 
 

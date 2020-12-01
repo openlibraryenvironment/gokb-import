@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.processing
 
+import com.fasterxml.jackson.databind.JsonNode
+import de.hbznrw.ygor.tools.JsonToolkit
 import ygor.Enrichment
 
 
@@ -41,6 +43,20 @@ abstract class UploadThreadGokb extends Thread{
         status = Status.SUCCESS
       }
     }
+  }
+
+
+  static UploadThreadGokb fromJson(JsonNode json) {
+    Enrichment.FileType fileType = new Enrichment.FileType(JsonToolkit.fromJson(json, "fileType"))
+    String uuid = JsonToolkit.fromJson(json, "uuid")
+    UploadThreadGokb.Status status = new UploadThreadGokb.Status(JsonToolkit.fromJson(json, "status"))
+    Integer total = JsonToolkit.fromJson(json, "total")
+    UploadThreadGokb uploadThread = JsonToolkit.fromJson(json, "uploadThread")
+    UploadThreadGokb result = new UploadThreadGokb(fileType, uploadThread)
+    result.uuid = uuid
+    result.total = total
+    result.status = status
+    result
   }
 
 

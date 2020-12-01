@@ -24,8 +24,6 @@ class EnrichmentService{
 
   GokbService gokbService
   KbartReader kbartReader
-  Map<String, UploadJob> uploadJobs = new HashMap<>()
-
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
     enrichment.getAsFile(type, true)
@@ -350,7 +348,7 @@ class EnrichmentService{
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword, true)
     }
     UploadJob uploadJob = uploadJobFrame.toUploadJob(sendPackageThreadGokb)
-    addUploadJob(uploadJob)
+    uploadJob.save()
     uploadJob.start()
     if (waitForFinish){
       while (uploadJob.getStatus() in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
@@ -415,19 +413,6 @@ class EnrichmentService{
       return Arrays.asList(split[0].split(";"))
     }
   }
-
-
-  void addUploadJob(UploadJob uploadJob){
-    if (uploadJob != null){
-      uploadJobs.put(uploadJob.uuid, uploadJob)
-    }
-  }
-
-
-  UploadJob getUploadJob(String uuid){
-    return uploadJobs.get(uuid)
-  }
-
 
   Enrichment setupEnrichment(Enrichment enrichment, KbartReader kbartReader, String addOnly, def pmOptions,
                              String platformName, String platformUrl, def params, pkgTitleId,

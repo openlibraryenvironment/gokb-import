@@ -36,6 +36,7 @@ class CompleteProcessingThread extends Thread {
     this.src = src
     this.token = token
     this.uploadJobFrame = uploadJobFrame
+    uploadJobFrame.save()
   }
 
   @Override
@@ -69,7 +70,7 @@ class CompleteProcessingThread extends Thread {
       }
       enrichment.originPathName = kbartReader.fileName
       UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
-      enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
+      uploadJob.save()                                                      // replacing uploadJobFrame with same uuid
       if (uploadJob == null){
         uploadJob
         log.error("Could not upload processed package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid))
