@@ -15,6 +15,12 @@ class UploadJob extends UploadJobFrame{
   }
 
 
+  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, String uuid){
+    super(fileType, uuid)
+    fillFrame(uploadThread)
+  }
+
+
   UploadJob fillFrame(UploadThreadGokb uploadThread){
     this.uploadThread = uploadThread
     total = uploadThread.total

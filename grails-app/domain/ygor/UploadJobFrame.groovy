@@ -11,14 +11,19 @@ class UploadJobFrame {
 
 
   UploadJobFrame(Enrichment.FileType fileType){
+    this(fileType, UUID.randomUUID().toString())
+  }
+
+
+  UploadJobFrame(Enrichment.FileType fileType, String uuid){
     this.fileType = fileType
-    uuid = UUID.randomUUID().toString()
+    this.uuid = uuid
     status = UploadThreadGokb.Status.PREPARATION
   }
 
 
   UploadJob toUploadJob(UploadThreadGokb uploadThread){
-    return new UploadJob(this.fileType, uploadThread)
+    return new UploadJob(this.fileType, uploadThread, this.uuid)
   }
 
 

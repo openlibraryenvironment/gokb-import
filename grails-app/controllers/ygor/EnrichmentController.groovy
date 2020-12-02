@@ -338,7 +338,7 @@ class EnrichmentController implements ControllersHelper{
       CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token,
           uploadJobFrame)
       try {
-        completeProcessingThread.run()
+        completeProcessingThread.start()
         result.status = UploadThreadGokb.Status.STARTED.toString()
         response.status = 200
         result.message = "Started upload job for package ".concat(pkgId)
@@ -415,7 +415,7 @@ class EnrichmentController implements ControllersHelper{
   def getStatus(){
     String jobId = params.get('jobId')
     def response = [:]
-    UploadJobFrame uploadJob = enrichmentService.UPLOAD_JOBS.get(jobId)
+    UploadJobFrame uploadJob = enrichmentService.getUploadJob(jobId)
     if (uploadJob == null){
       log.info("Received status request for uploadJob ".concat(jobId).concat(" but there is no according job."))
       response.status = UploadThreadGokb.Status.ERROR.toString()

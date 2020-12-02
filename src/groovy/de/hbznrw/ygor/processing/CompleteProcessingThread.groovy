@@ -40,6 +40,7 @@ class CompleteProcessingThread extends Thread {
 
   @Override
   void run() throws Exception {
+    enrichmentService.addUploadJob(uploadJobFrame)
     String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
         .concat(File.separator).concat(UUID.randomUUID().toString())
     Locale locale = new Locale("en")                                    // TODO get from request or package

@@ -417,15 +417,21 @@ class EnrichmentService{
   }
 
 
-  void addUploadJob(UploadJob uploadJob){
+  void addUploadJob(UploadJobFrame uploadJob){
     if (uploadJob != null){
+      log.debug("Adding ".concat(uploadJob.getClass().getName()).concat(" with uuid ").concat(uploadJob.uuid))
       UPLOAD_JOBS.put(uploadJob.uuid, uploadJob)
     }
   }
 
 
-  UploadJob getUploadJob(String uuid){
-    return UPLOAD_JOBS.get(uuid)
+  UploadJobFrame getUploadJob(String uuid){
+    if (uuid == null){
+      return null
+    }
+    UploadJobFrame uploadJob = UPLOAD_JOBS.get(uuid)
+    log.debug("Getting upload job for uuid ".concat(uuid).concat(" : ").concat(uploadJob?.getClass()?.getName()))
+    return uploadJob
   }
 
 
