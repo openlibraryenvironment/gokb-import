@@ -345,6 +345,7 @@ class EnrichmentController implements ControllersHelper{
         result.jobId = uploadJobFrame.uuid
       }
       catch(Exception e){
+        e.printStackTrace()
         result.status = UploadThreadGokb.Status.ERROR.toString()
         response.status = 500
         result.message = "Unable to process KBART file at the specified source url. Exception was: ".concat(e.message)
