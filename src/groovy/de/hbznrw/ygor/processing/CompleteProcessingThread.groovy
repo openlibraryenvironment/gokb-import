@@ -64,7 +64,8 @@ class CompleteProcessingThread extends Thread {
         enrichment = prepareEnrichment(token, sessionFolder, pkg, src)
       }
       catch (Exception e) {
-        log.error("Could not build enrichment for package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid))
+        e.printStackTrace()
+        log.error("Could not build enrichment for package ${pkg.id} with uuid ${pkg.uuid}")
         uploadJobFrame
         continue
       }
@@ -72,7 +73,7 @@ class CompleteProcessingThread extends Thread {
       UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
       enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
       if (uploadJob == null){
-        log.error("Could not upload processed package ".concat(pkg.id).concat(" with uuid ").concat(pkg.uuid))
+        log.error("Could not upload processed package ${pkg.id} with uuid ${pkg.uuid}")
         continue
       }
       else{
@@ -87,7 +88,7 @@ class CompleteProcessingThread extends Thread {
       throws Exception{
     Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
     String addOnly = "false"
-    List<String> pmOptions = Arrays.asList(MappingsContainer.KBART)
+    def pmOptions = [MappingsContainer.KBART]
     if (src.zdbMatch){
       pmOptions.add(MappingsContainer.ZDB)
     }
@@ -102,7 +103,7 @@ class CompleteProcessingThread extends Thread {
     String pkgTitle = pkg.name
     String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name")
     String pkgId = pkg.id
-    String pkgNominalPlatform = platformId.concat(";").concat(platformName)
+    String pkgNominalPlatform = "${platformId};${platformName}".toString()
     String pkgNominalProvider = pkg.provider?.name
     String uuid = pkg.uuid
     enrichment = enrichmentService.setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,

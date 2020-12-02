@@ -326,12 +326,12 @@ class EnrichmentController implements ControllersHelper{
     if (MapUtils.isEmpty(pkg)){
       result.status = UploadThreadGokb.Status.ERROR.toString()
       response.status = 404
-      result.message = "No package found for id ".concat(pkgId)
+      result.message = "No package found for id $pkgId"
     }
     else if (MapUtils.isEmpty(src)){
       result.status = UploadThreadGokb.Status.ERROR.toString()
       response.status = 404
-      result.message = "No source found for package with id ".concat(pkgId)
+      result.message = "No source found for package with id $pkgId"
     }
     else{
       UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
@@ -341,10 +341,11 @@ class EnrichmentController implements ControllersHelper{
         completeProcessingThread.start()
         result.status = UploadThreadGokb.Status.STARTED.toString()
         response.status = 200
-        result.message = "Started upload job for package ".concat(pkgId)
+        result.message = "Started upload job for package $pkgId"
         result.jobId = uploadJobFrame.uuid
       }
       catch(Exception e){
+        e.printStackTrace()
         result.status = UploadThreadGokb.Status.ERROR.toString()
         response.status = 500
         result.message = "Unable to process KBART file at the specified source url. Exception was: ".concat(e.message)
@@ -417,7 +418,7 @@ class EnrichmentController implements ControllersHelper{
     def response = [:]
     UploadJobFrame uploadJob = enrichmentService.getUploadJob(jobId)
     if (uploadJob == null){
-      log.info("Received status request for uploadJob ".concat(jobId).concat(" but there is no according job."))
+      log.info("Received status request for uploadJob $jobId but there is no according job.")
       response.status = UploadThreadGokb.Status.ERROR.toString()
       response.message = "No job found for this id."
       render response as JSON
