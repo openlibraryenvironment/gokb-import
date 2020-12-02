@@ -316,6 +316,26 @@
     }
   },
   {
+    "ygor" : "shortcode",
+    "display" : "Veröffentlichung Shortcode (033A:p)",
+    "in" : {
+      "kbart" : "",
+      "zdb" : "033A:p",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TITLE.shortcode"]
+    },
+    "order" : ["zdb"],
+    "type" : "String",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning", "other" : "ok"}]
+    }
+  },
+  {
     "ygor" : "tippMedium",
     "out" : {
       "gokb" : ["$TIPP.medium"]
