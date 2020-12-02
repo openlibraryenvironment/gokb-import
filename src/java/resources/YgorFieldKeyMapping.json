@@ -5,6 +5,7 @@
     "in" : {
       "kbart" : "access_end_date",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -25,6 +26,7 @@
     "in" : {
       "kbart" : "access_start_date",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -45,6 +47,7 @@
     "in" : {
       "kbart" : "access_type",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -65,6 +68,7 @@
     "in" : {
       "kbart" : "coverage_depth",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -88,6 +92,7 @@
     "in" : {
       "kbart" : "date_first_issue_online",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -108,6 +113,7 @@
     "in" : {
       "kbart" : "date_last_issue_online",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -128,6 +134,7 @@
     "in" : {
       "kbart" : "date_monograph_published_online",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -148,6 +155,7 @@
     "in" : {
       "kbart" : "date_monograph_published_print",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -189,6 +197,7 @@
     "in" : {
       "kbart" : "monograph_edition",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -211,6 +220,7 @@
     "in" : {
       "kbart" : "embargo_info",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -231,6 +241,7 @@
     "in" : {
       "kbart" : "ezb_id",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : "jourid"
     },
     "out" : {
@@ -251,6 +262,7 @@
     "in" : {
       "kbart" : "first_author",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -271,6 +283,7 @@
     "in" : {
       "kbart" : "first_editor",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -291,6 +304,7 @@
     "in" : {
       "kbart" : "gokb_uuid",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -365,7 +379,7 @@
     "in" : {
       "kbart" : "",
       "zdb" : "039E:Y",
-      "zdb" : "039E:t",
+      "gbv" : "039E:t",
       "ezb" : ""
     },
     "order" : ["zdb"],
@@ -382,6 +396,7 @@
     "in" : {
       "kbart" : "listprice_eur",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -401,6 +416,7 @@
     "in" : {
       "kbart" : "listprice_gbp",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -420,6 +436,7 @@
     "in" : {
       "kbart" : "listprice_usd",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -453,6 +470,7 @@
     "in" : {
       "kbart" : "monograph_edition",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -477,6 +495,7 @@
     "in" : {
       "kbart" : "monograph_volume",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -497,6 +516,7 @@
     "in" : {
       "kbart" : "notes",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -517,6 +537,7 @@
     "in" : {
       "kbart" : "num_first_issue_online",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -537,6 +558,7 @@
     "in" : {
       "kbart" : "num_first_vol_online",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -557,6 +579,7 @@
     "in" : {
       "kbart" : "num_last_issue_online",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -577,6 +600,7 @@
     "in" : {
       "kbart" : "num_last_vol_online",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -597,7 +621,7 @@
     "in" : {
       "kbart" : "online_identifier",
       "zdb" : "005A:0",
-      "zdb" : "005A:0",
+      "gbv" : "005A:0",
       "ezb" : ""
     },
     "out" : {
@@ -692,6 +716,7 @@
     "in" : {
       "kbart" : "publication_title",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -772,6 +797,7 @@
     "in" : {
       "kbart" : "publication_type",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -923,6 +949,7 @@
     "in" : {
       "kbart" : ["monograph_parent_collection_title"],
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -943,6 +970,7 @@
     "in" : {
       "kbart" : ["primary_subject", "subject_area", "subject"],
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -963,6 +991,7 @@
     "in" : {
       "kbart" : "title_id",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : ""
     },
     "out" : {
@@ -983,6 +1012,7 @@
     "in" : {
       "kbart" : "title_url",
       "zdb" : "",
+      "gbv" : "",
       "ezb" : "detail_link"
     },
     "out" : {

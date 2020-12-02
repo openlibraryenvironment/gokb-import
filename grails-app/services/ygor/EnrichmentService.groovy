@@ -318,7 +318,7 @@ class EnrichmentService{
 
 
   /**
-   * used by EnrichmentService    --> processComplete
+   * used by CompleteProcessingThread     --> run
    */
   UploadJob processComplete(@Nonnull UploadJobFrame uploadJobFrame, @Nonnull Enrichment enrichment, String gokbUsername,
                             String gokbPassword, boolean isUpdate, boolean waitForFinish) {
