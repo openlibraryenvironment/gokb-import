@@ -72,10 +72,10 @@ class MultiField {
 
 
   List<String> getPrioValues() {
-    if (revised != null) {
+    if (!StringUtils.isEmpty(revised)){
       return [revised]
     }
-    if (normalized != null) {
+    if (!StringUtils.isEmpty(normalized)){
       return [normalized]
     }
     if (keyMapping == null) {
@@ -88,7 +88,9 @@ class MultiField {
     for (source in keyMapping.sourcePrio) {
       List<String> prioFields = getFieldValuesBySource(source)
       if (!prioFields.isEmpty()) {
-        return prioFields
+        if (prioFields.get(0) instanceof String && !StringUtils.isEmpty(prioFields.get(0))){
+          return prioFields
+        }
       }
     }
     // no collected value --> return default value (if any)

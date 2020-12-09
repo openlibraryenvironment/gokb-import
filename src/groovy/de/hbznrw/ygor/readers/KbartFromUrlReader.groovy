@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.readers
 
+import de.hbznrw.ygor.tools.UrlToolkit
 import org.apache.commons.io.FileUtils
 import ygor.EnrichmentService
 
@@ -23,18 +24,16 @@ class KbartFromUrlReader extends KbartReader{
     File file = new File(fileName)
     // connection.setConnectTimeout(2000)
     // connection.setReadTimeout(30000)
+    connection = UrlToolkit.resolveRedirects(connection, 5)
     byte[] content = getByteContent(connection.getInputStream())
     InputStream inputStream = new ByteArrayInputStream(content)
     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
       String encoding = enrichmentService.getEncoding(inputStream, url)
-      if (encoding in ["text/plain" /* add further "encoding-neutral" content types here*/]){
+      if (encoding in ["text/plain", "text/tab-separated-values" /* add further "encoding-neutral" content types here*/]){
         // There was no encoding found in the url connection.
         encoding = enrichmentService.getEncoding(inputStream, null)
-        if (encoding == null){
-          throw new IllegalArgumentException(messageSource.getMessage("error.kbart.noEncoding", ["foo"] as Object[], locale))
-        }
       }
-      if (!("UTF-8".equals(encoding))){
+      if (!(encoding in [null, "UTF-8"])){
         throw new IllegalArgumentException(messageSource.getMessage("error.kbart.invalidEncoding", ["foo"] as Object[], locale))
       }
     }

@@ -230,9 +230,11 @@ class Record{
 
   void addDuplicates(AbstractIdentifier id, Set<String> recordUids, String enrichmentFolder, String resultHash,
                      MappingsContainer mappingsContainer){
+    log.debug("Adding duplicate IDs for record ".concat(multiFields.get("publicationTitleKbart").getFirstPrioValue()).concat(" : " + recordUids.toString()))
     for (String recordUid in recordUids){
       if (recordUid != this.uid){
         Record dup = load(enrichmentFolder, resultHash, recordUid, mappingsContainer)
+        log.debug("... ".concat(dup.multiFields.get("publicationTitleKbart").getFirstPrioValue()))
         if (!haveDistinctiveId(this, dup)){
           duplicates.put(id, recordUid)
         }

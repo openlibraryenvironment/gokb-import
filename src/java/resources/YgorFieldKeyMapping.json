@@ -745,7 +745,7 @@
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}],
-      "missing" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}],
+      "missing" : [{"serial" : "error", "monograph" : "error", "other" : "error"}],
       "undefined" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}]
     }
   },
@@ -765,7 +765,7 @@
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}],
-      "missing" : [{"serial" : "warning", "monograph" : "ok", "other" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "undefined" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}]
     }
   },
@@ -851,7 +851,7 @@
   },
   {
     "ygor" : "publishedTo",
-    "display" : "Erscheinungszeitraum Startjahr (011@:b)",
+    "display" : "Erscheinungszeitraum Endjahr (011@:b)",
     "in" : {
       "kbart" : "",
       "zdb" : "011@:b",

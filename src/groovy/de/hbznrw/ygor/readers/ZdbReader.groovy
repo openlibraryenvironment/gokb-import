@@ -1,7 +1,6 @@
 package de.hbznrw.ygor.readers
 
 import groovy.util.logging.Log4j
-import groovy.util.slurpersupport.GPathResult
 
 
 @Log4j

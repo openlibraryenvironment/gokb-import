@@ -268,38 +268,33 @@ class GokbExporter {
     if (title == null){
       title = ""
     }
-    if (record.zdbIntegrationDate != null){
-      List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
-      if (ramifications != null && !ramifications.isEmpty()){
-        String extendedTitle = title
-        for (String ramification in ramifications){
-          if (!StringUtils.isEmpty(ramification)){
-            if (!StringUtils.isEmpty(extendedTitle)){
-              extendedTitle = extendedTitle.concat(" / ")
-            }
-            extendedTitle = extendedTitle.concat(ramification)
-          }
+    List<String> ramifications = record.multiFields.get("publicationTitleRamification").getFieldValuesBySource(MappingsContainer.ZDB)
+    if (ramifications != null && !ramifications.isEmpty()){
+      String extendedTitle = title
+      for (String ramification in ramifications){
+        if (!StringUtils.isEmpty(ramification)){
+          extendedTitle = extendedTitle.concat(" / ").concat(ramification)
         }
-        titleNode.set("name", new TextNode(extendedTitle))
       }
-      else{
-        for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
-          String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
-          if (!StringUtils.isEmpty(extendedTitle)){
-            if (isRoughlySubString(title, extendedTitle)){
-              titleNode.set("name", new TextNode(extendedTitle))
-            }
-            else{
-              titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
-            }
-            return titleNode
+      titleNode.set("name", new TextNode(extendedTitle))
+    }
+    else{
+      for (String extendedTitleFieldName in ["publicationSubTitle", "publicationTitleVariation"]){
+        String extendedTitle = record.multiFields.get(extendedTitleFieldName).getFirstPrioValue()
+        if (!StringUtils.isEmpty(extendedTitle)){
+          if (isRoughlySubString(title, extendedTitle)){
+            titleNode.set("name", new TextNode(extendedTitle))
           }
+          else{
+            titleNode.set("name", new TextNode(title.concat(": ").concat(extendedTitle)))
+          }
+          return titleNode
         }
       }
     }
     if (StringUtils.isEmpty(title)){
-      // there was no title name read from ZDB API - take publication title
-      titleNode.set("name", new TextNode(record.getMultiField("publicationTitleKbart")?.getFirstPrioValue()))
+      title = record.multiFields.get("publicationTitleKbart").getFirstPrioValue()
+      titleNode.set("name", new TextNode(title))
     }
     return titleNode
   }

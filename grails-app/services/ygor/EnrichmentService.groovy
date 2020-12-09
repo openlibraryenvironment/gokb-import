@@ -24,7 +24,7 @@ class EnrichmentService{
 
   GokbService gokbService
   KbartReader kbartReader
-  Map<String, UploadJob> uploadJobs = new HashMap<>()
+  static Map<String, UploadJob> UPLOAD_JOBS = new HashMap<>()
 
 
   File getFile(Enrichment enrichment, Enrichment.FileType type){
@@ -307,12 +307,21 @@ class EnrichmentService{
 
 
   /**
-   * used by AutoUpdateService --> processCompleteUpdate
-   * used by                       processCompleteWithToken
-   * used by                       processGokbPackage
+   * used by AutoUpdateService    --> processCompleteUpdate
+   * used by EnrichmentController --> processCompleteWithToken
    */
   UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate,
-                            boolean waitForFinish){
+                            boolean waitForFinish) {
+    UploadJobFrame uploadJob = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
+    return processComplete(uploadJob, enrichment, gokbUsername, gokbPassword, isUpdate, waitForFinish)
+  }
+
+
+  /**
+   * used by EnrichmentService    --> processComplete
+   */
+  UploadJob processComplete(@Nonnull UploadJobFrame uploadJobFrame, @Nonnull Enrichment enrichment, String gokbUsername,
+                            String gokbPassword, boolean isUpdate, boolean waitForFinish) {
     def options = [
         'options'        : enrichment.processingOptions,
         'addOnly'        : enrichment.addOnly,
@@ -340,10 +349,11 @@ class EnrichmentService{
       // send with basic auth
       sendPackageThreadGokb = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword, true)
     }
-    UploadJob uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThreadGokb)
+    UploadJob uploadJob = uploadJobFrame.toUploadJob(sendPackageThreadGokb)
+    addUploadJob(uploadJob)
     uploadJob.start()
     if (waitForFinish){
-      while (uploadJob.status in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
+      while (uploadJob.getStatus() in [UploadThreadGokb.Status.PREPARATION, UploadThreadGokb.Status.STARTED]){
         Thread.sleep(1000)
         uploadJob.updateCount()
         uploadJob.refreshStatus()
@@ -407,12 +417,55 @@ class EnrichmentService{
   }
 
 
-  void addUploadJob(UploadJob uploadJob){
-    uploadJobs.put(uploadJob.uuid, uploadJob)
+  void addUploadJob(UploadJobFrame uploadJob){
+    if (uploadJob != null){
+      log.debug("Adding ".concat(uploadJob.getClass().getName()).concat(" with uuid ").concat(uploadJob.uuid))
+      UPLOAD_JOBS.put(uploadJob.uuid, uploadJob)
+    }
   }
 
 
-  UploadJob getUploadJob(String uuid){
-    return uploadJobs.get(uuid)
+  UploadJobFrame getUploadJob(String uuid){
+    if (uuid == null){
+      return null
+    }
+    UploadJobFrame uploadJob = UPLOAD_JOBS.get(uuid)
+    log.debug("Getting upload job for uuid ".concat(uuid).concat(" : ").concat(uploadJob?.getClass()?.getName()))
+    return uploadJob
   }
+
+
+  Enrichment setupEnrichment(Enrichment enrichment, KbartReader kbartReader, String addOnly, def pmOptions,
+                             String platformName, String platformUrl, def params, pkgTitleId,
+                             String pkgTitle, String pkgCuratoryGroup, String pkgId, String pkgNominalPlatform,
+                             String pkgNominalProvider, String updateToken, String uuid){
+    kbartReader.checkHeader()
+    Map<String, Object> parameterMap = new HashMap<>()
+    parameterMap.putAll(params)
+    parameterMap.put("pkgTitleId", pkgTitleId)
+    addParameterToParameterMap("pkgTitle", pkgTitle, parameterMap)
+    addParameterToParameterMap("pkgCuratoryGroup", pkgCuratoryGroup, parameterMap)
+    addParameterToParameterMap("pkgId", pkgId, parameterMap)
+    addParameterToParameterMap("pkgNominalPlatform", pkgNominalPlatform, parameterMap)
+    addParameterToParameterMap("pkgNominalProvider", pkgNominalProvider, parameterMap)
+    prepareFile(enrichment, parameterMap)
+    enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
+    enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
+    enrichment.dataContainer.pkgHeader.token = updateToken
+    enrichment.dataContainer.pkgHeader.uuid = uuid
+    enrichment.dataContainer.pkgHeader.nominalPlatform.name = platformName
+    enrichment.dataContainer.pkgHeader.nominalPlatform.url = platformUrl
+    enrichment
+  }
+
+
+  static private void addParameterToParameterMap(String parameterName, String parameterValue, Map<String, String[]> parameterMap){
+    if (parameterMap == null){
+      parameterMap = new HashMap<>()
+    }
+    String[] value = new String[1]
+    value[0] = parameterValue
+    parameterMap.put(parameterName, value)
+  }
+
 }
