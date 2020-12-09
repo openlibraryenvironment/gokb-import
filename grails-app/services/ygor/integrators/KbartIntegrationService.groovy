@@ -29,6 +29,7 @@ class KbartIntegrationService {
     TreeMap<String, String> item = reader.readItemData(null, null)
     while (item != null) {
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
+      log.debug(item.toString())
       identifiers = []
       for (idMapping in idMappings) {
         for (key in idMapping.kbartKeys) {
