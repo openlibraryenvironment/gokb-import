@@ -365,8 +365,8 @@ class Record{
 
   @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   void setDisplayTitle(){
-    List<String> titleFieldNames = ["publicationTitleApis", "publicationTitleVariation",
-                                    "publicationSubTitle", "publicationTitleKbart"]
+    List<String> titleFieldNames = ["publicationTitleApis", "publicationTitleKbart",
+                                    "publicationTitleVariation", "publicationSubTitle"]
     for (String displayTitleCandidateFieldNames in titleFieldNames){
       String value = multiFields.get(displayTitleCandidateFieldNames).getFirstPrioValue()
       if (!StringUtils.isEmpty(value)){

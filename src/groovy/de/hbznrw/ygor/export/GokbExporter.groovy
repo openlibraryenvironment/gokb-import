@@ -26,6 +26,9 @@ import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
 import java.nio.charset.Charset
 
+// TODO: Refactor. Postprocessing methods should only be used once within an export, not twice as some are used for
+//       Tipps and for Titles by now.
+
 @Log4j
 class GokbExporter {
 
