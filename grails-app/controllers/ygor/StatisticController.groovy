@@ -36,6 +36,7 @@ class StatisticController implements ControllersHelper{
   Map<String, UploadJob> finishedUploadJobs = [:]
 
   def index(){
+    SessionService.setSessionDuration(request, 3600)
     render(
         view: 'index',
         model: [currentView: 'statistic']
@@ -43,6 +44,7 @@ class StatisticController implements ControllersHelper{
   }
 
   def show(){
+    SessionService.setSessionDuration(request, 28800)
     String resultHash = request.parameterMap.resultHash[0]
     if (enrichmentsUploading.contains(resultHash)){
       return null
@@ -308,6 +310,7 @@ class StatisticController implements ControllersHelper{
 
 
   def deleteFile = {
+    SessionService.setSessionDuration(request, 3600)
     request.session.lastUpdate = [:]
     enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
     redirect(
@@ -318,6 +321,7 @@ class StatisticController implements ControllersHelper{
 
 
   def correctFile = {
+    SessionService.setSessionDuration(request, 3600)
     Enrichment enrichment = getCurrentEnrichment()
     enrichmentService.deleteFileAndFormat(enrichment)
     redirect(
@@ -332,6 +336,7 @@ class StatisticController implements ControllersHelper{
 
 
   def downloadPackageFile = {
+    SessionService.setSessionDuration(request, 7200)
     def en = getCurrentEnrichment()
     if (en){
       def result = enrichmentService.getFile(en, Enrichment.FileType.PACKAGE)
@@ -344,6 +349,7 @@ class StatisticController implements ControllersHelper{
 
 
   def downloadIntegratedPackageFile = {
+    SessionService.setSessionDuration(request, 72000)
     def en = getCurrentEnrichment()
     if (en){
       def result = enrichmentService.getFile(en, Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
@@ -356,6 +362,7 @@ class StatisticController implements ControllersHelper{
 
 
   def downloadTitlesFile = {
+    SessionService.setSessionDuration(request, 72000)
     def en = getCurrentEnrichment()
     if (en){
       def result = enrichmentService.getFile(en, Enrichment.FileType.TITLES)
@@ -368,6 +375,7 @@ class StatisticController implements ControllersHelper{
 
 
   def downloadRawFile = {
+    SessionService.setSessionDuration(request, 72000)
     def en = getCurrentEnrichment()
     if (en){
       File zip = FileToolkit.zipFiles(en.sessionFolder, en.resultHash);
@@ -380,16 +388,19 @@ class StatisticController implements ControllersHelper{
 
 
   def sendPackageFile = {
+    SessionService.setSessionDuration(request, 72000)
     sendFile(Enrichment.FileType.PACKAGE)
   }
 
 
   def sendIntegratedPackageFile = {
+    SessionService.setSessionDuration(request, 72000)
     sendFile(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
   }
 
 
   def sendTitlesFile = {
+    SessionService.setSessionDuration(request, 72000)
     sendFile(Enrichment.FileType.TITLES)
   }
 
