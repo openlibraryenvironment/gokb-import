@@ -200,7 +200,7 @@ class Enrichment{
 
 
   void save(){
-    log.info("Saving enrichment...")
+    log.info("Saving enrichment with ${dataContainer?.records?.size()} records...")
     String result = asJson(true)
     File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
     file.getParentFile().mkdirs()

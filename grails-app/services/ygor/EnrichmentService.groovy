@@ -472,4 +472,12 @@ class EnrichmentService{
     parameterMap.put(parameterName, value)
   }
 
+
+  static String getLastRun(Map<String, Object> pkg){
+    if (!StringUtils.isEmpty(pkg._embedded.source.lastRun)){
+      return pkg._embedded.source.lastRun
+    }
+    return null
+  }
+
 }

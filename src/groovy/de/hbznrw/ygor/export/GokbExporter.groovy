@@ -87,7 +87,7 @@ class GokbExporter {
 
 
   static ArrayNode extractTipps(Enrichment enrichment, FileType type) {
-    log.debug("extracting tipps ...")
+    log.debug("extracting tipps from ${enrichment.dataContainer.records.size()} records ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
     for (String recId in enrichment.dataContainer.records) {
       Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId,
