@@ -132,4 +132,15 @@ class DateNormalizer {
     }
     str
   }
+
+
+  static getDateString(String aString){
+    if (StringUtils.isEmpty((aString))){
+      return null
+    }
+    if (aString.contains("T")){
+      return aString.substring(0, aString.indexOf("T"))
+    }
+    return aString
+  }
 }
