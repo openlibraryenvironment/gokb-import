@@ -29,8 +29,8 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.uri = uri
     this.user = user
     this.password = password
-    total += enrichment.yellowRecords?.size()
-    total += enrichment.greenRecords?.size()
+    this.total += enrichment.yellowRecords?.size()
+    this.total += enrichment.greenRecords?.size()
     result = []
     gokbStatusResponse = [:]
     this.locale = enrichment.locale
@@ -42,19 +42,21 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, boolean integrateWithTitleData){
     this.enrichment = enrichment
     this.uri = uri
-    total += enrichment.yellowRecords?.size()
-    total += enrichment.greenRecords?.size()
+    this.total += enrichment.yellowRecords?.size()
+    this.total += enrichment.greenRecords?.size()
     result = []
     gokbStatusResponse = [:]
     this.locale = enrichment.locale
     this.isUpdate = enrichment.isUpdate
     this.integrateWithTitleData = integrateWithTitleData
     status = UploadThreadGokb.Status.PREPARATION
+    log.info("Set up send package upload thread with ${this.total} records.")
   }
 
 
   @Override
   void run(){
+    log.info("Starting package upload thread ...")
     status = UploadThreadGokb.Status.STARTED
     def json
     if (integrateWithTitleData){
@@ -63,7 +65,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     else{
       json = enrichment.getAsFile(Enrichment.FileType.PACKAGE, true)
     }
-    log.info("exportFile: " + enrichment.resultHash + " -> " + uri)
+    log.info("... exportFile: " + enrichment.resultHash + " -> " + uri)
     if (isUpdate){
       result << GokbExporter.sendUpdate(uri.concat("/").concat(enrichment.dataContainer?.pkgHeader?.uuid), json.getText(), locale)
     }
@@ -71,6 +73,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
     }
     gokbJobId = result[0].get("info")?.get("job_id")?.toString()
+    log.info("Finished package upload thread for GOKb job id ${gokbJobId}.")
   }
 
 

@@ -36,7 +36,7 @@ class KbartIntegrationService {
     TreeMap<String, String> item = reader.readItemData(null, null, lastUpdate)
     while (item != null) {
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
-      log.debug(item.toString())
+      log.debug("Integrating KBart record ${item.toString()}")
       identifiers = []
       for (idMapping in idMappings) {
         for (key in idMapping.kbartKeys) {
@@ -65,6 +65,7 @@ class KbartIntegrationService {
       }
       record.publicationType = record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
       dataContainer.addRecord(record)
+      log.debug("... added record ${record.displayTitle} to data container.")
       record.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
       owner.increaseProgress()
       item = reader.readItemData(null, null, lastUpdate)

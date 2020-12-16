@@ -63,6 +63,7 @@ class CompleteProcessingThread extends Thread {
       Enrichment enrichment
       try {
         enrichment = prepareEnrichment(token, sessionFolder, pkg, src)
+        log.info("Prepared enrichment ${enrichment.originName}.")
       }
       catch (Exception e) {
         e.printStackTrace()
