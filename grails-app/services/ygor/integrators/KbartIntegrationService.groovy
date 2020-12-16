@@ -5,6 +5,7 @@ import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
+import de.hbznrw.ygor.tools.DateToolkit
 import ygor.Record
 import ygor.field.Field
 import ygor.field.FieldKeyMapping
@@ -33,6 +34,8 @@ class KbartIntegrationService {
     if (owner.enrichment.isUpdate){
       lastUpdate = LocalDate.parse(DateNormalizer.getDateString(owner.enrichment.lastProcessingDate))
     }
+    // addOnly is to be set if there is at least one KBart line containing a valid date stamp
+    boolean addOnly = false
     TreeMap<String, String> item = reader.readItemData(null, null, lastUpdate)
     while (item != null) {
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
@@ -68,6 +71,11 @@ class KbartIntegrationService {
       log.debug("... added record ${record.displayTitle} to data container.")
       record.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
       owner.increaseProgress()
+      if (!addOnly){
+        if (null != DateToolkit.getAsLocalDate(item.get("last_changed"))){
+          addOnly = owner.enrichment.addOnly = true
+        }
+      }
       item = reader.readItemData(null, null, lastUpdate)
     }
     return

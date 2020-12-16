@@ -1,8 +1,12 @@
 package de.hbznrw.ygor.tools
 
+import de.hbznrw.ygor.normalizers.DateNormalizer
+import org.apache.commons.lang.StringUtils
+
 import java.text.SimpleDateFormat
 import groovy.time.TimeCategory
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -47,4 +51,15 @@ class DateToolkit {
   static String formatDate(LocalDateTime localDateTime, DateTimeFormatter formatter){
     return localDateTime.format(formatter)
   }
+
+
+  static LocalDate getAsLocalDate(String value) {
+    String dateString = DateNormalizer.getDateString(value)
+    LocalDate itemLastUpdate = null
+    if (!StringUtils.isEmpty(dateString)) {
+      itemLastUpdate = LocalDate.parse(dateString)
+    }
+    itemLastUpdate
+  }
+
 }

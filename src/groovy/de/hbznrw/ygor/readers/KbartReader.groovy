@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.readers
 
-import de.hbznrw.ygor.normalizers.DateNormalizer
+import de.hbznrw.ygor.tools.DateToolkit
+import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -9,9 +10,9 @@ import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
-import java.text.DateFormat
 import java.time.LocalDate
 
+@Log4j
 class KbartReader {
 
   static final IDENTIFIER = 'kbart'
@@ -141,8 +142,8 @@ class KbartReader {
     else{
       while (iterator.hasNext()) {
         def next = iterator.next()
-        LocalDate itemLastUpdate = LocalDate.parse(DateNormalizer.getDateString(next.get("last_changed")))
-        if (!itemLastUpdate.isBefore(lastPackageUpdate)){
+        LocalDate itemLastUpdate = DateToolkit.getAsLocalDate(next.get("last_changed"))
+        if (itemLastUpdate == null || !itemLastUpdate.isBefore(lastPackageUpdate)){
           return next
         }
       }
@@ -200,7 +201,8 @@ class KbartReader {
     if (null != configuration.quote) {
       if ('null' == configuration.quote) {
         csvFormat = csvFormat.withQuote(null)
-      } else {
+      }
+      else {
         csvFormat = csvFormat.withQuote((char) configuration.quote)
       }
     }

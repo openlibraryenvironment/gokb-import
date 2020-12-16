@@ -67,9 +67,16 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     }
     log.info("... exportFile: " + enrichment.resultHash + " -> " + uri)
     if (isUpdate){
-      result << GokbExporter.sendUpdate(uri.concat("/").concat(enrichment.dataContainer?.pkgHeader?.uuid), json.getText(), locale)
+      uri = uri.concat("/").concat(enrichment.dataContainer?.pkgHeader?.uuid)
+      if (enrichment.addOnly){
+        uri = uri.concat("&addOnly=true")
+      }
+      result << GokbExporter.sendUpdate(uri, json.getText(), locale)
     }
     else{
+      if (enrichment.addOnly){
+        uri = uri.concat("&addOnly=true")
+      }
       result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
     }
     gokbJobId = result[0].get("info")?.get("job_id")?.toString()
