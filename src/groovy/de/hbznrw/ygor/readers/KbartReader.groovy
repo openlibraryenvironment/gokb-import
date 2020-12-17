@@ -1,5 +1,7 @@
 package de.hbznrw.ygor.readers
 
+import de.hbznrw.ygor.tools.DateToolkit
+import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -8,6 +10,9 @@ import org.apache.commons.lang.StringUtils
 import ygor.field.FieldKeyMapping
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
+import java.time.LocalDate
+
+@Log4j
 class KbartReader {
 
   static final IDENTIFIER = 'kbart'
@@ -76,10 +81,11 @@ class KbartReader {
     iterator = csv.iterator()
   }
 
+
   // NOTE: should have been an override of AbstractReader.readItemData(), but the parameters are too different
-  Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
+  Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier, LocalDate lastUpdate) {
     // guess, the iterator is in the position to return the desired next record
-    CSVRecord next = getNext()
+    CSVRecord next = getNext(lastUpdate)
     if (next && (!identifier || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKeys == identifier))) {
       return returnItem(next)
     }
@@ -87,7 +93,7 @@ class KbartReader {
     CSVRecord currentRecord = next
     CSVRecord item
     while ({
-      item = getNext()
+      item = getNext(lastUpdate)
       if (item && item.get(fieldKeyMapping.kbartKeys == identifier)) {
         return returnItem(item)
       }
@@ -127,11 +133,22 @@ class KbartReader {
   }
 
 
-  CSVRecord getNext() {
-    if (iterator.hasNext()) {
-      return iterator.next()
+  CSVRecord getNext(LocalDate lastPackageUpdate) {
+    if (lastPackageUpdate == null || !csvHeader.contains("last_changed")){
+      if (iterator.hasNext()) {
+        return iterator.next()
+      }
     }
-    null
+    else{
+      while (iterator.hasNext()) {
+        def next = iterator.next()
+        LocalDate itemLastUpdate = DateToolkit.getAsLocalDate(next.get("last_changed"))
+        if (itemLastUpdate == null || !itemLastUpdate.isBefore(lastPackageUpdate)){
+          return next
+        }
+      }
+      null
+    }
   }
 
 
@@ -184,7 +201,8 @@ class KbartReader {
     if (null != configuration.quote) {
       if ('null' == configuration.quote) {
         csvFormat = csvFormat.withQuote(null)
-      } else {
+      }
+      else {
         csvFormat = csvFormat.withQuote((char) configuration.quote)
       }
     }

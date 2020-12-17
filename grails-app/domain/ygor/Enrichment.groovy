@@ -142,6 +142,7 @@ class Enrichment{
    * Ygor's central processing method.
    */
   def process(HashMap options, KbartReader kbartReader) throws Exception{
+    log.debug("Start processing enrichment ${originName}.")
     this.kbartReader = kbartReader
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')
@@ -154,6 +155,7 @@ class Enrichment{
 
 
   def stop(){
+    log.debug("Stop processing enrichment ${this.originName}.")
     thread.stopEnrichment()
   }
 
@@ -200,7 +202,7 @@ class Enrichment{
 
 
   void save(){
-    log.info("Saving enrichment...")
+    log.info("Saving enrichment with ${dataContainer?.records?.size()} records...")
     String result = asJson(true)
     File file = new File(enrichmentFolder.concat(File.separator).concat(resultHash))
     file.getParentFile().mkdirs()
@@ -436,6 +438,7 @@ class Enrichment{
 
 
   void enrollPlatformToRecords() {
+    // TODO: do this in one iteration to half loading and saving times
     enrollMappingToRecords("platformName", dataContainer?.pkgHeader?.nominalPlatform.name)
     enrollMappingToRecords("platformUrl", dataContainer?.pkgHeader?.nominalPlatform.url)
   }
@@ -483,7 +486,7 @@ class Enrichment{
       classifyRecord(record)
       record.save(enrichmentFolder, resultHash)
     }
-    log.debug("Classifying all records finished")
+    log.debug("Classifying all records finished with ${redRecords.size()} red, ${yellowRecords.size()} yellow and ${greenRecords.size()} green records.")
   }
 
 
