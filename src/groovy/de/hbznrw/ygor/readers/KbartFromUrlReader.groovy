@@ -2,7 +2,10 @@ package de.hbznrw.ygor.readers
 
 import de.hbznrw.ygor.tools.UrlToolkit
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
 import ygor.EnrichmentService
+
+import java.nio.file.Files
 
 class KbartFromUrlReader extends KbartReader{
 
@@ -38,12 +41,9 @@ class KbartFromUrlReader extends KbartReader{
       }
     }
     FileUtils.copyInputStreamToFile(new ByteArrayInputStream(content), file)
-    String fileData = file.getText()
-    init(fileData)
+    init(file)
     // copy content to local file
-    FileWriter fileWriter = new FileWriter(file)
-    fileWriter.write(fileData)
-    fileWriter.close()
+    Files.write(file.toPath(), content)
   }
 
 

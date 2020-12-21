@@ -116,9 +116,8 @@ class EnrichmentController implements ControllersHelper{
       return
     }
 
-    def recordSeparator = "none"        // = request.parameterMap['recordSeparator'][0]
     def addOnly = false
-    setInputFieldDataToLastUpdate(file, recordSeparator, addOnly)
+    setInputFieldDataToLastUpdate(file, null, addOnly)
 
     if (file.empty){
       flash.info = null
