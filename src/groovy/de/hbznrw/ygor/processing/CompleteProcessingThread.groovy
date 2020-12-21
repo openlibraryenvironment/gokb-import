@@ -4,6 +4,7 @@ import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
 import ygor.AutoUpdateService
 import ygor.Enrichment
 import ygor.EnrichmentService
@@ -62,6 +63,7 @@ class CompleteProcessingThread extends Thread {
       Enrichment enrichment
       try {
         enrichment = prepareEnrichment(token, sessionFolder, pkg, src)
+        log.info("Prepared enrichment ${enrichment.originName}.")
       }
       catch (Exception e) {
         e.printStackTrace()
@@ -106,8 +108,12 @@ class CompleteProcessingThread extends Thread {
     String pkgNominalPlatform = "${platformId};${platformName}".toString()
     String pkgNominalProvider = pkg.provider?.name
     String uuid = pkg.uuid
+    String lastUpdated = EnrichmentService.getLastRun(pkg)
+    if (lastUpdated != null){
+      addOnly = "true"
+    }
     enrichment = enrichmentService.setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,
-        pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform, pkgNominalProvider, updateToken, uuid)
+        pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform, pkgNominalProvider, updateToken, uuid, lastUpdated)
     return enrichment
   }
 

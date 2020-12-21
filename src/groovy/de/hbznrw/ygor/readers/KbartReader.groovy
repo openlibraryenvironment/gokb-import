@@ -1,13 +1,18 @@
 package de.hbznrw.ygor.readers
 
+import de.hbznrw.ygor.tools.DateToolkit
+import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.apache.commons.csv.QuoteMode
 import org.apache.commons.lang.StringUtils
-import ygor.field.FieldKeyMapping
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
+import java.time.LocalDate
+
+
+@Log4j
 class KbartReader {
 
   static final IDENTIFIER = 'kbart'
@@ -18,10 +23,8 @@ class KbartReader {
 
   private BufferedReader csvReader
   private CSVFormat csvFormat
-  private CSVParser csv
   private List<String> csvHeader
   Iterator<CSVRecord> csvRecords
-  private Iterator<CSVRecord> iterator
   private CSVRecord lastItemReturned
   String fileName
 
@@ -32,18 +35,22 @@ class KbartReader {
       'publication_type'
   ]
 
+
   static ALIASES = [
       'notes' : ['coverage_notes'],
       'zdb_id': ['zdb-id', 'ZDB_ID', 'ZDB-ID']
   ]
 
+
   KbartReader(){
     // not in use
   }
 
+
   KbartReader(def kbartFile) throws Exception{
     init(kbartFile)
   }
+
 
   protected void init(File kbartFile){
     // TODO : remove the BOM from the Data
@@ -109,11 +116,15 @@ class KbartReader {
 
 
   // NOTE: should have been an override of AbstractReader.readItemData(), but the parameters are too different
-  Map<String, String> readItemData() {
+  Map<String, String> readItemData(LocalDate lastPackageUpdate) {
     while (csvRecords.hasNext()){
       CSVRecord next = csvRecords.next()
-      Map<String, String> nextAsMap = returnItem(next)
-      if (nextAsMap != null) return nextAsMap
+      int i = csvHeader.indexOf("last_changed")
+      LocalDate itemLastUpdate = i > -1 ? DateToolkit.getAsLocalDate(next.get(i)) : null
+      if (itemLastUpdate == null || lastPackageUpdate == null || !itemLastUpdate.isBefore(lastPackageUpdate)) {
+        Map<String, String> nextAsMap = returnItem(next)
+        if (nextAsMap != null) return nextAsMap
+      }
     }
     return null
   }
@@ -192,7 +203,8 @@ class KbartReader {
     if (null != configuration.quote) {
       if ('null' == configuration.quote) {
         csvFormat = csvFormat.withQuote(null)
-      } else {
+      }
+      else {
         csvFormat = csvFormat.withQuote((char) configuration.quote)
       }
     }
@@ -207,6 +219,7 @@ class KbartReader {
     csvFormat = csvFormat.withIgnoreHeaderCase(true)
     this
   }
+
 
   static def resolver = [
       'comma'      : ',',

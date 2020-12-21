@@ -73,12 +73,12 @@ class MultipleProcessingThread extends Thread {
     if (null == enrichment.originPathName)
       System.exit(0)
     enrichment.setStatus(Enrichment.ProcessingState.WORKING)
-    log.info('Starting MultipleProcessingThread integrate... '.concat(String.valueOf(getId())))
+    log.info("Starting MultipleProcessingThread ${String.valueOf(getId())} run... ")
     try {
       ezbIntegrationService = new EzbIntegrationService(enrichment.mappingsContainer)
       zdbIntegrationService = new ZdbIntegrationService(enrichment.mappingsContainer)
       enrich()
-      log.info('Finished MultipleProcessingThread '.concat(String.valueOf(getId())).concat(' creating ')
+      log.info("... finished enriching in MultipleProcessingThread ${String.valueOf(getId())} creating "
           .concat(enrichment.dataContainer.records.size().toString()).concat(" records."))
     }
     catch (YgorProcessingException e) { // TODO Throw it in ...IntegrationService and / or ...Reader
@@ -86,13 +86,13 @@ class MultipleProcessingThread extends Thread {
       enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length() + 2))
       log.error(e.getMessage())
       log.error(e.printStackTrace())
-      log.error('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
+      log.error("Aborted MultipleProcessingThread ${String.valueOf(getId())} run")
       return
     }
     catch (Exception e) {
       enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
       log.error(e.getMessage())
-      log.error('Aborted MultipleProcessingThread '.concat(String.valueOf(getId())))
+      log.error("Aborted MultipleProcessingThread ${String.valueOf(getId())} run")
       def stacktrace = Throwables.getStackTraceAsString(e).replaceAll("\\p{C}", " ")
       enrichment.setMessage(stacktrace + " ..")
       return
@@ -104,6 +104,7 @@ class MultipleProcessingThread extends Thread {
     enrichment.classifyAllRecords()
     enrichment.save()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+    log.debug("Finished MultipleProcessingThread ${String.valueOf(getId())} run")
   }
 
   synchronized private void enrich(){

@@ -438,7 +438,7 @@ class EnrichmentService{
   Enrichment setupEnrichment(Enrichment enrichment, KbartReader kbartReader, String addOnly, def pmOptions,
                              String platformName, String platformUrl, def params, pkgTitleId,
                              String pkgTitle, String pkgCuratoryGroup, String pkgId, String pkgNominalPlatform,
-                             String pkgNominalProvider, String updateToken, String uuid){
+                             String pkgNominalProvider, String updateToken, String uuid, String lastUpdated){
     kbartReader.checkHeader()
     Map<String, Object> parameterMap = new HashMap<>()
     parameterMap.putAll(params)
@@ -455,6 +455,10 @@ class EnrichmentService{
     enrichment.dataContainer.pkgHeader.uuid = uuid
     enrichment.dataContainer.pkgHeader.nominalPlatform.name = platformName
     enrichment.dataContainer.pkgHeader.nominalPlatform.url = platformUrl
+    if (lastUpdated != null){
+      enrichment.lastProcessingDate = lastUpdated
+      enrichment.isUpdate = true
+    }
     enrichment
   }
 
@@ -466,6 +470,14 @@ class EnrichmentService{
     String[] value = new String[1]
     value[0] = parameterValue
     parameterMap.put(parameterName, value)
+  }
+
+
+  static String getLastRun(Map<String, Object> pkg){
+    if (!StringUtils.isEmpty(pkg._embedded.source.lastRun)){
+      return pkg._embedded.source.lastRun
+    }
+    return null
   }
 
 }

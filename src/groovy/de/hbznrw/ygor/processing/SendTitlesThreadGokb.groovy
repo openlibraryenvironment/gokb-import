@@ -20,18 +20,21 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
     result = []
     this.locale = locale
     status = UploadThreadGokb.Status.PREPARATION
+    log.info("Set up send titles upload thread with ${this.total} records.")
   }
 
 
   @Override
   void run(){
+    log.info("Starting titles upload thread ...")
     status = UploadThreadGokb.Status.STARTED
     for (def recId in enrichment.dataContainer.records){
       String titleText = GokbExporter.extractTitle(enrichment, recId, false)
-      log.info("export Record " + recId + " to " + uri)
+      log.info("... export Record " + recId + " to " + uri)
       result << GokbExporter.sendText(uri, titleText, user, password, locale)
       count ++
     }
+    log.info("Finished titles upload thread.")
   }
 
 

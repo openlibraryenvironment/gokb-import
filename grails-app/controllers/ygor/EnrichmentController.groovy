@@ -405,10 +405,13 @@ class EnrichmentController implements ControllersHelper{
     String pkgNominalProvider = pkg.get("provider")?.get("name")
     String updateToken = params.get('updateToken')
     String uuid = pkg.get("uuid")
-
+    String lastUpdated = EnrichmentService.getLastRun(pkg)
+    if (lastUpdated != null){
+      addOnly = "true"
+    }
     return enrichmentService.setupEnrichment(enrichment, enrichmentService.kbartReader, addOnly, pmOptions, platform.name,
         platform.primaryUrl, request.parameterMap, pkgTitleId, pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform,
-        pkgNominalProvider, updateToken, uuid)
+        pkgNominalProvider, updateToken, uuid, lastUpdated)
   }
 
 

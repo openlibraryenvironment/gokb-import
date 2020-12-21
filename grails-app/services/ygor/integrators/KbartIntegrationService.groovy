@@ -1,15 +1,19 @@
 package ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
+import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.readers.KbartReaderConfiguration
+import de.hbznrw.ygor.tools.DateToolkit
 import ygor.Record
 import ygor.field.Field
 import ygor.field.FieldKeyMapping
 import ygor.field.MappingsContainer
 import ygor.field.MultiField
 import ygor.identifier.AbstractIdentifier
+
+import java.time.LocalDate
 
 class KbartIntegrationService {
 
@@ -26,10 +30,16 @@ class KbartIntegrationService {
     KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
     List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
     List<AbstractIdentifier> identifiers
-    TreeMap<String, String> item = reader.readItemData()
+    LocalDate lastUpdate = null
+    if (owner.enrichment.isUpdate){
+      lastUpdate = LocalDate.parse(DateNormalizer.getDateString(owner.enrichment.lastProcessingDate))
+    }
+    // addOnly is to be set if there is at least one KBart line containing a valid date stamp
+    boolean addOnly = false
+    TreeMap<String, String> item = reader.readItemData(lastUpdate)
     while (item != null) {
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
-      log.debug(item.toString())
+      log.debug("Integrating KBart record ${item.toString()}")
       identifiers = []
       for (idMapping in idMappings) {
         for (key in idMapping.kbartKeys) {
@@ -58,9 +68,15 @@ class KbartIntegrationService {
       }
       record.publicationType = record.multiFields.get("publicationType").getFirstPrioValue().toLowerCase()
       dataContainer.addRecord(record)
+      log.debug("... added record ${record.displayTitle} to data container.")
       record.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
       owner.increaseProgress()
-      item = reader.readItemData()
+      if (!addOnly){
+        if (null != DateToolkit.getAsLocalDate(item.get("last_changed"))){
+          addOnly = owner.enrichment.addOnly = true
+        }
+      }
+      item = reader.readItemData(lastUpdate)
     }
     return
   }
