@@ -26,7 +26,7 @@ class KbartIntegrationService {
     KbartReader reader = owner.kbartReader.setConfiguration(kbartReaderConfiguration)
     List<FieldKeyMapping> idMappings = [owner.zdbKeyMapping, owner.issnKeyMapping, owner.eissnKeyMapping]
     List<AbstractIdentifier> identifiers
-    TreeMap<String, String> item = reader.readItemData(null, null)
+    TreeMap<String, String> item = reader.readItemData()
     while (item != null) {
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
       log.debug(item.toString())
@@ -60,7 +60,7 @@ class KbartIntegrationService {
       dataContainer.addRecord(record)
       record.save(dataContainer.enrichmentFolder, dataContainer.resultHash)
       owner.increaseProgress()
-      item = reader.readItemData(null, null)
+      item = reader.readItemData()
     }
     return
   }

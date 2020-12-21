@@ -16,9 +16,11 @@ class KbartReader {
   static final KBART_HEADER_PRINT_IDENTIFIER = "print_identifier"
   static final KBART_HEADER_DOI_IDENTIFIER = "doi_identifier"
 
+  private BufferedReader csvReader
   private CSVFormat csvFormat
   private CSVParser csv
   private List<String> csvHeader
+  Iterator<CSVRecord> csvRecords
   private Iterator<CSVRecord> iterator
   private CSVRecord lastItemReturned
   String fileName
@@ -40,63 +42,82 @@ class KbartReader {
   }
 
   KbartReader(def kbartFile) throws Exception{
-    InputStreamReader kbartFileReader = (kbartFile instanceof File) ?
-        new InputStreamReader(new FileInputStream(kbartFile)) :
-        new InputStreamReader(kbartFile.getInputStream())
-    String fileData = kbartFileReader.getText()
-    init(fileData)
+    init(kbartFile)
   }
 
-  protected void init(String fileData){
-    // remove the BOM from the Data
-    fileData = fileData.replace('\uFEFF', '')
+  protected void init(File kbartFile){
+    // TODO : remove the BOM from the Data
     // automatic delimiter adaptation by selection of the character with biggest count
+
+    BufferedReader bufferedReader = new BufferedReader(new FileReader(kbartFile))
+    String firstLine = bufferedReader.readLine()
+    char delimiterChar = calculateDelimiter(firstLine)
+    csvHeader = new ArrayList<String>()
+    csvHeader.addAll(firstLine.split(String.valueOf(delimiterChar)))
+    String lineSeparator = getLineSeparator(kbartFile)
+    csvReader = new BufferedReader(new FileReader(kbartFile), 1048576 * 10)
+    csvFormat = CSVFormat.RFC4180
+        .withDelimiter(delimiterChar)
+        .withEscape((char) "\\")
+        // .withFirstRecordAsHeader()
+        .withRecordSeparator(lineSeparator)
+    csvRecords = csvFormat.parse(bufferedReader).iterator()
+  }
+
+
+  private char calculateDelimiter(String line) {
     int maxCount = 0
     String delimiter
-    for (String prop : ['comma', 'semicolon', 'tab']){
-      int num = StringUtils.countMatches(fileData, resolver.get(prop).toString())
-      if (maxCount < num){
+    for (String prop : ['comma', 'semicolon', 'tab']) {
+      int num = StringUtils.countMatches(line, resolver.get(prop).toString())
+      if (maxCount < num) {
         maxCount = num
         delimiter = prop
       }
     }
     char delimiterChar = resolver.get(delimiter)
-    csvFormat = CSVFormat.EXCEL.withHeader().withIgnoreEmptyLines().withDelimiter(delimiterChar).withIgnoreSurroundingSpaces()
-    try{
-      csv = CSVParser.parse(fileData, csvFormat)
-    }
-    catch (IllegalArgumentException iae){
-      String duplicateName = iae.getMessage().minus("The header contains a duplicate name: \"")
-      duplicateName = duplicateName.substring(0, duplicateName.indexOf("\""))
-      throw new Exception(VALIDATION_TAG_LIB.message(code: 'error.kbart.multipleColumn').toString()
-          .replace("{}", duplicateName)
-          .concat("<br>").concat(VALIDATION_TAG_LIB.message(code: 'error.kbart.messageFooter').toString()))
-    }
-    csvHeader = csv.getHeaderMap().keySet() as ArrayList
-    iterator = csv.iterator()
+    delimiterChar
   }
 
-  // NOTE: should have been an override of AbstractReader.readItemData(), but the parameters are too different
-  Map<String, String> readItemData(FieldKeyMapping fieldKeyMapping, String identifier) {
-    // guess, the iterator is in the position to return the desired next record
-    CSVRecord next = getNext()
-    if (next && (!identifier || !fieldKeyMapping || next.get(fieldKeyMapping.kbartKeys == identifier))) {
-      return returnItem(next)
-    }
-    // otherwise, re-iterate over all entries
-    CSVRecord currentRecord = next
-    CSVRecord item
-    while ({
-      item = getNext()
-      if (item && item.get(fieldKeyMapping.kbartKeys == identifier)) {
-        return returnItem(item)
+
+  String getLineSeparator(File file) throws IOException {
+    char current
+    String lineSeparator = ""
+    FileInputStream fis = new FileInputStream(file)
+    try {
+      while (fis.available() > 0) {
+        current = (char) fis.read()
+        if ((current == '\n') || (current == '\r')) {
+          lineSeparator += current
+          if (fis.available() > 0) {
+            char next = (char) fis.read()
+            if ((next != current)
+                && ((next == '\r') || (next == '\n'))) {
+              lineSeparator += next
+            }
+          }
+          return lineSeparator
+        }
       }
-      // following: "do while" continue condition, see https://stackoverflow.com/a/46474198
-      item != currentRecord
-    }()) continue
-    null
-    // this last return statement should never be reached
+    } finally {
+      if (fis!=null) {
+        fis.close()
+      }
+    }
+    return null
   }
+
+
+  // NOTE: should have been an override of AbstractReader.readItemData(), but the parameters are too different
+  Map<String, String> readItemData() {
+    while (csvRecords.hasNext()){
+      CSVRecord next = csvRecords.next()
+      Map<String, String> nextAsMap = returnItem(next)
+      if (nextAsMap != null) return nextAsMap
+    }
+    return null
+  }
+
 
   private Map<String, String> returnItem(CSVRecord item) {
     if (!item) {
@@ -124,14 +145,6 @@ class KbartReader {
       resultMap.put("coverage_depth", "fulltext")
     }
     resultMap
-  }
-
-
-  CSVRecord getNext() {
-    if (iterator.hasNext()) {
-      return iterator.next()
-    }
-    null
   }
 
 
@@ -172,11 +185,6 @@ class KbartReader {
         }
       }
     }
-  }
-
-
-  private CSVParser getCSVParserFromReader(Reader reader) {
-    new CSVParser(reader, csvFormat)
   }
 
 
