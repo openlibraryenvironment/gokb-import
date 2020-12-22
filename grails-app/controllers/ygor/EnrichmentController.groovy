@@ -28,6 +28,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def process = {
+    SessionService.setSessionDuration(request, 3600)
     def namespace_list = gokbService.getNamespaceList()
     def namespace_doi_list = []
     def gokb_cgs = gokbService.getCuratoryGroupsList()
@@ -97,6 +98,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def uploadFile = {
+    SessionService.setSessionDuration(request, 3600)
     def file = request.getFile('uploadFile')
     if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
         request.parameterMap.uploadFileLabel[0] == request.session.lastUpdate?.file?.originalFilename){
@@ -179,6 +181,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def uploadUrl = {
+    SessionService.setSessionDuration(request, 3600)
     def urlString = request.parameterMap["uploadUrlText"][0]
     // validate
     if (!(new org.apache.commons.validator.routines.UrlValidator()).isValid(urlString)){
@@ -257,6 +260,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def uploadRawFile = {
+    SessionService.setSessionDuration(request, 3600)
     def file = request.getFile('uploadRawFile')
     Enrichment enrichment = Enrichment.fromZipFile(file, enrichmentService.sessionFolder.parentFile.absolutePath)
     enrichmentService.addSessionEnrichment(enrichment)
@@ -281,6 +285,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def prepareFile = {
+    SessionService.setSessionDuration(request, 3600)
     Enrichment enrichment = getCurrentEnrichment()
     enrichmentService.prepareFile(enrichment, request.parameterMap)
     enrichmentService.preparePackageHeader(enrichment, request.parameterMap)
@@ -304,6 +309,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processGokbPackage(){
+    SessionService.setSessionDuration(request, 72000)
     Map<String, String> result = [:]
     List<String> missingParams = []
     String pkgId = params.get('pkgId')
@@ -368,6 +374,7 @@ class EnrichmentController implements ControllersHelper{
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
   def processCompleteWithToken(){
+    SessionService.setSessionDuration(request, 72000)
     def result = [:]
     Enrichment enrichment = buildEnrichmentFromRequest()
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
@@ -463,6 +470,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processFile = {
+    SessionService.setSessionDuration(request, 72000)
     def en = getCurrentEnrichment()
     try{
       def pmOptions = request.parameterMap['processOption']
@@ -541,12 +549,14 @@ class EnrichmentController implements ControllersHelper{
 
 
   def stopProcessingFile = {
+    SessionService.setSessionDuration(request, 3600)
     getCurrentEnrichment().stop()
     deleteFile()
   }
 
 
   def deleteFile = {
+    SessionService.setSessionDuration(request, 3600)
     request.session.lastUpdate = [:]
     enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
     render(
@@ -560,6 +570,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def correctFile = {
+    SessionService.setSessionDuration(request, 3600)
     enrichmentService.deleteFileAndFormat(getCurrentEnrichment())
     render(
         view: 'process',

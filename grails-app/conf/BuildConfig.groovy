@@ -79,3 +79,19 @@ grails.project.dependency.resolution = {
     runtime "org.grails.plugins:grails-datatables:0.15"
   }
 }
+
+/*
+ * Commented out when introducing SessionService.setSessionDuration().
+ * Has formerly been part of Config.groovy , but according to
+ * https://stackoverflow.com/questions/2907516/how-to-configure-a-session-timeout-for-grails-application/18494029#comment51360045_18494029
+ * BuildConfig is the right place.
+ *
+// added for https://github.com/hbz/laser-ygor/issues/53
+//       according to https://stackoverflow.com/a/18494029/4420271 Timeout is set to 16 hours.
+//       This workaround solution is preferred to others for being versionable most easily.
+grails.war.resources = { stagingDir, args ->
+  def webXML = new java.io.File("${stagingDir}/WEB-INF/web.xml")
+  webXML.text = webXML.text.replaceFirst("<session-timeout>30</session-timeout>", "<session-timeout>960</session-timeout>")
+}
+*/
+
