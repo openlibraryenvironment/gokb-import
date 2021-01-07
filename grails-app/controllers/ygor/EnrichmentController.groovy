@@ -203,6 +203,7 @@ class EnrichmentController implements ControllersHelper{
     String kbartFileName = KbartFromUrlReader.urlStringToFileString(urlString)
     Enrichment enrichment = Enrichment.fromFilename(kbartFileName)
     enrichment.addOnly = false
+    enrichment.markDuplicates = true
     enrichment.processingOptions = null
     enrichment.locale = request.locale
     try {

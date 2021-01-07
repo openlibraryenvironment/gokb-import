@@ -74,6 +74,8 @@ class Enrichment{
   boolean isEzbIntegrated
   boolean autoUpdate                // shall be auto-updated in future times
   boolean isUpdate                  // this enrichment is part of an update
+  boolean markDuplicates            // is only necessary when the process is triggered by Ygor UI
+                                    // possible TODO: gokb-ui might need this field in future times
 
   def thread
   KbartReader kbartReader
@@ -105,11 +107,13 @@ class Enrichment{
     autoUpdate = false
     isUpdate = false
     transferredFile = null
+    markDuplicates = false
   }
 
 
   static Enrichment fromCommonsMultipartFile(CommonsMultipartFile file){
     Enrichment en = fromFilename(file.originalFilename)
+    en.markDuplicates = true
     en.transferredFile = new File(en.originPathName)
     file.transferTo(en.transferredFile)
     return en
@@ -221,6 +225,8 @@ class Enrichment{
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
     result.append("\"autoUpdate\":\"").append(String.valueOf(autoUpdate)).append("\",")
+    result.append("\"isUpdate\":\"").append(String.valueOf(isUpdate)).append("\",")
+    result.append("\"markDuplicates\":\"").append(String.valueOf(markDuplicates)).append("\",")
     result.append("\"enrichmentFolder\":\"").append(enrichmentFolder).append("\",")
     String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
     if (pn){
@@ -301,6 +307,8 @@ class Enrichment{
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
     en.autoUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "autoUpdate"))
+    en.isUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "isUpdate"))
+    en.markDuplicates = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "markDuplicates"))
     en.enrichmentFolder = JsonToolkit.fromJson(rootNode, "enrichmentFolder")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
     en.resultName = FileToolkit.getDateTimePrefixedFileName(originalFileName)

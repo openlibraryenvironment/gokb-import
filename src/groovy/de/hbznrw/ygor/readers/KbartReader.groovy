@@ -53,10 +53,8 @@ class KbartReader {
 
 
   protected void init(File kbartFile){
-    // TODO : remove the BOM from the Data
     // automatic delimiter adaptation by selection of the character with biggest count
-
-    BufferedReader bufferedReader = new BufferedReader(new FileReader(kbartFile))
+    BufferedReader bufferedReader = removeBOM(new BufferedReader(new FileReader(kbartFile)))
     String firstLine = bufferedReader.readLine()
     char delimiterChar = calculateDelimiter(firstLine)
     csvHeader = new ArrayList<String>()
@@ -69,6 +67,16 @@ class KbartReader {
         // .withFirstRecordAsHeader()
         .withRecordSeparator(lineSeparator)
     csvRecords = csvFormat.parse(bufferedReader).iterator()
+  }
+
+
+  private BufferedReader removeBOM(BufferedReader bufferedReader){
+    PushbackReader pushbackReader = new PushbackReader(bufferedReader)
+    int c = pushbackReader.read()
+    if(c != 0xFEFF) {
+      pushbackReader.unread(c)
+    }
+    return new BufferedReader(pushbackReader)
   }
 
 
