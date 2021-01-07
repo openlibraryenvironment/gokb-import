@@ -100,7 +100,9 @@ class MultipleProcessingThread extends Thread {
 
     enrichment.enrollPlatformToRecords()
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
-    enrichment.dataContainer.markDuplicateIds()
+    if (enrichment.markDuplicates) {
+      enrichment.dataContainer.markDuplicateIds()
+    }
     enrichment.classifyAllRecords()
     enrichment.save()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
