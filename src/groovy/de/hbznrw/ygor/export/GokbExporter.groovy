@@ -548,6 +548,7 @@ class GokbExporter {
     if (user != null && password != null){
       http.auth.basic user, password
     }
+    log.info("...sending text ${text.substring(0, text.length() > 50 ? 50 : text.length())}")
     http.request(Method.POST, ContentType.JSON){ request ->
       headers.'User-Agent' = 'ygor'
       headers.'Accept-Language' = locale
@@ -582,6 +583,7 @@ class GokbExporter {
 
   static Map sendUpdate(@Nonnull String url, @Nonnull String text, @Nonnull String locale){
     def http = new HTTPBuilder(url)
+    log.info("...sending update ${text.substring(0, text.length() > 50 ? 50 : text.length())}")
     http.request(Method.POST, ContentType.JSON){ request ->
       headers.'User-Agent' = 'ygor'
       headers.'Accept-Language' = locale
