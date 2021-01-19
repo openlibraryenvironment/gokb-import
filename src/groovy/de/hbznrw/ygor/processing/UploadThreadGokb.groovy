@@ -39,6 +39,11 @@ abstract class UploadThreadGokb extends Thread{
       }
       if (count >= total){
         status = Status.SUCCESS
+        return
+      }
+      if ("ok" == responseStatus && "true" == getGokbResponseValue("finished", false)){
+        status = Status.SUCCESS
+        return
       }
     }
   }
