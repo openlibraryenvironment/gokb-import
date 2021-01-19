@@ -36,7 +36,7 @@ class KbartIntegrationService {
     }
     // addOnly is to be set if there is at least one KBart line containing a valid date stamp
     boolean addOnly = false
-    Map<String, String> item = reader.readItemData(lastUpdate)
+    TreeMap<String, String> item = reader.readItemData(lastUpdate)
     while (item != null) {
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
       log.debug("Integrating KBart record ${item.toString()}")
