@@ -131,7 +131,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.dateFirstOnline"]
+      "gokb" : ["$TITLE.dateFirstOnline", "$TIPP.dateFirstOnline"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -151,7 +151,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.dateFirstInPrint"]
+      "gokb" : ["$TITLE.dateFirstInPrint", "$TIPP.dateFirstInPrint"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -920,7 +920,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.name"]
+      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.name", "$TIPP.publisherName"]
     },
     "order" : ["kbart", "zdb"],
     "type" : "String",
