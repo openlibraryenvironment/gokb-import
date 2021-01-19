@@ -2,6 +2,7 @@ package de.hbznrw.ygor.normalizers
 
 
 import groovy.util.logging.Log4j
+import org.apache.commons.lang.StringUtils
 import ygor.identifier.OnlineIdentifier
 
 import java.util.regex.Pattern
@@ -27,7 +28,7 @@ class IdentifierNormalizer {
         str = str.replaceAll("x\$", "X")
       }
     }
-    else if (type.equals("zdbId")) {
+    else if (type.equals("zdbId") && !StringUtils.isEmpty(str)) {
       str = new StringBuilder(str.replaceAll("x", "X")).insert(Math.abs(str.length() - 1).toInteger(), "-").toString()
     }
     else if (type.equals("ezbId")) {
