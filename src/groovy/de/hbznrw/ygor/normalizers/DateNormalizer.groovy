@@ -99,7 +99,9 @@ class DateNormalizer {
       else if (date.matches(YEAR_MM_DD_HH_mm_SS)){
         format = YYYY_MM_DD_HH_mm_SS
       }
-      return new Date(format.parse(date).getTime())
+      if (format != null){
+        return new Date(format.parse(date).getTime())
+      }
     }
     catch (Exception exception) {
       log.error("Could not parse ".concat(date).concat(" as Date. Exception: ").concat(exception.getMessage()))
