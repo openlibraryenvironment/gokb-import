@@ -24,7 +24,7 @@ class CompleteProcessingThread extends Thread {
   String token
   String addOnly
   UploadJobFrame uploadJobFrame
-  String localFile
+  File localFile
 
   /**
    * used by EnrichmentController.processGokbPackage()
@@ -34,7 +34,7 @@ class CompleteProcessingThread extends Thread {
    * @param token
    */
   CompleteProcessingThread(KbartReader kbartReader, Map<String, Object> pkg, Map<String, Object> src, String token,
-      UploadJobFrame uploadJobFrame, String file, def addOnly){
+      UploadJobFrame uploadJobFrame, File file, def addOnly){
     enrichmentService = new EnrichmentService()
     this.kbartReader = kbartReader
     this.pkg = pkg
@@ -93,10 +93,8 @@ class CompleteProcessingThread extends Thread {
       }
     }
     else {
-      File transferredFile = new File(localFile)
-
-      kbartReader = enrichmentService.kbartReader = new KbartReader(transferredFile)
-      kbartReader.fileName = localFile
+      kbartReader = enrichmentService.kbartReader = new KbartReader(localFile)
+      kbartReader.fileName = localFile.toString()
       Enrichment enrichment
 
       try {

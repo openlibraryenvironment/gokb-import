@@ -340,7 +340,6 @@ class EnrichmentController implements ControllersHelper{
     if (mpFile) {
       File transferredFile = new File(sessionFolder, pkg.name)
       FileUtils.writeByteArrayToFile(transferredFile, mpFile.getBytes())
-      attachedFilePath = transferredFile.toString()
     }
 
     if (MapUtils.isEmpty(pkg)){
@@ -356,7 +355,7 @@ class EnrichmentController implements ControllersHelper{
     else{
       UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
       CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token,
-          uploadJobFrame, attachedFilePath, addOnly)
+          uploadJobFrame, transferredFile, addOnly)
       try {
         completeProcessingThread.start()
         result.status = UploadThreadGokb.Status.STARTED.toString()
