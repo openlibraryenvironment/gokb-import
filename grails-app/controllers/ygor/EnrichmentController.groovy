@@ -321,6 +321,7 @@ class EnrichmentController implements ControllersHelper{
     CommonsMultipartFile mpFile = params.localFile ? request.getFile('uploadFile') : null
     String addOnly = params.addOnly
     String pkgId = params.get('pkgId')
+    File transferredFile = null
     if (StringUtils.isEmpty(pkgId)){
       missingParams.add("pkgId")
     }
@@ -338,7 +339,7 @@ class EnrichmentController implements ControllersHelper{
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
 
     if (mpFile) {
-      File transferredFile = new File(sessionFolder, pkg.name)
+      transferredFile = new File(sessionFolder, pkg.name)
       FileUtils.writeByteArrayToFile(transferredFile, mpFile.getBytes())
     }
 
