@@ -79,7 +79,9 @@ class MultiField {
       return [normalized]
     }
     if (keyMapping == null) {
-      return fields
+      List result = new ArrayList()
+      result.addAll(fields.collect{ field -> field.getValue() })
+      return result
     }
     if (keyMapping.valIsFix) {
       return [extractFixedValue(keyMapping.val)]
