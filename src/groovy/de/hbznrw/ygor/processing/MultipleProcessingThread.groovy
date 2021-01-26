@@ -70,8 +70,10 @@ class MultipleProcessingThread extends Thread {
   void run(){
     isRunning = true
     progressCurrent = 0.0
-    if (null == enrichment.originPathName)
+    if (null == enrichment.originPathName) {
+      log.error("Missing originPathName! Exiting..")
       System.exit(0)
+    }
     enrichment.setStatus(Enrichment.ProcessingState.WORKING)
     log.info("Starting MultipleProcessingThread ${String.valueOf(getId())} run... ")
     try {
