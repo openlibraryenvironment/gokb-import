@@ -11,9 +11,14 @@ import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
 import java.time.LocalDate
 
+import ygor.EnrichmentService
 
 @Log4j
 class KbartReader {
+
+  EnrichmentService enrichmentService = new EnrichmentService()
+
+  def messageSource = grails.util.Holders.applicationContext.getBean("messageSource")
 
   static final IDENTIFIER = 'kbart'
   static final KBART_HEADER_ZDB_ID = "zdb_id"

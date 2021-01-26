@@ -7,6 +7,8 @@ import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
 import groovy.util.logging.Log4j
 import org.apache.commons.collections.MapUtils
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
@@ -311,9 +313,15 @@ class EnrichmentController implements ControllersHelper{
 
   def processGokbPackage(){
     SessionService.setSessionDuration(request, 72000)
+    String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
+        .concat(File.separator).concat(UUID.randomUUID().toString())
     Map<String, String> result = [:]
     List<String> missingParams = []
+    String attachedFilePath = null
+    CommonsMultipartFile mpFile = params.localFile ? request.getFile('uploadFile') : null
+    String addOnly = params.addOnly
     String pkgId = params.get('pkgId')
+    File transferredFile = null
     if (StringUtils.isEmpty(pkgId)){
       missingParams.add("pkgId")
     }
@@ -329,6 +337,12 @@ class EnrichmentController implements ControllersHelper{
 
     Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
+
+    if (mpFile) {
+      transferredFile = new File(sessionFolder, pkg.name)
+      FileUtils.writeByteArrayToFile(transferredFile, mpFile.getBytes())
+    }
+
     if (MapUtils.isEmpty(pkg)){
       result.status = UploadThreadGokb.Status.ERROR.toString()
       response.status = 404
@@ -342,7 +356,7 @@ class EnrichmentController implements ControllersHelper{
     else{
       UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
       CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token,
-          uploadJobFrame)
+          uploadJobFrame, transferredFile, addOnly)
       try {
         completeProcessingThread.start()
         result.status = UploadThreadGokb.Status.STARTED.toString()
