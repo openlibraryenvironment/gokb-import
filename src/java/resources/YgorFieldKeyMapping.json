@@ -131,7 +131,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.dateFirstOnline", "$TIPP.dateFirstOnline"]
+      "gokb" : ["$TITLE.dateFirstOnline", "$TIPP.title.dateFirstOnline"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -151,7 +151,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.dateFirstInPrint", "$TIPP.dateFirstInPrint"]
+      "gokb" : ["$TITLE.dateFirstInPrint", "$TIPP.title.dateFirstInPrint"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -191,9 +191,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
-        "$TITLE.editionNumber"
-      ]
+      "gokb" : ["$TITLE.editionNumber", "$TIPP.title.editionNumber"]
     },
     "order" : ["kbart"],
     "type" : "Number",
@@ -253,7 +251,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.firstAuthor"]
+      "gokb" : ["$TITLE.firstAuthor", "$TIPP.title.firstAuthor"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -273,7 +271,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.firstEditor"]
+      "gokb" : ["$TITLE.firstEditor","$TIPP.title.firstEditor"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -293,7 +291,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:gokb,value)"]
+      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:gokb,value)", "$TIPP.title.identifiers.$ARRAY.(type:gokb,value)"]
     },
     "order" : ["kbart"],
     "type" : "ID",
@@ -505,7 +503,10 @@
       "gokb" : [
         "$TITLE.monographEdition",
         "$TITLE.editionDifferentiator",
-        "$TITLE.editionStatement"
+        "$TITLE.editionStatement",
+        "$TIPP.title.monographEdition",
+        "$TIPP.title.editionDifferentiator",
+        "$TIPP.title.editionStatement"
       ]
     },
     "order" : ["kbart"],
@@ -526,7 +527,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.monographVolume", "$TITLE.volumeNumber"]
+      "gokb" : ["$TITLE.monographVolume", "$TITLE.volumeNumber", "$TIPP.title.monographVolume", "$TIPP.title.volumeNumber"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -838,7 +839,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publishedFrom"]
+      "gokb" : ["$TITLE.publishedFrom","$TIPP.title.publishedFrom"]
     },
     "order" : ["zdb"],
     "type" : "StartDate",
@@ -858,7 +859,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publishedTo"]
+      "gokb" : ["$TITLE.publishedTo","$TIPP.title.publishedTo"]
     },
     "order" : ["zdb"],
     "type" : "EndDate",
@@ -878,7 +879,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.endDate"],
+      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.endDate"],
       "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
@@ -899,7 +900,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.startDate"],
+      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.startDate"],
       "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
@@ -920,7 +921,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.name", "$TIPP.publisherName"]
+      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.name", "$TIPP.publisherName"]
     },
     "order" : ["kbart", "zdb"],
     "type" : "String",
@@ -940,7 +941,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.place"]
+      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.place"]
     },
     "order" : ["zdb"],
     "type" : "String",
@@ -980,7 +981,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.shortcode"]
+      "gokb" : ["$TITLE.shortcode","$TIPP.title.shortcode"]
     },
     "order" : ["zdb"],
     "type" : "String",
