@@ -26,7 +26,6 @@ class EzbReader extends AbstractReader {
   List<Map<String, List<String>>> readItemData(String queryString) {
     List<Map<String, List<String>>> result = new ArrayList<>()
     try {
-      log.info("query EZB: " + queryString)
       String text = new URL(queryString).getText()
       def records = new XmlSlurper().parseText(text).depthFirst().findAll { it.name() == 'title' }
       if (records) {
