@@ -4,15 +4,13 @@ import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
-import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringUtils
-import org.springframework.web.multipart.commons.CommonsMultipartFile
 import ygor.AutoUpdateService
 import ygor.Enrichment
 import ygor.EnrichmentService
 import ygor.UploadJob
 import ygor.UploadJobFrame
 import ygor.field.MappingsContainer
+
 
 @Log4j
 class CompleteProcessingThread extends Thread {
@@ -44,6 +42,7 @@ class CompleteProcessingThread extends Thread {
     this.localFile = file
     this.addOnly
   }
+
 
   @Override
   void run() throws Exception {
@@ -80,7 +79,7 @@ class CompleteProcessingThread extends Thread {
           continue
         }
         enrichment.originPathName = kbartReader.fileName
-        UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
+        UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, true)
         enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
         if (uploadJob == null){
           log.error("Could not upload processed package ${pkg.id} with uuid ${pkg.uuid}")

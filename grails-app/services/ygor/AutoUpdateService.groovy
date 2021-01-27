@@ -61,12 +61,14 @@ class AutoUpdateService {
     log.info("Start automatic update for : ".concat(updateConfiguration.absolutePath))
     Enrichment enrichment = Enrichment.fromRawJson(JsonToolkit.jsonNodeFromFile(updateConfiguration), false)
     enrichment.isUpdate = true
+    enrichment.needsPreciseClassification = false
     processUpdate(enrichment)
   }
 
 
   static void processUpdate(Enrichment enrichment) throws Exception{
     enrichment.isUpdate = true
+    enrichment.needsPreciseClassification = false
     UploadJob uploadJob = ENRICHMENT_SERVICE.buildCompleteUpdateProcess(enrichment)
     ENRICHMENT_CONTROLLER.watchUpload(uploadJob, Enrichment.FileType.PACKAGE_WITH_TITLEDATA, enrichment.resultName)
   }
