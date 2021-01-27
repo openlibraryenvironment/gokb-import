@@ -3,6 +3,7 @@ package ygor.field
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import de.hbznrw.ygor.enums.Status
 import org.apache.commons.lang.StringUtils
 
 class FieldKeyMapping {
@@ -22,7 +23,7 @@ class FieldKeyMapping {
   boolean valIsFix
   boolean keepIfEmpty
   List<String> sourcePrio = MappingsContainer.DEFAULT_SOURCE_PRIO
-  Map<String, Map<String, String>> flags = [:]
+  Map<String, Map<String, Status>> flags = [:]
 
   static constraints = {
     ygorKey nullable: false
@@ -143,12 +144,12 @@ class FieldKeyMapping {
   private void addFlag(def mapping){
     if (mapping.key in VALID_FLAG_TYPES){
       for (def entry in mapping.value){
-        HashMap existing = flags.get(mapping.key)
+        HashMap<String, Status> existing = flags.get(mapping.key)
         if (existing == null){
           existing = [:]
         }
         for (def pair in entry){
-          existing.put(pair.key, pair.value)
+          existing.put(pair.key, Status.valueOf(pair.value.toUpperCase()))
         }
         flags.put(mapping.key, existing)
       }
@@ -156,7 +157,7 @@ class FieldKeyMapping {
   }
 
 
-  String getFlag(String validity, String publicationType){
+  Status getFlag(String validity, String publicationType){
     return flags.get(validity)?.get(publicationType)
   }
 
@@ -260,7 +261,7 @@ class FieldKeyMapping {
       jsonGenerator.writeFieldName(flag.key)
       jsonGenerator.writeStartObject()
       for (pair in flag.value){
-        jsonGenerator.writeStringField(pair.key, pair.value)
+        jsonGenerator.writeStringField(pair.key, pair.value.toString())
       }
       jsonGenerator.writeEndObject()
     }

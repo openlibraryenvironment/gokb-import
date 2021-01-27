@@ -15,6 +15,8 @@ enum Status {
   WARNING("warning"),
   MISSING("missing"),
   MISMATCH("mismatch"),
+  ERROR("error"),
+  OK("ok"),
 
   // parsing crap
   REMOVE_FLAG("remove_flag")

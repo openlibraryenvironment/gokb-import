@@ -179,7 +179,7 @@ class MultiField {
     if (keyMapping == null){
       return false
     }
-    return "error".equals(keyMapping.getFlag(status, publicationType))
+    return Status.ERROR.equals(keyMapping.getFlag(status, publicationType))
   }
 
 
@@ -187,7 +187,7 @@ class MultiField {
     if (keyMapping == null){
       return false
     }
-    return "warning".equals(keyMapping.getFlag(status, publicationType))
+    return Status.WARNING.equals(keyMapping.getFlag(status, publicationType))
   }
 
 
@@ -196,7 +196,7 @@ class MultiField {
       // fields without a key mapping cannot be evaluated
       return true
     }
-    return "ok".equals(keyMapping.getFlag(status, publicationType))
+    return Status.OK.equals(keyMapping.getFlag(status, publicationType))
   }
 
 
