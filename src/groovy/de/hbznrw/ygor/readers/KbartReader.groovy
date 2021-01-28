@@ -86,6 +86,7 @@ class KbartReader {
 
 
   private char calculateDelimiter(String line) {
+    log.debug("Getting delimiter for line: ${line}")
     int maxCount = 0
     String delimiter
     for (String prop : ['comma', 'semicolon', 'tab']) {

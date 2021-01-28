@@ -87,6 +87,9 @@ class JsonToolkit {
       if (multiField.keyMapping == null) {
         def value = multiField.getFirstPrioValue()
         ArrayList concatKey = new ArrayList<>(typeFilter)
+        if (concatKey.size() == 2 && concatKey.contains("\$TITLE")  && concatKey.contains("\$TIPP")){
+          concatKey.remove("\$TITLE")
+        }
         Iterator it = multiField.fields.iterator()
         if (it.hasNext()){
           concatKey.addAll(it.next().key)
