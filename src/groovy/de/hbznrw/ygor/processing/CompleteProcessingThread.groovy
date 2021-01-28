@@ -4,9 +4,6 @@ import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
-import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringUtils
-import org.springframework.web.multipart.commons.CommonsMultipartFile
 import ygor.AutoUpdateService
 import ygor.Enrichment
 import ygor.EnrichmentService
