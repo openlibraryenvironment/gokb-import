@@ -9,10 +9,6 @@ import java.nio.file.Files
 
 class KbartFromUrlReader extends KbartReader{
 
-  EnrichmentService enrichmentService = new EnrichmentService()
-
-  def messageSource = grails.util.Holders.applicationContext.getBean("messageSource")
-
   KbartFromUrlReader(URL url, File sessionFolder, Locale locale) throws Exception{
     HttpURLConnection connection
     try {
@@ -28,6 +24,7 @@ class KbartFromUrlReader extends KbartReader{
     // connection.setConnectTimeout(2000)
     // connection.setReadTimeout(30000)
     connection = UrlToolkit.resolveRedirects(connection, 5)
+    log.debug("Final URL after redirects: ${connection.getURL()}")
     byte[] content = getByteContent(connection.getInputStream())
     InputStream inputStream = new ByteArrayInputStream(content)
     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){

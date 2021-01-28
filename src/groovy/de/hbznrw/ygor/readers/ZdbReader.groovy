@@ -26,7 +26,6 @@ class ZdbReader extends AbstractReader {
   @Override
   List<Map<String, List<String>>> readItemData(String queryString){
     List<Map<String, List<String>>> result = new ArrayList<>()
-    log.info("query ZDB: " + queryString)
     String text = new URL(queryString).getText()
     def xml = XMLPARSER.parseText(text)
     List<Node> records = xml.get("records")

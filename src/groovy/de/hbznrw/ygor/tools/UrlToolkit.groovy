@@ -167,6 +167,9 @@ class UrlToolkit {
         if (urlExists(url)){
           result.add(url)
         }
+        else {
+          log.debug("Unable to reach specified URL ${url}")
+        }
       }
     }
     return result

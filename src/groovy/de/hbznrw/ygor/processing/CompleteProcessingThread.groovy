@@ -49,7 +49,9 @@ class CompleteProcessingThread extends Thread {
         .concat(File.separator).concat(UUID.randomUUID().toString())
 
     if (!localFile) {
+      log.info("Checking for usable URLs..")
       Locale locale = new Locale("en")                                    // TODO get from request or package
+      boolean proceeding = false
       List<URL> updateUrls
       if (Integer.valueOf(pkg._tippCount) == 0){
         // this is obviously a new package --> update with older timestamp
@@ -60,33 +62,56 @@ class CompleteProcessingThread extends Thread {
         // this package had already been filled with data
         updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
       }
+      log.info("Got ${updateUrls}")
+
       updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
       Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
-      while(urlsIterator.hasPrevious()){
-        URL url = urlsIterator.previous()
-        kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
-        Enrichment enrichment
-        try {
-          enrichment = prepareEnrichment(token, sessionFolder, pkg, src, "false")
-          log.info("Prepared enrichment ${enrichment.originName}.")
+
+      if (updateUrls.size() > 0) {
+        while(urlsIterator.hasPrevious()){
+          URL url = urlsIterator.previous()
+          try {
+            kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
+          }
+          catch (Exception e) {
+            e.printStackTrace()
+            log.error("ERROR while trying to read file!")
+            continue
+          }
+
+          Enrichment enrichment
+          try {
+            enrichment = prepareEnrichment(token, sessionFolder, pkg, src, "false")
+            log.info("Prepared enrichment ${enrichment.originName}.")
+          }
+          catch (Exception e) {
+            e.printStackTrace()
+            log.error("Could not build enrichment for package ${pkg.id} with uuid ${pkg.uuid}")
+            uploadJobFrame
+            continue
+          }
+          enrichment.originPathName = kbartReader.fileName
+          UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
+          enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
+          if (uploadJob == null){
+            log.error("Could not upload processed package ${pkg.id} with uuid ${pkg.uuid}")
+            continue
+          }
+          else{
+            // successfully proceeded upload
+            proceeding = true
+            break
+          }
         }
-        catch (Exception e) {
-          e.printStackTrace()
-          log.error("Could not build enrichment for package ${pkg.id} with uuid ${pkg.uuid}")
-          uploadJobFrame
-          continue
+
+        if (!proceeding) {
+          log.info("All valid URLs produced errors.")
+          uploadJobFrame.status = UploadThreadGokb.Status.ERROR
         }
-        enrichment.originPathName = kbartReader.fileName
-        UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
-        enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
-        if (uploadJob == null){
-          log.error("Could not upload processed package ${pkg.id} with uuid ${pkg.uuid}")
-          continue
-        }
-        else{
-          // successfully proceeded upload
-          break
-        }
+      }
+      else {
+        log.info("No usable URLs, skipping job!")
+        uploadJobFrame.status = UploadThreadGokb.Status.FINISHED_UNDEFINED
       }
     }
     else {
