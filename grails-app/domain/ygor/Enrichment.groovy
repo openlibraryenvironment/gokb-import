@@ -139,9 +139,6 @@ class Enrichment{
   }
 
 
-
-
-
   /**
    * Ygor's central processing method.
    */
@@ -153,7 +150,6 @@ class Enrichment{
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
     thread = new MultipleProcessingThread(this, options, kbartReader)
-    lastProcessingDate = LocalDateTime.now().toString()
     thread.start()
   }
 
