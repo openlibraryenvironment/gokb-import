@@ -74,6 +74,7 @@ class Enrichment{
   boolean isEzbIntegrated
   boolean autoUpdate                // shall be auto-updated in future times
   boolean isUpdate                  // this enrichment is part of an update
+  boolean needsPreciseClassification// this enrichment is part of an Ygor or gokb-ui triggered process
   boolean markDuplicates            // is only necessary when the process is triggered by Ygor UI
                                     // possible TODO: gokb-ui might need this field in future times
 
@@ -106,6 +107,7 @@ class Enrichment{
     isEzbIntegrated = false
     autoUpdate = false
     isUpdate = false
+    needsPreciseClassification = true
     transferredFile = null
     markDuplicates = false
   }
@@ -222,6 +224,7 @@ class Enrichment{
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
     result.append("\"autoUpdate\":\"").append(String.valueOf(autoUpdate)).append("\",")
     result.append("\"isUpdate\":\"").append(String.valueOf(isUpdate)).append("\",")
+    result.append("\"needsPreciseClassification\":\"").append(String.valueOf(needsPreciseClassification)).append("\",")
     result.append("\"markDuplicates\":\"").append(String.valueOf(markDuplicates)).append("\",")
     result.append("\"enrichmentFolder\":\"").append(enrichmentFolder).append("\",")
     String pn = packageName ? packageName : dataContainer.packageHeader?.name?.asText()
@@ -304,6 +307,7 @@ class Enrichment{
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
     en.autoUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "autoUpdate"))
     en.isUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "isUpdate"))
+    en.needsPreciseClassification = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "needsPreciseClassification"))
     en.markDuplicates = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "markDuplicates"))
     en.enrichmentFolder = JsonToolkit.fromJson(rootNode, "enrichmentFolder")
     en.mappingsContainer = JsonToolkit.fromJson(rootNode, "configuration.mappingsContainer")
@@ -506,15 +510,16 @@ class Enrichment{
         valOrEmpty(record.uid)
     ]
     if (record.isValid()){
-      if (record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
-          record.duplicates.isEmpty() &&
-          (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null) &&
-          !record.hasFlagOfColour(RecordFlag.Colour.YELLOW)){
+      if (needsPreciseClassification && record.multiFields.get("titleUrl").isCorrect(record.publicationType) &&
+          record.duplicates.isEmpty() && (!record.publicationType.equals("serial") || record.zdbIntegrationUrl != null)
+          && !record.hasFlagOfColour(RecordFlag.Colour.YELLOW)){
         greenRecords.put(key, values)
         yellowRecords.remove(key)
         redRecords.remove(key)
       }
       else{
+        // Note: if this process is not triggered by an UI with a view of processed results, there is no need and no use
+        // in showing differences between green and yellow records. Hence, they are all classified as yellow.
         yellowRecords.put(key, values)
         greenRecords.remove(key)
         redRecords.remove(key)

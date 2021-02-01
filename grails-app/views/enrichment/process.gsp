@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <g:render template="messages"/>
 
     <g:render template="processInfo"/>
 

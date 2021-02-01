@@ -311,9 +311,9 @@ class EnrichmentService{
    * used by EnrichmentController --> processCompleteWithToken
    */
   UploadJob processComplete(Enrichment enrichment, String gokbUsername, String gokbPassword, boolean isUpdate,
-                            boolean waitForFinish) {
+                            boolean needsPreciseClassification, boolean waitForFinish) {
     UploadJobFrame uploadJob = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
-    return processComplete(uploadJob, enrichment, gokbUsername, gokbPassword, isUpdate, waitForFinish)
+    return processComplete(uploadJob, enrichment, gokbUsername, gokbPassword, isUpdate, needsPreciseClassification, waitForFinish)
   }
 
 
@@ -321,7 +321,7 @@ class EnrichmentService{
    * used by EnrichmentService    --> processComplete
    */
   UploadJob processComplete(@Nonnull UploadJobFrame uploadJobFrame, @Nonnull Enrichment enrichment, String gokbUsername,
-                            String gokbPassword, boolean isUpdate, boolean waitForFinish) {
+                            String gokbPassword, boolean waitForFinish) {
     def options = [
         'options'        : enrichment.processingOptions,
         'addOnly'        : enrichment.addOnly,
@@ -458,6 +458,7 @@ class EnrichmentService{
     if (lastUpdated != null){
       enrichment.lastProcessingDate = lastUpdated
       enrichment.isUpdate = true
+      enrichment.needsPreciseClassification = false
     }
     enrichment
   }
