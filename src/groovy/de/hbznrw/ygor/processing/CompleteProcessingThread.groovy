@@ -157,9 +157,11 @@ class CompleteProcessingThread extends Thread {
     String pkgNominalProvider = pkg.provider?.name
     String uuid = pkg.uuid
     String lastUpdated = EnrichmentService.getLastRun(pkg)
-    if (!addOnly || lastUpdated != null){
+
+    if (!localFile && lastUpdated != null){
       addOnly = "true"
     }
+
     enrichment = enrichmentService.setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,
         pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform, pkgNominalProvider, updateToken, uuid, lastUpdated)
     return enrichment

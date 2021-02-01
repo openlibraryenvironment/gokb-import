@@ -319,7 +319,7 @@ class EnrichmentController implements ControllersHelper{
     List<String> missingParams = []
     String attachedFilePath = null
     CommonsMultipartFile mpFile = params.localFile ? request.getFile('uploadFile') : null
-    String addOnly = params.addOnly
+    String addOnly = params.addOnly ?: 'false'
     String pkgId = params.get('pkgId')
     File transferredFile = null
     if (StringUtils.isEmpty(pkgId)){
