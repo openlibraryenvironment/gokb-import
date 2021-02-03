@@ -62,6 +62,9 @@ class KbartReader {
     BufferedReader bufferedReader = removeBOM(new BufferedReader(new FileReader(kbartFile)))
     String firstLine = bufferedReader.readLine()
     char delimiterChar = calculateDelimiter(firstLine)
+    firstLine = firstLine.replace("^${delimiterChar}", " ${delimiterChar}")
+                         .replaceAll("(?<=${delimiterChar})${delimiterChar}", " ${delimiterChar}")
+                         .replaceAll('([\t;,])\$', /$1 /)
     csvHeader = new ArrayList<String>()
     csvHeader.addAll(firstLine.split(String.valueOf(delimiterChar)))
     String lineSeparator = getLineSeparator(kbartFile)
@@ -131,9 +134,9 @@ class KbartReader {
 
   // NOTE: should have been an override of AbstractReader.readItemData(), but the parameters are too different
   Map<String, String> readItemData(LocalDate lastPackageUpdate) {
+    int i = csvHeader.indexOf("last_changed")
     while (csvRecords.hasNext()){
       CSVRecord next = csvRecords.next()
-      int i = csvHeader.indexOf("last_changed")
       LocalDate itemLastUpdate = i > -1 ? DateToolkit.getAsLocalDate(next.get(i)) : null
       if (itemLastUpdate == null || lastPackageUpdate == null || !itemLastUpdate.isBefore(lastPackageUpdate)) {
         Map<String, String> nextAsMap = returnItem(next)
@@ -156,9 +159,11 @@ class KbartReader {
     Map<String, String> resultMap = new HashMap<>()
     boolean hasContentYet = false
     for (int i = 0; i < csvHeader.size(); i++) {
-      resultMap.put(csvHeader.get(i), splitItem[i])
-      if (!hasContentYet && StringUtils.isNotBlank(splitItem[i])){
-        hasContentYet = true
+      if (!StringUtils.isEmpty(csvHeader.get(i))) {
+        resultMap.put(csvHeader.get(i), splitItem[i])
+        if (!hasContentYet && StringUtils.isNotBlank(splitItem[i])){
+          hasContentYet = true
+        }
       }
     }
     if (!hasContentYet){
