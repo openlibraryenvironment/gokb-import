@@ -481,7 +481,7 @@
   {
     "ygor" : "medium",
     "out" : {
-      "gokb" : ["$TITLE.medium"]
+      "gokb" : ["$TITLE.medium", "$TIPP.title.medium"]
     },
     "type" : "String",
     "flags" : {
