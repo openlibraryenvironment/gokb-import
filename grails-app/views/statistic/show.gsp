@@ -367,150 +367,152 @@
         </div>
     </div>
 
-    <g:form>
-        <g:hiddenField name="originHash" value="${originHash}"/>
-        <g:hiddenField name="resultHash" value="${resultHash}"/>
-        <div class="col-xs-12" style="margin-bottom: 20px">
-            <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
-                <g:if test="${titlesUploaded == true}">
-                    <!-- Titles have already been uploaded -> disable upload button -->
-                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
-                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
-                        <g:message code="listDocuments.button.sendTitlesFile"/>
-                    </button>
-                </g:if>
-                <g:else>
-                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
-                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
-                        <g:message code="listDocuments.button.sendTitlesFile"/>
-                    </button>
-                </g:else>
-                <g:if test="${packageUploaded == true}">
-                    <!-- Package has already been uploaded -> disable upload button -->
-                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
-                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
-                        <g:message code="listDocuments.button.sendPackageFile"/>
-                    </button>
-                </g:if>
-                <g:else>
-                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
-                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
-                        <g:message code="listDocuments.button.sendPackageFile"/>
-                    </button>
-                </g:else>
-                <g:if test="${packageUploaded == true}">
-                    <!-- Package has already been uploaded -> disable upload button -->
-                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="packageWithTitles"
-                            data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
-                        <g:message code="listDocuments.button.sendIntegratedPackageFile"/>
-                    </button>
-                </g:if>
-                <g:else>
-                    <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="packageWithTitles"
-                            data-target="#credentialsModal" onclick="assignSendTargetToModal()">
-                        <g:message code="listDocuments.button.sendIntegratedPackageFile"/>
-                    </button>
-                </g:else>
-                <div class="modal fade" id="credentialsModal" role="dialog">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title"><g:message code="listDocuments.gokb.credentials"/></h4>
-                            </div>
-                            <div class="modal-body">
-                                <g:form>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><g:message
-                                                code="listDocuments.gokb.username"/></span>
-                                        <g:textField name="gokbUsername" size="24" class="form-control"/>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><g:message
-                                                code="listDocuments.gokb.password"/></span>
-                                        <g:passwordField name="gokbPassword" size="24" class="form-control"/>
-                                    </div>
-                                    <br/>
-                                    <div align="right">
-                                        <button type="button" class="btn btn-default btn-same-width" data-dismiss="modal"><g:message
-                                                code="listDocuments.button.cancel"/></button>
-                                        <g:actionSubmit action="" value="${message(code: 'listDocuments.button.send')}"
-                                                        class="btn btn-success btn-same-width"
-                                                        id="cred-modal-btn-send" data-toggle="tooltip"
-                                                        data-placement="top"
-                                                        title="JavaScript ${message(code: 'technical.required')}."/>
-                                    </div>
-                                </g:form>
+    <g:if test="${redRecords?.getAt("recordsTotal") + yellowRecords?.getAt("recordsTotal") + greenRecords?.getAt("recordsTotal") != 0}">
+        <g:form>
+            <g:hiddenField name="originHash" value="${originHash}"/>
+            <g:hiddenField name="resultHash" value="${resultHash}"/>
+            <div class="col-xs-12" style="margin-bottom: 20px">
+                <g:if test="${grailsApplication.config.ygor.enableGokbUpload}">
+                    <g:if test="${titlesUploaded == true}">
+                        <!-- Titles have already been uploaded -> disable upload button -->
+                        <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
+                                data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                            <g:message code="listDocuments.button.sendTitlesFile"/>
+                        </button>
+                    </g:if>
+                    <g:else>
+                        <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="titles"
+                                data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                            <g:message code="listDocuments.button.sendTitlesFile"/>
+                        </button>
+                    </g:else>
+                    <g:if test="${packageUploaded == true}">
+                        <!-- Package has already been uploaded -> disable upload button -->
+                        <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
+                                data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                            <g:message code="listDocuments.button.sendPackageFile"/>
+                        </button>
+                    </g:if>
+                    <g:else>
+                        <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="package"
+                                data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                            <g:message code="listDocuments.button.sendPackageFile"/>
+                        </button>
+                    </g:else>
+                    <g:if test="${packageUploaded == true}">
+                        <!-- Package has already been uploaded -> disable upload button -->
+                        <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="packageWithTitles"
+                                data-target="#credentialsModal" onclick="assignSendTargetToModal()" disabled="disabled">
+                            <g:message code="listDocuments.button.sendIntegratedPackageFile"/>
+                        </button>
+                    </g:if>
+                    <g:else>
+                        <button type="button" class="btn btn-success btn-same-width" data-toggle="modal" gokbdata="packageWithTitles"
+                                data-target="#credentialsModal" onclick="assignSendTargetToModal()">
+                            <g:message code="listDocuments.button.sendIntegratedPackageFile"/>
+                        </button>
+                    </g:else>
+                    <div class="modal fade" id="credentialsModal" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><g:message code="listDocuments.gokb.credentials"/></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <g:form>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><g:message
+                                                    code="listDocuments.gokb.username"/></span>
+                                            <g:textField name="gokbUsername" size="24" class="form-control"/>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><g:message
+                                                    code="listDocuments.gokb.password"/></span>
+                                            <g:passwordField name="gokbPassword" size="24" class="form-control"/>
+                                        </div>
+                                        <br/>
+                                        <div align="right">
+                                            <button type="button" class="btn btn-default btn-same-width" data-dismiss="modal"><g:message
+                                                    code="listDocuments.button.cancel"/></button>
+                                            <g:actionSubmit action="" value="${message(code: 'listDocuments.button.send')}"
+                                                            class="btn btn-success btn-same-width"
+                                                            id="cred-modal-btn-send" data-toggle="tooltip"
+                                                            data-placement="top"
+                                                            title="JavaScript ${message(code: 'technical.required')}."/>
+                                        </div>
+                                    </g:form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    <br/>
+                    <br/>
+                    <script>
+                        function assignSendTargetToModal(){
+                            $('#credentialsModal').on('show.bs.modal', function (event) {
+                                var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
+                                if (uri.localeCompare('package') == 0) {
+                                    $(this).find('#cred-modal-btn-send').attr('name', '_action_sendPackageFile');
+                                }
+                                else if (uri.localeCompare('packageWithTitles') == 0) {
+                                    $(this).find('#cred-modal-btn-send').attr('name', '_action_sendIntegratedPackageFile');
+                                }
+                                else if (uri.localeCompare('titles') == 0) {
+                                    $(this).find('#cred-modal-btn-send').attr('name', '_action_sendTitlesFile');
+                                }
+                            });
+                        }
+                    </script>
+                </g:if>
+                <g:else>
+                    <g:actionSubmit action="sendIntegratedPackageFile"
+                                    value="${message(code: 'listDocuments.button.sendIntegratedPackageFile')}"
+                                    class="btn btn-success disabled btn-same-width"
+                                    data-toggle="tooltip" data-placement="top"
+                                    title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}"
+                                    disabled="disabled"/>
+                    <g:actionSubmit action="sendPackageFile"
+                                    value="${message(code: 'listDocuments.button.sendPackageFile')}"
+                                    class="btn btn-success disabled btn-same-width"
+                                    data-toggle="tooltip" data-placement="top"
+                                    title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}"
+                                    disabled="disabled"/>
+                    <g:actionSubmit action="sendTitlesFile" value="${message(code: 'listDocuments.button.sendTitlesFile')}"
+                                    class="btn btn-success disabled btn-same-width"
+                                    data-toggle="tooltip" data-placement="top"
+                                    title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}"
+                                    disabled="disabled"/>
+                    <br/>
+                    <br/>
+                </g:else>
+                <g:actionSubmit action="downloadTitlesFile"
+                                value="${message(code: 'listDocuments.button.downloadTitlesFile')}"
+                                class="btn btn-default btn-same-width"/>
+                <g:actionSubmit action="downloadPackageFile"
+                                value="${message(code: 'listDocuments.button.downloadPackageFile')}"
+                                class="btn btn-default btn-same-width"/>
+                <g:actionSubmit action="downloadIntegratedPackageFile"
+                                value="${message(code: 'listDocuments.button.downloadIntegratedPackageFile')}"
+                                class="btn btn-default btn-same-width"/>
+                <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
+                                class="btn btn-default btn-same-width"/>
                 <br/>
                 <br/>
-                <script>
-                    function assignSendTargetToModal(){
-                        $('#credentialsModal').on('show.bs.modal', function (event) {
-                            var uri = $(event.relatedTarget)[0].getAttribute("gokbdata");
-                            if (uri.localeCompare('package') == 0) {
-                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendPackageFile');
-                            }
-                            else if (uri.localeCompare('packageWithTitles') == 0) {
-                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendIntegratedPackageFile');
-                            }
-                            else if (uri.localeCompare('titles') == 0) {
-                                $(this).find('#cred-modal-btn-send').attr('name', '_action_sendTitlesFile');
-                            }
-                        });
-                    }
-                </script>
-            </g:if>
-            <g:else>
-                <g:actionSubmit action="sendIntegratedPackageFile"
-                                value="${message(code: 'listDocuments.button.sendIntegratedPackageFile')}"
-                                class="btn btn-success disabled btn-same-width"
-                                data-toggle="tooltip" data-placement="top"
-                                title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}"
-                                disabled="disabled"/>
-                <g:actionSubmit action="sendPackageFile"
-                                value="${message(code: 'listDocuments.button.sendPackageFile')}"
-                                class="btn btn-success disabled btn-same-width"
-                                data-toggle="tooltip" data-placement="top"
-                                title="Deaktiviert: ${grailsApplication.config.gokbApi.xrPackageUri}"
-                                disabled="disabled"/>
-                <g:actionSubmit action="sendTitlesFile" value="${message(code: 'listDocuments.button.sendTitlesFile')}"
-                                class="btn btn-success disabled btn-same-width"
-                                data-toggle="tooltip" data-placement="top"
-                                title="Deaktiviert: ${grailsApplication.config.gokbApi.xrTitleUri}"
-                                disabled="disabled"/>
-                <br/>
-                <br/>
-            </g:else>
-            <g:actionSubmit action="downloadTitlesFile"
-                            value="${message(code: 'listDocuments.button.downloadTitlesFile')}"
-                            class="btn btn-default btn-same-width"/>
-            <g:actionSubmit action="downloadPackageFile"
-                            value="${message(code: 'listDocuments.button.downloadPackageFile')}"
-                            class="btn btn-default btn-same-width"/>
-            <g:actionSubmit action="downloadIntegratedPackageFile"
-                            value="${message(code: 'listDocuments.button.downloadIntegratedPackageFile')}"
-                            class="btn btn-default btn-same-width"/>
-            <g:actionSubmit action="downloadRawFile" value="${message(code: 'listDocuments.button.downloadRawFile')}"
-                            class="btn btn-default btn-same-width"/>
-            <br/>
-            <br/>
-            <g:actionSubmit action="correctFile" value="${message(code: 'listDocuments.button.correctFile')}"
-                            class="btn btn-warning btn-same-width"/>
-            <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deleteFile')}"
-                            class="btn btn-danger btn-same-width"/>
-        </div>
-        <script>
-            var bwidth=0
-            $(".btn-same-width").each(function(i,v){
-                if($(v).width()>bwidth) bwidth=$(v).width();
-            });
-            $(".btn-same-width").width(bwidth);
-        </script>
-    </g:form>
+                <g:actionSubmit action="correctFile" value="${message(code: 'listDocuments.button.correctFile')}"
+                                class="btn btn-warning btn-same-width"/>
+                <g:actionSubmit action="deleteFile" value="${message(code: 'listDocuments.button.deleteFile')}"
+                                class="btn btn-danger btn-same-width"/>
+            </div>
+            <script>
+                var bwidth=0
+                $(".btn-same-width").each(function(i,v){
+                    if($(v).width()>bwidth) bwidth=$(v).width();
+                });
+                $(".btn-same-width").width(bwidth);
+            </script>
+        </g:form>
+    </g:if>
 
     <div class="col-xs-12">
         <div class="panel panel-default">
