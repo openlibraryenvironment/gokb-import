@@ -480,6 +480,11 @@
   },
   {
     "ygor" : "medium",
+    "in" : {
+      "kbart" : "medium",
+      "zdb" : "",
+      "ezb" : ""
+    },
     "out" : {
       "gokb" : ["$TITLE.medium", "$TIPP.title.medium"]
     },
