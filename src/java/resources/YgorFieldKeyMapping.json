@@ -48,7 +48,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "gokb" : ["$TIPP.accessType"]
     },
     "order" : ["kbart"],
     "type" : "Abbreviation",
