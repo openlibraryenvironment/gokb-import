@@ -232,6 +232,14 @@
     <g:set var="lineCounter" value="${0}"/>
     <g:set var="displayZDB" value="true"/>
 
+    <g:if test="${redRecords?.getAt("recordsTotal") + yellowRecords?.getAt("recordsTotal") + greenRecords?.getAt("recordsTotal") == 0}">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <h3 class="panel-title"><g:message code="statistic.show.records.zero"/></h3>
+            </div>
+        </div>
+    </g:if>
+
     <div id="red-frame" class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading-red">
