@@ -126,7 +126,7 @@ class CompleteProcessingThread extends Thread {
         log.info("Prepared enrichment ${enrichment.originName}.")
 
         enrichment.originPathName = kbartReader.fileName
-        UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, true)
+        UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false)
         enrichmentService.addUploadJob(uploadJob)
       }
       catch (Exception e) {
