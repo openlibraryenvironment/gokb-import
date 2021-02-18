@@ -422,6 +422,25 @@
     }
   },
   {
+    "ygor" : "language",
+    "display" : "Sprache",
+    "in" : {
+      "kbart" : "language",
+      "zdb" : "010@:a"
+    },
+    "out" : {
+      "gokb" : ["$TIPP.language", "$TIPP.title.language", "$TITLE.language"]
+    },
+    "order" : ["kbart", "zdb"],
+    "type" : "Abbreviation",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "undefined" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}]
+    }
+  },
+  {
     "ygor" : "listpriceEur",
     "in" : {
       "kbart" : "listprice_eur",
