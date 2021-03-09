@@ -429,7 +429,7 @@
       "zdb" : "010@:a"
     },
     "out" : {
-      "gokb" : ["$TIPP.language", "$TIPP.title.language", "$TITLE.language"]
+      "gokb" : ["$TITLE.language", "$TIPP.title.language"]
     },
     "order" : ["kbart", "zdb"],
     "type" : "Abbreviation",
