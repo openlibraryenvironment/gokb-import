@@ -1,6 +1,5 @@
 package de.hbznrw.ygor.processing
 
-import com.google.common.base.Throwables
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.readers.EzbReader
 import de.hbznrw.ygor.readers.KbartReader
