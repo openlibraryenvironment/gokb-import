@@ -309,7 +309,9 @@
                     })
                 </script>
 
-                <g:if test="${enrichment.status == Enrichment.ProcessingState.WORKING}">
+                <g:if test="${enrichment.status in [Enrichment.ProcessingState.WORKING,
+                                                    Enrichment.ProcessingState.FINISHED,
+                                                    Enrichment.ProcessingState.ERROR]}">
                     <script>
                         $(function(){
                             var ygorDocumentStatus${enrichment.resultHash} = function(){
