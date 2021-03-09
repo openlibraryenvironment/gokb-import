@@ -72,10 +72,10 @@ class MultiField {
 
 
   List<String> getPrioValues() {
-    if (!StringUtils.isEmpty(revised)){
+    if (revised != null){
       return [revised]
     }
-    if (!StringUtils.isEmpty(normalized)){
+    if (normalized != null){
       return [normalized]
     }
     if (keyMapping == null) {
