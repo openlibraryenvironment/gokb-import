@@ -436,13 +436,13 @@ class EnrichmentService{
 
 
   Enrichment setupEnrichment(Enrichment enrichment, KbartReader kbartReader, String addOnly, def pmOptions,
-                             String platformName, String platformUrl, def params, pkgTitleId,
+                             String platformName, String platformUrl, def params, def titleIdNamespace,
                              String pkgTitle, String pkgCuratoryGroup, String pkgId, String pkgNominalPlatform,
                              String pkgNominalProvider, String updateToken, String uuid, String lastUpdated){
     kbartReader.checkHeader()
     Map<String, Object> parameterMap = new HashMap<>()
     parameterMap.putAll(params)
-    parameterMap.put("pkgTitleId", pkgTitleId)
+    parameterMap.put("pkgTitleId", [titleIdNamespace])
     addParameterToParameterMap("pkgTitle", pkgTitle, parameterMap)
     addParameterToParameterMap("pkgCuratoryGroup", pkgCuratoryGroup, parameterMap)
     addParameterToParameterMap("pkgId", pkgId, parameterMap)
