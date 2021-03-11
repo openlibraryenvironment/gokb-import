@@ -49,7 +49,6 @@ class CompleteProcessingThread extends Thread {
     enrichmentService.addUploadJob(uploadJobFrame)
     String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
         .concat(File.separator).concat(UUID.randomUUID().toString())
-
     if (!localFile) {
       log.info("Checking for usable URLs..")
       Locale locale = new Locale("en")                                    // TODO get from request or package
@@ -65,10 +64,8 @@ class CompleteProcessingThread extends Thread {
         updateUrls = AutoUpdateService.getUpdateUrls(src.url, src.lastRun, pkg.dateCreated)
       }
       log.info("Got ${updateUrls}")
-
       updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
       Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
-
       if (updateUrls.size() > 0) {
         while(urlsIterator.hasPrevious()){
           URL url = urlsIterator.previous()
@@ -105,7 +102,6 @@ class CompleteProcessingThread extends Thread {
             break
           }
         }
-
         if (!proceeding) {
           log.info("All valid URLs produced errors.")
           uploadJobFrame.status = UploadThreadGokb.Status.ERROR
@@ -120,7 +116,6 @@ class CompleteProcessingThread extends Thread {
       kbartReader = enrichmentService.kbartReader = new KbartReader(localFile)
       kbartReader.fileName = localFile.toString()
       Enrichment enrichment
-
       try {
         enrichment = prepareEnrichment(token, sessionFolder, pkg, src, addOnly)
         log.info("Prepared enrichment ${enrichment.originName}.")
@@ -137,21 +132,24 @@ class CompleteProcessingThread extends Thread {
     }
   }
 
+
   private Enrichment prepareEnrichment(String updateToken, String sessionFolder, def pkg, def src, def addOnly)
       throws Exception{
     Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
     def pmOptions = [MappingsContainer.KBART]
+    // fields from source
     if (src.zdbMatch){
       pmOptions.add(MappingsContainer.ZDB)
     }
     if (src.ezbMatch){
       pmOptions.add(MappingsContainer.EZB)
     }
+    String pkgTitleIdNamespace = src.targetNamespace?.value ?: null
+    // fields from package
     String platformName = pkg._embedded?.nominalPlatform?.name
     String platformId = pkg._embedded?.nominalPlatform?.id
     String platformUrl = pkg._embedded?.nominalPlatform?.primaryUrl
     Map<String, Object> params = new HashMap<>()
-    String pkgTitleId                                  // TODO
     String pkgTitle = pkg.name
     String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name")
     String pkgId = pkg.id
@@ -159,13 +157,12 @@ class CompleteProcessingThread extends Thread {
     String pkgNominalProvider = pkg.provider?.name
     String uuid = pkg.uuid
     String lastUpdated = EnrichmentService.getLastRun(pkg)
-
     if (!localFile && lastUpdated != null){
       addOnly = "true"
     }
-
-    enrichment = enrichmentService.setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName, platformUrl, params, pkgTitleId,
-        pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform, pkgNominalProvider, updateToken, uuid, lastUpdated)
+    enrichment = enrichmentService.setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName,
+        platformUrl, params, pkgTitleIdNamespace, pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform,
+        pkgNominalProvider, updateToken, uuid, lastUpdated)
     return enrichment
   }
 
