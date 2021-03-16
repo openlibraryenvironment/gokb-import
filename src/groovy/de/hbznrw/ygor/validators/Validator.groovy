@@ -69,9 +69,6 @@ class Validator {
         return Status.INVALID
       }
     }
-    else if (str.contains("|")) {
-      return Status.UNDEFINED
-    }
     return Status.VALID
   }
 
@@ -83,9 +80,6 @@ class Validator {
   static isValidAbbreviation(String abbreviation) {
     if (StringUtils.isEmpty(abbreviation)) {
       return Status.MISSING
-    }
-    if (abbreviation.contains("|")) {
-      return Status.UNDEFINED
     }
     if (abbreviation.length() > 1) {
       return Status.INVALID
@@ -101,9 +95,11 @@ class Validator {
   static isValidNumber(String str) {
     if (!str || str.trim().equals("")) {
       return Status.MISSING
-    } else if (str.contains("|")) {
+    }
+    else if (str.contains("|")) {
       return Status.UNDEFINED
-    } else if (str.isInteger()) {
+    }
+    else if (str.isInteger()) {
       return Status.VALID
     }
 
@@ -208,9 +204,6 @@ class Validator {
   static Status isValidURL(String str) {
     if (StringUtils.isEmpty(str)) {
       return Status.MISSING
-    }
-    else if (str.contains("|")) {
-      return Status.UNDEFINED
     }
     if (URL_VALIDATOR.isValid(str)) {
       return Status.VALID
