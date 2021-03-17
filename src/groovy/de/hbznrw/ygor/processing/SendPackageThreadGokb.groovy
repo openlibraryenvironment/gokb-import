@@ -67,7 +67,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     }
     log.info("... exportFile: " + enrichment.resultHash + " -> " + uri)
     if (isUpdate){
-      uri = uri.replace("?", "/${enrichment.dataContainer?.pkgHeader?.uuid}?")
+      uri = uri.replace("\\?", "/${enrichment.dataContainer?.pkgHeader?.uuid}?")
       if (enrichment.addOnly){
         uri = uri.concat("&addOnly=true")
       }
