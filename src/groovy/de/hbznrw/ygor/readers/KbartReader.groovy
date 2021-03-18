@@ -3,15 +3,19 @@ package de.hbznrw.ygor.readers
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.apache.commons.csv.QuoteMode
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 
 import ygor.EnrichmentService
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 @Log4j
 class KbartReader {
@@ -20,11 +24,12 @@ class KbartReader {
 
   def messageSource = grails.util.Holders.applicationContext.getBean("messageSource")
 
-  static final IDENTIFIER = 'kbart'
-  static final KBART_HEADER_ZDB_ID = "zdb_id"
-  static final KBART_HEADER_ONLINE_IDENTIFIER = "online_identifier"
-  static final KBART_HEADER_PRINT_IDENTIFIER = "print_identifier"
-  static final KBART_HEADER_DOI_IDENTIFIER = "doi_identifier"
+  static final def IDENTIFIER = 'kbart'
+  static final String KBART_HEADER_ZDB_ID = "zdb_id"
+  static final String KBART_HEADER_ONLINE_IDENTIFIER = "online_identifier"
+  static final String KBART_HEADER_PRINT_IDENTIFIER = "print_identifier"
+  static final String KBART_HEADER_DOI_IDENTIFIER = "doi_identifier"
+  static final Pattern DATE_PATTERN = Pattern.compile("[\\d]{4}-[\\d]{2}-[\\d]{2}")
 
   private BufferedReader csvReader
   private CSVFormat csvFormat
@@ -32,6 +37,7 @@ class KbartReader {
   Iterator<CSVRecord> csvRecords
   private CSVRecord lastItemReturned
   String fileName
+  Date fileNameDate
 
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
@@ -52,13 +58,17 @@ class KbartReader {
   }
 
 
-  KbartReader(def kbartFile) throws Exception{
-    init(kbartFile)
+  KbartReader(def kbartFile, String originalFileName) throws Exception{
+    init(kbartFile, originalFileName)
   }
 
 
-  protected void init(File kbartFile){
+  protected void init(File kbartFile, String originalFileName){
+    if (kbartFile == null){
+      return
+    }
     // automatic delimiter adaptation by selection of the character with biggest count
+    fileNameDate = extractDateFromFileName(originalFileName)
     BufferedReader bufferedReader = removeBOM(new BufferedReader(new FileReader(kbartFile)))
     String firstLine = bufferedReader.readLine()
     char delimiterChar = calculateDelimiter(firstLine)
@@ -72,9 +82,31 @@ class KbartReader {
     csvFormat = CSVFormat.RFC4180
         .withDelimiter(delimiterChar)
         .withEscape((char) "\\")
-        // .withFirstRecordAsHeader()
         .withRecordSeparator(lineSeparator)
     csvRecords = csvFormat.parse(bufferedReader).iterator()
+  }
+
+
+  private Date extractDateFromFileName(String fileName){
+    if (StringUtils.isEmpty(fileName)){
+      return null
+    }
+    Matcher dateMatcher = DATE_PATTERN.matcher(fileName)
+    String dateString = null
+    while (dateMatcher.find()) {
+      // iterate through file name until last occurrence of a date
+      dateString = dateMatcher.group()
+    }
+    if (!StringUtils.isEmpty(dateString)){
+      try{
+        return new SimpleDateFormat("yyyy-MM-dd").parse(dateString)
+      }
+      catch(ParseException pe){
+        return null
+      }
+    }
+    // else
+    return null
   }
 
 

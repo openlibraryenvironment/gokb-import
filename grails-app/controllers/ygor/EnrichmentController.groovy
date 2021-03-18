@@ -146,7 +146,7 @@ class EnrichmentController implements ControllersHelper{
       Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
       enrichment.addFileAndFormat()
       enrichment.status = Enrichment.ProcessingState.PREPARE_1
-      kbartReader = new KbartReader(enrichment.transferredFile)
+      kbartReader = new KbartReader(enrichment.transferredFile, enrichment.originName)
       kbartReader.checkHeader()
       redirect(
           action: 'process',

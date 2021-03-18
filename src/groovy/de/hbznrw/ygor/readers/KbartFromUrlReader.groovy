@@ -38,7 +38,7 @@ class KbartFromUrlReader extends KbartReader{
       }
     }
     FileUtils.copyInputStreamToFile(new ByteArrayInputStream(content), file)
-    init(file)
+    init(file, fileName)
     // copy content to local file
     Files.write(file.toPath(), content)
   }
