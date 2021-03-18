@@ -5,6 +5,7 @@ import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.PackageHeader
 import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
+import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.FileToolkit
@@ -23,7 +24,7 @@ import ygor.identifier.AbstractIdentifier
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.LocalDateTime
+import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -31,7 +32,6 @@ import java.util.zip.ZipInputStream
 class Enrichment{
 
   static mapWith = "none" // disable persisting into database
-
   static enum FileType {
     ORIGIN,
     RESULT,
@@ -57,6 +57,7 @@ class Enrichment{
   String originName
   String originHash
   String originPathName
+  String fileNameDate
   File transferredFile
   String packageName
 
@@ -147,6 +148,9 @@ class Enrichment{
   def process(HashMap options, KbartReader kbartReader) throws Exception{
     log.debug("Start processing enrichment ${originName}.")
     this.kbartReader = kbartReader
+    if (kbartReader.fileNameDate){
+      this.fileNameDate = DateNormalizer.YYYY_MM_DD.format(kbartReader.fileNameDate)
+    }
     resultName = FileToolkit.getDateTimePrefixedFileName(originName)
     ygorVersion = options.get('ygorVersion')
     dataContainer.info.file = originName
@@ -222,6 +226,9 @@ class Enrichment{
     result.append("\"originHash\":\"").append(originHash).append("\",")
     result.append("\"resultHash\":\"").append(resultHash).append("\",")
     result.append("\"originPathName\":\"").append(originPathName).append("\",")
+    if (fileNameDate){
+      result.append("\"fileNameDate\":\"").append(fileNameDate).append("\",")
+    }
     result.append("\"autoUpdate\":\"").append(String.valueOf(autoUpdate)).append("\",")
     result.append("\"isUpdate\":\"").append(String.valueOf(isUpdate)).append("\",")
     result.append("\"needsPreciseClassification\":\"").append(String.valueOf(needsPreciseClassification)).append("\",")
@@ -305,6 +312,7 @@ class Enrichment{
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
+    en.fileNameDate = JsonToolkit.fromJson(rootNode, "fileNameDate")
     en.autoUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "autoUpdate"))
     en.isUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "isUpdate"))
     en.needsPreciseClassification = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "needsPreciseClassification"))

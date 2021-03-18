@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.readers
 
+import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
@@ -99,7 +100,7 @@ class KbartReader {
     }
     if (!StringUtils.isEmpty(dateString)){
       try{
-        return new SimpleDateFormat("yyyy-MM-dd").parse(dateString)
+        return DateNormalizer.YYYY_MM_DD.parse(dateString)
       }
       catch(ParseException pe){
         return null
