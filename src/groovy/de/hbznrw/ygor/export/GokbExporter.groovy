@@ -484,25 +484,14 @@ class GokbExporter {
         titleIdNode = idNode
         break
       }
-      else {
-        count++
-      }
+      count++
     }
     if (titleIdNode == null) {
       // There is no titleId node --> nothing to do
       return
     }
-    // remove title id node if value is a copy another identifier node value
-    for (int i = 0; i < identifiers.size(); i++) {
-      if (i != count &&
-          identifiers.get(i).get("value").asText().equals(titleIdNode.get("value").asText())) {
-        identifiers.remove(count)
-        return
-      }
-    }
     if (StringUtils.isEmpty(namespace)) {
-      // namespace has not been selected -->
-      // just remove titleId node from identifiers
+      // namespace has not been selected --> remove titleId node from identifiers
       identifiers.remove(count)
       return
     }
