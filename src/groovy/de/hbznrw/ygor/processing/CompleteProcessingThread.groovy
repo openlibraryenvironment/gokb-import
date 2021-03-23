@@ -80,7 +80,7 @@ class CompleteProcessingThread extends Thread {
 
           Enrichment enrichment
           try {
-            enrichment = prepareEnrichment(token, sessionFolder, pkg, src, "false")
+            enrichment = prepareEnrichment(token, sessionFolder, pkg, src, "false", false)
             log.info("Prepared enrichment ${enrichment.originName}.")
           }
           catch (Exception e) {
@@ -133,7 +133,8 @@ class CompleteProcessingThread extends Thread {
   }
 
 
-  private Enrichment prepareEnrichment(String updateToken, String sessionFolder, def pkg, def src, def addOnly)
+  private Enrichment prepareEnrichment(String updateToken, String sessionFolder, Map pkg, Map src, String addOnly,
+                                       boolean ignoreLastChanged)
       throws Exception{
     Enrichment enrichment = Enrichment.fromFilename(sessionFolder, pkg.name)
     def pmOptions = [MappingsContainer.KBART]
@@ -162,7 +163,7 @@ class CompleteProcessingThread extends Thread {
     }
     enrichment = enrichmentService.setupEnrichment(enrichment, kbartReader, addOnly, pmOptions, platformName,
         platformUrl, params, pkgTitleIdNamespace, pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform,
-        pkgNominalProvider, updateToken, uuid, lastUpdated)
+        pkgNominalProvider, updateToken, uuid, lastUpdated, ignoreLastChanged)
     return enrichment
   }
 
