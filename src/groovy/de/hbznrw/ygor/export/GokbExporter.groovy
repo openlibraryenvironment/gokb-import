@@ -240,7 +240,9 @@ class GokbExporter {
     else {
       result.put("name", packageHeader.name)
     }
-
+    if (enrichment.fileNameDate){
+      result.put("fileNameDate", enrichment.fileNameDate)
+    }
     def nominalPlatform = new ObjectNode(NODE_FACTORY)
     nominalPlatform.put("name", (String) packageHeader.nominalPlatform.name)
     nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
