@@ -819,9 +819,6 @@
       "zdb" : ["025@:a"],
       "ezb" : ""
     },
-    "out" : {
-      "gokb" : []
-    },
     "order" : ["zdb"],
     "type" : "Title",
     "flags" : {
@@ -903,7 +900,10 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.endDate"],
+      "gokb" : [
+        "$TITLE.publisher_history.$ARRAY.$COUNT.endDate",
+        "$TIPP.title.publisher_history.$ARRAY.$COUNT.endDate"
+      ],
       "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
@@ -924,7 +924,10 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.startDate"],
+      "gokb" : [
+        "$TITLE.publisher_history.$ARRAY.$COUNT.startDate",
+        "$TIPP.title.publisher_history.$ARRAY.$COUNT.startDate"
+      ],
       "keepIfEmpty" : "true"
     },
     "order" : ["zdb"],
@@ -945,7 +948,11 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.name", "$TIPP.publisherName"]
+      "gokb" : [
+        "$TITLE.publisher_history.$ARRAY.$COUNT.name",
+        "$TIPP.title.publisher_history.$ARRAY.$COUNT.name",
+        "$TIPP.publisherName"
+      ]
     },
     "order" : ["kbart", "zdb"],
     "type" : "String",
@@ -965,7 +972,10 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.title.publisher_history.$ARRAY.$COUNT.place"]
+      "gokb" : [
+        "$TITLE.publisher_history.$ARRAY.$COUNT.place",
+        "$TIPP.title.publisher_history.$ARRAY.$COUNT.place"
+      ]
     },
     "order" : ["zdb"],
     "type" : "String",
@@ -1045,7 +1055,10 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:titleId,value)", "$TIPP.title.identifiers.$ARRAY.(type:titleId,value)"]
+      "gokb" : [
+        "$TITLE.identifiers.$ARRAY.(type:titleId,value)",
+        "$TIPP.title.identifiers.$ARRAY.(type:titleId,value)"
+      ]
     },
     "order" : ["kbart"],
     "type" : "ID",
