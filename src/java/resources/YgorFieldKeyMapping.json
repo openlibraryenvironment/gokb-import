@@ -531,7 +531,12 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.monographVolume", "$TITLE.volumeNumber", "$TIPP.title.monographVolume", "$TIPP.title.volumeNumber"]
+      "gokb" : [
+        "$TITLE.monographVolume",
+        "$TITLE.volumeNumber",
+        "$TIPP.title.monographVolume",
+        "$TIPP.title.volumeNumber"
+      ]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -651,7 +656,8 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:onlineIdentifier,value)",
+      "gokb" : [
+        "$TITLE.identifiers.$ARRAY.(type:onlineIdentifier,value)",
         "$TIPP.title.identifiers.$ARRAY.(type:onlineIdentifier,value)"
       ]
     },
@@ -701,7 +707,8 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:printIdentifier,value)",
+      "gokb" : [
+        "$TITLE.identifiers.$ARRAY.(type:printIdentifier,value)",
         "$TIPP.title.identifiers.$ARRAY.(type:printIdentifier,value)"
       ]
     },

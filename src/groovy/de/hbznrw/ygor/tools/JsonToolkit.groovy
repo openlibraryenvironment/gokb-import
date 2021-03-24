@@ -82,14 +82,15 @@ class JsonToolkit {
 
   private static ObjectNode getJsonFromRecord(List<String> typeFilter, String target, Record record,
                                               YgorFormatter formatter) {
+    ArrayList concatKeyStub = new ArrayList<>(typeFilter)
+    if (concatKeyStub.size() == 2 && concatKeyStub.contains("\$TITLE") && concatKeyStub.contains("\$TIPP")){
+      concatKeyStub.remove("\$TITLE")
+    }
     ObjectNode result = MAPPER.createObjectNode()
     for (MultiField multiField in record.multiFields.values()) {
       if (multiField.keyMapping == null) {
         def value = multiField.getFirstPrioValue()
-        ArrayList concatKey = new ArrayList<>(typeFilter)
-        if (concatKey.size() == 2 && concatKey.contains("\$TITLE")  && concatKey.contains("\$TIPP")){
-          concatKey.remove("\$TITLE")
-        }
+        ArrayList concatKey = new ArrayList<>(concatKeyStub)
         Iterator it = multiField.fields.iterator()
         if (it.hasNext()){
           concatKey.addAll(it.next().key)
