@@ -72,9 +72,6 @@
     },
     "order" : ["kbart"],
     "type" : "String",
-    "value" : {
-      "fixed" : "Fulltext"
-    },
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}],
