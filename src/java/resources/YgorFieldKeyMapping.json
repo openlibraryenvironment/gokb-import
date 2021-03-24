@@ -183,26 +183,6 @@
     }
   },
   {
-    "ygor" : "editionNumber",
-    "display" : "monograph_edition",
-    "in" : {
-      "kbart" : "monograph_edition",
-      "zdb" : "",
-      "ezb" : ""
-    },
-    "out" : {
-      "gokb" : ["$TITLE.editionNumber", "$TIPP.title.editionNumber"]
-    },
-    "order" : ["kbart"],
-    "type" : "Number",
-    "flags" : {
-      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
-      "invalid" : [{"serial" : "error", "monograph" : "error", "other" : "ok"}],
-      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
-      "undefined" : [{"serial" : "warning", "monograph" : "warning", "other" : "ok"}]
-    }
-  },
-  {
     "ygor" : "embargoInfo",
     "display" : "embargo_info",
     "in" : {
@@ -990,7 +970,7 @@
     "ygor" : "series",
     "display" : "Series",
     "in" : {
-      "kbart" : ["monograph_parent_collection_title"],
+      "kbart" : "monograph_parent_collection_title",
       "zdb" : "",
       "ezb" : ""
     },
