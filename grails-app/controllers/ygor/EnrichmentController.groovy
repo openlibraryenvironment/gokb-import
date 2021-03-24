@@ -415,6 +415,7 @@ class EnrichmentController implements ControllersHelper{
     Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
     String addOnly = params.get('addOnly').toString()                     // "true" or "false"
     def pmOptions = params.get('processOption')                           // "kbart", "zdb", "ezb"
+    boolean ignoreLastChanged = params.boolean('ignoreLastChanged')       // "true" or "false"
 
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
     Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'), ["source", "curatoryGroups", "nominalPlatform"], null)
@@ -433,7 +434,7 @@ class EnrichmentController implements ControllersHelper{
     }
     return enrichmentService.setupEnrichment(enrichment, enrichmentService.kbartReader, addOnly, pmOptions, platform.name,
         platform.primaryUrl, request.parameterMap, pkgTitleId, pkgTitle, pkgCuratoryGroup, pkgId, pkgNominalPlatform,
-        pkgNominalProvider, updateToken, uuid, lastUpdated)
+        pkgNominalProvider, updateToken, uuid, lastUpdated, ignoreLastChanged)
   }
 
 

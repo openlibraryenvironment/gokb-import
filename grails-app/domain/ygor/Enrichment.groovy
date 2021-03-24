@@ -24,7 +24,6 @@ import ygor.identifier.AbstractIdentifier
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -71,6 +70,7 @@ class Enrichment{
   String lastProcessingDate
   String locale
   boolean addOnly
+  boolean ignoreLastChanged
   boolean isZdbIntegrated
   boolean isEzbIntegrated
   boolean autoUpdate                // shall be auto-updated in future times
@@ -111,6 +111,7 @@ class Enrichment{
     needsPreciseClassification = true
     transferredFile = null
     markDuplicates = false
+    ignoreLastChanged = false
   }
 
 
@@ -271,6 +272,7 @@ class Enrichment{
     }
     result.append("\"namespaceTitleId\":\"").append(dataContainer.info.namespace_title_id).append("\",")
     result.append("\"addOnly\":\"").append(String.valueOf(addOnly)).append("\",")
+    result.append("\"ignoreLastChanged\":\"").append(String.valueOf(ignoreLastChanged)).append("\",")
     result.append("\"isZdbIntegrated\":\"").append(String.valueOf(isZdbIntegrated)).append("\",")
     result.append("\"isEzbIntegrated\":\"").append(String.valueOf(isEzbIntegrated)).append("\",")
     if (dataContainer.curatoryGroup != null){
@@ -328,6 +330,7 @@ class Enrichment{
     en.updateUrl = JsonToolkit.fromJson(rootNode, "configuration.updateUrl")
     en.dataContainer.info.namespace_title_id = JsonToolkit.fromJson(rootNode, "configuration.namespaceTitleId")
     en.addOnly = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.addOnly"))
+    en.ignoreLastChanged = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.ignoreLastChanged"))
     en.isZdbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isZdbIntegrated"))
     en.isEzbIntegrated = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "configuration.isEzbIntegrated"))
     en.processingOptions = JsonToolkit.fromJson(rootNode, "configuration.processingOptions")

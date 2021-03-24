@@ -438,7 +438,8 @@ class EnrichmentService{
   Enrichment setupEnrichment(Enrichment enrichment, KbartReader kbartReader, String addOnly, def pmOptions,
                              String platformName, String platformUrl, def params, def titleIdNamespace,
                              String pkgTitle, String pkgCuratoryGroup, String pkgId, String pkgNominalPlatform,
-                             String pkgNominalProvider, String updateToken, String uuid, String lastUpdated){
+                             String pkgNominalProvider, String updateToken, String uuid, String lastUpdated,
+                             boolean ignoreLastChanged){
     kbartReader.checkHeader()
     Map<String, Object> parameterMap = new HashMap<>()
     parameterMap.putAll(params)
@@ -450,6 +451,7 @@ class EnrichmentService{
     addParameterToParameterMap("pkgNominalProvider", pkgNominalProvider, parameterMap)
     prepareFile(enrichment, parameterMap)
     enrichment.addOnly = (addOnly.equals("on") || addOnly.equals("true")) ? true : false
+    enrichment.ignoreLastChanged = ignoreLastChanged
     enrichment.processingOptions = EnrichmentService.decodeApiCalls(pmOptions)
     enrichment.dataContainer.pkgHeader.token = updateToken
     enrichment.dataContainer.pkgHeader.uuid = uuid

@@ -5,6 +5,7 @@ import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 
+// TODO: delete
 @Log4j
 class AutoUpdateService {
 
