@@ -127,7 +127,7 @@ class DateNormalizer {
 
 
   private static String removeBlanksAndBrackets(String str){
-    str = str.replaceAll(" ", "")
+    str = str.trim()
     def bracketMatcher = BRACKET_PATTERN.matcher(str)
     if (bracketMatcher.find()){
       str = bracketMatcher.group(1)
