@@ -209,7 +209,7 @@ class GokbExporter {
 
   static ObjectNode removeEmptyIdentifiers(ObjectNode item, FileType type) {
     if (type.equals(FileType.TITLES)) {
-        removeEmptyIds(item.identifiers)
+      removeEmptyIds(item.identifiers)
     }
     else if (type.equals(FileType.PACKAGE)) {
       removeEmptyIds(item.title.identifiers)
