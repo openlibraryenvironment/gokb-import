@@ -1040,6 +1040,7 @@
     },
     "out" : {
       "gokb" : [
+        "$TIPP.titleId",
         "$TITLE.identifiers.$ARRAY.(type:titleId,value)",
         "$TIPP.title.identifiers.$ARRAY.(type:titleId,value)"
       ]
