@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.export.structure.PackageHeaderNominalProvider
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
@@ -84,8 +85,9 @@ class EnrichmentService{
     if (platform != null){
       applyPlatformToPackageHeader(platform, ph)
     }
-    if (pm['pkgNominalProvider']){
-      ph.nominalProvider = pm['pkgNominalProvider'][0]
+    def provider = getProvider(pm)
+    if (provider != null){
+      applyProviderToPackageHeader(provider, ph)
     }
   }
 
@@ -191,6 +193,20 @@ class EnrichmentService{
   }
 
 
+  def getProvider(Map pm){
+    if (pm['pkgNominalProvider'] == null){
+      log.error("ParameterMap missing nominalProvider.")
+      return null
+    }
+    log.debug("Getting providers for: ${pm['pkgNominalProvider'][0]}")
+    def provider = pickProvider(pm['pkgNominalProvider'][0])
+    if (provider == null){
+      log.error("No provider found.")
+    }
+    return provider
+  }
+
+
   private def pickPlatform(String platFormId, String queryTerm){
     def platforms = gokbService.getPlatformMap(queryTerm, false).records
     def pkgNomPlatform = null
@@ -221,6 +237,33 @@ class EnrichmentService{
   }
 
 
+  private def pickProvider(String queryTerm){
+    def providers = gokbService.getProviderMap(queryTerm).records
+    def pkgNomProvider = null
+    log.debug("Got providers: ${providers}")
+    providers.each{
+      if ((queryTerm == null || it.name == queryTerm) && it.status == "Current"){
+        if (pkgNomProvider){
+          log.warn("Multiple providers found named: ".concat(pkgNomProvider.name).concat(" and ").concat(it.name))
+        }
+        else{
+          log.debug("Set ${it.name} as nominalProvider.")
+          pkgNomProvider = it
+        }
+      }
+      else{
+        if (queryTerm != null && it.name != queryTerm){
+          log.debug("No name match: ${it.name} - ${queryTerm}")
+        }
+        if (it.status != "Current"){
+          log.debug("Wrong status: ${it.status}")
+        }
+      }
+    }
+    return pkgNomProvider
+  }
+
+
   private void applyPlatformToPackageHeader(def platform, def packageHeader){
     try{
       new URL(platform.url)
@@ -231,6 +274,12 @@ class EnrichmentService{
     }
     packageHeader.nominalPlatform.name = platform.name
     packageHeader.nominalPlatform.oid = platform.oid
+  }
+
+
+  private void applyProviderToPackageHeader(def provider, def packageHeader){
+    packageHeader.nominalProvider.name = provider.name
+    packageHeader.nominalProvider.oid = provider.oid
   }
 
 

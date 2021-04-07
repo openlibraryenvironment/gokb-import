@@ -5,6 +5,7 @@ import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.GokbExporter
 import de.hbznrw.ygor.export.structure.PackageHeader
 import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
+import de.hbznrw.ygor.export.structure.PackageHeaderNominalProvider
 import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
 import de.hbznrw.ygor.readers.KbartReader
@@ -77,7 +78,7 @@ class Enrichment{
   boolean isUpdate                  // this enrichment is part of an update
   boolean needsPreciseClassification// this enrichment is part of an Ygor or gokb-ui triggered process
   boolean markDuplicates            // is only necessary when the process is triggered by Ygor UI
-                                    // possible TODO: gokb-ui might need this field in future times
+  // possible TODO: gokb-ui might need this field in future times
 
   def thread
   KbartReader kbartReader
@@ -288,7 +289,10 @@ class Enrichment{
       result.append("\"isil\":\"").append(dataContainer.isil).append("\",")
     }
     if (dataContainer.pkgHeader?.nominalProvider != null){
-      result.append("\"nominalProvider\":\"").append(dataContainer?.pkgHeader?.nominalProvider).append("\",")
+      result.append("\"nominalProvider\":{")
+        result.append("\"name\":\"").append(dataContainer.pkgHeader?.nominalProvider.name).append("\",")
+        result.append("\"oid\":\"").append(dataContainer.pkgHeader?.nominalProvider.oid).append("\"")
+      result.append("},")
     }
     if (dataContainer.pkgHeader?.nominalPlatform != null){
       result.append("\"nominalPlatform\":{")
@@ -349,7 +353,7 @@ class Enrichment{
       en.dataContainer.isil = JsonToolkit.fromJson(rootNode, "configuration.isil")
     }
     en.dataContainer.pkgHeader = new PackageHeader()
-    en.dataContainer?.pkgHeader?.nominalProvider = JsonToolkit.fromJson(rootNode, "configuration.nominalProvider")
+    en.dataContainer?.pkgHeader?.nominalProvider = PackageHeaderNominalProvider.fromJson(rootNode, "configuration.nominalProvider")
     en.dataContainer?.pkgHeader?.nominalPlatform = PackageHeaderNominalPlatform.fromJson(rootNode, "configuration.nominalPlatform")
     en.packageName = JsonToolkit.fromJson(rootNode, "packageName")
     if (null != JsonToolkit.fromJson(rootNode, "token")){

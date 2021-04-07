@@ -4,7 +4,7 @@ class PackageHeader {
   String isil
   String name
   PackageHeaderNominalPlatform nominalPlatform = new PackageHeaderNominalPlatform()
-  String nominalProvider
+  PackageHeaderNominalProvider nominalProvider = new PackageHeaderNominalProvider()
   String token
   String uuid
 }
