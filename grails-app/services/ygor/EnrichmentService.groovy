@@ -230,6 +230,7 @@ class EnrichmentService{
       packageHeader.nominalPlatform.url = ""
     }
     packageHeader.nominalPlatform.name = platform.name
+    packageHeader.nominalPlatform.oid = platform.oid
   }
 
 

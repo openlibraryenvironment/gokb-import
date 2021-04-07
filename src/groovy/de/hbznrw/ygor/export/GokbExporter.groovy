@@ -246,6 +246,7 @@ class GokbExporter {
     def nominalPlatform = new ObjectNode(NODE_FACTORY)
     nominalPlatform.put("name", (String) packageHeader.nominalPlatform.name)
     nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
+    nominalPlatform.put("oid", (String) packageHeader.nominalPlatform.oid)
     result.set("nominalPlatform", nominalPlatform)
 
     if (null != enrichment.dataContainer.curatoryGroup){

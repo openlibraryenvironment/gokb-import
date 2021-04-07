@@ -294,6 +294,7 @@ class Enrichment{
       result.append("\"nominalPlatform\":{")
         result.append("\"name\":\"").append(dataContainer.pkgHeader?.nominalPlatform.name).append("\",")
         result.append("\"url\":\"").append(dataContainer.pkgHeader?.nominalPlatform.url).append("\"")
+        result.append("\"oid\":\"").append(dataContainer.pkgHeader?.nominalPlatform.oid).append("\"")
       result.append("},")
     }
     result.append("\"locale\":\"").append(locale).append("\",")
@@ -460,6 +461,7 @@ class Enrichment{
     // TODO: do this in one iteration to half loading and saving times
     enrollMappingToRecords("platformName", dataContainer?.pkgHeader?.nominalPlatform.name)
     enrollMappingToRecords("platformUrl", dataContainer?.pkgHeader?.nominalPlatform.url)
+    enrollMappingToRecords("platformOid", dataContainer?.pkgHeader?.nominalPlatform.oid)
   }
 
 
