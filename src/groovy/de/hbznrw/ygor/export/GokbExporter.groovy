@@ -131,26 +131,20 @@ class GokbExporter {
           String recId = enrichment.dataContainer.records[i]
           def titleRecord = extractTitle(enrichment, recId, true)
           byte[] title
-
           StringWriter strw = new StringWriter()
-
           if (i == 0) {
             strw.write("[")
           }
-
           if (titleRecord) {
             if (i != 0){
               strw.write(",")
             }
             strw.write(titleRecord)
           }
-
           if (i == enrichment.dataContainer.records.size()-1) {
             strw.write("]")
           }
-
           title = strw.toString().getBytes(Charset.forName("UTF-8"))
-
           ByteBuffer buffer = ByteBuffer.wrap(title)
           buffer.put(title)
           buffer.flip()
@@ -230,9 +224,6 @@ class GokbExporter {
     def result = new ObjectNode(NODE_FACTORY)
     def identifiers = new ArrayNode(NODE_FACTORY)
 
-    for (String field in ["nominalProvider"]) {
-      result.put("${field}", (String) packageHeader."${field}")
-    }
     setIsil(enrichment.dataContainer, identifiers)
     if (enrichment.packageName){
       result.put("name", enrichment.packageName)
@@ -246,7 +237,13 @@ class GokbExporter {
     def nominalPlatform = new ObjectNode(NODE_FACTORY)
     nominalPlatform.put("name", (String) packageHeader.nominalPlatform.name)
     nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
+    nominalPlatform.put("oid", (String) packageHeader.nominalPlatform.oid)
     result.set("nominalPlatform", nominalPlatform)
+
+    def nominalProvider = new ObjectNode(NODE_FACTORY)
+    nominalProvider.put("name", (String) packageHeader.nominalProvider.name)
+    nominalProvider.put("oid", (String) packageHeader.nominalProvider.oid)
+    result.set("nominalProvider", nominalProvider)
 
     if (null != enrichment.dataContainer.curatoryGroup){
       ArrayNode curatoryGroups = NODE_FACTORY.arrayNode()

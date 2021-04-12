@@ -228,7 +228,7 @@
                                     raw('</div>')}
                             <div class="input-group">
                                 <span class="input-group-addon"><em>GOKb</em> <g:message code="listDocuments.key.provider" /></span>
-                                <span class="form-control" >${enrichment.dataContainer?.pkgHeader?.nominalProvider}</span>
+                                <span class="form-control" >${enrichment.dataContainer?.pkgHeader?.nominalProvider.name}</span>
                             </div>
                             <br />
 
