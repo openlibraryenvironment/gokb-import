@@ -60,6 +60,7 @@ class Enrichment{
   String fileNameDate
   File transferredFile
   String packageName
+  long packageId
 
   String resultName
   String resultHash
