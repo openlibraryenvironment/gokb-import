@@ -643,6 +643,16 @@ class EnrichmentController implements ControllersHelper{
 
 
   // get Platform suggestions for typeahead
+  def suggestTitle = {
+    log.debug("Getting title suggestions..")
+    def result = [:]
+    def titles = gokbService.getTitleMap(params.q)
+    result.items = titles.records
+    render result as JSON
+  }
+
+
+  // get Platform suggestions for typeahead
   def suggestPlatform = {
     log.debug("Getting platform suggestions..")
     def result = [:]

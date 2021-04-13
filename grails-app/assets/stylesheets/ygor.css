@@ -74,12 +74,14 @@ body .input-group .selection .select2-selection__rendered .select2-selection__cl
 	height: 33px;
 }
 
+select#pkgTitle,
 select#pkgTitleId,
 select#pkgNominalPlatform,
 select#pkgNominalProvider {
-	width: 405px;
+	width: 500px;
 }
 
+select#pkgTitle .warning,
 select#pkgTitleId .warning,
 select#pkgNominalPlatform .warning,
 select#pkgNominalProvider .warning {
@@ -87,7 +89,7 @@ select#pkgNominalProvider .warning {
 	color: #bbb;
 }
 select#processIndex {
-	width: 405px;
+	width: 500px;
 	display: inline-block;
 }
 

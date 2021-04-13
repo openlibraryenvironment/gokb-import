@@ -48,12 +48,9 @@
                         <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_1}">
                             <div class="input-group">
                                 <span class="input-group-addon"><g:message code="listDocuments.key.title" /></span>
-                                <g:if test="${session.lastUpdate?.parameterMap?.pkgTitle}">
-                                    <g:textField name="pkgTitle" size="60" value="${session.lastUpdate.parameterMap.pkgTitle[0]}" class="form-control" required="true"/>
-                                </g:if>
-                                <g:else>
-                                    <g:textField name="pkgTitle" size="60" class="form-control" required="true"/>
-                                </g:else>
+                                <select class="dynamic-options form-control" name="pkgTitle" id="pkgTitle">
+                                    <option></option>
+                                </select>
                             </div>
                             <span class="checkbox">
                                 <label>
@@ -136,6 +133,10 @@
                             </g:if>
 
                             <script>
+                                var title = null;
+                                if (${false != session.lastUpdate?.parameterMap?.pkgTitle?.getAt(0)}){
+                                    title = "${session.lastUpdate?.parameterMap?.pkgTitle?.getAt(0)}";
+                                }
                                 var platform = null;
                                 if (${false != session.lastUpdate?.parameterMap?.pkgNominalPlatform?.getAt(0)}){
                                     platform = "${session.lastUpdate?.parameterMap?.pkgNominalPlatform?.getAt(0)}";
@@ -153,6 +154,32 @@
                                     curatoryGroup = "${session.lastUpdate?.parameterMap?.pkgCuratoryGroup?.getAt(0)}";
                                 }
                                 $(document).ready(function() {
+                                    $('#pkgTitle').select2({
+                                        allowClear: true,
+                                        placeholder: '${message(code:"listDocuments.js.placeholder.platform")}',
+                                        debug: true,
+                                        tags: true,
+                                        templateSelection: function (data) {
+                                            // Add custom attributes to the <option> tag for the selected option
+                                            $(data.element).attr('value', data.findFilter);
+                                            return data.text;
+                                        },
+                                        ajax: {
+                                            url: '/ygor/enrichment/suggestTitle',
+                                            data: function (params) {
+                                                var query = {
+                                                    q: params.term
+                                                }
+                                                return query;
+                                            },
+                                            processResults: function (data) {
+                                                return {
+                                                    results: data.items
+                                                }
+                                            }
+                                        }
+                                    });
+                                    $('#pkgTitle').append($('<option></option>').attr('value', title).text(title));
                                     $('#pkgNominalPlatform').select2({
                                         allowClear: true,
                                         placeholder: '${message(code:"listDocuments.js.placeholder.platform")}',
