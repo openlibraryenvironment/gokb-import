@@ -150,7 +150,7 @@ class MultiField {
       }
     }
     // no collected value --> return default value (if any)
-    return g.message(code:'record.source.default')
+    return "default value"
   }
 
 
