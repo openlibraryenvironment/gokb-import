@@ -156,7 +156,7 @@
                                 $(document).ready(function() {
                                     $('#pkgTitle').select2({
                                         allowClear: true,
-                                        placeholder: '${message(code:"listDocuments.js.placeholder.platform")}',
+                                        placeholder: '${message(code:"listDocuments.js.placeholder.package")}',
                                         debug: true,
                                         tags: true,
                                         templateSelection: function (data) {
