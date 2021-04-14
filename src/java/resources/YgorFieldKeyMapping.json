@@ -682,6 +682,20 @@
     }
   },
   {
+    "ygor" : "platformOid",
+    "display" : "Platform ID",
+    "out" : {
+      "gokb" : ["$TIPP.platform.oid"]
+    },
+    "type" : "ID",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}]
+    }
+  },
+  {
     "ygor" : "platformUrl",
     "display" : "Platform URL",
     "out" : {
