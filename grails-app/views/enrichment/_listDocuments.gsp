@@ -165,7 +165,7 @@
                                             return data.text;
                                         },
                                         ajax: {
-                                            url: '/ygor/enrichment/suggestTitle',
+                                            url: '/ygor/enrichment/suggestPackageTitle',
                                             data: function (params) {
                                                 var query = {
                                                     q: params.term

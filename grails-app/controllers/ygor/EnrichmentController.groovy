@@ -642,8 +642,8 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  // get Platform suggestions for typeahead
-  def suggestTitle = {
+  // get package title suggestions for typeahead
+  def suggestPackageTitle = {
     log.debug("Getting title suggestions..")
     def result = [:]
     def titles = gokbService.getTitleMap(params.q)
