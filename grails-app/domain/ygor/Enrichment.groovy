@@ -60,6 +60,7 @@ class Enrichment{
   String fileNameDate
   File transferredFile
   String packageName
+  long packageId
 
   String resultName
   String resultHash
@@ -484,7 +485,7 @@ class Enrichment{
 
   FieldKeyMapping createMappingWithValue(String ygorField, String value){
     FieldKeyMapping platformNameMapping = mappingsContainer.getMapping(ygorField, MappingsContainer.YGOR)
-    if (StringUtils.isEmpty(platformNameMapping.val)){
+    if (platformNameMapping != null && StringUtils.isEmpty(platformNameMapping.val)){
       platformNameMapping.val = value
     }
     platformNameMapping

@@ -49,8 +49,21 @@ class EnrichmentService{
     if (enrichment == null || pm == null){
       return
     }
-    if (pm['pkgTitle']){
-      enrichment.packageName = pm['pkgTitle'][0]
+    if (pm['pkgTitle'] && pm['pkgTitle'][0]){
+      if (pm['pkgTitle'][0].startsWith("org.gokb.cred.Package:")){
+        String[] packageInfo = pm['pkgTitle'][0].split(";")
+        if (packageInfo.length == 2){
+          enrichment.packageId = Long.valueOf(packageInfo[0].substring(22))
+          enrichment.packageName = packageInfo[1]
+          def pkg = getPackage(String.valueOf(enrichment.packageId), null, null)
+          if (pkg != null){
+            enrichment.packageUuid = pkg.uuid
+          }
+        }
+      }
+      else{
+        enrichment.packageName = pm['pkgTitle'][0]
+      }
     }
     if (pm['addOnly'] && pm['addOnly'][0] in ["on", "true"]){
       enrichment.addOnly = true
@@ -119,6 +132,9 @@ class EnrichmentService{
   }
 
 
+  /**
+   * @param resultFields Optional. All fields are returned if left empty.
+   */
   Map<String, Object> gokbRestApiRequest(@Nonnull String uri, String user, String password, List<String> resultFields){
     if (StringUtils.isEmpty(uri)){
       return null

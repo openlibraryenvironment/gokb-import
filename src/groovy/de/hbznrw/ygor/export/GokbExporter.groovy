@@ -231,6 +231,12 @@ class GokbExporter {
     else {
       result.put("name", packageHeader.name)
     }
+    if (enrichment.packageId){
+      result.put("gokbId", enrichment.packageId)
+    }
+    if (enrichment.packageUuid){
+      result.put("uuid", enrichment.packageUuid)
+    }
     if (enrichment.fileNameDate){
       result.put("fileNameDate", enrichment.fileNameDate)
     }

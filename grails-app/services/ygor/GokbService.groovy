@@ -9,6 +9,41 @@ class GokbService {
   def grailsApplication
   def messageSource
 
+  Map getTitleMap(def qterm = null, def suggest = true) {
+    log.info("getting title map from gokb ..")
+    def result = [:]
+    try {
+      String esQuery = qterm ? URLEncoder.encode(qterm) : ""
+      def json
+      if (suggest) {
+        json = geElasticsearchSuggests(esQuery, "Package", null) // 10000 is maximum value allowed by now
+      }
+      else {
+        json = geElasticsearchFindings(esQuery, "Package", null, 10)
+      }
+      result.records = []
+      result.map = [:]
+
+      if (json?.info?.records) {
+        json.info.records.each { r ->
+          result.records.add([id: r.name, text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})" : ""), url: r.primaryUrl, status: r.status, oid: r.id, uuid: r.uuid, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
+          result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl ?: 'no URL!')
+        }
+      }
+      if (json?.warning?.records) {
+        json.warning.records.each { r ->
+          result.records.add([id: r.name, text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})" : ""), url: r.primaryUrl, status: r.status, oid: r.id, uuid: r.uuid, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
+          result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl ?: 'no URL!')
+        }
+      }
+    }
+    catch (Exception e) {
+      log.error(e.getMessage())
+    }
+    result
+  }
+
+
   Map getPlatformMap(def qterm = null, def suggest = true) {
     log.info("getting platform map from gokb ..")
     def result = [:]
@@ -49,11 +84,13 @@ class GokbService {
     queryElasticsearch(url)
   }
 
+
   Map geElasticsearchFindings(final String query, final String type,
                               final String role, final Integer max) {
     String url = buildUri(grailsApplication.config.gokbApi.xrFindUriStub.toString(), query, type, role, max)
     queryElasticsearch(url)
   }
+
 
   Map queryElasticsearch(String url) {
     log.info("querying: " + url)
@@ -78,6 +115,7 @@ class GokbService {
       }
     }
   }
+
 
   private String buildUri(final String stub, final String query, final String type, final String role, final Integer max, String category = null) {
     String url = stub + "?"
