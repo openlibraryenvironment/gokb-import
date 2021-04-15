@@ -61,6 +61,7 @@ class Enrichment{
   File transferredFile
   String packageName
   long packageId
+  String packageUuid
 
   String resultName
   String resultHash
@@ -475,7 +476,7 @@ class Enrichment{
     MultiField multiField = new MultiField(tippNameMapping)
     for (String recId in dataContainer.records){
       Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
-      multiField.validate(dataContainer.info.namespace_title_id)
+      multiField.validateContent(dataContainer.info.namespace_title_id)
       record.addMultiField(multiField)
       record.save(enrichmentFolder, resultHash)
     }

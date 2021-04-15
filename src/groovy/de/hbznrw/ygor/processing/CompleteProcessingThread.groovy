@@ -23,6 +23,7 @@ class CompleteProcessingThread extends Thread {
   String addOnly
   UploadJobFrame uploadJobFrame
   File localFile
+  boolean ignoreLastChanged
 
   /**
    * used by EnrichmentController.processGokbPackage()
@@ -32,7 +33,7 @@ class CompleteProcessingThread extends Thread {
    * @param token
    */
   CompleteProcessingThread(KbartReader kbartReader, Map<String, Object> pkg, Map<String, Object> src, String token,
-      UploadJobFrame uploadJobFrame, File file, def addOnly){
+      UploadJobFrame uploadJobFrame, File file, def addOnly, boolean ignoreLastChanged){
     enrichmentService = new EnrichmentService()
     this.kbartReader = kbartReader
     this.pkg = pkg
@@ -41,6 +42,7 @@ class CompleteProcessingThread extends Thread {
     this.uploadJobFrame = uploadJobFrame
     this.localFile = file
     this.addOnly
+    this.ignoreLastChanged = ignoreLastChanged
   }
 
 
@@ -80,7 +82,7 @@ class CompleteProcessingThread extends Thread {
 
           Enrichment enrichment
           try {
-            enrichment = prepareEnrichment(token, sessionFolder, pkg, src, "false", false)
+            enrichment = prepareEnrichment(token, sessionFolder, pkg, src, "false", ignoreLastChanged)
             log.info("Prepared enrichment ${enrichment.originName}.")
           }
           catch (Exception e) {
@@ -90,6 +92,7 @@ class CompleteProcessingThread extends Thread {
             continue
           }
           enrichment.originPathName = kbartReader.fileName
+          enrichment.ignoreLastChanged = ignoreLastChanged
           UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, true)
           enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
           if (uploadJob == null){
@@ -117,7 +120,7 @@ class CompleteProcessingThread extends Thread {
       kbartReader.fileName = localFile.toString()
       Enrichment enrichment
       try {
-        enrichment = prepareEnrichment(token, sessionFolder, pkg, src, addOnly)
+        enrichment = prepareEnrichment(token, sessionFolder, pkg, src, addOnly, false)
         log.info("Prepared enrichment ${enrichment.originName}.")
 
         enrichment.originPathName = kbartReader.fileName
