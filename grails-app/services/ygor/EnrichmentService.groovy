@@ -55,6 +55,10 @@ class EnrichmentService{
         if (packageInfo.length == 2){
           enrichment.packageId = Long.valueOf(packageInfo[0].substring(22))
           enrichment.packageName = packageInfo[1]
+          def pkg = getPackage(String.valueOf(enrichment.packageId), null, null)
+          if (pkg != null){
+            enrichment.packageUuid = pkg.uuid
+          }
         }
       }
       else{
@@ -128,6 +132,9 @@ class EnrichmentService{
   }
 
 
+  /**
+   * @param resultFields Optional. All fields are returned if left empty.
+   */
   Map<String, Object> gokbRestApiRequest(@Nonnull String uri, String user, String password, List<String> resultFields){
     if (StringUtils.isEmpty(uri)){
       return null
