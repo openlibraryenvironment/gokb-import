@@ -29,7 +29,6 @@ class MultiField {
   static hasMany = [fields: Field]
 
   final private static Pattern FIXED_PATTERN = Pattern.compile("\\{fixed=(.*)}")
-  final private static def g = new ValidationTagLib()
 
   static constraints = {
   }
@@ -134,13 +133,13 @@ class MultiField {
   @SuppressWarnings('JpaAttributeMemberSignatureInspection')
   String getPrioSource() {
     if (revised != null){
-      return g.message(code: 'record.source.revised')
+      return "default value"
     }
     if (keyMapping == null) {
       return "kbart"
     }
     if (keyMapping.valIsFix) {
-      return g.message(code:'record.source.default')
+      return "default value"
     }
     // no fixed value --> search for collected values
     for (source in keyMapping.sourcePrio) {
@@ -150,7 +149,7 @@ class MultiField {
       }
     }
     // no collected value --> return default value (if any)
-    return g.message(code:'record.source.default')
+    return "default value"
   }
 
 
