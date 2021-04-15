@@ -263,7 +263,7 @@ class StatisticController implements ControllersHelper{
         if (key.equals("publicationType")){
           record.publicationType = multiField.revised.toLowerCase()
         }
-        record.validate(namespace)
+        record.validateContent(namespace)
         record.save(enrichmentFolder, resultHash)
       }
       else{
@@ -553,7 +553,7 @@ class StatisticController implements ControllersHelper{
           RecordFlag flag = record.getFlag(flagId.key)
           flag.setColour(RecordFlag.Colour.valueOf(flagId.value))
         }
-        record.validate(namespace)
+        record.validateContent(namespace)
         enrichment.classifyRecord(record)
       }
     }

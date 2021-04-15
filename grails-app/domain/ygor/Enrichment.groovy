@@ -509,7 +509,7 @@ class Enrichment{
     for (String recId in dataContainer.records){
       Record record = Record.load(enrichmentFolder, resultHash, recId, mappingsContainer)
       record.normalize(namespace)
-      record.validate(namespace)
+      record.validateContent(namespace)
       classifyRecord(record)
       record.save(enrichmentFolder, resultHash)
     }

@@ -215,7 +215,7 @@ class Record{
   }
 
 
-  void validate(String namespace) {
+  void validateContent(String namespace) {
     this.validateMultifields(namespace)
     RecordValidator.validateCoverage(this)
     RecordValidator.validateHistoryEvent(this)
