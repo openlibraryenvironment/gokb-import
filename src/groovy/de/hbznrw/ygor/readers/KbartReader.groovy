@@ -166,12 +166,13 @@ class KbartReader {
 
 
   // NOTE: should have been an override of AbstractReader.readItemData(), but the parameters are too different
-  Map<String, String> readItemData(LocalDate lastPackageUpdate) {
+  Map<String, String> readItemData(LocalDate lastPackageUpdate, boolean ignoreLastChanged) {
     int i = csvHeader.indexOf("last_changed")
     while (csvRecords.hasNext()){
       CSVRecord next = csvRecords.next()
       LocalDate itemLastUpdate = i > -1 ? DateToolkit.getAsLocalDate(next.get(i)) : null
-      if (itemLastUpdate == null || lastPackageUpdate == null || !itemLastUpdate.isBefore(lastPackageUpdate)) {
+      if (itemLastUpdate == null || lastPackageUpdate == null ||
+          ignoreLastChanged || !itemLastUpdate.isBefore(lastPackageUpdate)) {
         Map<String, String> nextAsMap = returnItem(next)
         if (nextAsMap != null) return nextAsMap
       }

@@ -334,6 +334,7 @@ class EnrichmentController implements ControllersHelper{
       result.missingParams = missingParams
       return result as JSON
     }
+    boolean ignoreLastChanged = params.boolean('ignoreLastChanged') ?: false
 
     Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
@@ -356,7 +357,7 @@ class EnrichmentController implements ControllersHelper{
     else{
       UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
       CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token,
-          uploadJobFrame, transferredFile, addOnly)
+          uploadJobFrame, transferredFile, addOnly, ignoreLastChanged)
       try {
         completeProcessingThread.start()
         result.status = UploadThreadGokb.Status.STARTED.toString()
@@ -413,8 +414,8 @@ class EnrichmentController implements ControllersHelper{
     }
     enrichmentService.kbartReader = new KbartReader(file)
     Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
-    String addOnly = params.get('addOnly').toString()                     // "true" or "false"
-    def pmOptions = params.get('processOption')                           // "kbart", "zdb", "ezb"
+    String addOnly = params.get('addOnly').toString()                           // "true" or "false"
+    def pmOptions = params.get('processOption')                                 // "kbart", "zdb", "ezb"
     boolean ignoreLastChanged = params.boolean('ignoreLastChanged')       // "true" or "false"
 
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
