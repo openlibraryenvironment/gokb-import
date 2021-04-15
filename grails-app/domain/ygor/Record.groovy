@@ -291,7 +291,7 @@ class Record{
 
 
   private void validateMultifields(String namespace) {
-    multiFields.each { k, v -> v.validate(namespace) }
+    multiFields.each { k, v -> v.validateContent(namespace) }
   }
 
 

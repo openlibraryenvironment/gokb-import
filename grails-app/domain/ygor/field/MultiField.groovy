@@ -158,7 +158,7 @@ class MultiField {
   }
 
 
-  void validate(String namespace) {
+  void validateContent(String namespace) {
     String value = getFirstPrioValue()
     if (keyMapping != null && keyMapping.allowedValues != null && !keyMapping.allowedValues.isEmpty()){
       if (!(value in keyMapping.allowedValues)){

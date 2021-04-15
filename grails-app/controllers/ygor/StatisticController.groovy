@@ -543,7 +543,7 @@ class StatisticController implements ControllersHelper{
 
 
   def setFlag() {
-    def record
+    Record record
     try{
       Enrichment enrichment = getEnrichment(params.resultHash)
       String namespace = enrichment.dataContainer.info.namespace_title_id

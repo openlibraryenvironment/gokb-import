@@ -108,8 +108,7 @@ class GokbExporter {
         tipp = removeEmptyFields(tipp)
         tipp = removeEmptyIdentifiers(tipp, type)
         tipp.set("title", postProcessPublicationTitle(tipp.get("title"), record))
-        tipp = postProcessTitleIdentifiers(tipp, type,
-            enrichment.dataContainer.info.namespace_title_id)
+        tipp = postProcessTitleIdentifiers(tipp, type, enrichment.dataContainer.info.namespace_title_id)
         tipps.add(tipp)
       }
     }
@@ -173,8 +172,7 @@ class GokbExporter {
       title = removeEmptyFields(title)
       title = removeEmptyIdentifiers(title, FileType.TITLES)
       title = removeEmptyPrices(title)
-      title = postProcessTitleIdentifiers(title, FileType.TITLES,
-          enrichment.dataContainer.info.namespace_title_id)
+      title = postProcessTitleIdentifiers(title, FileType.TITLES, enrichment.dataContainer.info.namespace_title_id)
       if (printPretty){
         return JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(title)
       }
