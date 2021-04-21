@@ -401,6 +401,15 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
+  def ajaxGetPackageRelatedValues = {
+    def en = getCurrentEnrichment()
+    if (en){
+      def pkg = enrichmentService.getPackage(params.uuid, null, null)
+      render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name + '", "curatoryGroup":"' + pkg._embedded?.curatoryGroups[0]?.name + '"}'
+    }
+  }
+
+
   private Enrichment buildEnrichmentFromRequest(){
     // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
