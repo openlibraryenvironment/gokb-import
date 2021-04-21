@@ -405,6 +405,11 @@ class EnrichmentController implements ControllersHelper{
     def en = getCurrentEnrichment()
     if (en){
       def pkg = enrichmentService.getPackage(params.uuid, null, null)
+      def titleId = ""
+      if (pkg.provider?.name){
+        def provider = enrichmentService.getProvider(pkg.provider.name, ["titleId"])
+        // titleId =
+      }
       render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name + '", "curatoryGroup":"' + pkg._embedded?.curatoryGroups[0]?.name + '"}'
     }
   }
