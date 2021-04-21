@@ -31,7 +31,7 @@ class EnrichmentController implements ControllersHelper{
 
   def process = {
     SessionService.setSessionDuration(request, 3600)
-    def namespace_list = gokbService.getNamespaceList()
+    def namespace_list = gokbService.getNamespaceList(grailsApplication.config.gokbApi.namespaceCategory)
     def namespace_doi_list = []
     def gokb_cgs = gokbService.getCuratoryGroupsList()
     namespace_doi_list.addAll(namespace_list)
@@ -405,15 +405,22 @@ class EnrichmentController implements ControllersHelper{
     if (en){
       def pkg = enrichmentService.getPackage(params.uuid, null, null)
       String isil = ""
+      String packageNamespace = ""
+      String packageId = ""
       def ids = pkg?._embedded?.ids
       if (ids != null){
         for (def id in ids){
           if (id.namespace?.value.equals("isil")){
             isil = String.valueOf(id.value)
           }
+          else if (id.namespace?.value in ["Anbieter_Produkt_ID" /* add further namespace categories here */ ]){
+            packageId = String.valueOf(id.value)
+            packageNamespace = id.namespace?.value
+          }
         }
       }
       render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name +
+          '", "packageId":"' + packageId + '", "packageNamespace":"' + packageNamespace +
           '", "isil":"' + isil + '", "curatoryGroup":"' + pkg._embedded?.curatoryGroups[0]?.name + '"}'
     }
   }
@@ -694,7 +701,7 @@ class EnrichmentController implements ControllersHelper{
   def gokbNameSpaces = {
     log.debug("Getting namespaces of connected GOKb instance..")
     def result = [:]
-    result.items = gokbService.getNamespaceList()
+    result.items = gokbService.getNamespaceList(grailsApplication.config.gokbApi.namespaceCategory)
     render result as JSON
   }
 

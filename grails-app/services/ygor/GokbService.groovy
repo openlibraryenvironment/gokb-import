@@ -184,10 +184,9 @@ class GokbService {
   }
 
 
-  def getNamespaceList() {
+  def getNamespaceList(String category) {
     String nsBase = grailsApplication.config.gokbApi.baseUri.toString() + "api/namespaces"
-    String nsCategory = grailsApplication.config.gokbApi.namespaceCategory ?: null
-    String nsUrl = buildUri(nsBase, null, null, null, null, nsCategory)
+    String nsUrl = buildUri(nsBase, null, null, null, null, category)
     def placeholderNamespace = messageSource.getMessage('listDocuments.js.placeholder.namespace', null, Locale.default)
     def result = [[id: '', text: placeholderNamespace]]
 
@@ -198,7 +197,7 @@ class GokbService {
         log.debug("Retrieved namespaces via: ${nsUrl}")
         json.info.result.each { r ->
           if (!(r.value in ["issn", "eissn", "doi"])) {
-            result.add([id: r.value, text: r.value, cat: r.category])
+            result.add([id: r.value, text: r.value, cat: r.category, id: r.id])
           }
         }
       }

@@ -192,8 +192,12 @@
                                                 data = jQuery.parseJSON(data);
                                                 var isil = data.isil;
                                                 $("#pkgIsil").val(isil);
+                                                var pkgIdNamespace = data.packageNamespace;
+                                                $("#pkgIdNamespace").append('<option selected="selected" value="' + pkgIdNamespace+ '">' + pkgIdNamespace+ '</option>');
+                                                var pkgId = data.packageId;
+                                                $("#pkgId").val(pkgId);
                                                 var provider = data.provider;
-                                                $("#pkgNominalProvider").append('<option selected="selected" value="' + provider+ '">' + provider+ '</option>')
+                                                $("#pkgNominalProvider").append('<option selected="selected" value="' + provider + '">' + provider+ '</option>');
                                                 var platform = data.platform;
                                                 $('#pkgNominalPlatform').append($('<option selected="selected"></option>').attr('value', platform).text(platform));
                                                 var titleId = data.titleId;
