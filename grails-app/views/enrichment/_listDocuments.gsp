@@ -190,15 +190,15 @@
                                             data:        sendData,
                                             success:function(data, textStatus){
                                                 data = jQuery.parseJSON(data);
+                                                var isil = data.isil;
+                                                $("#pkgIsil").val(isil);
                                                 var provider = data.provider;
                                                 $("#pkgNominalProvider").append('<option selected="selected" value="' + provider+ '">' + provider+ '</option>')
-                                                // var provider = new Option(data.provider, 1, false, false);
-                                                // $('#pkgNominalProvider').append(provider).trigger('change');
                                                 var platform = data.platform;
-                                                var titleId = data.titleId;
-                                                var curatoryGroup = data.curatoryGroup;
                                                 $('#pkgNominalPlatform').append($('<option selected="selected"></option>').attr('value', platform).text(platform));
+                                                var titleId = data.titleId;
                                                 $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', titleId).text(titleId));
+                                                var curatoryGroup = data.curatoryGroup;
                                                 $('#pkgCuratoryGroup').append($('<option selected="selected"></option>').attr('value', curatoryGroup).text(curatoryGroup));
                                             },
                                             error:function(XMLHttpRequest, textStatus, errorThrown){

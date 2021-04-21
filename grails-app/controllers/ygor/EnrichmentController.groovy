@@ -396,7 +396,6 @@ class EnrichmentController implements ControllersHelper{
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
     enrichmentService.addUploadJob(uploadJob)
     result.message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
-
     render result as JSON
   }
 
@@ -405,12 +404,17 @@ class EnrichmentController implements ControllersHelper{
     def en = getCurrentEnrichment()
     if (en){
       def pkg = enrichmentService.getPackage(params.uuid, null, null)
-      def titleId = ""
-      if (pkg.provider?.name){
-        def provider = enrichmentService.getProvider(pkg.provider.name, ["titleId"])
-        // titleId =
+      String isil = ""
+      def ids = pkg?._embedded?.ids
+      if (ids != null){
+        for (def id in ids){
+          if (id.namespace?.value.equals("isil")){
+            isil = String.valueOf(id.value)
+          }
+        }
       }
-      render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name + '", "curatoryGroup":"' + pkg._embedded?.curatoryGroups[0]?.name + '"}'
+      render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name +
+          '", "isil":"' + isil + '", "curatoryGroup":"' + pkg._embedded?.curatoryGroups[0]?.name + '"}'
     }
   }
 
