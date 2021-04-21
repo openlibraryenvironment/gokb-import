@@ -26,6 +26,9 @@ class EzbIntegrationService extends ExternalIntegrationService {
       String processStart = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date())
       for (String recId in dataContainer.records){
         Record record = Record.load(dataContainer.enrichmentFolder, dataContainer.resultHash, recId, mappingsContainer)
+        if (record.publicationType.toLowerCase() != "serial"){
+          continue
+        }
         if (status == ExternalIntegrationService.IntegrationStatus.INTERRUPTING){
           status = ExternalIntegrationService.IntegrationStatus.STOPPED
           return
