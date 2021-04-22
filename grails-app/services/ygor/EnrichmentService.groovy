@@ -54,7 +54,7 @@ class EnrichmentService{
         if (packageInfo.length == 2){
           enrichment.packageId = Long.valueOf(packageInfo[0].substring(22))
           enrichment.packageName = packageInfo[1]
-          def pkg = getPackage(String.valueOf(enrichment.packageId), null, null)
+          def pkg = getPackage(String.valueOf(enrichment.packageId), null, null, null)
           if (pkg != null){
             enrichment.packageUuid = pkg.uuid
           }
@@ -101,7 +101,7 @@ class EnrichmentService{
       log.error("ParameterMap missing nominalProvider.")
     }
     else{
-      def provider = getProvider(pm, null)
+      def provider = getProvider(pm, null, null)
       if (provider != null){
         applyProviderToPackageHeader(provider, ph)
       }
@@ -109,9 +109,10 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> getPackage(String packageId, List<String> embeddedFields, String[] fields){
+  Map<String, Object> getPackage(String packageId, List<String> embeddedFields, String[] fields, String curatoryGroup){
     def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
     uri = gokbService.appendEmbeddedFields(uri, embeddedFields)
+    uri = gokbService.appendCuratoryGroup(uri, curatoryGroup)
     List<String, Object> fieldList = new ArrayList()
     if (fields != null){
       fieldList.addAll(fields)
@@ -204,7 +205,7 @@ class EnrichmentService{
 
 
   private def pickPlatform(String platFormId, String queryTerm){
-    def platforms = gokbService.getPlatformMap(queryTerm, false).records
+    def platforms = gokbService.getPlatformMap(queryTerm, false, null).records
     def pkgNomPlatform = null
     log.debug("Got platforms: ${platforms}")
     platforms.each{
@@ -233,9 +234,9 @@ class EnrichmentService{
   }
 
 
-  def getProvider(String providerName, List<String> embeddedFields){
+  def getProvider(String providerName, List<String> embeddedFields, String curatoryGroup = null){
     log.debug("Getting providers for: ${providerName}")
-    def providers = gokbService.getProviderMap(providerName, embeddedFields).records
+    def providers = gokbService.getProviderMap(providerName, embeddedFields, curatoryGroup).records
     def pkgNomProvider = null
     log.debug("Got providers: ${providers}")
     providers.each{

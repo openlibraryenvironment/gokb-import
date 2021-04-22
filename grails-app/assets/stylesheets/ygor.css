@@ -76,6 +76,7 @@ body .input-group .selection .select2-selection__rendered .select2-selection__cl
 
 select#pkgTitle,
 select#pkgTitleId,
+select#pkgCuratoryGroup,
 select#pkgNominalPlatform,
 select#pkgNominalProvider {
 	width: 500px;
@@ -83,6 +84,7 @@ select#pkgNominalProvider {
 
 select#pkgTitle .warning,
 select#pkgTitleId .warning,
+select#pkgCuratoryGroup .warning,
 select#pkgNominalPlatform .warning,
 select#pkgNominalProvider .warning {
 	font-style: italic;

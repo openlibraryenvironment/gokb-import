@@ -10,14 +10,14 @@ class GokbService {
   def grailsApplication
   def messageSource
 
-  Map getTitleMap(def qterm = null, def suggest = true) {
+  Map getTitleMap(def qterm = null, def suggest = true, String curatoryGroup = null) {
     log.info("getting title map from gokb ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Package", null, null) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Package", null, null, curatoryGroup) // 10000 is maximum value allowed by now
       }
       else {
         json = geElasticsearchFindings(esQuery, "Package", null, 10)
@@ -52,7 +52,7 @@ class GokbService {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Platform", null, null) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Platform", null, null, null) // 10000 is maximum value allowed by now
       }
       else {
         json = geElasticsearchFindings(esQuery, "Platform", null, 10)
@@ -80,9 +80,11 @@ class GokbService {
   }
 
 
-  Map geElasticsearchSuggests(final String query, final String type, final String role, final List<String> embeddedFields) {
+  Map geElasticsearchSuggests(final String query, final String type, final String role,
+                              final List<String> embeddedFields, final String curatoryGroup) {
     String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), query, type, role, null)
     url = appendEmbeddedFields(url, embeddedFields)
+    url = appendCuratoryGroup(url, curatoryGroup)
     queryElasticsearch(url)
   }
 
@@ -156,12 +158,21 @@ class GokbService {
   }
 
 
-  Map getProviderMap(def qterm = null, List<String> embeddedFields) {
+  String appendCuratoryGroup(String uri, String curatoryGroup){
+    if (!StringUtils.isEmpty(curatoryGroup)){
+      uri = uri.contains("?") ? uri + "&" : uri + "?"
+      uri = uri + "curatoryGroup=" + curatoryGroup
+    }
+    uri
+  }
+
+
+  Map getProviderMap(def qterm = null, List<String> embeddedFields, String curatoryGroup = null) {
     log.info("getting provider map from gokb ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
-      def json = geElasticsearchSuggests(esQuery, "Org", null, embeddedFields) // 10000 is maximum value allowed by now
+      def json = geElasticsearchSuggests(esQuery, "Org", null, embeddedFields, null) // 10000 is maximum value allowed by now
       result.records = []
       result.map = [:]
       if (json?.info?.records) {
