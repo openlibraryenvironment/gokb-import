@@ -2,7 +2,9 @@
 
 <%@ page
         import="ygor.Enrichment"
+        import="ygor.EnrichmentController"
         import="ygor.GokbService"
+        import="ygor.EnrichmentService"
         import="de.hbznrw.ygor.export.structure.TitleStruct"
         import="de.hbznrw.ygor.readers.*"
 %>
@@ -246,7 +248,8 @@
                                             url: '/ygor/enrichment/suggestPlatform',
                                             data: function (params) {
                                                 var query = {
-                                                    q: params.term
+                                                    q: params.term,
+                                                    curatoryGroup: curatoryGroup
                                                 }
                                                 return query;
                                             },
@@ -266,7 +269,8 @@
                                             url: '/ygor/enrichment/suggestProvider',
                                             data: function (params) {
                                                 var query = {
-                                                    q: params.term
+                                                    q: params.term,
+                                                    curatoryGroup: curatoryGroup
                                                 }
                                                 return query;
                                             },
