@@ -1,6 +1,5 @@
 package ygor
 
-import de.hbznrw.ygor.export.structure.PackageHeaderNominalProvider
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
@@ -98,26 +97,21 @@ class EnrichmentService{
     if (platform != null){
       applyPlatformToPackageHeader(platform, ph)
     }
-    def provider = getProvider(pm)
-    if (provider != null){
-      applyProviderToPackageHeader(provider, ph)
+    if (pm['pkgNominalProvider'] == null){
+      log.error("ParameterMap missing nominalProvider.")
+    }
+    else{
+      def provider = getProvider(pm, null)
+      if (provider != null){
+        applyProviderToPackageHeader(provider, ph)
+      }
     }
   }
 
 
   Map<String, Object> getPackage(String packageId, List<String> embeddedFields, String[] fields){
     def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
-    if (!CollectionUtils.isEmpty(embeddedFields)){
-      uri = uri.concat("?_embed=")
-      for (String field : embeddedFields){
-        if (uri.endsWith("=")){
-          uri = uri.concat(field)
-        }
-        else{
-          uri = uri.concat(",").concat(field)
-        }
-      }
-    }
+    uri = gokbService.appendEmbeddedFields(uri, embeddedFields)
     List<String, Object> fieldList = new ArrayList()
     if (fields != null){
       fieldList.addAll(fields)
@@ -209,20 +203,6 @@ class EnrichmentService{
   }
 
 
-  def getProvider(Map pm){
-    if (pm['pkgNominalProvider'] == null){
-      log.error("ParameterMap missing nominalProvider.")
-      return null
-    }
-    log.debug("Getting providers for: ${pm['pkgNominalProvider'][0]}")
-    def provider = pickProvider(pm['pkgNominalProvider'][0])
-    if (provider == null){
-      log.error("No provider found.")
-    }
-    return provider
-  }
-
-
   private def pickPlatform(String platFormId, String queryTerm){
     def platforms = gokbService.getPlatformMap(queryTerm, false).records
     def pkgNomPlatform = null
@@ -253,12 +233,13 @@ class EnrichmentService{
   }
 
 
-  private def pickProvider(String queryTerm){
-    def providers = gokbService.getProviderMap(queryTerm).records
+  def getProvider(String providerName, List<String> embeddedFields){
+    log.debug("Getting providers for: ${providerName}")
+    def providers = gokbService.getProviderMap(providerName, embeddedFields).records
     def pkgNomProvider = null
     log.debug("Got providers: ${providers}")
     providers.each{
-      if ((queryTerm == null || it.name == queryTerm) && it.status == "Current"){
+      if ((providerName == null || it.name == providerName) && it.status == "Current"){
         if (pkgNomProvider){
           log.warn("Multiple providers found named: ".concat(pkgNomProvider.name).concat(" and ").concat(it.name))
         }
@@ -268,13 +249,16 @@ class EnrichmentService{
         }
       }
       else{
-        if (queryTerm != null && it.name != queryTerm){
-          log.debug("No name match: ${it.name} - ${queryTerm}")
+        if (providerName != null && it.name != providerName){
+          log.debug("No name match: ${it.name} - ${providerName}")
         }
         if (it.status != "Current"){
           log.debug("Wrong status: ${it.status}")
         }
       }
+    }
+    if (pkgNomProvider == null){
+      log.error("No provider found.")
     }
     return pkgNomProvider
   }

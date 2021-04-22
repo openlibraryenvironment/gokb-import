@@ -2,6 +2,7 @@ package ygor
 
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang.StringUtils
 
 class GokbService {
@@ -16,7 +17,7 @@ class GokbService {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Package", null) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Package", null, null) // 10000 is maximum value allowed by now
       }
       else {
         json = geElasticsearchFindings(esQuery, "Package", null, 10)
@@ -51,7 +52,7 @@ class GokbService {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Platform", null) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Platform", null, null) // 10000 is maximum value allowed by now
       }
       else {
         json = geElasticsearchFindings(esQuery, "Platform", null, 10)
@@ -79,8 +80,9 @@ class GokbService {
   }
 
 
-  Map geElasticsearchSuggests(final String query, final String type, final String role) {
+  Map geElasticsearchSuggests(final String query, final String type, final String role, final List<String> embeddedFields) {
     String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), query, type, role, null)
+    url = appendEmbeddedFields(url, embeddedFields)
     queryElasticsearch(url)
   }
 
@@ -138,12 +140,28 @@ class GokbService {
   }
 
 
-  Map getProviderMap(def qterm = null) {
+  String appendEmbeddedFields(String uri, List<String> embeddedFields){
+    if (!CollectionUtils.isEmpty(embeddedFields)){
+      uri = uri.concat("?_embed=")
+      for (String field : embeddedFields){
+        if (uri.endsWith("=")){
+          uri = uri.concat(field)
+        }
+        else{
+          uri = uri.concat(",").concat(field)
+        }
+      }
+    }
+    uri
+  }
+
+
+  Map getProviderMap(def qterm = null, List<String> embeddedFields) {
     log.info("getting provider map from gokb ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
-      def json = geElasticsearchSuggests(esQuery, "Org", null) // 10000 is maximum value allowed by now
+      def json = geElasticsearchSuggests(esQuery, "Org", null, embeddedFields) // 10000 is maximum value allowed by now
       result.records = []
       result.map = [:]
       if (json?.info?.records) {
@@ -166,10 +184,9 @@ class GokbService {
   }
 
 
-  def getNamespaceList() {
+  def getNamespaceList(String category) {
     String nsBase = grailsApplication.config.gokbApi.baseUri.toString() + "api/namespaces"
-    String nsCategory = grailsApplication.config.gokbApi.namespaceCategory ?: null
-    String nsUrl = buildUri(nsBase, null, null, null, null, nsCategory)
+    String nsUrl = buildUri(nsBase, null, null, null, null, category)
     def placeholderNamespace = messageSource.getMessage('listDocuments.js.placeholder.namespace', null, Locale.default)
     def result = [[id: '', text: placeholderNamespace]]
 
@@ -180,7 +197,7 @@ class GokbService {
         log.debug("Retrieved namespaces via: ${nsUrl}")
         json.info.result.each { r ->
           if (!(r.value in ["issn", "eissn", "doi"])) {
-            result.add([id: r.value, text: r.value, cat: r.category])
+            result.add([id: r.value, text: r.value, cat: r.category, id: r.id])
           }
         }
       }

@@ -180,6 +180,36 @@
                                         }
                                     });
                                     $('#pkgTitle').append($('<option></option>').attr('value', title).text(title));
+                                    $('#pkgTitle').on('select2:select', function (e) {
+                                        var sendData = {};
+                                        sendData['packageName'] = e.params.data.text;
+                                        sendData['uuid'] = e.params.data.uuid;
+                                        jQuery.ajax({
+                                            type:       'GET',
+                                            url:         '${grailsApplication.config.grails.app.context}/enrichment/ajaxGetPackageRelatedValues',
+                                            data:        sendData,
+                                            success:function(data, textStatus){
+                                                data = jQuery.parseJSON(data);
+                                                var isil = data.isil;
+                                                $("#pkgIsil").val(isil);
+                                                var pkgIdNamespace = data.packageNamespace;
+                                                $("#pkgIdNamespace").append('<option selected="selected" value="' + pkgIdNamespace+ '">' + pkgIdNamespace+ '</option>');
+                                                var pkgId = data.packageId;
+                                                $("#pkgId").val(pkgId);
+                                                var provider = data.provider;
+                                                $("#pkgNominalProvider").append('<option selected="selected" value="' + provider + '">' + provider+ '</option>');
+                                                var platform = data.platform;
+                                                $('#pkgNominalPlatform').append($('<option selected="selected"></option>').attr('value', platform).text(platform));
+                                                var titleId = data.titleId;
+                                                $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', titleId).text(titleId));
+                                                var curatoryGroup = data.curatoryGroup;
+                                                $('#pkgCuratoryGroup').append($('<option selected="selected"></option>').attr('value', curatoryGroup).text(curatoryGroup));
+                                            },
+                                            error:function(XMLHttpRequest, textStatus, errorThrown){
+                                                // do nothing
+                                            }
+                                        });
+                                    });
                                     $('#pkgNominalPlatform').select2({
                                         allowClear: true,
                                         placeholder: '${message(code:"listDocuments.js.placeholder.platform")}',
