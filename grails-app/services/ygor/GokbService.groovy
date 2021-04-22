@@ -45,14 +45,14 @@ class GokbService {
   }
 
 
-  Map getPlatformMap(def qterm = null, def suggest = true) {
+  Map getPlatformMap(String qterm = null, def suggest = true, String curatoryGroup) {
     log.info("getting platform map from gokb ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Platform", null, null, null) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Platform", null, null, curatoryGroup) // 10000 is maximum value allowed by now
       }
       else {
         json = geElasticsearchFindings(esQuery, "Platform", null, 10)

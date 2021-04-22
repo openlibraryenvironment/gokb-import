@@ -404,6 +404,9 @@ class EnrichmentController implements ControllersHelper{
     def en = getCurrentEnrichment()
     if (en){
       def pkg = enrichmentService.getPackage(params.uuid, null, null, null)
+      if (pkg == null){
+        return
+      }
       String isil = ""
       String packageNamespace = ""
       String packageId = ""
@@ -691,8 +694,10 @@ class EnrichmentController implements ControllersHelper{
     log.debug("Getting platform suggestions..")
     def result = [:]
     def platforms = gokbService.getPlatformMap(params.q, true, params.curatoryGroup)
-    result.items = platforms.records
-    render result as JSON
+    if (platforms != null){
+      result.items = platforms.records
+      render result as JSON
+    }
   }
 
 
