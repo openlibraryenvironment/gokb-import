@@ -32,7 +32,7 @@ class EnrichmentController implements ControllersHelper{
     SessionService.setSessionDuration(request, 3600)
     def namespace_list = gokbService.getNamespaceList(grailsApplication.config.gokbApi.namespaceCategory)
     def namespace_doi_list = []
-    def gokb_cgs = gokbService.getCuratoryGroupsList()
+    def gokb_cgs = gokbService.getCurrentCuratoryGroupsList()
     namespace_doi_list.addAll(namespace_list)
     namespace_doi_list  << [id: 'doi', text: 'doi']
     Enrichment en = getCurrentEnrichment()
@@ -431,7 +431,11 @@ class EnrichmentController implements ControllersHelper{
 
   def ajaxGetCuratoryGroups = {
     def result = [:]
-    result["items"] = gokbService.getCuratoryGroupsList()
+    result["items"] = []
+    for (def curatoryGroup in gokbService.getCurrentCuratoryGroupsList()){
+      curatoryGroup.id = curatoryGroup.get("text")
+      result["items"] << curatoryGroup
+    }
     render result as JSON
   }
 

@@ -227,7 +227,7 @@ class GokbService {
   }
 
 
-  def getCuratoryGroupsList() {
+  def getCurrentCuratoryGroupsList() {
     String cgsUrl = grailsApplication.config.gokbApi.baseUri.toString() + "api/groups"
     def result = []
     log.debug("Quering curatory groups via: ${cgsUrl}")
@@ -236,13 +236,13 @@ class GokbService {
       if (json?.info?.result) {
         log.debug("Retrieved curatory groups via: ${cgsUrl}")
         json.info.result.each { r ->
-          if (!StringUtils.isEmpty(r.name)){
+          if (!StringUtils.isEmpty(r.name) && r.status.equals("Current")){
             result.add([id: r.uuid, text: r.name])
           }
         }
       }
       if (json?.warning?.result) {
-        if (!StringUtils.isEmpty(r.value)){
+        if (!StringUtils.isEmpty(r.value) && r.status.equals("Current")){
           result.add([id: r.value, text: r.value])
         }
       }
