@@ -1,12 +1,7 @@
 <!-- _listDocuments.gsp -->
 
 <%@ page
-        import="ygor.Enrichment"
-        import="ygor.EnrichmentController"
-        import="ygor.GokbService"
-        import="ygor.EnrichmentService"
-        import="de.hbznrw.ygor.export.structure.TitleStruct"
-        import="de.hbznrw.ygor.readers.*"
+    import="ygor.Enrichment; ygor.EnrichmentController; ygor.GokbService; ygor.EnrichmentService; de.hbznrw.ygor.export.structure.TitleStruct; de.hbznrw.ygor.readers.*"
 %>
 
 <g:form controller="enrichment" action="process">
