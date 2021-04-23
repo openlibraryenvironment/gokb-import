@@ -208,7 +208,7 @@ class GokbService {
         log.debug("Retrieved namespaces via: ${nsUrl}")
         json.info.result.each { r ->
           if (!(r.value in ["issn", "eissn", "doi"])) {
-            result.add([id: r.value, text: r.value, cat: r.category, id: r.id])
+            result.add([id: r.value, text: r.value, cat: r.category])
           }
         }
       }
