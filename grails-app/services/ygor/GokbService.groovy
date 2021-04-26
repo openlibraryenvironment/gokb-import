@@ -207,16 +207,12 @@ class GokbService {
       if (json?.info?.result) {
         log.debug("Retrieved namespaces via: ${nsUrl}")
         json.info.result.each { r ->
-          if (!(r.value in ["issn", "eissn", "doi"])) {
-            result.add([id: r.value, text: r.value, cat: r.category, id: r.id])
-          }
+          addValidNamespaceToResult(r, result)
         }
       }
       if (json?.warning?.result) {
         json.warning.result.each { r ->
-          if (!(r.value in ["issn", "eissn"])) {
-            result.add([id: r.value, text: r.value, cat: r.category])
-          }
+          addValidNamespaceToResult(r, result)
         }
       }
     }
@@ -224,6 +220,15 @@ class GokbService {
       log.error(e.getMessage())
     }
     result
+  }
+
+
+  private void addValidNamespaceToResult(r, List<LinkedHashMap<String, String>> result){
+    if (!(r.value in ["issn", "eissn", "doi"])){
+      if (r.id && r.value && r.category){
+        result.add([id: r.value, text: r.value, cat: r.category, id: r.id])
+      }
+    }
   }
 
 
