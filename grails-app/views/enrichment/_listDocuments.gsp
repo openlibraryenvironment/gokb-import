@@ -1,10 +1,7 @@
 <!-- _listDocuments.gsp -->
 
 <%@ page
-        import="ygor.Enrichment"
-        import="ygor.GokbService"
-        import="de.hbznrw.ygor.export.structure.TitleStruct"
-        import="de.hbznrw.ygor.readers.*"
+    import="ygor.Enrichment; ygor.EnrichmentController; ygor.GokbService; ygor.EnrichmentService; de.hbznrw.ygor.export.structure.TitleStruct; de.hbznrw.ygor.readers.*"
 %>
 
 <g:form controller="enrichment" action="process">
@@ -36,7 +33,6 @@
                                 </em></span>
                             </span>
                         </div>
-                        <br />
                         <div id="progress-${enrichment.resultHash}" class="progress">
                             <g:if test="${enrichment.status == Enrichment.ProcessingState.FINISHED}">
                                 <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%;">100%</div>
@@ -46,6 +42,16 @@
                             </g:else>
                         </div>
                         <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_1}">
+                            <div class="input-group">
+                                <span class="input-group-addon"><em>GOKb</em> Curatory Group</span>
+                                <select class="dynamic-options form-control" name="pkgCuratoryGroup" id="pkgCuratoryGroup">
+                                    <option></option>
+                                    <g:each in="${curatoryGroups}" var="cg">
+                                        <option value="${cg.text}">${cg.text}</option>
+                                    </g:each>
+                                </select>
+                            </div>
+                            <br/>
                             <div class="input-group">
                                 <span class="input-group-addon"><g:message code="listDocuments.key.title" /></span>
                                 <select class="dynamic-options form-control" name="pkgTitle" id="pkgTitle">
@@ -117,20 +123,6 @@
                                 </div>
                                 <br>
                             </g:if>
-                            <g:if test="${curatoryGroups?.size() > 0}">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><em>GOKb</em> Curatory Group</span>
-                                    <g:select name="pkgCuratoryGroup" id="pkgCuratoryGroup" from="${curatoryGroups}"
-                                              optionKey="text" optionValue="text" class="form-control"
-                                              required="required"
-                                              noSelection="${['':message(code:'listDocuments.js.placeholder.curatorygroup')]}"/>
-                                    <g:if test="${session.lastUpdate?.parameterMap?.pkgCuratoryGroup}">
-                                        <script>
-                                            $('#pkgCuratoryGroup').val('${session.lastUpdate?.parameterMap?.pkgCuratoryGroup[0]}').select();
-                                        </script>
-                                    </g:if>
-                                </div>
-                            </g:if>
 
                             <script>
                                 var title = null;
@@ -150,7 +142,7 @@
                                     titleId = "${session.lastUpdate?.parameterMap?.pkgTitleId?.getAt(0)}";
                                 }
                                 var curatoryGroup = null;
-                                if (${false != session.lastUpdate?.parameterMap?.pkgCuratoryGroup?.getAt(0)}){
+                                if (${false != session.lastUpdate?.parameterMap?.pkgCuratoryGroup?.getAt(0)}) {
                                     curatoryGroup = "${session.lastUpdate?.parameterMap?.pkgCuratoryGroup?.getAt(0)}";
                                 }
                                 $(document).ready(function() {
@@ -168,7 +160,8 @@
                                             url: '/ygor/enrichment/suggestPackageTitle',
                                             data: function (params) {
                                                 var query = {
-                                                    q: params.term
+                                                    q: params.term,
+                                                    curatoryGroup: curatoryGroup
                                                 }
                                                 return query;
                                             },
@@ -210,6 +203,33 @@
                                             }
                                         });
                                     });
+                                    $('#pkgCuratoryGroup').select2({
+                                        allowClear: true,
+                                        placeholder: '${message(code:"listDocuments.js.placeholder.curatorygroup")}',
+                                        debug: true,
+                                        templateSelection: function (data) {
+                                            // Add custom attributes to the <option> tag for the selected option
+                                            $(data.element).attr('value', data.findFilter);
+                                            return data.text;
+                                        },
+                                        ajax: {
+                                            url: '/ygor/enrichment/ajaxGetCuratoryGroups',
+                                            data: function (params) {
+                                                var query = {
+                                                    q: params.term
+                                                }
+                                                return query;
+                                            },
+                                            processResults: function (data) {
+                                                return {
+                                                    results: data.items
+                                                }
+                                            }
+                                        }
+                                    });
+                                    $('#pkgCuratoryGroup').on('select2:select', function (e) {
+                                        curatoryGroup = e.params.data.text;
+                                    });
                                     $('#pkgNominalPlatform').select2({
                                         allowClear: true,
                                         placeholder: '${message(code:"listDocuments.js.placeholder.platform")}',
@@ -223,7 +243,8 @@
                                             url: '/ygor/enrichment/suggestPlatform',
                                             data: function (params) {
                                                 var query = {
-                                                    q: params.term
+                                                    q: params.term,
+                                                    curatoryGroup: curatoryGroup
                                                 }
                                                 return query;
                                             },
@@ -243,7 +264,8 @@
                                             url: '/ygor/enrichment/suggestProvider',
                                             data: function (params) {
                                                 var query = {
-                                                    q: params.term
+                                                    q: params.term,
+                                                    curatoryGroup: curatoryGroup
                                                 }
                                                 return query;
                                             },

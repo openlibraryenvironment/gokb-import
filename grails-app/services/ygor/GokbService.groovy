@@ -10,14 +10,14 @@ class GokbService {
   def grailsApplication
   def messageSource
 
-  Map getTitleMap(def qterm = null, def suggest = true) {
+  Map getTitleMap(def qterm = null, def suggest = true, String curatoryGroup = null) {
     log.info("getting title map from gokb ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Package", null, null) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Package", null, null, curatoryGroup) // 10000 is maximum value allowed by now
       }
       else {
         json = geElasticsearchFindings(esQuery, "Package", null, 10)
@@ -45,14 +45,14 @@ class GokbService {
   }
 
 
-  Map getPlatformMap(def qterm = null, def suggest = true) {
+  Map getPlatformMap(String qterm = null, def suggest = true, String curatoryGroup) {
     log.info("getting platform map from gokb ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Platform", null, null) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Platform", null, null, curatoryGroup) // 10000 is maximum value allowed by now
       }
       else {
         json = geElasticsearchFindings(esQuery, "Platform", null, 10)
@@ -80,9 +80,11 @@ class GokbService {
   }
 
 
-  Map geElasticsearchSuggests(final String query, final String type, final String role, final List<String> embeddedFields) {
+  Map geElasticsearchSuggests(final String query, final String type, final String role,
+                              final List<String> embeddedFields, final String curatoryGroup) {
     String url = buildUri(grailsApplication.config.gokbApi.xrSuggestUriStub.toString(), query, type, role, null)
     url = appendEmbeddedFields(url, embeddedFields)
+    url = appendCuratoryGroup(url, curatoryGroup)
     queryElasticsearch(url)
   }
 
@@ -156,12 +158,21 @@ class GokbService {
   }
 
 
-  Map getProviderMap(def qterm = null, List<String> embeddedFields) {
+  String appendCuratoryGroup(String uri, String curatoryGroup){
+    if (!StringUtils.isEmpty(curatoryGroup)){
+      uri = uri.contains("?") ? uri + "&" : uri + "?"
+      uri = uri + "curatoryGroup=" + curatoryGroup
+    }
+    uri
+  }
+
+
+  Map getProviderMap(def qterm = null, List<String> embeddedFields, String curatoryGroup = null) {
     log.info("getting provider map from gokb ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
-      def json = geElasticsearchSuggests(esQuery, "Org", null, embeddedFields) // 10000 is maximum value allowed by now
+      def json = geElasticsearchSuggests(esQuery, "Org", null, embeddedFields, null) // 10000 is maximum value allowed by now
       result.records = []
       result.map = [:]
       if (json?.info?.records) {
@@ -196,16 +207,12 @@ class GokbService {
       if (json?.info?.result) {
         log.debug("Retrieved namespaces via: ${nsUrl}")
         json.info.result.each { r ->
-          if (!(r.value in ["issn", "eissn", "doi"])) {
-            result.add([id: r.value, text: r.value, cat: r.category, id: r.id])
-          }
+          addValidNamespaceToResult(r, result)
         }
       }
       if (json?.warning?.result) {
         json.warning.result.each { r ->
-          if (!(r.value in ["issn", "eissn"])) {
-            result.add([id: r.value, text: r.value, cat: r.category])
-          }
+          addValidNamespaceToResult(r, result)
         }
       }
     }
@@ -216,7 +223,16 @@ class GokbService {
   }
 
 
-  def getCuratoryGroupsList() {
+  private void addValidNamespaceToResult(r, List<LinkedHashMap<String, String>> result){
+    if (!(r.value in ["issn", "eissn", "doi"])){
+      if (r.value && r.category){
+        result.add([id: r.value, text: r.value, cat: r.category])
+      }
+    }
+  }
+
+
+  def getCurrentCuratoryGroupsList() {
     String cgsUrl = grailsApplication.config.gokbApi.baseUri.toString() + "api/groups"
     def result = []
     log.debug("Quering curatory groups via: ${cgsUrl}")
@@ -225,13 +241,13 @@ class GokbService {
       if (json?.info?.result) {
         log.debug("Retrieved curatory groups via: ${cgsUrl}")
         json.info.result.each { r ->
-          if (!StringUtils.isEmpty(r.name)){
+          if (!StringUtils.isEmpty(r.name) && r.status.equals("Current")){
             result.add([id: r.uuid, text: r.name])
           }
         }
       }
       if (json?.warning?.result) {
-        if (!StringUtils.isEmpty(r.value)){
+        if (!StringUtils.isEmpty(r.value) && r.status.equals("Current")){
           result.add([id: r.value, text: r.value])
         }
       }

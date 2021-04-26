@@ -54,7 +54,7 @@ class EnrichmentService{
         if (packageInfo.length == 2){
           enrichment.packageId = Long.valueOf(packageInfo[0].substring(22))
           enrichment.packageName = packageInfo[1]
-          def pkg = getPackage(String.valueOf(enrichment.packageId), null, null)
+          def pkg = getPackage(String.valueOf(enrichment.packageId), null, null, null)
           if (pkg != null){
             enrichment.packageUuid = pkg.uuid
           }
@@ -101,7 +101,7 @@ class EnrichmentService{
       log.error("ParameterMap missing nominalProvider.")
     }
     else{
-      def provider = getProvider(pm, null)
+      def provider = getProvider(pm['pkgNominalProvider'][0], null, pm['pkgCuratoryGroup'][0])
       if (provider != null){
         applyProviderToPackageHeader(provider, ph)
       }
@@ -109,9 +109,13 @@ class EnrichmentService{
   }
 
 
-  Map<String, Object> getPackage(String packageId, List<String> embeddedFields, String[] fields){
+  Map<String, Object> getPackage(String packageId, List<String> embeddedFields, String[] fields, String curatoryGroup){
+    if (packageId == null){
+      return null
+    }
     def uri = Holders.config.gokbApi.packageInfo.toString().concat(packageId)
     uri = gokbService.appendEmbeddedFields(uri, embeddedFields)
+    uri = gokbService.appendCuratoryGroup(uri, curatoryGroup)
     List<String, Object> fieldList = new ArrayList()
     if (fields != null){
       fieldList.addAll(fields)
@@ -185,26 +189,38 @@ class EnrichmentService{
 
 
   def getPlatform(Map pm){
-    if (pm['pkgNominalPlatform'] == null){
+    if (pm['pkgNominalPlatform'] == null || StringUtils.isEmpty(pm['pkgNominalPlatform'][0])){
       log.error("ParameterMap missing nominalPlatform.")
       return null
     }
     log.debug("Getting platforms for: ${pm['pkgNominalPlatform'][0]}")
-    def platformSplit = splitPlatformString(pm['pkgNominalPlatform'][0])
-    if (platformSplit == null || platformSplit.size() != 2){
+    def platformSplit = pm['pkgNominalPlatform'][0].split(';')
+    if (platformSplit == null || platformSplit.size() > 2){
       log.error("Could not split platform string.")
       return null
     }
-    def platform = pickPlatform(platformSplit[0], platformSplit[1])
-    if (platform == null){
-      log.error("No platform found.")
+    def platform
+    if (platformSplit.size() == 1){
+      def platforms = gokbService.getPlatformMap(platformSplit[0], false, null)
+      for (def pf in platforms.records){
+        if (pf.id?.equals(platformSplit[0])){
+          platform = pf
+          break
+        }
+      }
+    }
+    else if (platformSplit.size() == 2){
+      platform = pickPlatform(platformSplit[0], platformSplit[1])
+      if (platform == null){
+        log.error("No platform found.")
+      }
     }
     return platform
   }
 
 
   private def pickPlatform(String platFormId, String queryTerm){
-    def platforms = gokbService.getPlatformMap(queryTerm, false).records
+    def platforms = gokbService.getPlatformMap(queryTerm, false, null).records
     def pkgNomPlatform = null
     log.debug("Got platforms: ${platforms}")
     platforms.each{
@@ -233,9 +249,9 @@ class EnrichmentService{
   }
 
 
-  def getProvider(String providerName, List<String> embeddedFields){
+  def getProvider(String providerName, List<String> embeddedFields, String curatoryGroup){
     log.debug("Getting providers for: ${providerName}")
-    def providers = gokbService.getProviderMap(providerName, embeddedFields).records
+    def providers = gokbService.getProviderMap(providerName, embeddedFields, curatoryGroup).records
     def pkgNomProvider = null
     log.debug("Got providers: ${providers}")
     providers.each{
@@ -280,18 +296,6 @@ class EnrichmentService{
   private void applyProviderToPackageHeader(def provider, def packageHeader){
     packageHeader.nominalProvider.name = provider.name
     packageHeader.nominalProvider.oid = provider.oid
-  }
-
-
-  /**
-   * Splits into an array of platformId and platformName (query term)
-   */
-  private def splitPlatformString(String platformString){
-    def tmp = platformString.split(';')
-    if (tmp.size() != 2){
-      return null
-    }
-    return [tmp[0], tmp[1]]
   }
 
 

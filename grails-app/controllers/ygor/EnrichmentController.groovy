@@ -8,7 +8,6 @@ import grails.converters.JSON
 import groovy.util.logging.Log4j
 import org.apache.commons.collections.MapUtils
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
@@ -33,7 +32,7 @@ class EnrichmentController implements ControllersHelper{
     SessionService.setSessionDuration(request, 3600)
     def namespace_list = gokbService.getNamespaceList(grailsApplication.config.gokbApi.namespaceCategory)
     def namespace_doi_list = []
-    def gokb_cgs = gokbService.getCuratoryGroupsList()
+    def gokb_cgs = gokbService.getCurrentCuratoryGroupsList()
     namespace_doi_list.addAll(namespace_list)
     namespace_doi_list  << [id: 'doi', text: 'doi']
     Enrichment en = getCurrentEnrichment()
@@ -336,7 +335,8 @@ class EnrichmentController implements ControllersHelper{
     }
     boolean ignoreLastChanged = params.boolean('ignoreLastChanged') ?: false
 
-    Map<String, Object> pkg = enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null)
+    Map<String, Object> pkg =
+        enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null, null)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
 
     if (mpFile) {
@@ -403,7 +403,10 @@ class EnrichmentController implements ControllersHelper{
   def ajaxGetPackageRelatedValues = {
     def en = getCurrentEnrichment()
     if (en){
-      def pkg = enrichmentService.getPackage(params.uuid, null, null)
+      def pkg = enrichmentService.getPackage(params.uuid, null, null, null)
+      if (pkg == null){
+        return
+      }
       String isil = ""
       String packageNamespace = ""
       String packageId = ""
@@ -426,6 +429,17 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
+  def ajaxGetCuratoryGroups = {
+    def result = [:]
+    result["items"] = []
+    for (def curatoryGroup in gokbService.getCurrentCuratoryGroupsList()){
+      curatoryGroup.id = curatoryGroup.get("text")
+      result["items"] << curatoryGroup
+    }
+    render result as JSON
+  }
+
+
   private Enrichment buildEnrichmentFromRequest(){
     // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
@@ -444,7 +458,8 @@ class EnrichmentController implements ControllersHelper{
     boolean ignoreLastChanged = params.boolean('ignoreLastChanged')       // "true" or "false"
 
     Map<String, Object> platform = enrichmentService.getPlatform(String.valueOf(params.get('pkgNominalPlatformId')))
-    Map<String, Object> pkg = enrichmentService.getPackage(params.get('pkgId'), ["source", "curatoryGroups", "nominalPlatform"], null)
+    Map<String, Object> pkg =
+        enrichmentService.getPackage(params.get('pkgId'), ["source", "curatoryGroups", "nominalPlatform"], null, null)
     String pkgTitleId = request.parameterMap.get("titleIdNamespace")
     String pkgTitle = pkg.get("name")
     String pkgCuratoryGroup = pkg.get("_embedded")?.get("curatoryGroups")?.getAt(0)?.get("name") // TODO query embed CG
@@ -672,7 +687,7 @@ class EnrichmentController implements ControllersHelper{
   def suggestPackageTitle = {
     log.debug("Getting title suggestions..")
     def result = [:]
-    def titles = gokbService.getTitleMap(params.q)
+    def titles = gokbService.getTitleMap(params.q, true, params.curatoryGroup)
     result.items = titles.records
     render result as JSON
   }
@@ -682,9 +697,11 @@ class EnrichmentController implements ControllersHelper{
   def suggestPlatform = {
     log.debug("Getting platform suggestions..")
     def result = [:]
-    def platforms = gokbService.getPlatformMap(params.q)
-    result.items = platforms.records
-    render result as JSON
+    def platforms = gokbService.getPlatformMap(params.q, true, params.curatoryGroup)
+    if (platforms != null){
+      result.items = platforms.records
+      render result as JSON
+    }
   }
 
 
@@ -692,7 +709,7 @@ class EnrichmentController implements ControllersHelper{
   def suggestProvider = {
     log.debug("Getting provider suggestions..")
     def result = [:]
-    def providers = gokbService.getProviderMap(params.q)
+    def providers = gokbService.getProviderMap(params.q, null, params.curatoryGroup)
     result.items = providers.records
     render result as JSON
   }
