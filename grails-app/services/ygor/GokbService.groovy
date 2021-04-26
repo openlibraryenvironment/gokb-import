@@ -225,8 +225,8 @@ class GokbService {
 
   private void addValidNamespaceToResult(r, List<LinkedHashMap<String, String>> result){
     if (!(r.value in ["issn", "eissn", "doi"])){
-      if (r.id && r.value && r.category){
-        result.add([id: r.value, text: r.value, cat: r.category, id: r.id])
+      if (r.value && r.category){
+        result.add([id: r.value, text: r.value, cat: r.category])
       }
     }
   }
