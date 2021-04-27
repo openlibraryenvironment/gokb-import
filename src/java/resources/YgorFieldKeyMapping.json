@@ -308,7 +308,7 @@
       "ezb" : ""
     },
     "order" : ["zdb"],
-    "type" : "Date",
+    "type" : "StartDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "ok"}],
@@ -435,6 +435,24 @@
       "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
       "missing" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
       "undefined" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}]
+    }
+  },
+  {
+    "ygor" : "lastChanged",
+    "display" : "Last Changed",
+    "in" : {
+      "kbart" : "last_changed"
+    },
+    "out" : {
+      "gokb" : ["$TIPP.lastChanged"]
+    },
+    "order" : ["kbart"],
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}]
     }
   },
   {
