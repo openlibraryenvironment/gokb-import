@@ -308,7 +308,7 @@
       "ezb" : ""
     },
     "order" : ["zdb"],
-    "type" : "Date",
+    "type" : "StartDate",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "ok"}],
