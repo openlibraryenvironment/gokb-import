@@ -438,6 +438,24 @@
     }
   },
   {
+    "ygor" : "lastChanged",
+    "display" : "Last Changed",
+    "in" : {
+      "kbart" : "last_changed"
+    },
+    "out" : {
+      "gokb" : ["$TIPP.lastChanged"]
+    },
+    "order" : ["kbart"],
+    "type" : "StartDate",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}]
+    }
+  },
+  {
     "ygor" : "listpriceEur",
     "in" : {
       "kbart" : "listprice_eur",
