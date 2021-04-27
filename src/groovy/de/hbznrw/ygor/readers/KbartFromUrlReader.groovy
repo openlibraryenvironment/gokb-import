@@ -19,12 +19,15 @@ class KbartFromUrlReader extends KbartReader{
       throw new RuntimeException("URL Connection was not established.")
     }
     connection.connect()
-    fileName = sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
-    File file = new File(fileName)
     // connection.setConnectTimeout(2000)
     // connection.setReadTimeout(30000)
     connection = UrlToolkit.resolveRedirects(connection, 5)
     log.debug("Final URL after redirects: ${connection.getURL()}")
+
+    fileName = sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
+    fileName = fileName.split("\\?")[0]
+    File file = new File(fileName)
+
     byte[] content = getByteContent(connection.getInputStream())
     InputStream inputStream = new ByteArrayInputStream(content)
     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
