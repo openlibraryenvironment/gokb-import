@@ -665,6 +665,29 @@
     }
   },
   {
+    "ygor" : "oaType",
+    "display" : "Open Access type",
+    "in" : {
+      "kbart" : "oa_type",
+      "zdb" : "",
+      "ezb" : ""
+    },
+    "out" : {
+      "gokb" : ["$TIPP.oaType"]
+    },
+    "value" : {
+      "allowedValues" : ["Blue OA", "Gold OA", "Green OA", "Hybrid", "White OA", "Yellow OA"]
+    },
+    "order" : ["kbart"],
+    "type" : "String",
+    "flags" : {
+      "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
+      "missing" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
+      "undefined" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}]
+    }
+  },
+  {
     "ygor" : "onlineIdentifier",
     "display" : "online_identifier",
     "in" : {
