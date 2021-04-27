@@ -422,9 +422,33 @@ class EnrichmentController implements ControllersHelper{
           }
         }
       }
+      String tippNamespace = getTippNamespace(pkg)
       render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name +
           '", "packageId":"' + packageId + '", "packageNamespace":"' + packageNamespace +
+          '", "tippNamespace":"' + tippNamespace +
           '", "isil":"' + isil + '", "curatoryGroup":"' + pkg._embedded?.curatoryGroups[0]?.name + '"}'
+    }
+  }
+
+  private String getTippNamespace(Map<String, Object> pkg){
+    List<Object> allTitleIdNamespaces = gokbService.getNamespaceList(grailsApplication.config.gokbApi.namespaceCategory)
+    List<String> allTitleIdNamespacesValues = []
+    for (def namespace in allTitleIdNamespaces){
+      if (!StringUtils.isEmpty(namespace.id)){
+        allTitleIdNamespacesValues.add(namespace.id)
+      }
+    }
+    List<Object> tippContent = enrichmentService.getTippsOfPackage(pkg.uuid, 5)?.records
+    if (tippContent != null){
+      for (def tipp in tippContent){
+        if (tipp.identifiers != null){
+          for (def identifier in tipp.identifiers){
+            if (identifier.namespace in allTitleIdNamespacesValues){
+              return identifier.namespace
+            }
+          }
+        }
+      }
     }
   }
 
