@@ -130,6 +130,13 @@ class EnrichmentService{
   }
 
 
+  Map<String, Object> getTippsOfPackage(String packageUuid, int maxTippCount = 1){
+    def uri = Holders.config.gokbApi.xrFindUriStub.toString().concat("?componentType=TitleInstancePackagePlatform&pkg=")
+        .concat(packageUuid).concat("&max=").concat(String.valueOf(maxTippCount))
+    return gokbRestApiRequest(uri, null, null, null)
+  }
+
+
   /**
    * @param resultFields Optional. All fields are returned if left empty.
    */
