@@ -197,6 +197,8 @@
                                                 $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', titleId).text(titleId));
                                                 var curatoryGroup = data.curatoryGroup;
                                                 $('#pkgCuratoryGroup').append($('<option selected="selected"></option>').attr('value', curatoryGroup).text(curatoryGroup));
+                                                var tippNamespace = data.tippNamespace;
+                                                $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', tippNamespace).text(tippNamespace));
                                             },
                                             error:function(XMLHttpRequest, textStatus, errorThrown){
                                                 // do nothing
