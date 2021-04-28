@@ -775,7 +775,7 @@
     "display" : "print_identifier",
     "in" : {
       "kbart" : "print_identifier",
-      "zdb" : "004A:0",
+      "zdb" : "",
       "ezb" : ""
     },
     "out" : {
@@ -784,7 +784,7 @@
         "$TIPP.title.identifiers.$ARRAY.(type:printIdentifier,value)"
       ]
     },
-    "order" : ["kbart", "zdb"],
+    "order" : ["kbart"],
     "type" : "ID",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
