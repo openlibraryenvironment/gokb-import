@@ -711,7 +711,8 @@ class EnrichmentController implements ControllersHelper{
   def suggestPackageTitle = {
     log.debug("Getting title suggestions..")
     def result = [:]
-    def titles = gokbService.getTitleMap(params.q, true, params.curatoryGroup)
+    boolean suggest = StringUtils.isEmpty(params.curatoryGroup) ? true : false
+    def titles = gokbService.getTitleMap(params.q, suggest, params.curatoryGroup)
     result.items = titles.records
     render result as JSON
   }

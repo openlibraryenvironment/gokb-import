@@ -17,24 +17,22 @@ class GokbService {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Package", null, null, curatoryGroup) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Package", null, null, curatoryGroup)
       }
       else {
-        json = geElasticsearchFindings(esQuery, "Package", null, 10)
+        int maxHits = StringUtils.isEmpty(curatoryGroup) ? 10 : 10000
+        json = geElasticsearchFindings(esQuery, "Package", null, curatoryGroup, maxHits)
       }
       result.records = []
       result.map = [:]
-
       if (json?.info?.records) {
-        json.info.records.each { r ->
-          result.records.add([id: r.name, text: r.name.concat(" - ").concat(r.source?.url ?: "none").concat(r.status ? " (${r.status})" : ""), url: r.source?.url, status: r.status, oid: r.id, uuid: r.uuid, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
-          result.map.put(r.name.concat(" - ").concat(r.source?.url ?: "none"), r.source?.url ?: 'no URL!')
+        json.info.records.each { record ->
+          addRecordToTitleResult(result, record)
         }
       }
       if (json?.warning?.records) {
-        json.warning.records.each { r ->
-          result.records.add([id: r.name, text: r.name.concat(" - ").concat(r.source?.url ?: "none").concat(r.status ? " (${r.status})" : ""), url: r.source?.url, status: r.status, oid: r.id, uuid: r.uuid, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
-          result.map.put(r.name.concat(" - ").concat(r.source?.url ?: "none"), r.source?.url ?: 'no URL!')
+        json.warning.records.each { record ->
+          addRecordToTitleResult(result, record)
         }
       }
     }
@@ -42,6 +40,14 @@ class GokbService {
       log.error(e.getMessage())
     }
     result
+  }
+
+
+  private void addRecordToTitleResult(LinkedHashMap<Object, Object> result, record){
+    result.records.add([id: record.name, text: record.name, url: record.source?.url, status: record.status,
+                        oid: record.id, uuid: record.uuid, name: record.name,
+                        findFilter: record.id.concat(";").concat(record.name)])
+    result.map.put(record.name.concat(" - ").concat(record.source?.url ?: "none"), record.source?.url ?: 'no URL!')
   }
 
 
@@ -55,21 +61,19 @@ class GokbService {
         json = geElasticsearchSuggests(esQuery, "Platform", null, null, curatoryGroup) // 10000 is maximum value allowed by now
       }
       else {
-        json = geElasticsearchFindings(esQuery, "Platform", null, 10)
+        json = geElasticsearchFindings(esQuery, "Platform", null, curatoryGroup, 10)
       }
       result.records = []
       result.map = [:]
 
       if (json?.info?.records) {
-        json.info.records.each { r ->
-          result.records.add([id: r.name, text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})" : ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
-          result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl ?: 'no URL!')
+        json.info.records.each { record ->
+          addRecordToPlatformResult(result, record)
         }
       }
       if (json?.warning?.records) {
-        json.warning.records.each { r ->
-          result.records.add([id: r.name, text: r.name.concat(" - ").concat(r.primaryUrl ?: "none").concat(r.status ? " (${r.status})" : ""), url: r.primaryUrl, status: r.status, oid: r.id, name: r.name, findFilter: r.id.concat(";").concat(r.name)])
-          result.map.put(r.name.concat(" - ").concat(r.primaryUrl ?: "none"), r.primaryUrl ?: 'no URL!')
+        json.warning.records.each { record ->
+          addRecordToPlatformResult(result, record)
         }
       }
     }
@@ -77,6 +81,15 @@ class GokbService {
       log.error(e.getMessage())
     }
     result
+  }
+
+
+  private void addRecordToPlatformResult(LinkedHashMap<Object, Object> result, record){
+    result.records.add([id: record.name,
+                        text: record.name.concat(" - ").concat(record.primaryUrl ?: "none").concat(record.status ? " (${record.status})" : ""),
+                        url: record.primaryUrl, status: record.status, oid: record.id, name: record.name,
+                        findFilter: record.id.concat(";").concat(record.name)])
+    result.map.put(record.name.concat(" - ").concat(record.primaryUrl ?: "none"), record.primaryUrl ?: 'no URL!')
   }
 
 
@@ -90,8 +103,9 @@ class GokbService {
 
 
   Map geElasticsearchFindings(final String query, final String type,
-                              final String role, final Integer max) {
+                              final String role, final String curatoryGroup, final Integer max) {
     String url = buildUri(grailsApplication.config.gokbApi.xrFindUriStub.toString(), query, type, role, max)
+    url = appendCuratoryGroup(url, curatoryGroup)
     queryElasticsearch(url)
   }
 
