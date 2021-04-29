@@ -17,10 +17,11 @@ class GokbService {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
       def json
       if (suggest) {
-        json = geElasticsearchSuggests(esQuery, "Package", null, null, curatoryGroup) // 10000 is maximum value allowed by now
+        json = geElasticsearchSuggests(esQuery, "Package", null, null, curatoryGroup)
       }
       else {
-        json = geElasticsearchFindings(esQuery, "Package", null, 10)
+        int maxHits = StringUtils.isEmpty(curatoryGroup) ? 10 : 10000
+        json = geElasticsearchFindings(esQuery, "Package", null, curatoryGroup, maxHits)
       }
       result.records = []
       result.map = [:]
@@ -60,7 +61,7 @@ class GokbService {
         json = geElasticsearchSuggests(esQuery, "Platform", null, null, curatoryGroup) // 10000 is maximum value allowed by now
       }
       else {
-        json = geElasticsearchFindings(esQuery, "Platform", null, 10)
+        json = geElasticsearchFindings(esQuery, "Platform", null, curatoryGroup, 10)
       }
       result.records = []
       result.map = [:]
@@ -102,8 +103,9 @@ class GokbService {
 
 
   Map geElasticsearchFindings(final String query, final String type,
-                              final String role, final Integer max) {
+                              final String role, final String curatoryGroup, final Integer max) {
     String url = buildUri(grailsApplication.config.gokbApi.xrFindUriStub.toString(), query, type, role, max)
+    url = appendCuratoryGroup(url, curatoryGroup)
     queryElasticsearch(url)
   }
 
