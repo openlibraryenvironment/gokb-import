@@ -53,7 +53,7 @@
                             </div>
                             <br/>
                             <div class="input-group">
-                                <span class="input-group-addon"><g:message code="listDocuments.key.title" /></span>
+                                <span class="input-group-addon"><g:message code="listDocuments.key.pkg" /></span>
                                 <select class="dynamic-options form-control" name="pkgTitle" id="pkgTitle">
                                     <option></option>
                                 </select>
