@@ -256,6 +256,9 @@
                                     $('#pkgCuratoryGroup').on('select2:select', function (e) {
                                         curatoryGroup = e.params.data.text;
                                     });
+                                    $('#pkgCuratoryGroup').on('select2:unselect', function (e) {
+                                        curatoryGroup = null;
+                                    });
                                     $('#pkgNominalPlatform').select2({
                                         allowClear: true,
                                         placeholder: '${message(code:"listDocuments.js.placeholder.platform")}',
