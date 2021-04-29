@@ -189,22 +189,26 @@
                                             data:        sendData,
                                             success:function(data, textStatus){
                                                 data = jQuery.parseJSON(data);
-                                                var isil = data.isil;
-                                                $("#pkgIsil").val(isil);
-                                                var pkgIdNamespace = data.packageNamespace;
-                                                $("#pkgIdNamespace").append('<option selected="selected" value="' + pkgIdNamespace+ '">' + pkgIdNamespace+ '</option>');
-                                                var pkgId = data.packageId;
-                                                $("#pkgId").val(pkgId);
-                                                var provider = data.provider;
-                                                $("#pkgNominalProvider").append('<option selected="selected" value="' + provider + '">' + provider+ '</option>');
-                                                var platform = data.platform;
-                                                $('#pkgNominalPlatform').append($('<option selected="selected"></option>').attr('value', platform).text(platform));
-                                                var titleId = data.titleId;
-                                                $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', titleId).text(titleId));
                                                 var curatoryGroup = data.curatoryGroup;
                                                 $('#pkgCuratoryGroup').append($('<option selected="selected"></option>').attr('value', curatoryGroup).text(curatoryGroup));
+                                                var isil = data.isil;
+                                                $("#pkgIsil").val(isil);
+                                                $("#pkgIsil").attr('disabled', 'disabled');
+                                                var pkgIdNamespace = data.packageNamespace;
+                                                $("#pkgIdNamespace").append('<option selected="selected" value="' + pkgIdNamespace+ '">' + pkgIdNamespace+ '</option>');
+                                                $("#pkgIdNamespace").attr('disabled', 'disabled');
+                                                var pkgId = data.packageId;
+                                                $("#pkgId").val(pkgId);
+                                                $("#pkgId").attr('disabled', 'disabled');
+                                                var provider = data.provider;
+                                                $("#pkgNominalProvider").append('<option selected="selected" value="' + provider + '">' + provider+ '</option>');
+                                                $("#pkgNominalProvider").attr('disabled', 'disabled');
+                                                var platform = data.platform;
+                                                $('#pkgNominalPlatform').append($('<option selected="selected"></option>').attr('value', platform).text(platform));
+                                                $("#pkgNominalPlatform").attr('disabled', 'disabled');
                                                 var tippNamespace = data.tippNamespace;
                                                 $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', tippNamespace).text(tippNamespace));
+                                                $("#pkgTitleId").attr('disabled', 'disabled');
                                             },
                                             error:function(XMLHttpRequest, textStatus, errorThrown){
                                                 // do nothing
