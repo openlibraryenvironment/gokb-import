@@ -227,6 +227,12 @@
                                                     results: data.items
                                                 }
                                             }
+                                        },
+                                        sorter: function(data) {
+                                            return data.sort(function(a, b) {
+                                                return a.text.toLowerCase() < b.text.toLowerCase() ? -1 :
+                                                       a.text.toLowerCase() > b.text.toLowerCase() ? 1 : 0;
+                                            });
                                         }
                                     });
                                     $('#pkgCuratoryGroup').on('select2:select', function (e) {
