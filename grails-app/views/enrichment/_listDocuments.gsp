@@ -215,6 +215,14 @@
                                             }
                                         });
                                     });
+                                    $('#pkgTitle').on('select2:unselect', function (e) {
+                                        $("#pkgIsil").removeAttr('disabled');
+                                        $("#pkgIdNamespace").removeAttr('disabled');
+                                        $("#pkgId").removeAttr('disabled');
+                                        $("#pkgNominalProvider").removeAttr('disabled');
+                                        $("#pkgNominalPlatform").removeAttr('disabled');
+                                        $("#pkgTitleId").removeAttr('disabled');
+                                    });
                                     $('#pkgCuratoryGroup').select2({
                                         allowClear: true,
                                         placeholder: '${message(code:"listDocuments.js.placeholder.curatorygroup")}',
