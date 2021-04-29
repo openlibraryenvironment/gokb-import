@@ -216,12 +216,7 @@
                                         });
                                     });
                                     $('#pkgTitle').on('select2:unselect', function (e) {
-                                        $("#pkgIsil").removeAttr('disabled');
-                                        $("#pkgIdNamespace").removeAttr('disabled');
-                                        $("#pkgId").removeAttr('disabled');
-                                        $("#pkgNominalProvider").removeAttr('disabled');
-                                        $("#pkgNominalPlatform").removeAttr('disabled');
-                                        $("#pkgTitleId").removeAttr('disabled');
+                                        reEnableSelects();
                                     });
                                     $('#pkgCuratoryGroup').select2({
                                         allowClear: true,
@@ -307,6 +302,14 @@
                                     });
                                     $('#pkgNominalProvider').append($('<option></option>').attr('value', provider).text(provider));
                                 });
+                                function reEnableSelects(){
+                                    $("#pkgIsil").removeAttr('disabled');
+                                    $("#pkgIdNamespace").removeAttr('disabled');
+                                    $("#pkgId").removeAttr('disabled');
+                                    $("#pkgNominalProvider").removeAttr('disabled');
+                                    $("#pkgNominalPlatform").removeAttr('disabled');
+                                    $("#pkgTitleId").removeAttr('disabled');
+                                }
                             </script>
                         </g:if>
 
@@ -395,7 +398,7 @@
                     <g:actionSubmit action="deleteFile" value="${message(code:'listDocuments.button.deleteFile')}" class="btn btn-danger"/>
                     <g:actionSubmit action="correctFile" value="${message(code:'listDocuments.button.correctFile')}" class="btn btn-warning"/>
                     <g:if test="${enrichment.status == Enrichment.ProcessingState.PREPARE_1}">
-                        <g:actionSubmit action="prepareFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
+                        <g:actionSubmit onclick="reEnableSelects()" action="prepareFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
                     </g:if>
                     <g:else>
                         <g:actionSubmit action="processFile" value="${message(code:'listDocuments.button.processfile')}" class="btn btn-success"/>
