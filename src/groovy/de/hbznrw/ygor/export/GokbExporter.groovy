@@ -81,6 +81,10 @@ class GokbExporter {
     if (enrichment.dataContainer?.pkgHeader?.token != null){
       pkg.put("updateToken", enrichment.dataContainer?.pkgHeader?.token)
     }
+
+    if (enrichment.dataContainer?.pkgHeader?.updateURL != null){
+      pkg.put("updateURL", enrichment.dataContainer?.pkgHeader?.updateURL)
+    }
     log.debug("extracting package finished")
     pkg
   }
