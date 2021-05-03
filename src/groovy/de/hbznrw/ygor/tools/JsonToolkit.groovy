@@ -95,7 +95,7 @@ class JsonToolkit {
         if (it.hasNext()){
           concatKey.addAll(it.next().key)
         }
-        upsertIntoJsonNode(result, concatKey, value, multiField.type, formatter, false)
+        upsertIntoJsonNode(result, concatKey, value, multiField.type, multiField.isMultiValueCapable, formatter, false)
       }
       else {
         Set qualifiedKeys = multiField.keyMapping."${target}"
@@ -125,7 +125,7 @@ class JsonToolkit {
 
 
   private static void upsertIntoJsonNode(JsonNode root, ArrayList<String> keyPath, String value, String type,
-                                         YgorFormatter formatter, boolean keepIfEmpty) {
+                                         boolean isMultiValueCapable, YgorFormatter formatter, boolean keepIfEmpty) {
     if (keyPath.size() <= 1){
       return
     }
@@ -135,28 +135,29 @@ class JsonToolkit {
     }
     else {
       if (keyPath.get(1).equals(ARRAY)) {
-        upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
+        upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, isMultiValueCapable, formatter, keepIfEmpty)
       }
       else if (keyPath.get(1).equals(COUNT)) {
         // TODO until now, only 1 element in array is supported ==> implement count
         if (root.size() == 0) {
           root.add(new ObjectNode(NODE_FACTORY))
         }
-        upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
+        upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, isMultiValueCapable, formatter, keepIfEmpty)
       }
       else {
-        JsonNode subNode = getSubNode(keyPath, value, keepIfEmpty)
+        JsonNode subNode = getSubNode(keyPath, value, keepIfEmpty, isMultiValueCapable)
         subNode = putAddNode(keyPath, root, subNode)
         if (keyPath.size() > 2) {
           // root is not final leaf --> iterate
-          upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
+          upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value, type, isMultiValueCapable, formatter, keepIfEmpty)
         }
       }
     }
   }
 
 
-  private static JsonNode getSubNode(ArrayList<String> keyPath, String value, boolean keepIfEmpty) {
+  private static JsonNode getSubNode(ArrayList<String> keyPath, String value, boolean keepIfEmpty,
+                                     boolean isMultiValueCapable) {
     assert keyPath.size() > 1
     if (keyPath.size() == 2) {
       value = MultiField.extractFixedValue(value)

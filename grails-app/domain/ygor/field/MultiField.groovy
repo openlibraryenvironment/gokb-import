@@ -22,6 +22,7 @@ class MultiField {
   FieldKeyMapping keyMapping          // TODO: keep in MappingsContainer only and access by ygorFieldKey (?)
   List fields = []
   String type                         // TODO: move to FieldKeyMapping (?)
+  boolean isMultiValueCapable
   String status
   String normalized = null
   String revised = null
@@ -44,6 +45,7 @@ class MultiField {
         this.displayName = fieldKeyMapping.ygorKey
       }
       this.type = fieldKeyMapping.type
+      this.isMultiValueCapable = fieldKeyMapping.isMultiValueCapable
       keyMapping = fieldKeyMapping
     }
   }
