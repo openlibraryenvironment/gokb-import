@@ -6,5 +6,6 @@ class PackageHeader {
   PackageHeaderNominalPlatform nominalPlatform = new PackageHeaderNominalPlatform()
   PackageHeaderNominalProvider nominalProvider = new PackageHeaderNominalProvider()
   String token
+  String updateURL
   String uuid
 }
