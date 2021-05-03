@@ -93,16 +93,17 @@ class GokbExporter {
   static ArrayNode extractTipps(Enrichment enrichment, FileType type) {
     log.debug("extracting tipps from ${enrichment.dataContainer.records.size()} records ...")
     ArrayNode tipps = new ArrayNode(NODE_FACTORY)
+    Character multiValueSeparator = getMultiValueSeparator(enrichment)
     for (String recId in enrichment.dataContainer.records) {
       Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recId,
           enrichment.dataContainer.mappingsContainer)
       if (record.isValid()){
         ObjectNode tipp
         if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
-          tipp = JsonToolkit.getCombinedTitleTippJsonFromRecord("gokb", record, FORMATTER)
+          tipp = JsonToolkit.getCombinedTitleTippJsonFromRecord("gokb", record, FORMATTER, multiValueSeparator)
         }
         else{
-          tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER)
+          tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER, multiValueSeparator)
         }
         tipp = postProcessIssnIsbn(tipp, record, FileType.PACKAGE)
         if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
@@ -122,17 +123,28 @@ class GokbExporter {
   }
 
 
+  private static Character getMultiValueSeparator(Enrichment enrichment){
+    if (enrichment.kbartReader.delimiterChar == ','){
+      return ';'
+    }
+    else{
+      return ','
+    }
+  }
+
+
   static File extractTitles(Enrichment enrichment) {
     String fileName = enrichment.enrichmentFolder + ".titles.json"
     log.debug("extracting titles ... to ".concat(fileName))
     RandomAccessFile titlesFile = new RandomAccessFile(fileName, "rw")
     def fileChannel = titlesFile.getChannel()
+    Character multiValueSeparator = getMultiValueSeparator(enrichment)
     try {
       FileLock fileLock = fileChannel.tryLock()
       if (null != fileLock){
         for (int i=0; i<enrichment.dataContainer.records.size(); i++){
           String recId = enrichment.dataContainer.records[i]
-          def titleRecord = extractTitle(enrichment, recId, true)
+          def titleRecord = extractTitle(enrichment, recId, true, multiValueSeparator)
           byte[] title
           StringWriter strw = new StringWriter()
           if (i == 0) {
@@ -165,12 +177,12 @@ class GokbExporter {
   }
 
 
-  static String extractTitle(Enrichment enrichment, String recordId, boolean printPretty) {
+  static String extractTitle(Enrichment enrichment, String recordId, boolean printPretty, char multiValueSeparator) {
     Record record = Record.load(enrichment.dataContainer.enrichmentFolder, enrichment.resultHash, recordId,
         enrichment.dataContainer.mappingsContainer)
     if (record != null && record.isValid()){
       record.deriveHistoryEventObjects(enrichment)
-      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER)
+      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER, multiValueSeparator)
       title = postProcessPublicationTitle(title, record)
       title = postProcessIssnIsbn(title, record, FileType.TITLES)
       title = removeEmptyFields(title)

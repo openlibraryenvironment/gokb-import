@@ -39,6 +39,7 @@ class KbartReader {
   private CSVRecord lastItemReturned
   String fileName
   Date fileNameDate
+  char delimiterChar
 
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
@@ -72,7 +73,7 @@ class KbartReader {
     fileNameDate = extractDateFromFileName(originalFileName)
     BufferedReader bufferedReader = removeBOM(new BufferedReader(new FileReader(kbartFile)))
     String firstLine = bufferedReader.readLine()
-    char delimiterChar = calculateDelimiter(firstLine)
+    delimiterChar = calculateDelimiter(firstLine)
     firstLine = firstLine.replace("^${delimiterChar}", " ${delimiterChar}")
                          .replaceAll("(?<=${delimiterChar})${delimiterChar}", " ${delimiterChar}")
                          .replaceAll('([\t;,])\$', /$1 /)

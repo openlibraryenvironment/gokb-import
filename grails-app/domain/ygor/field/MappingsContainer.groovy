@@ -18,6 +18,7 @@ class MappingsContainer {
   final public static String EZB = "ezb"
   final public static String GOKB = "gokb"
   final public static String TYPE = "type"
+  final public static String MULTI_VALUE = "multivalue"
   final public static String FLAGS = "flags"
   final public static DEFAULT_SOURCE_PRIO = [KBART, ZDB, EZB]
 

@@ -172,6 +172,7 @@
     },
     "order" : ["kbart"],
     "type" : "String",
+    "multivalue" : "true",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],
@@ -430,6 +431,7 @@
     },
     "order" : ["kbart", "zdb"],
     "type" : "Abbreviation",
+    "multivalue" : "true",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
       "invalid" : [{"serial" : "warning", "monograph" : "warning", "other" : "warning"}],

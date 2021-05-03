@@ -17,6 +17,7 @@ class FieldKeyMapping {
   List<String> zdbKeys = new ArrayList()
   List<String> ezbKeys = new ArrayList()
   String type
+  boolean isMultiValueCapable
   Set<String> gokb
   String val = ""
   Set<String> allowedValues = new HashSet<>()
@@ -69,6 +70,9 @@ class FieldKeyMapping {
           break
         case MappingsContainer.TYPE:
           type = mapping.value
+          break
+        case MappingsContainer.MULTI_VALUE:
+          isMultiValueCapable = Boolean.valueOf(mapping.value)
           break
         case MappingsContainer.GOKB:
           gokb = new HashSet<>()

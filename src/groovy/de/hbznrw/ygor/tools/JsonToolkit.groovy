@@ -65,23 +65,26 @@ class JsonToolkit {
   }
 
 
-  static ObjectNode getTippJsonFromRecord(String target, Record record, YgorFormatter formatter) {
-    getJsonFromRecord(new ArrayList(Arrays.asList("\$TIPP")), target, record, formatter)
+  static ObjectNode getTippJsonFromRecord(String target, Record record, YgorFormatter formatter,
+                                          char multiValueSeparator) {
+    getJsonFromRecord(new ArrayList(Arrays.asList("\$TIPP")), target, record, formatter, multiValueSeparator)
   }
 
 
-  static ObjectNode getTitleJsonFromRecord(String target, Record record, YgorFormatter formatter) {
-    getJsonFromRecord(new ArrayList(Arrays.asList("\$TITLE")), target, record, formatter)
+  static ObjectNode getTitleJsonFromRecord(String target, Record record, YgorFormatter formatter,
+                                           char multiValueSeparator) {
+    getJsonFromRecord(new ArrayList(Arrays.asList("\$TITLE")), target, record, formatter, multiValueSeparator)
   }
 
 
-  static ObjectNode getCombinedTitleTippJsonFromRecord(String target, Record record, YgorFormatter formatter) {
-    getJsonFromRecord(new ArrayList(Arrays.asList("\$TITLE", "\$TIPP")), target, record, formatter)
+  static ObjectNode getCombinedTitleTippJsonFromRecord(String target, Record record, YgorFormatter formatter,
+                                                       char multiValueSeparator) {
+    getJsonFromRecord(new ArrayList(Arrays.asList("\$TITLE", "\$TIPP")), target, record, formatter, multiValueSeparator)
   }
 
 
   private static ObjectNode getJsonFromRecord(List<String> typeFilter, String target, Record record,
-                                              YgorFormatter formatter) {
+                                              YgorFormatter formatter, char multiValueSeparator) {
     ArrayList concatKeyStub = new ArrayList<>(typeFilter)
     if (concatKeyStub.size() == 2 && concatKeyStub.contains("\$TITLE") && concatKeyStub.contains("\$TIPP")){
       concatKeyStub.remove("\$TITLE")
@@ -95,7 +98,8 @@ class JsonToolkit {
         if (it.hasNext()){
           concatKey.addAll(it.next().key)
         }
-        upsertIntoJsonNode(result, concatKey, value, multiField.type, formatter, false)
+        upsertIntoJsonNode(result, concatKey, value, multiField.type, multiField.isMultiValueCapable,
+            multiValueSeparator, formatter, false)
       }
       else {
         Set qualifiedKeys = multiField.keyMapping."${target}"
@@ -103,8 +107,8 @@ class JsonToolkit {
           ArrayList splitKey = qualifiedKey.split("\\.") as ArrayList
           if (splitKey.size() > 1 && splitKey[0] in typeFilter) {
             def value = multiField.getFirstPrioValue()
-            upsertIntoJsonNode(result, splitKey, value, multiField.type, formatter,
-                multiField.keyMapping.keepIfEmpty)
+            upsertIntoJsonNode(result, splitKey, value, multiField.type, multiField.isMultiValueCapable,
+                multiValueSeparator, formatter, multiField.keyMapping.keepIfEmpty)
           }
         }
       }
@@ -125,7 +129,8 @@ class JsonToolkit {
 
 
   private static void upsertIntoJsonNode(JsonNode root, ArrayList<String> keyPath, String value, String type,
-                                         YgorFormatter formatter, boolean keepIfEmpty) {
+                                         boolean isMultiValueCapable, char multiValueSeparator, YgorFormatter formatter,
+                                         boolean keepIfEmpty) {
     if (keyPath.size() <= 1){
       return
     }
@@ -135,35 +140,50 @@ class JsonToolkit {
     }
     else {
       if (keyPath.get(1).equals(ARRAY)) {
-        upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
+        upsertIntoJsonNode(root, keyPath[1..keyPath.size() - 1], value, type, isMultiValueCapable, multiValueSeparator,
+            formatter, keepIfEmpty)
       }
       else if (keyPath.get(1).equals(COUNT)) {
         // TODO until now, only 1 element in array is supported ==> implement count
         if (root.size() == 0) {
           root.add(new ObjectNode(NODE_FACTORY))
         }
-        upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
+        upsertIntoJsonNode(root.get(0), keyPath[1..keyPath.size() - 1], value, type, isMultiValueCapable,
+            multiValueSeparator, formatter, keepIfEmpty)
       }
       else {
-        JsonNode subNode = getSubNode(keyPath, value, keepIfEmpty)
+        JsonNode subNode = getSubNode(keyPath, value, keepIfEmpty, isMultiValueCapable, multiValueSeparator)
         subNode = putAddNode(keyPath, root, subNode)
         if (keyPath.size() > 2) {
           // root is not final leaf --> iterate
-          upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value, type, formatter, keepIfEmpty)
+          upsertIntoJsonNode(subNode, keyPath[1..keyPath.size() - 1], value, type, isMultiValueCapable,
+              multiValueSeparator, formatter, keepIfEmpty)
         }
       }
     }
   }
 
 
-  private static JsonNode getSubNode(ArrayList<String> keyPath, String value, boolean keepIfEmpty) {
+  private static JsonNode getSubNode(ArrayList<String> keyPath, String value, boolean keepIfEmpty,
+                                     boolean isFieldMultiValueCapable, char multiValueSeparator) {
     assert keyPath.size() > 1
     if (keyPath.size() == 2) {
       value = MultiField.extractFixedValue(value)
-      if (value.equals("") && keepIfEmpty) {
-        value = " " // this is obviously a hack without any harm. Correct implementation seems expensive.
+      if (isFieldMultiValueCapable){
+        String [] values = value.split(String.valueOf(multiValueSeparator))
+        ArrayNode result = new ArrayNode(NODE_FACTORY)
+        for (String v in values){
+          TextNode singleValueNode = new TextNode(v.trim())
+          result.add(singleValueNode)
+        }
+        return result
       }
-      return new TextNode(value)
+      else{
+        if (value.equals("") && keepIfEmpty) {
+          value = " " // this is obviously a hack without any harm. Correct implementation seems expensive.
+        }
+        return new TextNode(value)
+      }
     }
     if (keyPath[2].equals(ARRAY)) {
       return new ArrayNode(NODE_FACTORY)
