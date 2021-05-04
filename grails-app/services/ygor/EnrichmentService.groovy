@@ -3,6 +3,7 @@ package ygor
 import de.hbznrw.ygor.export.structure.Pod
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.util.Holders
@@ -351,11 +352,12 @@ class EnrichmentService{
   /**
    * used by AutoUpdateService
    */
-  UploadJob buildCompleteUpdateProcess(Enrichment enrichment){
+  UploadJob buildCompleteUpdateProcess(Enrichment enrichment, YgorFeedback ygorFeedback){
     try{
       String urlString = StringUtils.isEmpty(enrichment.updateUrl) ? enrichment.originUrl : enrichment.updateUrl
       URL originUrl = new URL(urlString)
-      kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder, LocaleUtils.toLocale(enrichment.locale))
+      kbartReader = new KbartFromUrlReader(originUrl, enrichment.sessionFolder, LocaleUtils.toLocale(enrichment.locale),
+          ygorFeedback)
       enrichment.dataContainer.records = []
       new File(enrichment.enrichmentFolder).mkdirs()
       return processComplete(enrichment, null, null, true, true)

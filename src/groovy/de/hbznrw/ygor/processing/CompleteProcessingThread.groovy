@@ -24,6 +24,7 @@ class CompleteProcessingThread extends Thread {
   UploadJobFrame uploadJobFrame
   File localFile
   boolean ignoreLastChanged
+  YgorFeedback ygorFeedback
 
   /**
    * used by EnrichmentController.processGokbPackage()
@@ -43,11 +44,14 @@ class CompleteProcessingThread extends Thread {
     this.localFile = file
     this.addOnly
     this.ignoreLastChanged = ignoreLastChanged
+    ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "", this.getClass(),
+        null, null, null, null)
   }
 
 
   @Override
   void run() throws Exception {
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.RUNNING
     enrichmentService.addUploadJob(uploadJobFrame)
     String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
         .concat(File.separator).concat(UUID.randomUUID().toString())
@@ -71,12 +75,16 @@ class CompleteProcessingThread extends Thread {
       if (updateUrls.size() > 0) {
         while(urlsIterator.hasPrevious()){
           URL url = urlsIterator.previous()
+          ygorFeedback.processedData.put("url", url.toString())
           try {
-            kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale)
+            kbartReader = enrichmentService.kbartReader = new KbartFromUrlReader(url, new File(sessionFolder), locale, ygorFeedback)
           }
           catch (Exception e) {
+            ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+            ygorFeedback.exceptions.add(e)
+            ygorFeedback.statusDescription = "ERROR while trying to read file!"
             e.printStackTrace()
-            log.error("ERROR while trying to read file!")
+            log.error(ygorFeedback.statusDescription)
             continue
           }
 
