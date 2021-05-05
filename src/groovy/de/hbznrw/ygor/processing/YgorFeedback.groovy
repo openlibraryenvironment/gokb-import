@@ -1,5 +1,8 @@
 package de.hbznrw.ygor.processing
 
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
+
 import javax.annotation.Nonnull
 
 class YgorFeedback{
@@ -30,6 +33,42 @@ class YgorFeedback{
     PREPARATION,
     RUNNING,
     WAITING
+  }
+
+
+  @Override
+  String toString(){
+    String result = "Ygor processing status: " + ygorProcessingStatus.toString() + " |"
+    if (!StringUtils.isEmpty(statusDescription)){
+      result += (" Processing description: " + statusDescription + " |")
+    }
+    if (reportingComponent){
+      result += (" Reporting component: " + reportingComponent.getName() + " |")
+    }
+    if (dataComponent){
+      result += (" Data component: " + dataComponent.getName() + " |")
+    }
+    if (!errors.isEmpty()){
+      result += "Errors:"
+      for (def error in errors){
+        result += (" " + error.key + " = " + error.value + ".")
+      }
+      result += " |"
+    }
+    if (!processedData.isEmpty()){
+      result += "Processed data:"
+      for (def date in processedData){
+        result += (" " + date.key + " = " + date.value + ".")
+      }
+      result += " |"
+    }
+    if (!exceptions.isEmpty()){
+      result += "Exceptions:"
+      for (def exception in exceptions){
+        result += (" " + exception.toString() + " : " + exception.message + " ... with Stacktrace : " + ExceptionUtils.getStackTrace(exception) + ".")
+      }
+    }
+    return result
   }
 
 }
