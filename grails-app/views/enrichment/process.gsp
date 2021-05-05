@@ -10,8 +10,6 @@
 </head>
 
 <body>
-    <g:render template="messages"/>
-
     <g:render template="processInfo"/>
 
     <g:render template="uploadFile"/>
