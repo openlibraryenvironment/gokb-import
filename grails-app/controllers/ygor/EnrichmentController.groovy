@@ -118,7 +118,7 @@ class EnrichmentController implements ControllersHelper{
       String messageFooter = message(code: 'error.kbart.messageFooter').toString()
       flash.error = invalidEncoding.concat("<br>").concat(messageFooter)
       ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
-      ygorFeedback.statusDescription.concat(flash.error)
+      ygorFeedback.statusDescription += flash.error
       redirect(
           action: 'process'
       )
@@ -188,6 +188,8 @@ class EnrichmentController implements ControllersHelper{
 
 
   def uploadUrl = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Uploading URL. ",
+        this.getClass(), null, null, null, null)
     SessionService.setSessionDuration(request, 3600)
     def urlString = request.parameterMap["uploadUrlText"][0]
     // validate
@@ -396,10 +398,12 @@ class EnrichmentController implements ControllersHelper{
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
   def processCompleteWithToken(){
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION,
+        "Complete processing with token authentication. ", this.getClass(), null, null, null, null)
     SessionService.setSessionDuration(request, 72000)
     def result = [:]
     Enrichment enrichment = buildEnrichmentFromRequest()
-    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true, ygorFeedback)
     enrichmentService.addUploadJob(uploadJob)
     result.message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
     render result as JSON
@@ -410,7 +414,7 @@ class EnrichmentController implements ControllersHelper{
     def en = getCurrentEnrichment()
     if (en){
       def pkg = enrichmentService.getPackage(params.uuid, null, null, null)
-      if (pkg == null){
+      if (pkg == null || pkg.responseStatus == "error"){
         return
       }
       String isil = ""
@@ -568,8 +572,11 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processFile = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Processing file. ", this.getClass(), null,
+        null, null, null)
     SessionService.setSessionDuration(request, 72000)
     def en = getCurrentEnrichment()
+    ygorFeedback.processedData.put("enrichment", en.originName)
     try{
       def pmOptions = request.parameterMap['processOption']
       if (en.status != Enrichment.ProcessingState.WORKING){
@@ -598,7 +605,7 @@ class EnrichmentController implements ControllersHelper{
                 'ygorType'   : grailsApplication.config.ygor.type
             ]
             en.processingOptions = Arrays.asList(pmOptions)
-            en.process(options, kbartReader)
+            en.process(options, kbartReader, ygorFeedback)
           }
         }
       }
@@ -632,6 +639,8 @@ class EnrichmentController implements ControllersHelper{
       }
     }
     catch(Exception e){
+      ygorFeedback.exceptions << e
+      ygorFeedback.statusDescription += "Exception occurred during processFile."
       setErrorStatus(en)
       redirect(action: 'process')
     }

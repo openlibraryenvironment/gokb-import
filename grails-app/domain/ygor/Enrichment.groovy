@@ -8,6 +8,7 @@ import de.hbznrw.ygor.export.structure.PackageHeaderNominalPlatform
 import de.hbznrw.ygor.export.structure.PackageHeaderNominalProvider
 import de.hbznrw.ygor.normalizers.DateNormalizer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.readers.KbartReader
 import de.hbznrw.ygor.tools.FileToolkit
 import de.hbznrw.ygor.tools.JsonToolkit
@@ -149,8 +150,9 @@ class Enrichment{
   /**
    * Ygor's central processing method.
    */
-  def process(HashMap options, KbartReader kbartReader) throws Exception{
+  def process(HashMap options, KbartReader kbartReader, YgorFeedback ygorFeedback) throws Exception{
     log.debug("Start processing enrichment ${originName}.")
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.PREPARATION
     this.kbartReader = kbartReader
     if (kbartReader.fileNameDate){
       this.fileNameDate = DateNormalizer.YYYY_MM_DD.format(kbartReader.fileNameDate)
@@ -159,7 +161,7 @@ class Enrichment{
     ygorVersion = options.get('ygorVersion')
     dataContainer.info.file = originName
     dataContainer.info.type = options.get('ygorType')
-    thread = new MultipleProcessingThread(this, options, kbartReader)
+    thread = new MultipleProcessingThread(this, options, kbartReader, ygorFeedback)
     thread.start()
   }
 
