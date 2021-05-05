@@ -120,7 +120,10 @@ class EnrichmentController implements ControllersHelper{
       ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
       ygorFeedback.statusDescription += flash.error
       redirect(
-          action: 'process'
+          action: 'process',
+          model: [
+              ygorFeedback : ygorFeedback
+          ]
       )
       return
     }
@@ -142,7 +145,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
       return
@@ -161,7 +165,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
     }
@@ -179,7 +184,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
       return
@@ -232,7 +238,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
       return
@@ -253,7 +260,8 @@ class EnrichmentController implements ControllersHelper{
         ],
         model: [
             enrichment : enrichment,
-            currentView: 'process'
+            currentView: 'process',
+            ygorFeedback : ygorFeedback
         ]
     )
   }
@@ -406,6 +414,7 @@ class EnrichmentController implements ControllersHelper{
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true, ygorFeedback)
     enrichmentService.addUploadJob(uploadJob)
     result.message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
+    result.ygorFeedback = ygorFeedback
     render result as JSON
   }
 
@@ -619,7 +628,8 @@ class EnrichmentController implements ControllersHelper{
             ],
             model: [
                 enrichment : en,
-                currentView: 'process'
+                currentView: 'process',
+                ygorFeedback : ygorFeedback
             ]
         )
       }
@@ -633,7 +643,8 @@ class EnrichmentController implements ControllersHelper{
             ],
             model: [
                 enrichment : en,
-                currentView: 'process'
+                currentView: 'process',
+                ygorFeedback : ygorFeedback
             ]
         )
       }
