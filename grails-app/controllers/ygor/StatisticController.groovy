@@ -2,6 +2,7 @@ package ygor
 
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.SendTitlesThreadGokb
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.tools.FileToolkit
 import grails.converters.JSON
 import groovy.util.logging.Log4j
@@ -388,24 +389,30 @@ class StatisticController implements ControllersHelper{
 
 
   def sendPackageFile = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.RUNNING, "Send package file.",
+        this.getClass(), null,        null, null, null)
     SessionService.setSessionDuration(request, 72000)
-    sendFile(Enrichment.FileType.PACKAGE)
+    sendFile(Enrichment.FileType.PACKAGE, ygorFeedback)
   }
 
 
   def sendIntegratedPackageFile = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.RUNNING, "Send integrated package file.",
+        this.getClass(), null,        null, null, null)
     SessionService.setSessionDuration(request, 72000)
-    sendFile(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
+    sendFile(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, ygorFeedback)
   }
 
 
   def sendTitlesFile = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.RUNNING, "Send titles file.",
+        this.getClass(), null,        null, null, null)
     SessionService.setSessionDuration(request, 72000)
-    sendFile(Enrichment.FileType.TITLES)
+    sendFile(Enrichment.FileType.TITLES, ygorFeedback)
   }
 
 
-  private void sendFile(Enrichment.FileType fileType){
+  private void sendFile(Enrichment.FileType fileType, YgorFeedback ygorFeedback){
     gokbUsername = params.gokbUsername
     gokbPassword = params.gokbPassword
     def enrichment = getCurrentEnrichment()
@@ -417,18 +424,18 @@ class StatisticController implements ControllersHelper{
       UploadJob uploadJob
       if (fileType.equals(Enrichment.FileType.TITLES)){
         SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
-            RequestContextUtils.getLocale(request).toString())
+            RequestContextUtils.getLocale(request).toString(), ygorFeedback)
         uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
-            false)
+            false, ygorFeedback)
         uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)){
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
-            true)
-        uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThread)
+            true, ygorFeedback)
+        uploadJob = new UploadJob(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, sendPackageThread, ygorFeedback)
       }
       if (uploadJob != null){
         runningUploadJobs.put(uploadJob.uuid, uploadJob)
@@ -455,7 +462,8 @@ class StatisticController implements ControllersHelper{
             runningJobIds   : runningUploadJobs.keySet(),
             finishedJobIds  : finishedUploadJobs.keySet(),
             titlesUploaded  : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.TITLES),
-            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE)
+            packageUploaded : true == enrichment.hasBeenUploaded.get(Enrichment.FileType.PACKAGE),
+            ygorFeedback    : ygorFeedback
         ]
     )
   }

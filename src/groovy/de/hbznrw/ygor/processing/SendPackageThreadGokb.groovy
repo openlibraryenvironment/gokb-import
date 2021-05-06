@@ -1,5 +1,6 @@
 package de.hbznrw.ygor.processing
 
+import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.export.GokbExporter
 import grails.util.Holders
 import groovy.util.logging.Log4j
@@ -24,7 +25,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   boolean isUpdate
 
   SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, @Nonnull String user,
-                        @Nonnull String password, boolean integrateWithTitleData){
+                        @Nonnull String password, boolean integrateWithTitleData, YgorFeedback ygorFeedback){
     this.enrichment = enrichment
     this.uri = uri
     this.user = user
@@ -36,10 +37,14 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.locale = enrichment.locale
     this.integrateWithTitleData = integrateWithTitleData
     this.isUpdate = enrichment.isUpdate
+    this.ygorFeedback = ygorFeedback
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.PREPARATION
+    ygorFeedback.statusDescription += " Created SendPackageThreadGokb."
     status = UploadThreadGokb.Status.PREPARATION
   }
 
-  SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, boolean integrateWithTitleData){
+  SendPackageThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri, boolean integrateWithTitleData,
+                        YgorFeedback ygorFeedback){
     this.enrichment = enrichment
     this.uri = uri
     this.total += enrichment.yellowRecords?.size()
@@ -57,6 +62,10 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   @Override
   void run(){
     log.info("Starting package upload thread ...")
+    ygorFeedback.statusDescription += " Started SendPackageThreadGokb."
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.RUNNING
+    ygorFeedback.reportingComponent = this.getClass()
+    ygorFeedback.dataComponent = DataContainer.class
     status = UploadThreadGokb.Status.STARTED
     def json
     if (integrateWithTitleData){
@@ -71,13 +80,13 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       if (enrichment.addOnly){
         uri = uri.concat("&addOnly=true")
       }
-      result << GokbExporter.sendUpdate(uri, json.getText(), locale)
+      result << GokbExporter.sendUpdate(uri, json.getText(), locale, ygorFeedback)
     }
     else{
       if (enrichment.addOnly){
         uri = uri.concat("&addOnly=true")
       }
-      result << GokbExporter.sendText(uri, json.getText(), user, password, locale)
+      result << GokbExporter.sendText(uri, json.getText(), user, password, locale, ygorFeedback)
     }
     gokbJobId = result[0].get("info")?.get("job_id")?.toString()
     log.info("Finished package upload thread for GOKb job id ${gokbJobId}.")

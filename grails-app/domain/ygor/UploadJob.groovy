@@ -2,21 +2,24 @@ package ygor
 
 import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
+import de.hbznrw.ygor.processing.YgorFeedback
 
 @SuppressWarnings("JpaObjectClassSignatureInspection")
 class UploadJob extends UploadJobFrame{
 
+  static mapWith = "none" // disable persisting into database
+
   def uploadThread
   Integer total
 
-  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread){
-    super(fileType)
+  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, YgorFeedback ygorFeedback){
+    super(fileType, ygorFeedback)
     fillFrame(uploadThread)
   }
 
 
-  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, String uuid){
-    super(fileType, uuid)
+  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, String uuid, YgorFeedback ygorFeedback){
+    super(fileType, uuid, ygorFeedback)
     fillFrame(uploadThread)
   }
 
@@ -24,6 +27,7 @@ class UploadJob extends UploadJobFrame{
   UploadJob fillFrame(UploadThreadGokb uploadThread){
     this.uploadThread = uploadThread
     total = uploadThread.total
+    ygorFeedback.statusDescription += " Filled UploadJob with UploadThread."
     return this
   }
 

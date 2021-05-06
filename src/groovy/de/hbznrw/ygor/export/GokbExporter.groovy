@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import de.hbznrw.ygor.format.GokbFormatter
 import de.hbznrw.ygor.normalizers.DoiNormalizer
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.StopwordToolkit
 import groovy.util.logging.Log4j
@@ -550,19 +551,22 @@ class GokbExporter {
   }
 
 
-  static Map sendText(@Nonnull String url, @Nonnull String text,
-                      @Nonnull String user, @Nonnull String password, @Nonnull String locale){
+  static Map sendText(@Nonnull String url, @Nonnull String text, @Nonnull String user, @Nonnull String password,
+                      @Nonnull String locale, YgorFeedback ygorFeedback){
     def http = new HTTPBuilder(url)
+    ygorFeedback.statusDescription += " Sending text to ${url} with user ${user}."
     if (user != null && password != null){
       http.auth.basic user, password
     }
-    log.info("...sending text ${text.substring(0, text.length() > 50 ? 50 : text.length())}")
+    log.info("... sending text ${text.substring(0, text.length() > 50 ? 50 : text.length())}")
     http.request(Method.POST, ContentType.JSON){ request ->
       headers.'User-Agent' = 'ygor'
       headers.'Accept-Language' = locale
       body = text
       response.success = { response, html ->
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.OK
+          ygorFeedback.statusDescription += " Text was successfully sent."
           if (response.status < 400){
             return ['info': html]
           }
@@ -571,11 +575,15 @@ class GokbExporter {
           }
         }
         else{
+          ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+          ygorFeedback.statusDescription += " Authentication error!"
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
       response.failure = { response, html ->
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+          ygorFeedback.statusDescription += " Unspecified error!"
           return ['error': html]
         }
         else{
@@ -583,14 +591,17 @@ class GokbExporter {
         }
       }
       response.'401' = { response ->
+        ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+        ygorFeedback.statusDescription += " Ygor received 401 response!"
         return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
       }
     }
   }
 
 
-  static Map sendUpdate(@Nonnull String url, @Nonnull String text, @Nonnull String locale){
+  static Map sendUpdate(@Nonnull String url, @Nonnull String text, @Nonnull String locale, YgorFeedback ygorFeedback){
     def http = new HTTPBuilder(url)
+    ygorFeedback.statusDescription += " Sending update to ${url}."
     log.info("...sending update ${text.substring(0, text.length() > 50 ? 50 : text.length())}")
     http.request(Method.POST, ContentType.JSON){ request ->
       headers.'User-Agent' = 'ygor'
@@ -598,26 +609,38 @@ class GokbExporter {
       body = text
       response.success = { response, html ->
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.OK
+          ygorFeedback.statusDescription += " Update was successfully sent."
           if (response.status < 400){
             return ['info': html]
           }
           else{
+            ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+            ygorFeedback.statusDescription += " Unspecified error! Missing UTF-8 content type."
             return ['warning': html]
           }
         }
         else{
+          ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+          ygorFeedback.statusDescription += " Authentication error!"
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
       response.failure = { response, html ->
         if (response.headers.'Content-Type' == 'application/json;charset=UTF-8'){
+          ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+          ygorFeedback.statusDescription += " Unspecified error!"
           return ['error': html]
         }
         else{
+          ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+          ygorFeedback.statusDescription += " Unspecified error! Missing UTF-8 content type."
           return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
         }
       }
       response.'401' = { response ->
+        ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+        ygorFeedback.statusDescription += " Ygor received 401 response!"
         return ['error': ['message': "Authentication error!", 'result': "ERROR"]]
       }
     }
