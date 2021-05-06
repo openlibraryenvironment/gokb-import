@@ -39,7 +39,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.isUpdate = enrichment.isUpdate
     this.ygorFeedback = ygorFeedback
     ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.PREPARATION
-    ygorFeedback.statusDescription += " Created SendPackageThreadGokb."
+    ygorFeedback.statusDescription += " Created SendPackageThreadGokb using basic auth."
     status = UploadThreadGokb.Status.PREPARATION
   }
 
@@ -54,6 +54,8 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.locale = enrichment.locale
     this.isUpdate = enrichment.isUpdate
     this.integrateWithTitleData = integrateWithTitleData
+    this.ygorFeedback = ygorFeedback
+    ygorFeedback.statusDescription += " Created SendPackageThreadGokb using token auth."
     status = UploadThreadGokb.Status.PREPARATION
     log.info("Set up send package upload thread with ${this.total} records.")
   }

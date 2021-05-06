@@ -398,6 +398,9 @@ class EnrichmentService{
     }
     // Main processing finished here.
     if (enrichment.status == Enrichment.ProcessingState.ERROR){
+      ygorFeedback.statusDescription += " Error occured during main processing phase."
+      ygorFeedback.reportingComponent = EnrichmentService.class
+      ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
       return null
     }
     // Upload is following - send package with integrated title data
