@@ -327,6 +327,8 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processGokbPackage(){
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Processing GOKb package. ", this.getClass(), null,
+        null, null, null)
     SessionService.setSessionDuration(request, 72000)
     String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
         .concat(File.separator).concat(UUID.randomUUID().toString())
@@ -359,7 +361,6 @@ class EnrichmentController implements ControllersHelper{
       transferredFile = new File(sessionFolder, pkg.name)
       FileUtils.writeByteArrayToFile(transferredFile, mpFile.getBytes())
     }
-
     if (MapUtils.isEmpty(pkg)){
       result.status = UploadThreadGokb.Status.ERROR.toString()
       response.status = 404
@@ -371,7 +372,7 @@ class EnrichmentController implements ControllersHelper{
       result.message = "No source found for package with id $pkgId"
     }
     else{
-      UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)
+      UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, ygorFeedback)
       CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token,
           uploadJobFrame, transferredFile, addOnly, ignoreLastChanged)
       try {
@@ -380,12 +381,14 @@ class EnrichmentController implements ControllersHelper{
         response.status = 200
         result.message = "Started upload job for package $pkgId"
         result.jobId = uploadJobFrame.uuid
+        result.ygorFeedback = ygorFeedback
       }
       catch(Exception e){
         e.printStackTrace()
         result.status = UploadThreadGokb.Status.ERROR.toString()
         response.status = 500
         result.message = "Unable to process KBART file at the specified source url. Exception was: ".concat(e.message)
+        result.ygorFeedback = ygorFeedback
       }
     }
     render result as JSON
