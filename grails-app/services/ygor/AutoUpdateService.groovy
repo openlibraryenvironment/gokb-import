@@ -1,5 +1,6 @@
 package ygor
 
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.tools.JsonToolkit
 import de.hbznrw.ygor.tools.UrlToolkit
 import groovy.util.logging.Log4j
@@ -20,14 +21,14 @@ class AutoUpdateService {
   }
 
 
-  static void processUpdateConfiguration(File updateFile) throws Exception{
+  static void processUpdateConfiguration(File updateFile, YgorFeedback ygorFeedback) throws Exception{
     Enrichment enrichment = Enrichment.fromJsonFile(updateFile, false)
     List<URL> updateUrls = getUpdateUrls(enrichment)
     for (URL updateUrl in updateUrls){
       if (UrlToolkit.urlExists(updateUrl)){
         enrichment.updateUrl = updateUrl
         log.info("Start automatic update for : ".concat(updateFile.absolutePath).concat(" with URL : ").concat(updateUrl.toExternalForm()))
-        processUpdate(enrichment)
+        processUpdate(enrichment, ygorFeedback)
       }
     }
   }
@@ -58,19 +59,19 @@ class AutoUpdateService {
 
 
   // obsolete. TODO: delete
-  static void processUpdate(File updateConfiguration) throws Exception{
+  static void processUpdate(File updateConfiguration, YgorFeedback ygorFeedback) throws Exception{
     log.info("Start automatic update for : ".concat(updateConfiguration.absolutePath))
     Enrichment enrichment = Enrichment.fromRawJson(JsonToolkit.jsonNodeFromFile(updateConfiguration), false)
     enrichment.isUpdate = true
     enrichment.needsPreciseClassification = false
-    processUpdate(enrichment)
+    processUpdate(enrichment, ygorFeedback)
   }
 
 
-  static void processUpdate(Enrichment enrichment) throws Exception{
+  static void processUpdate(Enrichment enrichment, YgorFeedback ygorFeedback) throws Exception{
     enrichment.isUpdate = true
     enrichment.needsPreciseClassification = false
-    UploadJob uploadJob = ENRICHMENT_SERVICE.buildCompleteUpdateProcess(enrichment)
+    UploadJob uploadJob = ENRICHMENT_SERVICE.buildCompleteUpdateProcess(enrichment, ygorFeedback)
     ENRICHMENT_CONTROLLER.watchUpload(uploadJob, Enrichment.FileType.PACKAGE_WITH_TITLEDATA, enrichment.resultName)
   }
 }

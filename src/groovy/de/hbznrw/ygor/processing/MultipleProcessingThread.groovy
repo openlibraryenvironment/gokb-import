@@ -46,8 +46,9 @@ class MultipleProcessingThread extends Thread {
   private KbartReader kbartReader
   private ZdbIntegrationService zdbIntegrationService
   private EzbIntegrationService ezbIntegrationService
+  YgorFeedback ygorFeedback
 
-  MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader) throws YgorProcessingException{
+  MultipleProcessingThread(Enrichment en, HashMap options, KbartReader kbartReader, YgorFeedback ygorFeedback){
     enrichment = en
     apiCalls = EnrichmentService.decodeApiCalls(options.get('options'))
     quote = options.get('quote')
@@ -63,6 +64,7 @@ class MultipleProcessingThread extends Thread {
     identifierByKey = [(zdbKeyMapping)  : ZdbIdentifier.class,
                        (issnKeyMapping) : PrintIdentifier.class,
                        (eissnKeyMapping): OnlineIdentifier.class]
+    this.ygorFeedback = ygorFeedback
   }
 
 
@@ -71,35 +73,34 @@ class MultipleProcessingThread extends Thread {
     isRunning = true
     progressCurrent = 0.0
     if (null == enrichment.originPathName) {
+      ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+      ygorFeedback.statusDescription += "Missing originPathName! Exiting.."
       log.error("Missing originPathName! Exiting..")
       System.exit(0)
     }
     enrichment.setStatus(Enrichment.ProcessingState.WORKING)
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.RUNNING
     log.info("Starting MultipleProcessingThread ${String.valueOf(getId())} run... ")
     try {
-      ezbIntegrationService = new EzbIntegrationService(enrichment.mappingsContainer)
-      zdbIntegrationService = new ZdbIntegrationService(enrichment.mappingsContainer)
+      ezbIntegrationService = new EzbIntegrationService(enrichment.mappingsContainer, ygorFeedback)
+      zdbIntegrationService = new ZdbIntegrationService(enrichment.mappingsContainer, ygorFeedback)
       enrich()
       log.info("... finished enriching in MultipleProcessingThread ${String.valueOf(getId())} creating "
           .concat(enrichment.dataContainer.records.size().toString()).concat(" records."))
     }
-    catch (YgorProcessingException e) { // TODO Throw it in ...IntegrationService and / or ...Reader
+    catch (Exception e) {
+      String info = "Aborted MultipleProcessingThread ${String.valueOf(getId())} run."
+      ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+      ygorFeedback.statusDescription += info
+      ygorFeedback.exceptions << e
       enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
-      enrichment.setMessage(e.toString().substring(YgorProcessingException.class.getName().length() + 2))
       log.error(e.getMessage())
       log.error(e.printStackTrace())
-      log.error("Aborted MultipleProcessingThread ${String.valueOf(getId())} run")
-      return
-    }
-    catch (Exception e) {
-      enrichment.setStatusByCallback(Enrichment.ProcessingState.ERROR)
-      log.error(e.getMessage())
-      log.error("Aborted MultipleProcessingThread ${String.valueOf(getId())} run")
+      log.error(info)
       def stacktrace = Throwables.getStackTraceAsString(e).replaceAll("\\p{C}", " ")
       enrichment.setMessage(stacktrace + " ..")
       return
     }
-
     enrichment.enrollPlatformToRecords()
     GokbExporter.extractPackageHeader(enrichment)    // to enrichment.dataContainer.packageHeader
     if (enrichment.markDuplicates) {
@@ -108,6 +109,7 @@ class MultipleProcessingThread extends Thread {
     enrichment.classifyAllRecords()
     enrichment.save()
     enrichment.setStatusByCallback(Enrichment.ProcessingState.FINISHED)
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.OK
     log.debug("Finished MultipleProcessingThread ${String.valueOf(getId())} run")
   }
 

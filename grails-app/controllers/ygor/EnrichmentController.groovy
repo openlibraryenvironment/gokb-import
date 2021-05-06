@@ -2,6 +2,7 @@ package ygor
 
 import de.hbznrw.ygor.processing.CompleteProcessingThread
 import de.hbznrw.ygor.processing.UploadThreadGokb
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.readers.KbartFromUrlReader
 import de.hbznrw.ygor.readers.KbartReader
 import grails.converters.JSON
@@ -99,6 +100,8 @@ class EnrichmentController implements ControllersHelper{
 
 
   def uploadFile = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Uploading file. ", this.getClass(), null,
+        null, null, null)
     SessionService.setSessionDuration(request, 3600)
     def file = request.getFile('uploadFile')
     if (file.size < 1 && request.parameterMap.uploadFileLabel != null &&
@@ -111,10 +114,16 @@ class EnrichmentController implements ControllersHelper{
     if (encoding && encoding != "UTF-8"){
       flash.info = null
       flash.warning = null
-      flash.error = message(code: 'error.kbart.invalidEncoding').toString().concat("<br>")
-          .concat(message(code: 'error.kbart.messageFooter').toString())
+      String invalidEncoding = message(code: 'error.kbart.invalidEncoding').toString()
+      String messageFooter = message(code: 'error.kbart.messageFooter').toString()
+      flash.error = invalidEncoding.concat("<br>").concat(messageFooter)
+      ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+      ygorFeedback.statusDescription += flash.error
       redirect(
-          action: 'process'
+          action: 'process',
+          model: [
+              ygorFeedback : ygorFeedback
+          ]
       )
       return
     }
@@ -136,7 +145,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
       return
@@ -155,7 +165,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
     }
@@ -173,7 +184,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
       return
@@ -182,6 +194,8 @@ class EnrichmentController implements ControllersHelper{
 
 
   def uploadUrl = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Uploading URL. ",
+        this.getClass(), null, null, null, null)
     SessionService.setSessionDuration(request, 3600)
     def urlString = request.parameterMap["uploadUrlText"][0]
     // validate
@@ -208,7 +222,7 @@ class EnrichmentController implements ControllersHelper{
     enrichment.processingOptions = null
     enrichment.locale = request.locale
     try {
-      kbartReader = new KbartFromUrlReader(new URL(urlString), new File (enrichment.enrichmentFolder), request.locale)
+      kbartReader = new KbartFromUrlReader(new URL(urlString), new File (enrichment.enrichmentFolder), request.locale, ygorFeedback)
       kbartReader.checkHeader()
     }
     catch (Exception e) {
@@ -224,7 +238,8 @@ class EnrichmentController implements ControllersHelper{
           ],
           model: [
               enrichment : enrichment,
-              currentView: 'process'
+              currentView: 'process',
+              ygorFeedback : ygorFeedback
           ]
       )
       return
@@ -245,7 +260,8 @@ class EnrichmentController implements ControllersHelper{
         ],
         model: [
             enrichment : enrichment,
-            currentView: 'process'
+            currentView: 'process',
+            ygorFeedback : ygorFeedback
         ]
     )
   }
@@ -390,12 +406,15 @@ class EnrichmentController implements ControllersHelper{
    * Content-Disposition: form-data; name="uploadFile"; filename="yourKBartTestFile.tsv"
    */
   def processCompleteWithToken(){
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION,
+        "Complete processing with token authentication. ", this.getClass(), null, null, null, null)
     SessionService.setSessionDuration(request, 72000)
     def result = [:]
     Enrichment enrichment = buildEnrichmentFromRequest()
-    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true)
+    UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true, ygorFeedback)
     enrichmentService.addUploadJob(uploadJob)
     result.message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
+    result.ygorFeedback = ygorFeedback
     render result as JSON
   }
 
@@ -404,7 +423,7 @@ class EnrichmentController implements ControllersHelper{
     def en = getCurrentEnrichment()
     if (en){
       def pkg = enrichmentService.getPackage(params.uuid, null, null, null)
-      if (pkg == null){
+      if (pkg == null || pkg.responseStatus == "error"){
         return
       }
       String isil = ""
@@ -562,8 +581,11 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processFile = {
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Processing file. ", this.getClass(), null,
+        null, null, null)
     SessionService.setSessionDuration(request, 72000)
     def en = getCurrentEnrichment()
+    ygorFeedback.processedData.put("enrichment", en.originName)
     try{
       def pmOptions = request.parameterMap['processOption']
       if (en.status != Enrichment.ProcessingState.WORKING){
@@ -592,7 +614,7 @@ class EnrichmentController implements ControllersHelper{
                 'ygorType'   : grailsApplication.config.ygor.type
             ]
             en.processingOptions = Arrays.asList(pmOptions)
-            en.process(options, kbartReader)
+            en.process(options, kbartReader, ygorFeedback)
           }
         }
       }
@@ -606,7 +628,8 @@ class EnrichmentController implements ControllersHelper{
             ],
             model: [
                 enrichment : en,
-                currentView: 'process'
+                currentView: 'process',
+                ygorFeedback : ygorFeedback
             ]
         )
       }
@@ -620,12 +643,15 @@ class EnrichmentController implements ControllersHelper{
             ],
             model: [
                 enrichment : en,
-                currentView: 'process'
+                currentView: 'process',
+                ygorFeedback : ygorFeedback
             ]
         )
       }
     }
     catch(Exception e){
+      ygorFeedback.exceptions << e
+      ygorFeedback.statusDescription += "Exception occurred during processFile."
       setErrorStatus(en)
       redirect(action: 'process')
     }

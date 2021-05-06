@@ -2,6 +2,7 @@ package ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.readers.ZdbReader
 import org.apache.commons.lang.StringUtils
 import ygor.Record
@@ -18,10 +19,12 @@ class ZdbIntegrationService extends ExternalIntegrationService {
   FieldKeyMapping zdbIdMapping
   String processStart
   ZdbReader zdbReader
+  YgorFeedback ygorFeedback
 
-  ZdbIntegrationService(MappingsContainer mappingsContainer) {
+  ZdbIntegrationService(MappingsContainer mappingsContainer, YgorFeedback ygorFeedback) {
     super(mappingsContainer)
     zdbReader = new ZdbReader()
+    this.ygorFeedback = ygorFeedback
   }
 
 

@@ -1,21 +1,24 @@
 package de.hbznrw.ygor.readers
 
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.tools.UrlToolkit
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.IOUtils
-import ygor.EnrichmentService
 
 import java.nio.file.Files
 
 class KbartFromUrlReader extends KbartReader{
 
-  KbartFromUrlReader(URL url, File sessionFolder, Locale locale) throws Exception{
+  KbartFromUrlReader(URL url, File sessionFolder, Locale locale, YgorFeedback ygorFeedback) throws Exception{
+    ygorFeedback.reportingComponent = this.getClass()
     HttpURLConnection connection
     try {
       connection = (HttpURLConnection) url.openConnection()
       connection.addRequestProperty("User-Agent", "Mozilla/5.0")
     }
     catch (IOException e) {
+      ygorFeedback.exceptions.add(e)
+      ygorFeedback.statusDescription = "URL Connection was not established."
+      ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
       throw new RuntimeException("URL Connection was not established.")
     }
     connection.connect()
@@ -23,6 +26,7 @@ class KbartFromUrlReader extends KbartReader{
     // connection.setReadTimeout(30000)
     connection = UrlToolkit.resolveRedirects(connection, 5)
     log.debug("Final URL after redirects: ${connection.getURL()}")
+    ygorFeedback.processedData.put("Final URL after redirects", connection.getURL())
 
     fileName = sessionFolder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
     fileName = fileName.split("\\?")[0]
@@ -37,7 +41,10 @@ class KbartFromUrlReader extends KbartReader{
         encoding = enrichmentService.getEncoding(inputStream, null)
       }
       if (!(encoding in [null, "UTF-8"])){
-        throw new IllegalArgumentException(messageSource.getMessage("error.kbart.invalidEncoding", ["foo"] as Object[], locale))
+        Exception e = new IllegalArgumentException(messageSource.getMessage("error.kbart.invalidEncoding", ["foo"] as Object[], locale))
+        ygorFeedback.exceptions.add(e)
+        ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.ERROR
+        throw e
       }
     }
     FileUtils.copyInputStreamToFile(new ByteArrayInputStream(content), file)

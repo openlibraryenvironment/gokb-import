@@ -2,6 +2,7 @@ package ygor.integrators
 
 import de.hbznrw.ygor.export.DataContainer
 import de.hbznrw.ygor.processing.MultipleProcessingThread
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.readers.EzbReader
 import org.apache.commons.lang.StringUtils
 import ygor.Record
@@ -13,10 +14,12 @@ import java.text.SimpleDateFormat
 class EzbIntegrationService extends ExternalIntegrationService {
 
   EzbReader ezbReader
+  YgorFeedback ygorFeedback
 
-  EzbIntegrationService(MappingsContainer mappingsContainer) {
+  EzbIntegrationService(MappingsContainer mappingsContainer, YgorFeedback ygorFeedback) {
     super(mappingsContainer)
     ezbReader = new EzbReader()
+    this.ygorFeedback = ygorFeedback
   }
 
 
