@@ -3,6 +3,7 @@ package de.hbznrw.ygor.processing
 import de.hbznrw.ygor.export.GokbExporter
 import groovy.util.logging.Log4j
 import ygor.Enrichment
+import ygor.Record
 
 import javax.annotation.Nonnull
 
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull
 class SendTitlesThreadGokb extends UploadThreadGokb{
 
   SendTitlesThreadGokb(@Nonnull Enrichment enrichment, @Nonnull String uri,
-                       @Nonnull String user, @Nonnull String password, @Nonnull locale){
+                       @Nonnull String user, @Nonnull String password, @Nonnull String locale, YgorFeedback ygorFeedback){
     this.enrichment = enrichment
     this.uri = uri
     this.user = user
@@ -20,6 +21,9 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
     result = []
     this.locale = locale
     status = UploadThreadGokb.Status.PREPARATION
+    this.ygorFeedback = ygorFeedback
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.PREPARATION
+    ygorFeedback.statusDescription += " Created SendTitlesThreadGokb."
     log.info("Set up send titles upload thread with ${this.total} records.")
   }
 
@@ -28,10 +32,14 @@ class SendTitlesThreadGokb extends UploadThreadGokb{
   void run(){
     log.info("Starting titles upload thread ...")
     status = UploadThreadGokb.Status.STARTED
+    ygorFeedback.statusDescription += " Started SendTitlesThreadGokb."
+    ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.RUNNING
+    ygorFeedback.reportingComponent = this.getClass()
     for (def recId in enrichment.dataContainer.records){
+      ygorFeedback.dataComponent = Record.class
       String titleText = GokbExporter.extractTitle(enrichment, recId, false)
       log.info("... export Record " + recId + " to " + uri)
-      result << GokbExporter.sendText(uri, titleText, user, password, locale)
+      result << GokbExporter.sendText(uri, titleText, user, password, locale, ygorFeedback)
       count ++
     }
     log.info("Finished titles upload thread.")

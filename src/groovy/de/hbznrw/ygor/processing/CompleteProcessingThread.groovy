@@ -44,8 +44,8 @@ class CompleteProcessingThread extends Thread {
     this.localFile = file
     this.addOnly
     this.ignoreLastChanged = ignoreLastChanged
-    ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "", this.getClass(),
-        null, null, null, null)
+    ygorFeedback = uploadJobFrame?.ygorFeedback ?: new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "",
+        this.getClass(), null, null, null, null)
   }
 
 
@@ -101,7 +101,7 @@ class CompleteProcessingThread extends Thread {
           }
           enrichment.originPathName = kbartReader.fileName
           enrichment.ignoreLastChanged = ignoreLastChanged
-          UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, true)
+          UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, true, ygorFeedback)
           enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
           if (uploadJob == null){
             log.error("Could not upload processed package ${pkg.id} with uuid ${pkg.uuid}")
@@ -132,7 +132,7 @@ class CompleteProcessingThread extends Thread {
         log.info("Prepared enrichment ${enrichment.originName}.")
 
         enrichment.originPathName = kbartReader.fileName
-        UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false)
+        UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, ygorFeedback)
         enrichmentService.addUploadJob(uploadJob)
       }
       catch (Exception e) {

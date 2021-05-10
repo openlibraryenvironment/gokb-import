@@ -14,6 +14,7 @@ abstract class UploadThreadGokb extends Thread{
   int count = 0
   String locale
   Status status
+  YgorFeedback ygorFeedback
 
   abstract Map getResultsTable()
 
