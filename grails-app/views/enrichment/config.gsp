@@ -27,13 +27,13 @@
 					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
 					<td>packageHeader.nominalProvider</td>
-					<td>GOKb Provider</td>
+					<td>Knowledge Base Provider</td>
 				</tr>
 				<tr>
 					<td>Ygor <em>, <g:message code="config.table.form" /></em></td>
 					<td></td>
 					<td>packageHeader.nominalPlatform</td>
-					<td>GOKb Plattform</td>
+					<td>Knowledge Base Plattform</td>
 				</tr>
 
 				<tr>

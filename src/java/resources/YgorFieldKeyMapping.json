@@ -289,7 +289,7 @@
       "ezb" : ""
     },
     "out" : {
-      "kb" : ["$TITLE.identifiers.$ARRAY.(type:gokb,value)", "$TIPP.title.identifiers.$ARRAY.(type:gokb,value)"]
+      "kb" : ["$TITLE.identifiers.$ARRAY.(type:kb,value)", "$TIPP.title.identifiers.$ARRAY.(type:kb,value)"]
     },
     "order" : ["kbart"],
     "type" : "ID",
