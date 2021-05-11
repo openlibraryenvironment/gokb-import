@@ -527,6 +527,7 @@ class EnrichmentController implements ControllersHelper{
 
   def getStatus(){
     String jobId = params.get('jobId')
+    log.debug("Received status request for uploadJob $jobId.")
     def result = [:]
     UploadJobFrame uploadJob = enrichmentService.getUploadJob(jobId)
     if (uploadJob == null){
@@ -535,25 +536,29 @@ class EnrichmentController implements ControllersHelper{
       result.message = "No job found for this id."
       render result as JSON
     }
-    else if (uploadJob instanceof UploadJob) {
+    else if (uploadJob instanceof UploadJob){
+      log.debug("Upload job $jobId is instance of UploadJob.")
       uploadJob.updateCount()
       uploadJob.refreshStatus()
       result.status = uploadJob.getStatus().toString()
       result.gokbJobId = uploadJob.uploadThread?.gokbJobId
       render result as JSON
     }
-    else if (uploadJob.status == UploadThreadGokb.Status.ERROR) {
+    else if (uploadJob.status == UploadThreadGokb.Status.ERROR){
       result.status = UploadThreadGokb.Status.ERROR.toString()
       response.status = 400
       result.message = "There was an error processing this job."
+      log.info("There was an error processing job $jobId .")
       render result as JSON
     }
-    else if (uploadJob.status == UploadThreadGokb.Status.FINISHED_UNDEFINED) {
+    else if (uploadJob.status == UploadThreadGokb.Status.FINISHED_UNDEFINED){
+      log.info("UploadJob $jobId finished in an undefined status.")
       result.status = UploadThreadGokb.Status.FINISHED_UNDEFINED.toString()
       result.message = "No URLs processed."
       render result as JSON
     }
     else{
+      log.debug("UploadJob $jobId is still in frame status.")
       // uploadJob is instance of UploadJobFrame
       result.status = UploadThreadGokb.Status.PREPARATION.toString()
       render result as JSON

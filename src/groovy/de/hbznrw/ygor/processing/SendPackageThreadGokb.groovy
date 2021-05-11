@@ -40,6 +40,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
     this.ygorFeedback = ygorFeedback
     ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.PREPARATION
     ygorFeedback.statusDescription += " Created SendPackageThreadGokb using basic auth."
+    log.debug("Created SendPackageThreadGokb using basic auth.")
     status = UploadThreadGokb.Status.PREPARATION
   }
 
@@ -115,6 +116,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
           AutoUpdateService.addEnrichmentJob(enrichment)
         }
       }
+      log.debug("Count: $count . Process finished.")
     }
     else{
       String error = getGokbResponseValue("error", false)
@@ -128,6 +130,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
           count = Double.valueOf(countString) / 100.0 * total
         }
       }
+      log.debug("Count: $count . Process unfinished.")
     }
   }
 
@@ -135,10 +138,12 @@ class SendPackageThreadGokb extends UploadThreadGokb{
   boolean isInterrupted(){
     String message = getGokbResponseValue("job_result.message", true)
     if (message != null && message.contains("tipps have not been loaded because of validation errors")){
+      log.debug("SendPackageThread is interrupted.")
       return true
     }
     message = getGokbResponseValue("result", false)
     if (message != null && message.contains("error")){
+      log.debug("SendPackageThread is interrupted.")
       return true
     }
     // else
@@ -229,6 +234,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
         result.put('responseStatus', 'authenticationError')
       }
     }
+    log.debug("KB responseStatus : ${result.get('responseStatus')}")
     result
   }
 
