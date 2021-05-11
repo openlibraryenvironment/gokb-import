@@ -8,7 +8,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.accessEndDate"]
+      "kb" : ["$TIPP.accessEndDate"]
     },
     "order" : ["kbart"],
     "type" : "EndDate",
@@ -28,7 +28,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.accessStartDate"]
+      "kb" : ["$TIPP.accessStartDate"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -48,7 +48,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.accessType"]
+      "kb" : ["$TIPP.accessType"]
     },
     "order" : ["kbart"],
     "type" : "Abbreviation",
@@ -68,7 +68,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageDepth"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageDepth"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -88,7 +88,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startDate"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.startDate"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -108,7 +108,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endDate"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.endDate"]
     },
     "order" : ["kbart"],
     "type" : "EndDate",
@@ -128,7 +128,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.dateFirstOnline", "$TIPP.title.dateFirstOnline"]
+      "kb" : ["$TITLE.dateFirstOnline", "$TIPP.title.dateFirstOnline"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -148,7 +148,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.dateFirstInPrint", "$TIPP.title.dateFirstInPrint"]
+      "kb" : ["$TITLE.dateFirstInPrint", "$TIPP.title.dateFirstInPrint"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -168,7 +168,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.ddc", "$TIPP.title.ddc", "$TIPP.ddc"]
+      "kb" : ["$TITLE.ddc", "$TIPP.title.ddc", "$TIPP.ddc"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -189,7 +189,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:doi,value)", "$TIPP.title.identifiers.$ARRAY.(type:doi,value)"]
+      "kb" : ["$TITLE.identifiers.$ARRAY.(type:doi,value)", "$TIPP.title.identifiers.$ARRAY.(type:doi,value)"]
     },
     "order" : ["kbart", "zdb"],
     "type" : "String",
@@ -209,7 +209,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.embargo"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.embargo"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -229,7 +229,7 @@
       "ezb" : "jourid"
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:ezb,value)", "$TIPP.title.identifiers.$ARRAY.(type:ezb,value)"]
+      "kb" : ["$TITLE.identifiers.$ARRAY.(type:ezb,value)", "$TIPP.title.identifiers.$ARRAY.(type:ezb,value)"]
     },
     "order" : ["ezb", "kbart"],
     "type" : "ID",
@@ -249,7 +249,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.firstAuthor", "$TIPP.title.firstAuthor"]
+      "kb" : ["$TITLE.firstAuthor", "$TIPP.title.firstAuthor"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -269,7 +269,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.firstEditor","$TIPP.title.firstEditor"]
+      "kb" : ["$TITLE.firstEditor","$TIPP.title.firstEditor"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -289,7 +289,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:gokb,value)", "$TIPP.title.identifiers.$ARRAY.(type:gokb,value)"]
+      "kb" : ["$TITLE.identifiers.$ARRAY.(type:gokb,value)", "$TIPP.title.identifiers.$ARRAY.(type:gokb,value)"]
     },
     "order" : ["kbart"],
     "type" : "ID",
@@ -427,7 +427,7 @@
       "zdb" : "010@:a"
     },
     "out" : {
-      "gokb" : ["$TITLE.language", "$TIPP.title.language"]
+      "kb" : ["$TITLE.language", "$TIPP.title.language"]
     },
     "order" : ["kbart", "zdb"],
     "type" : "Abbreviation",
@@ -446,7 +446,7 @@
       "kbart" : "last_changed"
     },
     "out" : {
-      "gokb" : ["$TIPP.lastChanged"]
+      "kb" : ["$TIPP.lastChanged"]
     },
     "order" : ["kbart"],
     "type" : "StartDate",
@@ -465,7 +465,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.prices.$ARRAY.(currency:EUR,type:list,amount)"]
+      "kb" : ["$TIPP.prices.$ARRAY.(currency:EUR,type:list,amount)"]
     },
     "order" : ["kbart"],
     "type" : "Amount",
@@ -484,7 +484,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.prices.$ARRAY.(currency:GBP,type:list,amount)"]
+      "kb" : ["$TIPP.prices.$ARRAY.(currency:GBP,type:list,amount)"]
     },
     "order" : ["kbart"],
     "type" : "Amount",
@@ -503,7 +503,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.prices.$ARRAY.(currency:USD,type:list,amount)"]
+      "kb" : ["$TIPP.prices.$ARRAY.(currency:USD,type:list,amount)"]
     },
     "order" : ["kbart"],
     "type" : "Amount",
@@ -522,7 +522,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.medium", "$TIPP.title.medium"]
+      "kb" : ["$TITLE.medium", "$TIPP.title.medium"]
     },
     "type" : "String",
     "flags" : {
@@ -541,7 +541,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.monographEdition",
         "$TITLE.editionDifferentiator",
         "$TITLE.editionStatement",
@@ -568,7 +568,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.monographVolume",
         "$TITLE.volumeNumber",
         "$TIPP.title.monographVolume",
@@ -593,7 +593,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageNote"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.coverageNote"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -613,7 +613,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.startIssue"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -633,7 +633,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.startVolume"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -653,7 +653,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.endIssue"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -673,7 +673,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
+      "kb" : ["$TIPP.coverage.$ARRAY.$COUNT.endVolume"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -693,7 +693,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.oaType"]
+      "kb" : ["$TIPP.oaType"]
     },
     "value" : {
       "allowedValues" : ["Blue OA", "Gold OA", "Green OA", "Hybrid", "White OA", "Yellow OA"]
@@ -716,7 +716,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.identifiers.$ARRAY.(type:onlineIdentifier,value)",
         "$TIPP.title.identifiers.$ARRAY.(type:onlineIdentifier,value)"
       ]
@@ -734,7 +734,7 @@
     "ygor" : "platformName",
     "display" : "Platform Name",
     "out" : {
-      "gokb" : ["$TIPP.platform.name"]
+      "kb" : ["$TIPP.platform.name"]
     },
     "type" : "Title",
     "flags" : {
@@ -748,7 +748,7 @@
     "ygor" : "platformOid",
     "display" : "Platform ID",
     "out" : {
-      "gokb" : ["$TIPP.platform.oid"]
+      "kb" : ["$TIPP.platform.oid"]
     },
     "type" : "ID",
     "flags" : {
@@ -762,7 +762,7 @@
     "ygor" : "platformUrl",
     "display" : "Platform URL",
     "out" : {
-      "gokb" : ["$TIPP.platform.primaryUrl"]
+      "kb" : ["$TIPP.platform.primaryUrl"]
     },
     "type" : "URL",
     "flags" : {
@@ -781,7 +781,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.identifiers.$ARRAY.(type:printIdentifier,value)",
         "$TIPP.title.identifiers.$ARRAY.(type:printIdentifier,value)"
       ]
@@ -804,7 +804,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
+      "kb" : ["$TITLE.subTitle", "$TIPP.title.subTitle"]
     },
     "order" : ["zdb"],
     "type" : "Title",
@@ -824,7 +824,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.name"]
+      "kb" : ["$TIPP.name"]
     },
     "order" : ["kbart"],
     "type" : "Title",
@@ -844,7 +844,7 @@
       "ezb" : "title"
     },
     "out" : {
-      "gokb" : ["$TITLE.name", "$TIPP.title.name"]
+      "kb" : ["$TITLE.name", "$TIPP.title.name"]
     },
     "order" : ["zdb","ezb"],
     "type" : "Title",
@@ -898,7 +898,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.type", "$TIPP.title.type"]
+      "kb" : ["$TITLE.type", "$TIPP.title.type"]
     },
     "value" : {
       "allowedValues" : ["Monograph", "monograph", "Serial", "serial"]
@@ -921,7 +921,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publishedFrom","$TIPP.title.publishedFrom"]
+      "kb" : ["$TITLE.publishedFrom","$TIPP.title.publishedFrom"]
     },
     "order" : ["zdb"],
     "type" : "StartDate",
@@ -941,7 +941,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.publishedTo","$TIPP.title.publishedTo"]
+      "kb" : ["$TITLE.publishedTo","$TIPP.title.publishedTo"]
     },
     "order" : ["zdb"],
     "type" : "EndDate",
@@ -961,7 +961,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.publisher_history.$ARRAY.$COUNT.endDate",
         "$TIPP.title.publisher_history.$ARRAY.$COUNT.endDate"
       ],
@@ -985,7 +985,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.publisher_history.$ARRAY.$COUNT.startDate",
         "$TIPP.title.publisher_history.$ARRAY.$COUNT.startDate"
       ],
@@ -1009,7 +1009,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.publisher_history.$ARRAY.$COUNT.name",
         "$TIPP.title.publisher_history.$ARRAY.$COUNT.name",
         "$TIPP.publisherName"
@@ -1033,7 +1033,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TITLE.publisher_history.$ARRAY.$COUNT.place",
         "$TIPP.title.publisher_history.$ARRAY.$COUNT.place"
       ]
@@ -1056,7 +1056,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.series"]
+      "kb" : ["$TIPP.series"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -1076,7 +1076,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.shortcode","$TIPP.title.shortcode"]
+      "kb" : ["$TITLE.shortcode","$TIPP.title.shortcode"]
     },
     "order" : ["zdb"],
     "type" : "String",
@@ -1096,7 +1096,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TIPP.subjectArea"]
+      "kb" : ["$TIPP.subjectArea"]
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -1116,7 +1116,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : [
+      "kb" : [
         "$TIPP.titleId",
         "$TITLE.identifiers.$ARRAY.(type:titleId,value)",
         "$TIPP.title.identifiers.$ARRAY.(type:titleId,value)"
@@ -1140,7 +1140,7 @@
       "ezb" : "detail_link"
     },
     "out" : {
-      "gokb" : ["$TIPP.url"]
+      "kb" : ["$TIPP.url"]
     },
     "order" : ["kbart","ezb"],
     "type" : "URL",
@@ -1161,7 +1161,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.identifiers.$ARRAY.(type:zdb,value)", "$TIPP.title.identifiers.$ARRAY.(type:zdb,value)"]
+      "kb" : ["$TITLE.identifiers.$ARRAY.(type:zdb,value)", "$TIPP.title.identifiers.$ARRAY.(type:zdb,value)"]
     },
     "order" : ["zdb","kbart"],
     "type" : "ID",
