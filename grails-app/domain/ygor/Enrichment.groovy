@@ -94,11 +94,13 @@ class Enrichment{
 
   Map<FileType, Boolean> hasBeenUploaded = new HashMap<>()
 
+  YgorFeedback ygorFeedback
+
   static constraints = {
   }
 
 
-  Enrichment(File sessionFolder, String originalFilename){
+  Enrichment(File sessionFolder, String originalFilename, YgorFeedback ygorFeedback){
     this.sessionFolder = sessionFolder
     originName = originalFilename.replaceAll(/\s+/, '_')
     originHash = FileToolkit.getMD5Hash(originName + Math.random())
@@ -116,6 +118,7 @@ class Enrichment{
     transferredFile = null
     markDuplicates = false
     ignoreLastChanged = false
+    this.ygorFeedback = ygorFeedback
   }
 
 
@@ -129,12 +132,16 @@ class Enrichment{
 
 
   static Enrichment fromFilename(String filename){
-    return new Enrichment(EnrichmentService.getSessionFolder(), filename)
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION,
+        "Creating Enrichment from file ${filename} .", this.getClass(), null, null, null, null)
+    return new Enrichment(EnrichmentService.getSessionFolder(), filename, ygorFeedback)
   }
 
 
   static Enrichment fromFilename(String sessionFolder, String filename) throws Exception{
-    return new Enrichment(new File(sessionFolder), filename)
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION,
+        "Creating Enrichment from file ${sessionFolder}/${filename} .", this.getClass(), null, null, null, null)
+    return new Enrichment(new File(sessionFolder), filename, ygorFeedback)
   }
 
 
@@ -317,7 +324,9 @@ class Enrichment{
   static Enrichment fromRawJson(JsonNode rootNode, boolean loadRecordData){
     String sessionFolder = JsonToolkit.fromJson(rootNode, "sessionFolder")
     String originalFileName = JsonToolkit.fromJson(rootNode, "originalFileName")
-    def en = new Enrichment(new File(sessionFolder), originalFileName)
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION,
+        "Creating Enrichment from raw Json using $originalFileName .", this.getClass(), null, null, null, null)
+    def en = new Enrichment(new File(sessionFolder), originalFileName, ygorFeedback)
     en.ygorVersion = JsonToolkit.fromJson(rootNode, "ygorVersion") // TODO compare with current version and abort?
     en.lastProcessingDate = JsonToolkit.fromJson(rootNode, "lastProcessingDate")
     en.originHash = JsonToolkit.fromJson(rootNode, "originHash")
