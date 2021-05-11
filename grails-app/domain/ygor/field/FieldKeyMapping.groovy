@@ -74,7 +74,7 @@ class FieldKeyMapping {
         case MappingsContainer.MULTI_VALUE:
           isMultiValueCapable = Boolean.valueOf(mapping.value)
           break
-        case MappingsContainer.GOKB:
+        case MappingsContainer.KB:
           gokb = new HashSet<>()
           if (mapping.value instanceof Collection<?>) {
             gokb.addAll(mapping.value)
@@ -245,7 +245,7 @@ class FieldKeyMapping {
     }
     jsonGenerator.writeEndArray()
 
-    jsonGenerator.writeFieldName(MappingsContainer.GOKB)
+    jsonGenerator.writeFieldName(MappingsContainer.KB)
     jsonGenerator.writeStartArray()
     for (String gf in gokb) {
       jsonGenerator.writeString(gf)

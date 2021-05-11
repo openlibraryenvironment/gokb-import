@@ -14,8 +14,8 @@ class HistoryEvent {
   static mapWith = "none" // disable persisting into database
 
   // fields from ZDB API:
-  // historyEventDate     : 039E:H --> GOKb: "$TITLE.historyEvents.$ARRAY.$COUNT.date"
-  // historyEventRelationType : 039E:b --> GOKb:
+  // historyEventDate         : 039E:H --> KB: "$TITLE.historyEvents.$ARRAY.$COUNT.date"
+  // historyEventRelationType : 039E:b --> KB:
   String date
   List<GokbTitleReference> from = []
   List<GokbTitleReference> to   = []

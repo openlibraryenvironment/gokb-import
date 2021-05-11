@@ -189,7 +189,7 @@ class Validator {
       }
     }
     else if (identifierType == namespace) {
-      // TODO use identifier type in GOKb (String, URL, ...) and specify here
+      // TODO use identifier type in Knowledge Base (String, URL, ...) and specify here
       return Status.VALID
     }
     return Status.UNDEFINED

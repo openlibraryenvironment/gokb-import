@@ -92,7 +92,7 @@ class SendPackageThreadGokb extends UploadThreadGokb{
       result << GokbExporter.sendText(uri, json.getText(), user, password, locale, ygorFeedback)
     }
     gokbJobId = result[0].get("info")?.get("job_id")?.toString()
-    log.info("Finished package upload thread for GOKb job id ${gokbJobId}.")
+    log.info("Finished package upload thread for KB job id ${gokbJobId}.")
   }
 
 

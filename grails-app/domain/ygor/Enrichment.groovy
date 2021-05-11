@@ -215,7 +215,7 @@ class Enrichment{
 
 
   File getAsFile(FileType type, boolean validate){
-    // by now, the only export file type is for GOKb, so call GOKbExporter
+    // by now, the only export file type is for GOKb and alike, so call GOKbExporter
     return GokbExporter.getFile(this, type, validate)
   }
 

@@ -327,7 +327,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def processGokbPackage(){
-    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Processing GOKb package. ", this.getClass(), null,
+    YgorFeedback ygorFeedback = new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "Processing Knowledge Base package. ", this.getClass(), null,
         null, null, null)
     SessionService.setSessionDuration(request, 72000)
     String sessionFolder = grails.util.Holders.grailsApplication.config.ygor.uploadLocation.toString()
@@ -775,7 +775,7 @@ class EnrichmentController implements ControllersHelper{
 
 
   def gokbNameSpaces = {
-    log.debug("Getting namespaces of connected GOKb instance..")
+    log.debug("Getting namespaces of connected Knowledge Base instance..")
     def result = [:]
     result.items = gokbService.getNamespaceList(grailsApplication.config.gokbApi.namespaceCategory)
     render result as JSON
