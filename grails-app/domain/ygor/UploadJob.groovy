@@ -4,6 +4,8 @@ import de.hbznrw.ygor.processing.SendPackageThreadGokb
 import de.hbznrw.ygor.processing.UploadThreadGokb
 import de.hbznrw.ygor.processing.YgorFeedback
 
+import javax.annotation.Nonnull
+
 @SuppressWarnings("JpaObjectClassSignatureInspection")
 class UploadJob extends UploadJobFrame{
 
@@ -12,13 +14,13 @@ class UploadJob extends UploadJobFrame{
   def uploadThread
   Integer total
 
-  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, YgorFeedback ygorFeedback){
+  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, @Nonnull YgorFeedback ygorFeedback){
     super(fileType, ygorFeedback)
     fillFrame(uploadThread)
   }
 
 
-  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, String uuid, YgorFeedback ygorFeedback){
+  UploadJob(Enrichment.FileType fileType, UploadThreadGokb uploadThread, String uuid, @Nonnull YgorFeedback ygorFeedback){
     super(fileType, uuid, ygorFeedback)
     fillFrame(uploadThread)
   }
@@ -34,6 +36,7 @@ class UploadJob extends UploadJobFrame{
 
   void start(){
     if (fileType in [Enrichment.FileType.TITLES, Enrichment.FileType.PACKAGE, Enrichment.FileType.PACKAGE_WITH_TITLEDATA]){
+      log.info("Starting UploadJob $uuid .")
       uploadThread.start()
     }
     // else there is nothing to do
