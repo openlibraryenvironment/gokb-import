@@ -193,7 +193,7 @@ class Record{
 
 
   boolean hasValidPublicationType(){
-    if (publicationType == null || !(publicationType in ["serial", "monograph", "other"])){
+    if (publicationType == null || !(publicationType in ["serial", "monograph", "other", "database"])){
       return false
     }
     return true
