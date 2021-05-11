@@ -101,10 +101,10 @@ class GokbExporter {
       if (record.isValid()){
         ObjectNode tipp
         if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
-          tipp = JsonToolkit.getCombinedTitleTippJsonFromRecord("gokb", record, FORMATTER, multiValueSeparator)
+          tipp = JsonToolkit.getCombinedTitleTippJsonFromRecord(MappingsContainer.KB, record, FORMATTER, multiValueSeparator)
         }
         else{
-          tipp = JsonToolkit.getTippJsonFromRecord("gokb", record, FORMATTER, multiValueSeparator)
+          tipp = JsonToolkit.getTippJsonFromRecord(MappingsContainer.KB, record, FORMATTER, multiValueSeparator)
         }
         tipp = postProcessIssnIsbn(tipp, record, FileType.PACKAGE)
         if (type.equals(FileType.PACKAGE_WITH_TITLEDATA)){
@@ -183,7 +183,7 @@ class GokbExporter {
         enrichment.dataContainer.mappingsContainer)
     if (record != null && record.isValid()){
       record.deriveHistoryEventObjects(enrichment)
-      ObjectNode title = JsonToolkit.getTitleJsonFromRecord("gokb", record, FORMATTER, multiValueSeparator)
+      ObjectNode title = JsonToolkit.getTitleJsonFromRecord(MappingsContainer.KB, record, FORMATTER, multiValueSeparator)
       title = postProcessPublicationTitle(title, record)
       title = postProcessIssnIsbn(title, record, FileType.TITLES)
       title = removeEmptyFields(title)

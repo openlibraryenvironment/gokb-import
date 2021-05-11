@@ -18,7 +18,7 @@ class FieldKeyMapping {
   List<String> ezbKeys = new ArrayList()
   String type
   boolean isMultiValueCapable
-  Set<String> gokb
+  Set<String> kb
   String val = ""
   Set<String> allowedValues = new HashSet<>()
   boolean valIsFix
@@ -29,17 +29,17 @@ class FieldKeyMapping {
   static constraints = {
     ygorKey nullable: false
     type nullable: false
-    gokb nullable: false
+    kb nullable: false
   }
 
   static String[] VALID_FLAG_TYPES = ["valid", "invalid", "missing", "undefined"]
 
-  static hasMany = [kbartKeys     : String,
-                    zdbKeys       : String,
-                    ezbKeys       : String,
-                    gokb          : String,
-                    sourcePrio    : String,
-                    allowedValues : String]
+  static hasMany = [kbartKeys    : String,
+                    zdbKeys      : String,
+                    ezbKeys      : String,
+                    kb           : String,
+                    sourcePrio   : String,
+                    allowedValues: String]
 
   FieldKeyMapping() {
     // add explicit default constructor
@@ -74,13 +74,13 @@ class FieldKeyMapping {
         case MappingsContainer.MULTI_VALUE:
           isMultiValueCapable = Boolean.valueOf(mapping.value)
           break
-        case MappingsContainer.GOKB:
-          gokb = new HashSet<>()
+        case MappingsContainer.KB:
+          kb = new HashSet<>()
           if (mapping.value instanceof Collection<?>) {
-            gokb.addAll(mapping.value)
+            kb.addAll(mapping.value)
           }
           else if (!StringUtils.isEmpty(mapping.value.toString())) {
-            gokb.add(mapping.value)
+            kb.add(mapping.value)
           }
           break
         case "display":
@@ -245,9 +245,9 @@ class FieldKeyMapping {
     }
     jsonGenerator.writeEndArray()
 
-    jsonGenerator.writeFieldName(MappingsContainer.GOKB)
+    jsonGenerator.writeFieldName(MappingsContainer.KB)
     jsonGenerator.writeStartArray()
-    for (String gf in gokb) {
+    for (String gf in kb) {
       jsonGenerator.writeString(gf)
     }
     jsonGenerator.writeEndArray()

@@ -12,7 +12,7 @@ For automatic updates, set up the following directory:
     
 ### Config
 
-Upload json result to GOKb
+Upload json result to Knowledge Base
 
 	ygor.enableGokbUpload = true|false
 	

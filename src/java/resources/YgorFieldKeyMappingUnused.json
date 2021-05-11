@@ -7,7 +7,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.continuingSeries"]
+      "kb" : ["$TITLE.continuingSeries"]
     },
     "order" : [""],
     "type" : "String",
@@ -26,7 +26,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.defaultAccessURL"]
+      "kb" : ["$TITLE.defaultAccessURL"]
     },
     "order" : [""],
     "type" : "URL",
@@ -40,7 +40,7 @@
   {
     "ygor" : "editStatus",
     "out" : {
-      "gokb" : ["$TITLE.editStatus"]
+      "kb" : ["$TITLE.editStatus"]
     },
     "type" : "String",
     "value" : {
@@ -56,7 +56,7 @@
   {
     "ygor" : "imprint",
     "out" : {
-      "gokb" : ["$TITLE.imprint"]
+      "kb" : ["$TITLE.imprint"]
     },
     "type" : "String",
     "flags" : {
@@ -74,7 +74,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.issuer"]
+      "kb" : ["$TITLE.issuer"]
     },
     "order" : [""],
     "type" : "String",
@@ -93,7 +93,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "kb" : []
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -112,7 +112,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "kb" : []
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -131,7 +131,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "kb" : []
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -150,7 +150,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "kb" : []
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -169,7 +169,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "kb" : []
     },
     "order" : ["kbart"],
     "type" : "String",
@@ -188,7 +188,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : ["$TITLE.OAStatus"]
+      "kb" : ["$TITLE.OAStatus"]
     },
     "order" : [],
     "type" : "String",
@@ -207,7 +207,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "kb" : []
     },
     "order" : ["kbart"],
     "type" : "ID",
@@ -226,7 +226,7 @@
       "ezb" : ""
     },
     "out" : {
-      "gokb" : []
+      "kb" : []
     },
     "order" : ["kbart"],
     "type" : "ID",
@@ -240,7 +240,7 @@
   {
     "ygor" : "publisherHistoryStatus",
     "out" : {
-      "gokb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.status"]
+      "kb" : ["$TITLE.publisher_history.$ARRAY.$COUNT.status"]
     },
     "type" : "String",
     "value" : {
@@ -256,7 +256,7 @@
   {
     "ygor" : "tippMedium",
     "out" : {
-      "gokb" : ["$TIPP.medium"]
+      "kb" : ["$TIPP.medium"]
     },
     "type" : "String",
     "value" : {
@@ -272,7 +272,7 @@
   {
     "ygor" : "tippStatus",
     "out" : {
-      "gokb" : ["$TIPP.status"]
+      "kb" : ["$TIPP.status"]
     },
     "type" : "String",
     "value" : {
@@ -288,7 +288,7 @@
   {
     "ygor" : "titleStatus",
     "out" : {
-      "gokb" : ["$TITLE.status"]
+      "kb" : ["$TITLE.status"]
     },
     "type" : "String",
     "value" : {

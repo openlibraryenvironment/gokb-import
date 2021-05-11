@@ -52,7 +52,7 @@ class GokbService {
 
 
   Map getPlatformMap(String qterm = null, def suggest = true, String curatoryGroup) {
-    log.info("getting platform map from gokb ..")
+    log.info("getting platform map from KB ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
@@ -182,7 +182,7 @@ class GokbService {
 
 
   Map getProviderMap(def qterm = null, List<String> embeddedFields, String curatoryGroup = null) {
-    log.info("getting provider map from gokb ..")
+    log.info("getting provider map from KB ..")
     def result = [:]
     try {
       String esQuery = qterm ? URLEncoder.encode(qterm) : ""
