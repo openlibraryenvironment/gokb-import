@@ -1,10 +1,8 @@
-# Ygor
-
-A spare hand when needed ..
+# GOKb-Import
 
 ### Setup
 
-    $ git clone https://github.com/hbz/laser-ygor.git
+    $ git clone https://github.com/openlibraryenvironment/gokb-import.git
 
 For automatic updates, set up the following directory:
 
