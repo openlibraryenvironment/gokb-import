@@ -130,21 +130,21 @@ environments {
       autoUpdateJobsInterval = '30 30 4 ? * * *' // check for updates every day at 04:30:30am
     }
     gokbApi {
-      baseUri           = 'http://phaeton.hbz-nrw.de/gokb/'
-      xrTitleUri        = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferenceTitle'
-      xrPackageUri      = 'http://phaeton.hbz-nrw.de/gokb/integration/crossReferencePackage'
-      xrSuggestUriStub  = 'http://phaeton.hbz-nrw.de/gokb/api/suggest'
-      xrFindUriStub     = 'http://phaeton.hbz-nrw.de/gokb/api/find'
-      xrJobInfo         = 'http://phaeton.hbz-nrw.de/gokb/integration/getJobInfo'
-      packageInfo       = 'http://phaeton.hbz-nrw.de/gokb/rest/packages/'
-      platformInfo      = 'http://phaeton.hbz-nrw.de/gokb/rest/platforms/'
-      sourceInfo        = 'http://phaeton.hbz-nrw.de/gokb/rest/sources/'
+      baseUri           = 'https://gokb.org/gokb/'
+      xrTitleUri        = 'https://gokb.org/gokb/integration/crossReferenceTitle'
+      xrPackageUri      = 'https://gokb.org/gokb/integration/crossReferencePackage'
+      xrSuggestUriStub  = 'https://gokb.org/gokb/api/suggest'
+      xrFindUriStub     = 'https://gokb.org/gokb/api/find'
+      xrJobInfo         = 'https://gokb.org/gokb/integration/getJobInfo'
+      packageInfo       = 'https://gokb.org/gokb/rest/packages/'
+      platformInfo      = 'https://gokb.org/gokb/rest/platforms/'
+      sourceInfo        = 'https://gokb.org/gokb/rest/sources/'
       namespaceCategory = 'ttl_prv'
       user              = ''
       pwd               = ''
     }
     gokbDB {
-      dbUri = 'jdbc:postgresql://phaeton.hbz-nrw.de:5432/gokb'
+      dbUri = 'jdbc:postgresql://gokb.org:5432/gokb'
       user  = ''
       pwd   = ''
     }
