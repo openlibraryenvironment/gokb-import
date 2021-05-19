@@ -2,7 +2,6 @@ package de.hbznrw.ygor.normalizers
 
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.runtime.InvokerHelper
 import ygor.Record
 import ygor.field.Field
 import ygor.field.MultiField
@@ -23,8 +22,7 @@ class EditionNormalizer {
     // and needs extra normalization, as it extracts a number from text
     MultiField monographEdition = record.getMultiField("monographEdition")
     MultiField editionNumber = new MultiField(null)
-    InvokerHelper.setProperties(editionNumber, monographEdition.properties)
-    // just extract the first number (i. e. integer) from the string
+    // just extract the first number (i. e. integer) from the monographEdition string value
     String stringValue = monographEdition.getFirstPrioValue()
     String numberValue = ""
     if (!StringUtils.isEmpty(stringValue)){
@@ -38,6 +36,9 @@ class EditionNormalizer {
         log.info("Could not derive editionNumber from monographEdition for record ${record.id} : ${record.displayTitle}")
       }
     }
-    editionNumber.addField(new Field("kbart", "editionNumber", numberValue))
+    if (numberValue != ""){
+      editionNumber.addField(new Field("kbart", "editionNumber", numberValue))
+      record.addMultiField(editionNumber)
+    }
   }
 }
