@@ -27,13 +27,14 @@ class EditionNormalizer {
     String numberValue = ""
     if (!StringUtils.isEmpty(stringValue)){
       Matcher matcher = Pattern.compile("\\d+").matcher(stringValue)
-      matcher.find()
-      try{
-        int i = Integer.valueOf(matcher.group())
-        numberValue = String.valueOf(i)
-      }
-      catch(NumberFormatException nfe){
-        log.info("Could not derive editionNumber from monographEdition for record ${record.id} : ${record.displayTitle}")
+      if (matcher.find()){
+        try{
+          int i = Integer.valueOf(matcher.group())
+          numberValue = String.valueOf(i)
+        }
+        catch(NumberFormatException | IllegalStateException exception){
+          log.info("Could not derive editionNumber from monographEdition for record ${record.id} : ${record.displayTitle}")
+        }
       }
     }
     if (numberValue != ""){
