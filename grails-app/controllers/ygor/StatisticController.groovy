@@ -425,12 +425,12 @@ class StatisticController implements ControllersHelper{
       if (fileType.equals(Enrichment.FileType.TITLES)){
         SendTitlesThreadGokb sendTitlesThread = new SendTitlesThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
             RequestContextUtils.getLocale(request).toString(), ygorFeedback)
-        uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread)
+        uploadJob = new UploadJob(Enrichment.FileType.TITLES, sendTitlesThread, ygorFeedback)
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE)){
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
             false, ygorFeedback)
-        uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread)
+        uploadJob = new UploadJob(Enrichment.FileType.PACKAGE, sendPackageThread, ygorFeedback)
       }
       else if (fileType.equals(Enrichment.FileType.PACKAGE_WITH_TITLEDATA)){
         SendPackageThreadGokb sendPackageThread = new SendPackageThreadGokb(enrichment, uri, gokbUsername, gokbPassword,
