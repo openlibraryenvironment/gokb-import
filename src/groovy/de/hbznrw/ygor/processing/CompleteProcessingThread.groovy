@@ -42,7 +42,7 @@ class CompleteProcessingThread extends Thread {
     this.token = token
     this.uploadJobFrame = uploadJobFrame
     this.localFile = file
-    this.addOnly
+    this.addOnly = addOnly
     this.ignoreLastChanged = ignoreLastChanged
     ygorFeedback = uploadJobFrame?.ygorFeedback ?: new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "",
         this.getClass(), null, null, null, null)
