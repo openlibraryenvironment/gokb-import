@@ -542,11 +542,7 @@
     },
     "out" : {
       "kb" : [
-        "$TITLE.monographEdition",
-        "$TITLE.editionDifferentiator",
         "$TITLE.editionStatement",
-        "$TIPP.title.monographEdition",
-        "$TIPP.title.editionDifferentiator",
         "$TIPP.title.editionStatement"
       ]
     },
