@@ -79,9 +79,6 @@ class FieldKeyMapping {
         case "lengthmax":
           lengthMax = mapping.value
           break
-        case MappingsContainer.TYPE:
-          type = mapping.value
-          break
         case MappingsContainer.MULTI_VALUE:
           isMultiValueCapable = Boolean.valueOf(mapping.value)
           break
