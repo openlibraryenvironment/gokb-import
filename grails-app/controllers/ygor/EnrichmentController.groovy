@@ -460,7 +460,7 @@ class EnrichmentController implements ControllersHelper{
         allTitleIdNamespacesValues.add(namespace.id)
       }
     }
-    List<Object> tippContent = enrichmentService.getTippsOfPackage(pkg.uuid, 5)?.records
+    List<Object> tippContent = enrichmentService.getTippsOfPackage(pkg.uuid, 10000)?.records
     if (tippContent != null){
       for (def tipp in tippContent){
         if (tipp.identifiers != null){
