@@ -431,8 +431,11 @@ class GokbExporter {
         // identifier has "type" only ==> remove
         idsToBeRemoved << count
       }
-      else if (idNode.elements().size() > 1 && idNode.get("value").asText().trim() == "\"\"") {
-        idsToBeRemoved << count
+      else if (idNode.elements().size() > 1){
+        if (idNode.get("type") == null || idNode.get("type").asText().trim() in ["", "\"\"", "null"] ||
+            idNode.get("value") == null || idNode.get("value")?.asText().trim() in ["", "\"\"", "null"]) {
+          idsToBeRemoved << count
+        }
       }
       count++
     }

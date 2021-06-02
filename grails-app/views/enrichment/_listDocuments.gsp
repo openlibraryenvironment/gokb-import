@@ -207,7 +207,9 @@
                                                 $('#pkgNominalPlatform').append($('<option selected="selected"></option>').attr('value', platform).text(platform));
                                                 $("#pkgNominalPlatform").attr('disabled', 'disabled');
                                                 var tippNamespace = data.tippNamespace;
-                                                $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', tippNamespace).text(tippNamespace));
+                                                if (tippNamespace != "null"){
+                                                    $('#pkgTitleId').append($('<option selected="selected"></option>').attr('value', tippNamespace).text(tippNamespace));
+                                                }
                                                 $("#pkgTitleId").attr('disabled', 'disabled');
                                             },
                                             error:function(XMLHttpRequest, textStatus, errorThrown){
