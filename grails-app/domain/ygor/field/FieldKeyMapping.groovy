@@ -17,6 +17,8 @@ class FieldKeyMapping {
   List<String> zdbKeys = new ArrayList()
   List<String> ezbKeys = new ArrayList()
   String type
+  Integer lengthMin = null
+  Integer lengthMax = null
   boolean isMultiValueCapable
   Set<String> kb
   String val = ""
@@ -67,6 +69,15 @@ class FieldKeyMapping {
           break
         case MappingsContainer.EZB:
           putToKeys(mapping.value, ezbKeys)
+          break
+        case MappingsContainer.TYPE:
+          type = mapping.value
+          break
+        case "lengthmin":
+          lengthMin = mapping.value
+          break
+        case "lengthmax":
+          lengthMax = mapping.value
           break
         case MappingsContainer.TYPE:
           type = mapping.value

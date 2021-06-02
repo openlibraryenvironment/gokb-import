@@ -16,7 +16,7 @@ class Validator {
 
   static UrlValidator URL_VALIDATOR = new UrlValidator(["http", "https"] as String[])
 
-  static validate(String type, String value, String... additionalParameters) {
+  static validate(String type, String value, Integer minLength = null, Integer maxLength = null, String... additionalParameters) {
     switch (type) {
       case "Title":
         return isValidString(value, 1)
@@ -25,7 +25,7 @@ class Validator {
         return isValidString(value, 2)
         break
       case "Abbreviation":
-        return isValidAbbreviation(value)
+        return isValidAbbreviation(value, minLength, maxLength)
         break
       case "Number":
         return isValidNumber(value)
@@ -77,11 +77,22 @@ class Validator {
    * @param abbreviation
    * @return
    */
-  static isValidAbbreviation(String abbreviation) {
+  static isValidAbbreviation(String abbreviation, Integer minLength = null, Integer maxLength = null) {
     if (StringUtils.isEmpty(abbreviation)) {
       return Status.MISSING
     }
-    if (abbreviation.length() > 1) {
+    if (maxLength == null){
+      // check for default maximum length of 1
+      if (abbreviation.length() > 1) {
+        return Status.INVALID
+      }
+    }
+    else{
+      if (abbreviation.length() > maxLength) {
+        return Status.INVALID
+      }
+    }
+    if (minLength != null && abbreviation.length() < minLength){
       return Status.INVALID
     }
     return Status.VALID
