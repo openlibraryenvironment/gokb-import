@@ -431,6 +431,8 @@
     },
     "order" : ["kbart", "zdb"],
     "type" : "Abbreviation",
+    "lengthmax" : 3,
+    "lengthmin" : 3,
     "multivalue" : "true",
     "flags" : {
       "valid" : [{"serial" : "ok", "monograph" : "ok", "other" : "ok"}],
