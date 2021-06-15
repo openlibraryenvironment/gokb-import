@@ -174,7 +174,7 @@ class MultiField {
         return
       }
     }
-    status = Validator.validate(type, value, ygorFieldKey, namespace)
+    status = Validator.validate(type, value, keyMapping?.lengthMin, keyMapping?.lengthMax, ygorFieldKey, namespace)
   }
 
 
