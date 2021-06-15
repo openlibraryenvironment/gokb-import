@@ -894,7 +894,7 @@
       "ezb" : ""
     },
     "out" : {
-      "kb" : ["$TITLE.type", "$TIPP.title.type"]
+      "kb" : ["$TITLE.type", "$TIPP.title.type", "$TITLE.publicationType", "$TIPP.title.publicationType"]
     },
     "order" : ["kbart"],
     "type" : "String",
