@@ -177,7 +177,7 @@ class GokbService {
   String appendCuratoryGroup(String uri, String curatoryGroup){
     if (!StringUtils.isEmpty(curatoryGroup)){
       uri = uri.contains("?") ? uri + "&" : uri + "?"
-      uri = uri + "curatoryGroup=" + curatoryGroup
+      uri = uri + "curatoryGroup=" + URLEncoder.encode(curatoryGroup, StandardCharsets.UTF_8.toString())
     }
     uri
   }
