@@ -5,6 +5,8 @@ import groovyx.net.http.Method
 import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang.StringUtils
 
+import java.nio.charset.StandardCharsets
+
 class GokbService {
 
   def grailsApplication
@@ -138,19 +140,19 @@ class GokbService {
   private String buildUri(final String stub, final String query, final String type, final String role, final Integer max, String category = null) {
     String url = stub + "?"
     if (query) {
-      url += "q=" + query + "&"
+      url += "q=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + "&"
     }
     if (type) {
-      url += "componentType=" + type + "&"
+      url += "componentType=" + URLEncoder.encode(type, StandardCharsets.UTF_8) + "&"
     }
     if (category) {
-      url += "category=" + category + "&"
+      url += "category=" + URLEncoder.encode(category, StandardCharsets.UTF_8) + "&"
     }
     if (role) {
-      url += "role=" + role + "&"
+      url += "role=" + URLEncoder.encode(role, StandardCharsets.UTF_8) + "&"
     }
     if (max) {
-      url += "max=" + max + "&"
+      url += "max=" + URLEncoder.encode(String.valueOf(max), StandardCharsets.UTF_8) + "&"
     }
     url.substring(0, url.length() - 1)
   }
