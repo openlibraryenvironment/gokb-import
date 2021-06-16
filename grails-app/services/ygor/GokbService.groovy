@@ -140,19 +140,19 @@ class GokbService {
   private String buildUri(final String stub, final String query, final String type, final String role, final Integer max, String category = null) {
     String url = stub + "?"
     if (query) {
-      url += "q=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + "&"
+      url += "q=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString()) + "&"
     }
     if (type) {
-      url += "componentType=" + URLEncoder.encode(type, StandardCharsets.UTF_8) + "&"
+      url += "componentType=" + URLEncoder.encode(type, StandardCharsets.UTF_8.toString()) + "&"
     }
     if (category) {
-      url += "category=" + URLEncoder.encode(category, StandardCharsets.UTF_8) + "&"
+      url += "category=" + URLEncoder.encode(category, StandardCharsets.UTF_8.toString()) + "&"
     }
     if (role) {
-      url += "role=" + URLEncoder.encode(role, StandardCharsets.UTF_8) + "&"
+      url += "role=" + URLEncoder.encode(role, StandardCharsets.UTF_8.toString()) + "&"
     }
     if (max) {
-      url += "max=" + URLEncoder.encode(String.valueOf(max), StandardCharsets.UTF_8) + "&"
+      url += "max=" + URLEncoder.encode(String.valueOf(max), StandardCharsets.UTF_8.toString()) + "&"
     }
     url.substring(0, url.length() - 1)
   }
