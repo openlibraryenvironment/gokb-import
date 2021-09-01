@@ -356,7 +356,8 @@
                                             <g:checkBox name="processOption" required="true" checked="true" value="${KbartReader.IDENTIFIER}"/>
                                             KBart <code><g:message code="listDocuments.enrichment.file" /></code>
                                         </label>
-                                    &nbsp;
+                                        &nbsp;
+                                        <!-- This option is transferred into the GOKb "enrichments after upload" phase
                                         <label>
                                             <g:if test="${session.lastUpdate?.pmOptions?.contains(ZdbReader.IDENTIFIER)}">
                                                 <g:checkBox name="processOption" checked="true" value="${ZdbReader.IDENTIFIER}" />
@@ -366,7 +367,7 @@
                                             </g:else>
                                             ZDB <em>@GBV</em> <code>API</code>
                                         </label>
-                                        &nbsp;
+                                        &nbsp; -->
                                         <label>
                                             <g:if test="${session.lastUpdate?.pmOptions?.contains(EzbReader.IDENTIFIER)}">
                                                 <g:checkBox name="processOption" checked="true" value="${EzbReader.IDENTIFIER}" />
