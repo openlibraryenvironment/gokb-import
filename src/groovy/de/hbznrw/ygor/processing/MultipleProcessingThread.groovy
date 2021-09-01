@@ -127,10 +127,13 @@ class MultipleProcessingThread extends Thread {
           enrichment.isEzbIntegrated = true
           ezbIntegrationService.integrate(this, enrichment.dataContainer)
           break
+        /*
+        // This enrichment is transferred into the GOKb "enrichments after upload" phase
         case ZdbReader.IDENTIFIER:
           enrichment.isZdbIntegrated = true
           zdbIntegrationService.integrate(this, enrichment.dataContainer)
           break
+         */
       }
     }
   }
