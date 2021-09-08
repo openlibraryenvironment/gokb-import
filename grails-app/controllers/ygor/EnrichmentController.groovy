@@ -352,9 +352,9 @@ class EnrichmentController implements ControllersHelper{
       return result as JSON
     }
     boolean ignoreLastChanged = params.boolean('ignoreLastChanged') ?: false
-
+    String curatoryGroup = !(StringUtils.isEmpty(params.get('activeGroup'))) ? params.get('activeGroup') : null
     Map<String, Object> pkg =
-        enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null, null)
+        enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null, curatoryGroup)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
 
     if (mpFile) {
