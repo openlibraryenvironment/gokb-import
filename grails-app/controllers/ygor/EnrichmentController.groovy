@@ -358,7 +358,7 @@ class EnrichmentController implements ControllersHelper{
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
 
     if (mpFile) {
-      transferredFile = new File(sessionFolder, pkg.name)
+      transferredFile = new File(sessionFolder, String.valueOf(pkg.name))
       FileUtils.writeByteArrayToFile(transferredFile, mpFile.getBytes())
     }
     if (MapUtils.isEmpty(pkg)){
@@ -445,7 +445,7 @@ class EnrichmentController implements ControllersHelper{
         }
       }
       def titleNamespace = getTitleNamespaceByPkgProvider(pkg)
-      String namespaceName = titleNamespace.name ?: titleNamespace.value ?: ""
+      String namespaceName = titleNamespace?.name ?: titleNamespace?.value ?: ""
       render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name +
           '", "packageId":"' + packageId + '", "packageNamespace":"' + packageNamespace +
           '", "tippNamespace":"' + namespaceName +
