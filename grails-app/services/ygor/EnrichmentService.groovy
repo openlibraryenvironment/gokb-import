@@ -125,6 +125,15 @@ class EnrichmentService{
   }
 
 
+  Map<String, Object> getOrganisation(String orgId){
+    if (orgId == null){
+      return null
+    }
+    def uri = Holders.config.gokbApi.orgInfo.toString().concat(orgId)
+    return gokbRestApiRequest(uri, null, null, null)
+  }
+
+
   Map<String, Object> getPlatform(String platformId){
     def uri = Holders.config.gokbApi.platformInfo.toString().concat(platformId)
     return gokbRestApiRequest(uri, null, null, Arrays.asList("id", "name", "primaryUrl", "provider", "uuid", "_embedded"))

@@ -358,7 +358,7 @@ class EnrichmentController implements ControllersHelper{
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
 
     if (mpFile) {
-      transferredFile = new File(sessionFolder, pkg.name)
+      transferredFile = new File(sessionFolder, String.valueOf(pkg.name))
       FileUtils.writeByteArrayToFile(transferredFile, mpFile.getBytes())
     }
     if (MapUtils.isEmpty(pkg)){
@@ -444,34 +444,18 @@ class EnrichmentController implements ControllersHelper{
           }
         }
       }
-      String tippNamespace = getTippNamespace(pkg)
+      def titleNamespace = getTitleNamespaceByPkgProvider(pkg)
+      String namespaceName = titleNamespace?.name ?: titleNamespace?.value ?: ""
       render '{"platform":"' + pkg.nominalPlatform?.name + '", "provider":"' + pkg.provider?.name +
           '", "packageId":"' + packageId + '", "packageNamespace":"' + packageNamespace +
-          '", "tippNamespace":"' + tippNamespace +
+          '", "tippNamespace":"' + namespaceName +
           '", "isil":"' + isil + '", "curatoryGroup":"' + pkg._embedded?.curatoryGroups[0]?.name + '"}'
     }
   }
 
-  private String getTippNamespace(Map<String, Object> pkg){
-    List<Object> allTitleIdNamespaces = gokbService.getNamespaceList(grailsApplication.config.gokbApi.namespaceCategory)
-    List<String> allTitleIdNamespacesValues = []
-    for (def namespace in allTitleIdNamespaces){
-      if (!StringUtils.isEmpty(namespace.id)){
-        allTitleIdNamespacesValues.add(namespace.id)
-      }
-    }
-    List<Object> tippContent = enrichmentService.getTippsOfPackage(pkg.uuid, 10000)?.records
-    if (tippContent != null){
-      for (def tipp in tippContent){
-        if (tipp.identifiers != null){
-          for (def identifier in tipp.identifiers){
-            if (identifier.namespace in allTitleIdNamespacesValues){
-              return identifier.namespace
-            }
-          }
-        }
-      }
-    }
+  private def getTitleNamespaceByPkgProvider(Map<String, Object> pkg){
+    def provider = enrichmentService.getOrganisation(String.valueOf(pkg.provider.id))
+    return provider?.titleNamespace
   }
 
 
