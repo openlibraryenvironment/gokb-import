@@ -15,7 +15,7 @@ class CommonNormalizer {
         return StringNormalizer.normalizeAbbreviation(value)
       case "String":
         // Volltext-Hack : besser im CoverageNormalizer unterbringen
-        if (field.ygorFieldKey == 'coverage_depth' && value.toLowerCase() == 'volltext')
+        if (field.ygorFieldKey == 'coverage_depth' && value.toLowerCase() in ['volltext', 'full text'])
           value = 'Fulltext'
         return StringNormalizer.normalizeString(value, false)
       case "Number":
