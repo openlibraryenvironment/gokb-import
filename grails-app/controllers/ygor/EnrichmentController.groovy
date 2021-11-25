@@ -346,15 +346,18 @@ class EnrichmentController implements ControllersHelper{
     if (StringUtils.isEmpty(token)){
       missingParams.add("updateToken")
     }
+    String activeCuratoryGroup = params.get('activeGroup')
+    if (StringUtils.isEmpty(activeCuratoryGroup)){
+      missingParams.add("activeGroup")
+    }
     if (!missingParams.isEmpty()){
       result.status = "error"
       result.missingParams = missingParams
       return result as JSON
     }
     boolean ignoreLastChanged = params.boolean('ignoreLastChanged') ?: false
-    String curatoryGroup = !(StringUtils.isEmpty(params.get('activeGroup'))) ? params.get('activeGroup') : null
     Map<String, Object> pkg =
-        enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null, curatoryGroup)
+        enrichmentService.getPackage(pkgId, ["source", "curatoryGroups", "nominalPlatform"], null, activeCuratoryGroup)
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
 
     if (mpFile) {
@@ -374,7 +377,7 @@ class EnrichmentController implements ControllersHelper{
     else{
       UploadJobFrame uploadJobFrame = new UploadJobFrame(Enrichment.FileType.PACKAGE_WITH_TITLEDATA, ygorFeedback)
       CompleteProcessingThread completeProcessingThread = new CompleteProcessingThread(kbartReader, pkg, src, token,
-          uploadJobFrame, transferredFile, addOnly, ignoreLastChanged)
+          uploadJobFrame, transferredFile, addOnly, ignoreLastChanged, activeCuratoryGroup)
       try {
         completeProcessingThread.start()
         result.status = UploadThreadGokb.Status.STARTED.toString()
