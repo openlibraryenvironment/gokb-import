@@ -59,6 +59,7 @@ class Enrichment{
   String originHash
   String originPathName
   String fileNameDate
+  String activeCuratoryGroupId
   File transferredFile
   String packageName
   long packageId
@@ -242,6 +243,9 @@ class Enrichment{
     if (fileNameDate){
       result.append("\"fileNameDate\":\"").append(fileNameDate).append("\",")
     }
+    if (activeCuratoryGroupId){
+      result.append("\"activeCuratoryGroupId\":\"").append(activeCuratoryGroupId).append("\",")
+    }
     result.append("\"autoUpdate\":\"").append(String.valueOf(autoUpdate)).append("\",")
     result.append("\"isUpdate\":\"").append(String.valueOf(isUpdate)).append("\",")
     result.append("\"needsPreciseClassification\":\"").append(String.valueOf(needsPreciseClassification)).append("\",")
@@ -333,6 +337,7 @@ class Enrichment{
     en.resultHash = JsonToolkit.fromJson(rootNode, "resultHash")
     en.originPathName = JsonToolkit.fromJson(rootNode, "originPathName")
     en.fileNameDate = JsonToolkit.fromJson(rootNode, "fileNameDate")
+    en.activeCuratoryGroupId = JsonToolkit.fromJson(rootNode, "activeCuratoryGroupId")
     en.autoUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "autoUpdate"))
     en.isUpdate = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "isUpdate"))
     en.needsPreciseClassification = Boolean.valueOf(JsonToolkit.fromJson(rootNode, "needsPreciseClassification"))

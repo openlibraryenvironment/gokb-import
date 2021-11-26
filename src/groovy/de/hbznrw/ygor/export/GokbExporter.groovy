@@ -255,6 +255,9 @@ class GokbExporter {
     if (enrichment.fileNameDate){
       result.put("fileNameDate", enrichment.fileNameDate)
     }
+    if (enrichment.activeCuratoryGroupId){
+      result.put("activeCuratoryGroupId", enrichment.activeCuratoryGroupId)
+    }
     def nominalPlatform = new ObjectNode(NODE_FACTORY)
     nominalPlatform.put("name", (String) packageHeader.nominalPlatform.name)
     nominalPlatform.put("primaryUrl", (String) packageHeader.nominalPlatform.url)
@@ -318,6 +321,7 @@ class GokbExporter {
     }
     return titleNode
   }
+
 
   private static ObjectNode postProcessIssnIsbn(ObjectNode node, Record record, FileType type){
     ObjectNode onlineIdentifier

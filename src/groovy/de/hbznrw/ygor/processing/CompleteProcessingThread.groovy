@@ -24,6 +24,7 @@ class CompleteProcessingThread extends Thread {
   UploadJobFrame uploadJobFrame
   File localFile
   boolean ignoreLastChanged
+  String activeCuratoryGroupId
   YgorFeedback ygorFeedback
 
   /**
@@ -34,7 +35,7 @@ class CompleteProcessingThread extends Thread {
    * @param token
    */
   CompleteProcessingThread(KbartReader kbartReader, Map<String, Object> pkg, Map<String, Object> src, String token,
-      UploadJobFrame uploadJobFrame, File file, def addOnly, boolean ignoreLastChanged){
+      UploadJobFrame uploadJobFrame, File file, def addOnly, boolean ignoreLastChanged, def activeCuratoryGroupId){
     enrichmentService = new EnrichmentService()
     this.kbartReader = kbartReader
     this.pkg = pkg
@@ -44,6 +45,7 @@ class CompleteProcessingThread extends Thread {
     this.localFile = file
     this.addOnly = addOnly
     this.ignoreLastChanged = ignoreLastChanged
+    this.activeCuratoryGroupId = activeCuratoryGroupId
     ygorFeedback = uploadJobFrame?.ygorFeedback ?: new YgorFeedback(YgorFeedback.YgorProcessingStatus.PREPARATION, "",
         this.getClass(), null, null, null, null)
   }
@@ -101,6 +103,7 @@ class CompleteProcessingThread extends Thread {
           }
           enrichment.originPathName = kbartReader.fileName
           enrichment.ignoreLastChanged = ignoreLastChanged
+          enrichment.activeCuratoryGroupId = activeCuratoryGroupId
           UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, true, ygorFeedback)
           enrichmentService.addUploadJob(uploadJob)                             // replacing uploadJobFrame with same uuid
           if (uploadJob == null){
@@ -132,6 +135,7 @@ class CompleteProcessingThread extends Thread {
         log.info("Prepared enrichment ${enrichment.originName}.")
 
         enrichment.originPathName = kbartReader.fileName
+        enrichment.activeCuratoryGroupId = activeCuratoryGroupId
         UploadJob uploadJob = enrichmentService.processComplete(uploadJobFrame, enrichment, null, null, false, ygorFeedback)
         enrichmentService.addUploadJob(uploadJob)
       }
