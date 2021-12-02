@@ -66,9 +66,26 @@ class CommonNormalizer {
    * @return
    */
   static String removeSpaces(String str) {
-    if (!str)
+    if (!str){
       return str
-    return str.trim().replaceAll(/\s+/, " ").replaceAll(/\s*:\s*/, ": ").replaceAll(/\s*,\s*/, ", ")
+    }
+    return str.replaceAll(/\s+/, " ").replaceAll(/\s*:\s*/, ": ").replaceAll(/\s*,\s*/, ", ")
+  }
+
+
+  /**
+   * Removes double spaces. Removes leading and ending spaces.
+   * Returns null if null given.
+   * Returns "" if empty string given
+   *
+   * @param str
+   * @return
+   */
+  static String escapeBackslashes(String str) {
+    if (!str){
+      return str
+    }
+    return str.replaceAll("\b", "\\\\b").replaceAll("\n", "\\\\n")
   }
 
 }
