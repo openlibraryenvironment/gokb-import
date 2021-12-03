@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils
 class StringNormalizer {
 
   static String normalizeString(String orgValue, boolean isTitleString) {
-    String result = CommonNormalizer.removeSpaces(orgValue)
+    String result = CommonNormalizer.removeSpaces(CommonNormalizer.escapeBackslashes(orgValue.trim()))
     if (isTitleString) {
       result = normalizeStringTitle(result)
     }
