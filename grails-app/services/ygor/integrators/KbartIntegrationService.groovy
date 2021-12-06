@@ -37,6 +37,7 @@ class KbartIntegrationService {
     // addOnly is to be set if there is at least one KBart line containing a valid date stamp
     boolean addOnly = false
     TreeMap<String, String> item = reader.readItemData(lastUpdate, owner.enrichment.ignoreLastChanged)
+    item = trimKeys(item)
     while (item != null) {
       // collect all identifiers (zdb_id, online_identifier, print_identifier) from the record
       log.debug("Integrating KBart record ${item.toString()}")
@@ -79,5 +80,17 @@ class KbartIntegrationService {
       item = reader.readItemData(lastUpdate, owner.enrichment.ignoreLastChanged)
     }
     return
+  }
+
+
+  private Map trimKeys(Map originalMap){
+    for (Map.Entry<String, Object> entry : new HashSet<>(originalMap.entrySet())) {
+      String trimmed = entry.getKey().trim()
+      if (!trimmed.equals(entry.getKey())) {
+        originalMap.remove(entry.getKey())
+        originalMap.put(trimmed, entry.getValue())
+      }
+    }
+    return originalMap
   }
 }
