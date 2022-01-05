@@ -155,7 +155,7 @@ class EnrichmentController implements ControllersHelper{
       Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
       enrichment.addFileAndFormat()
       enrichment.status = Enrichment.ProcessingState.PREPARE_1
-      kbartReader = new KbartReader(enrichment.transferredFile, enrichment.originName)
+      kbartReader = new KbartReader(enrichment.transferredFile, enrichment.originName, ygorFeedback)
       kbartReader.checkHeader()
       redirect(
           action: 'process',
@@ -416,7 +416,7 @@ class EnrichmentController implements ControllersHelper{
         "Complete processing with token authentication. ", this.getClass(), null, null, null, null)
     SessionService.setSessionDuration(request, 72000)
     def result = [:]
-    Enrichment enrichment = buildEnrichmentFromRequest()
+    Enrichment enrichment = buildEnrichmentFromRequest(ygorFeedback)
     UploadJob uploadJob = enrichmentService.processComplete(enrichment, null, null, false, true, ygorFeedback)
     enrichmentService.addUploadJob(uploadJob)
     result.message = watchUpload(uploadJob, Enrichment.FileType.PACKAGE, enrichment.originName)
@@ -473,7 +473,7 @@ class EnrichmentController implements ControllersHelper{
   }
 
 
-  private Enrichment buildEnrichmentFromRequest(){
+  private Enrichment buildEnrichmentFromRequest(YgorFeedback ygorFeedback){
     // create a sessionFolder
     CommonsMultipartFile file = request.getFile('uploadFile')
     if (file == null){
@@ -484,7 +484,7 @@ class EnrichmentController implements ControllersHelper{
       log.error("Received request with empty file. Aborting.")
       return
     }
-    enrichmentService.kbartReader = new KbartReader(file)
+    enrichmentService.kbartReader = new KbartReader(file, null, ygorFeedback)
     Enrichment enrichment = Enrichment.fromCommonsMultipartFile(file)
     String addOnly = params.get('addOnly').toString()                           // "true" or "false"
     def pmOptions = params.get('processOption')                                 // "kbart", "zdb", "ezb"

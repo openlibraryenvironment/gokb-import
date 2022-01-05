@@ -9,6 +9,7 @@ import java.nio.file.Files
 class KbartFromUrlReader extends KbartReader{
 
   KbartFromUrlReader(URL url, File sessionFolder, Locale locale, YgorFeedback ygorFeedback) throws Exception{
+    this.ygorFeedback = ygorFeedback
     ygorFeedback.reportingComponent = this.getClass()
     HttpURLConnection connection
     try {

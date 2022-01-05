@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.readers
 
 import de.hbznrw.ygor.normalizers.DateNormalizer
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
@@ -40,6 +41,7 @@ class KbartReader {
   String fileName
   Date fileNameDate
   char delimiterChar
+  private YgorFeedback ygorFeedback
 
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
@@ -60,7 +62,8 @@ class KbartReader {
   }
 
 
-  KbartReader(def kbartFile, String originalFileName) throws Exception{
+  KbartReader(def kbartFile, String originalFileName, YgorFeedback ygorFeedback) throws Exception{
+    this.ygorFeedback = ygorFeedback
     init(kbartFile, originalFileName)
   }
 
@@ -99,7 +102,9 @@ class KbartReader {
     }
     if (firstLineContainsUpperCaseLetters) {
       firstLine = firstLine.toLowerCase()
-      // TODO: feedback KBart format warning
+      ygorFeedback.reportingComponent = this.getClass()
+      ygorFeedback.statusDescription = "KBart header contains upper-case letters. File is processed nonetheless."
+      ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.WARNING
     }
     firstLine
   }
