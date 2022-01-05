@@ -77,6 +77,7 @@ class KbartReader {
     firstLine = firstLine.replace("^${delimiterChar}", " ${delimiterChar}")
                          .replaceAll("(?<=${delimiterChar})${delimiterChar}", " ${delimiterChar}")
                          .replaceAll('([\t;,])\$', /$1 /)
+    firstLine = checkForUpperCaseCharacters(firstLine)
     csvHeader = new ArrayList<String>()
     csvHeader.addAll(firstLine.split(String.valueOf(delimiterChar)))
     String lineSeparator = getLineSeparator(kbartFile)
@@ -86,6 +87,21 @@ class KbartReader {
         .withEscape((char) "\\")
         .withRecordSeparator(lineSeparator)
     csvRecords = csvFormat.parse(bufferedReader).iterator()
+  }
+
+
+  private String checkForUpperCaseCharacters(String firstLine) {
+    boolean firstLineContainsUpperCaseLetters = false
+    firstLine.each {
+      if (Character.isUpperCase(it.charAt(0))) {
+        firstLineContainsUpperCaseLetters = true
+      }
+    }
+    if (firstLineContainsUpperCaseLetters) {
+      firstLine = firstLine.toLowerCase()
+      // TODO: feedback KBart format warning
+    }
+    firstLine
   }
 
 
