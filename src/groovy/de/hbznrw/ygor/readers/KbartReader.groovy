@@ -1,6 +1,7 @@
 package de.hbznrw.ygor.readers
 
 import de.hbznrw.ygor.normalizers.DateNormalizer
+import de.hbznrw.ygor.processing.YgorFeedback
 import de.hbznrw.ygor.tools.DateToolkit
 import groovy.util.logging.Log4j
 import org.apache.commons.csv.CSVFormat
@@ -40,6 +41,7 @@ class KbartReader {
   String fileName
   Date fileNameDate
   char delimiterChar
+  private YgorFeedback ygorFeedback
 
   static ValidationTagLib VALIDATION_TAG_LIB = new ValidationTagLib()
 
@@ -60,7 +62,8 @@ class KbartReader {
   }
 
 
-  KbartReader(def kbartFile, String originalFileName) throws Exception{
+  KbartReader(def kbartFile, String originalFileName, YgorFeedback ygorFeedback) throws Exception{
+    this.ygorFeedback = ygorFeedback
     init(kbartFile, originalFileName)
   }
 
@@ -77,6 +80,7 @@ class KbartReader {
     firstLine = firstLine.replace("^${delimiterChar}", " ${delimiterChar}")
                          .replaceAll("(?<=${delimiterChar})${delimiterChar}", " ${delimiterChar}")
                          .replaceAll('([\t;,])\$', /$1 /)
+    firstLine = checkForUpperCaseCharacters(firstLine)
     csvHeader = new ArrayList<String>()
     csvHeader.addAll(firstLine.split(String.valueOf(delimiterChar)))
     String lineSeparator = getLineSeparator(kbartFile)
@@ -86,6 +90,23 @@ class KbartReader {
         .withEscape((char) "\\")
         .withRecordSeparator(lineSeparator)
     csvRecords = csvFormat.parse(bufferedReader).iterator()
+  }
+
+
+  private String checkForUpperCaseCharacters(String firstLine) {
+    boolean firstLineContainsUpperCaseLetters = false
+    firstLine.each {
+      if (Character.isUpperCase(it.charAt(0))) {
+        firstLineContainsUpperCaseLetters = true
+      }
+    }
+    if (firstLineContainsUpperCaseLetters) {
+      firstLine = firstLine.toLowerCase()
+      ygorFeedback.reportingComponent = this.getClass()
+      ygorFeedback.statusDescription = "KBart header contains upper-case letters. File is processed nonetheless."
+      ygorFeedback.ygorProcessingStatus = YgorFeedback.YgorProcessingStatus.WARNING
+    }
+    firstLine
   }
 
 

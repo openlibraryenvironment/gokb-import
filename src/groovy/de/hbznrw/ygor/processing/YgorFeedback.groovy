@@ -29,6 +29,7 @@ class YgorFeedback{
 
   enum YgorProcessingStatus{
     ERROR,
+    WARNING,
     OK,
     PREPARATION,
     RUNNING,

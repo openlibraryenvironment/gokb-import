@@ -127,7 +127,7 @@ class CompleteProcessingThread extends Thread {
       }
     }
     else {
-      kbartReader = enrichmentService.kbartReader = new KbartReader(localFile, localFile.getAbsolutePath())
+      kbartReader = enrichmentService.kbartReader = new KbartReader(localFile, localFile.getAbsolutePath(), ygorFeedback)
       kbartReader.fileName = localFile.toString()
       Enrichment enrichment
       try {
