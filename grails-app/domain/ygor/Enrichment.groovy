@@ -120,6 +120,7 @@ class Enrichment{
     markDuplicates = false
     ignoreLastChanged = false
     this.ygorFeedback = ygorFeedback
+    activeCuratoryGroupId = null
   }
 
 
