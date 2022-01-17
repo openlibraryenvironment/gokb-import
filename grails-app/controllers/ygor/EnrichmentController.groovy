@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest
 
 
 @Log4j
-class EnrichmentController implements ControllersHelper{
+class EnrichmentController implements ControllersHelper, Serializable{
 
   static scope = "session"
 
