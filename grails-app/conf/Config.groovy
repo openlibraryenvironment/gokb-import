@@ -102,7 +102,7 @@ environments {
     gokbApi {
       baseUri           = 'http://localhost:8080/gokb/'
       xrTitleUri        = 'http://localhost:8080/gokb/integration/crossReferenceTitle'
-      xrPackageUri      = 'http://localhost:8080/gokb/integration/crossReferencePackage'
+      xrPackageUri      = 'http://localhost:8080/gokb/integration/updatePackageTipps'
       xrSuggestUriStub  = 'http://localhost:8080/gokb/api/suggest'
       xrFindUriStub     = 'http://localhost:8080/gokb/api/find'
       xrJobInfo         = 'http://localhost:8080/gokb/integration/getJobInfo'

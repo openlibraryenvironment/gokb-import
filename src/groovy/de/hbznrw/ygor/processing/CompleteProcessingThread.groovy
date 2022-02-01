@@ -65,7 +65,7 @@ class CompleteProcessingThread extends Thread {
       if (Integer.valueOf(pkg._tippCount) == 0){
         // this is obviously a new package --> update with older timestamp
         updateUrls = new ArrayList<>()
-        updateUrls.add(new URL(src.url))
+        updateUrls = UrlToolkit.getUpdateUrlList(src.url, null)
       }
       else{
         // this package had already been filled with data

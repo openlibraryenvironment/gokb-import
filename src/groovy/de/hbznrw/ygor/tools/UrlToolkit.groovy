@@ -15,9 +15,9 @@ import java.util.regex.Pattern
 @Log4j
 class UrlToolkit {
 
-  static final String DATESTAMP_PLACEHOLDER = "{YYYY_MM_DD}"
-  static final String DATESTAMP_REGEX = "(.*[\\W_])([\\d]{4}-[\\d]{2}-[\\d]{2})([\\W_].*)"
-  static final String DATESTAMP_PLACEHOLDER_REGEX = "(.*[\\W_])(\\{?YYYY_MM_DD}?)([\\W_].*)"
+  static final String DATESTAMP_PLACEHOLDER = "\\{YYYY-MM-DD\\}"
+  static final String DATESTAMP_REGEX = "(.*[\\W_])([\\d]{4}-[\\d]{2}-[\\d]{2})(_?\\..*)"
+  static final String DATESTAMP_PLACEHOLDER_REGEX = "(.*[\\W_])(\\{YYYY-MM-DD\\})(_?\\..*)"
   static final Pattern DATESTAMP_REGEX_PATTERN = Pattern.compile(DATESTAMP_REGEX)
   static final Pattern DATESTAMP_PLACEHOLDER_REGEX_PATTERN = Pattern.compile(DATESTAMP_PLACEHOLDER_REGEX)
 
@@ -93,7 +93,10 @@ class UrlToolkit {
     if (StringUtils.isEmpty(url)){
       return false
     }
-    if (url.matches(DATESTAMP_REGEX)){
+
+    Matcher urlMatcher = DATESTAMP_REGEX_PATTERN.matcher(url)
+
+    if (urlMatcher.matches()){
       return true
     }
     return false
@@ -104,7 +107,10 @@ class UrlToolkit {
     if (StringUtils.isEmpty(url)){
       return false
     }
-    if (url.contains(DATESTAMP_PLACEHOLDER)){
+
+    Matcher urlMatcher = DATESTAMP_PLACEHOLDER_REGEX_PATTERN.matcher(url)
+
+    if (urlMatcher.matches()){
       return true
     }
     return false
@@ -126,22 +132,36 @@ class UrlToolkit {
       String prefix = urlMatcher.group(1)
       String appendix = urlMatcher.group(3)
       LocalDateTime fromDateTime
-      try {
-        fromDateTime = DateToolkit.fromString(from)
+
+      if (from) {
+        try {
+          fromDateTime = DateToolkit.fromString(from)
+        }
+        catch(IllegalArgumentException | DateTimeParseException e){
+          log.debug("Unable to parse URL date of ${url} via pattern")
+        }
       }
-      catch(IllegalArgumentException | DateTimeParseException e){
-        // this is a simple fallback - TODO: work out how far to go back in time
+
+      if (!fromDateTime) {
+        log.debug("Got URL date pattern but no earliest date cutoff, processing last 12 months before ${lastDate} instead ..")
         fromDateTime = LocalDateTime.now().minusMonths(12)
       }
+
       DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       fromDateTime.format(dateFormatter)
       UrlValidator urlValidator = new UrlValidator()
-      for (LocalDate date = fromDateTime.toLocalDate(); date.isBefore(lastDate.plusDays(1)); date = date.plusDays(1)){
+      for (LocalDate date = lastDate; date.isAfter(fromDateTime.toLocalDate()); date = date.minusDays(1)){
         String urlString = prefix.concat(date.format(dateFormatter)).concat(appendix)
         if (urlValidator.isValid(urlString)){
           result.add(new URL(urlString))
         }
+        else {
+          log.debug("Skipping invalid URL ${urlString}")
+        }
       }
+    }
+    else {
+      log.debug("No date pattern matching (${urlMatcher}) for ${url}")
     }
     return result
   }
