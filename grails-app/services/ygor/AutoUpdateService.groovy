@@ -46,13 +46,14 @@ class AutoUpdateService {
     if (StringUtils.isEmpty(lastProcessingDate)){
       lastProcessingDate = packageCreationDate
     }
-    if (StringUtils.isEmpty(url) || StringUtils.isEmpty(lastProcessingDate)){
+    if (StringUtils.isEmpty(url)){
       return new ArrayList<URL>()
     }
     if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)){
       return UrlToolkit.getUpdateUrlList(url, lastProcessingDate)
     }
     else{
+      log.debug("No dates in URL ..")
       return Arrays.asList(new URL(url))
     }
   }

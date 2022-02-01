@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils
 import java.nio.file.Files
 
 class KbartFromUrlReader extends KbartReader{
+  private YgorFeedback ygorFeedback
 
   KbartFromUrlReader(URL url, File sessionFolder, Locale locale, YgorFeedback ygorFeedback) throws Exception{
     this.ygorFeedback = ygorFeedback
