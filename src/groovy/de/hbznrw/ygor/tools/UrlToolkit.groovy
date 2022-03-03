@@ -162,6 +162,14 @@ class UrlToolkit {
     }
     else {
       log.debug("No date pattern matching (${urlMatcher}) for ${url}")
+      UrlValidator urlValidator = new UrlValidator()
+
+      if (urlValidator.isValid(url)){
+        result.add(new URL(url))
+      }
+      else {
+        log.debug("Skipping invalid URL ${url}")
+      }
     }
     return result
   }
