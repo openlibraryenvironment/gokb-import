@@ -361,7 +361,7 @@ class EnrichmentController implements ControllersHelper{
     Map<String, Object> src = pkg?.get("_embedded")?.get("source")
 
     if (mpFile) {
-      transferredFile = new File(sessionFolder, String.valueOf(pkg.name))
+      transferredFile = new File(sessionFolder, String.valueOf(pkg.name) + "_" + mpFile.fileItem?.name)
       FileUtils.writeByteArrayToFile(transferredFile, mpFile.getBytes())
     }
     if (MapUtils.isEmpty(pkg)){
