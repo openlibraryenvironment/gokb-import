@@ -10,6 +10,10 @@ import org.apache.commons.csv.QuoteMode
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -72,11 +76,13 @@ class KbartReader {
     if (kbartFile == null){
       return
     }
-    // automatic delimiter adaptation by selection of the character with biggest count
     fileNameDate = extractDateFromFileName(originalFileName)
     BufferedReader bufferedReader = removeBOM(new BufferedReader(new FileReader(kbartFile)))
     String firstLine = bufferedReader.readLine()
+    // automatic delimiter adaptation by selection of the character with biggest count
     delimiterChar = calculateDelimiter(firstLine)
+    kbartFile = escapeQuotes(kbartFile, delimiterChar)
+    bufferedReader = new BufferedReader(new FileReader(kbartFile))
     firstLine = firstLine.replace("^${delimiterChar}", " ${delimiterChar}")
                          .replaceAll("(?<=${delimiterChar})${delimiterChar}", " ${delimiterChar}")
                          .replaceAll('([\t;,])\$', /$1 /)
@@ -90,6 +96,64 @@ class KbartReader {
         .withEscape((char) "\\")
         .withRecordSeparator(lineSeparator)
     csvRecords = csvFormat.parse(bufferedReader).iterator()
+  }
+
+
+  /**
+   * Only do escape quotes that are not a full enclosure of a value.
+   * Fully enclosing quotes are just removed for being unnecessary in cases the cell contains further quotes.
+   * This method is not designed for performance when hitting a case that needs escaping, because we expect that to
+   * occur as a rare error only.
+   * @return the given File.
+   */
+  private File escapeQuotes(File kbartFile, char delimiterChar){
+    Path tempPath = Paths.get(kbartFile.absolutePath.concat("_escaped"))
+    BufferedReader reader = new BufferedReader(new FileReader(kbartFile))
+    BufferedWriter writer = new BufferedWriter(new FileWriter(tempPath.toFile()))
+    String line = reader.readLine()
+    int lineCount = 0
+    Map<Integer, String> changedLines = [:]
+
+    while (line != null){
+      String[] cells = line.split(String.valueOf(delimiterChar))
+      StringBuilder lineBuilder = new StringBuilder()
+
+      for (String cell in cells){
+        if (!StringUtils.isEmpty(cell)){
+          int count = cell.count("\"")
+          if (count == 0){
+            // nothing to do --> continue
+          }
+          else if (count == 1){
+            // we have the weird case of 1 quote --> better escape it if it is not yet being escaped
+            cell = cell.replaceFirst("(?<!\\\\)\"", "\\\\\"")
+          }
+          else{
+            int escapeStart = 0
+            int escapeEnd = cell.length()
+            if (cell.charAt(escapeStart) == "\"" && cell.charAt(escapeEnd-1) == "\""){
+              escapeStart++
+              escapeEnd--
+              cell = cell.substring(escapeStart, escapeEnd)
+            }
+            cell = cell.replaceAll("(?<!\\\\)\"", "\\\\\"")
+          }
+        }
+        lineBuilder.append(cell).append(delimiterChar)
+      }
+
+      if (lineBuilder.length() > 0){
+        // remove last delimiterChar
+        lineBuilder.setLength(lineBuilder.length() - 1)
+      }
+      writer.writeLine(lineBuilder.toString())
+      line = reader.readLine()
+    }
+    reader.close()
+    writer.close()
+    // Copy back to original path:
+    Files.move(tempPath, tempPath.resolveSibling(kbartFile.absolutePath), REPLACE_EXISTING)
+    kbartFile
   }
 
 
