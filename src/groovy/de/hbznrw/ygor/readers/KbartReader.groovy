@@ -124,23 +124,18 @@ class KbartReader {
             // nothing to do --> continue
           }
           else if (count == 1){
-            // we have the weird case of 1 quote --> better escape it
-            if (!cell.matches("\\\"")){
-              cell = cell.replaceFirst("\"", "\\\\\"")
-            }
+            // we have the weird case of 1 quote --> better escape it if it is not yet being escaped
+            cell = cell.replaceFirst("(?<!\\\\)\"", "\\\\\"")
           }
           else{
             int escapeStart = 0
             int escapeEnd = cell.length()
             if (cell.charAt(escapeStart) == "\"" && cell.charAt(escapeEnd-1) == "\""){
-              if (count == 2){
-                // nothing to be done
-                continue
-              }
               escapeStart++
-              escapeEnd++
+              escapeEnd--
+              cell = cell.substring(escapeStart, escapeEnd)
             }
-            cell = cell.substring(escapeStart, escapeEnd).replaceAll("(?<!\\)\"", "\\\\\"")
+            cell = cell.replaceAll("(?<!\\\\)\"", "\\\\\"")
           }
         }
         lineBuilder.append(cell).append(delimiterChar)
