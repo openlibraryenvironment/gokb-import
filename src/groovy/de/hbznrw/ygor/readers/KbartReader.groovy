@@ -140,7 +140,7 @@ class KbartReader {
               escapeStart++
               escapeEnd++
             }
-            cell = cell.substring(escapeStart, escapeEnd).replaceAll("\"", "\\\\\"")
+            cell = cell.substring(escapeStart, escapeEnd).replaceAll("(?<!\\)\"", "\\\\\"")
           }
         }
         lineBuilder.append(cell).append(delimiterChar)
