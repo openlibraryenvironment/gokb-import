@@ -82,6 +82,7 @@ class KbartReader {
     // automatic delimiter adaptation by selection of the character with biggest count
     delimiterChar = calculateDelimiter(firstLine)
     kbartFile = escapeQuotes(kbartFile, delimiterChar)
+    bufferedReader = new BufferedReader(new FileReader(kbartFile))
     firstLine = firstLine.replace("^${delimiterChar}", " ${delimiterChar}")
                          .replaceAll("(?<=${delimiterChar})${delimiterChar}", " ${delimiterChar}")
                          .replaceAll('([\t;,])\$', /$1 /)
